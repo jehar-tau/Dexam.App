@@ -1,0 +1,25 @@
+# dependencies and builds
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# local configuration and secrets
+.env
+.env.*
+!.env.example
+.npmrc
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
+
+# editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# temporary handoff state
+HANDOFF.md
+*.log

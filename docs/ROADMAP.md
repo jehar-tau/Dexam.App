@@ -1,0 +1,19 @@
+# Roadmap
+
+Each phase is refined through feature specifications and Decision Gates before implementation.
+
+1. Development OS: repository, docs, decisions, templates, prerequisites.
+2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.
+3. Identity: login, Student/Teacher/Sales/Admin roles, tested RLS.
+4. Academic foundation: programs, courses, modules, topics, lessons, enrolments, progress.
+5. Assignments: definitions, upload, review, feedback, approved resubmission behavior.
+6. CRM: leads, ownership, follow-ups, conversion, approved notifications.
+7. Commerce: products, Razorpay, verified orders, entitlements, expiry.
+8. Assessments: question bank, response types, autosave, scoring, results.
+9. Media: ebooks, private assets, video.
+10. Observability and product intelligence: event taxonomy, feedback, issue triage, reports.
+11. Learning AI: shadow evaluation, faculty comparison, governed feedback.
+12. Student AI/API/MCP: authorization-aware services exposed only after internal services mature.
+13. Aptitude product: assessment, results, and approved lead integration.
+
+The proposed first product milestone ends after a usable slice of phases 2–5: authentication, roles, basic admin, course/enrolment, coursework, assignment submission, and teacher feedback.
