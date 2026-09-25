@@ -13,6 +13,7 @@ Development OS — Setup Round 1.
 - Documented the product/engineering working agreement, decision policy, provisional architecture, testing strategy, roadmap, and setup path.
 - Initialized the local Git repository on `main` and created the foundation commit.
 - D-001 foundation package approved by the product owner.
+- D-002 application stack and deployment architecture drafted for owner review.
 
 ## Not yet started
 
@@ -32,7 +33,7 @@ Development OS — Setup Round 1.
 
 ## Next safe action
 
-Prepare and approve D-002, then install the local prerequisites and bootstrap the typed frontend plus Supabase local environment.
+Review and approve or modify D-002, then install the local prerequisites and bootstrap the typed frontend plus Supabase local environment.
 
 ## Blockers
 

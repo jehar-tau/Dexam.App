@@ -1,6 +1,6 @@
 # Architecture
 
-Status: provisional; foundation ADRs pending approval.
+Status: provisional; D-002 contains the detailed stack and deployment proposal pending approval.
 
 ## Proposed shape
 
