@@ -29,3 +29,6 @@ This repository contains application code and engineering/product documentation.
 - External webhooks are authenticated, idempotent, and auditable.
 - Consequential background work is retry-safe.
 - Observability must not leak student content or credentials.
+- Canonical person identity is independent of enrolment, exam year, course, college, or employment stage.
+- Lifecycle labels, operational roles, enrolments, and commercial entitlements are separate concepts; none replaces the person record.
+- Initial schema names and boundaries must allow future offering types without creating speculative college or professional features now.

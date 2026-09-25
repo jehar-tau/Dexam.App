@@ -21,6 +21,7 @@ Foundation implementation — application scaffold.
 - Added GitHub Actions checks for formatting, lint, types, unit tests, build, and browser smoke testing.
 - D-003 role and permission principles approved for Student, Teacher, Sales, and Admin.
 - D-004 canonical identity, duplicate prevention, employee gatekeeping, and immediate revocation requirements approved.
+- D-005 lifelong member architecture approved as a strategic direction; college/professional features remain research ideas, not V1 scope.
 
 ## Not yet started
 

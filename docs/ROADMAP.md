@@ -16,4 +16,8 @@ Each phase is refined through feature specifications and Decision Gates before i
 12. Student AI/API/MCP: authorization-aware services exposed only after internal services mature.
 13. Aptitude product: assessment, results, and approved lead integration.
 
+## Research horizon — lifelong Dexam
+
+In parallel with later product phases, research continuing value during college, graduation, and working life. Do not schedule implementation until evidence identifies a valuable problem and the owner approves a feature and business model. The initial architecture preserves identity and entitlement continuity under D-005 without adding speculative scope to V1.
+
 The proposed first product milestone ends after a usable slice of phases 2–5: authentication, roles, basic admin, course/enrolment, coursework, assignment submission, and teacher feedback.

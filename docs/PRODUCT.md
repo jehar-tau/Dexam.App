@@ -26,6 +26,14 @@ CRM, payments, assessments, AI evaluation, student AI/MCP, media infrastructure,
 - Interfaces should be understandable, accessible, responsive, and consistent with the approved Dexam design system.
 - Product behavior is specified before implementation.
 - Significant decisions are recorded in the repository.
+- A Dexam identity can continue beyond entrance preparation; course completion changes entitlements rather than fragmenting the person's account.
+- Long-term retention and monetization must be earned through continuing member value, consent, and trust.
+
+## Long-term horizon
+
+Dexam may evolve from entrance-exam preparation into a lifelong design-learning relationship spanning college, graduation, and professional life. Potential areas include workshops, portfolio and career development, mentorship, community, opportunity discovery, and continuing professional learning.
+
+These are exploration themes, not approved features. See `decisions/ADR-005-lifelong-member-architecture.md` for the architecture boundary that preserves this option without expanding V1 scope.
 
 ## Open product work
 
