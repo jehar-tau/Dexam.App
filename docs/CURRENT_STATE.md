@@ -20,6 +20,7 @@ Foundation implementation — application scaffold.
 - Initialized versioned local Supabase configuration, fictional-only seed policy, and an initial RLS database safety test.
 - Added GitHub Actions checks for formatting, lint, types, unit tests, build, and browser smoke testing.
 - D-003 role and permission principles approved for Student, Teacher, Sales, and Admin.
+- D-004 canonical identity, duplicate prevention, employee gatekeeping, and immediate revocation requirements approved.
 
 ## Not yet started
 
@@ -42,7 +43,7 @@ Foundation implementation — application scaffold.
 
 ## Next safe action
 
-Install the user-managed free prerequisites, confirm CI, run the local Supabase database safety test, and draft F001/F002 Decision Gates.
+Install the user-managed free prerequisites, confirm CI, run the local Supabase database safety test, and incorporate D-003/D-004 into F001/F002 Decision Gates.
 
 ## Blockers
 
