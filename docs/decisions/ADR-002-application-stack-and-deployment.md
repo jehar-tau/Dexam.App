@@ -22,6 +22,7 @@ The product owner expects the development agent to lead implementation and maint
 - Node.js 24 LTS, pinned in the repository and CI.
 - pnpm with a committed lockfile and an explicit package-manager version.
 - TypeScript in strict mode across application code.
+- A free Docker-compatible local runtime; prefer the open-source Colima path on the current Mac unless compatibility testing demonstrates a blocker.
 
 Node 24 is an LTS release as of this decision. Major runtime upgrades should be deliberate maintenance changes rather than silently following `latest`.
 
@@ -87,14 +88,16 @@ Cloudflare Pages is selected over Vercel for the initial static application beca
 
 ### 7. Initial cost boundary
 
-- Local development: no hosting charge; requires a supported container runtime.
+- Local development: no hosting charge; use free/open-source tools and a supported container runtime.
 - Cloudflare Pages static hosting: begin within the free plan limits.
 - Supabase staging: begin on one free project while developing.
-- Supabase production: it may be created as the second free project for pre-launch verification, but must move to Supabase Pro before admitting real students.
+- Supabase production: it may be created as the second free project for pre-launch verification. A small closed pilot may remain free with explicit acceptance of its limits; move to Supabase Pro before a paid/public launch.
 - Expected initial production baseline: approximately USD 25/month for one Supabase Pro project, excluding tax, domain, email delivery, video, large-file storage, payment fees, messaging, analytics, and usage overages.
 - Keep the Supabase spend cap enabled. Any new recurring service or cost increase requires a separate Decision Gate.
 
 Current Supabase pricing grants two free projects and lists Pro from USD 25/month with one default project covered. An additional project in the same paid organization adds compute cost; therefore staging should remain separately free until there is evidence that paid staging is necessary.
+
+The detailed free allowances, growth scenarios, and cost controls are maintained in `../COST_MODEL.md`. Approval of D-002 authorizes the free architecture, not any purchase. Each paid activation still requires explicit owner approval.
 
 ## Rejected alternatives
 

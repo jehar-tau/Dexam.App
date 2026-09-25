@@ -14,6 +14,7 @@ Development OS — Setup Round 1.
 - Initialized the local Git repository on `main` and created the foundation commit.
 - D-001 foundation package approved by the product owner.
 - D-002 application stack and deployment architecture drafted for owner review.
+- Added a free-first cost model covering development, launch, and growth scenarios; no paid service is authorized.
 
 ## Not yet started
 
