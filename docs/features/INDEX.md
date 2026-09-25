@@ -4,8 +4,8 @@ No product features are approved or in implementation yet.
 
 The first expected specifications are:
 
-- F001 Authentication
-- F002 Roles and permissions
+- F001 Authentication — next specification
+- F002 Roles and permissions — next specification; governed by D-003
 - F003 Application shell and basic administration
 - F004 Course and enrolment foundation
 - F005 Coursework

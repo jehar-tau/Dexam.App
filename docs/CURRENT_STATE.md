@@ -19,6 +19,7 @@ Foundation implementation — application scaffold.
 - Added Vitest/Testing Library unit tests and a passing Playwright Chromium smoke journey.
 - Initialized versioned local Supabase configuration, fictional-only seed policy, and an initial RLS database safety test.
 - Added GitHub Actions checks for formatting, lint, types, unit tests, build, and browser smoke testing.
+- D-003 role and permission principles approved for Student, Teacher, Sales, and Admin.
 
 ## Not yet started
 
@@ -27,6 +28,7 @@ Foundation implementation — application scaffold.
 - Running local Supabase stack and database test (blocked on container runtime)
 - Hosted staging environment
 - Detailed product model and role/permission matrix
+- F001 Authentication and F002 Roles and Permissions specifications
 - Design tokens and component library
 
 ## Environment findings
@@ -40,7 +42,7 @@ Foundation implementation — application scaffold.
 
 ## Next safe action
 
-Install the user-managed free prerequisites, confirm CI, and run the local Supabase database safety test.
+Install the user-managed free prerequisites, confirm CI, run the local Supabase database safety test, and draft F001/F002 Decision Gates.
 
 ## Blockers
 

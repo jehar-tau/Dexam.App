@@ -1,9 +1,9 @@
 # Decision Register
 
-| ID    | Decision                                                                                      | Status                     | Record                                        |
-| ----- | --------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------- |
-| D-001 | Foundation package: repository boundaries, source vault, agent harnesses, and first milestone | Approved 2026-09-26        | `ADR-001-foundation.md`                       |
-| D-002 | Application stack and deployment architecture                                                 | Approved 2026-09-26        | `ADR-002-application-stack-and-deployment.md` |
-| D-003 | Roles and permission boundaries                                                               | Product discovery required | Not created                                   |
+| ID    | Decision                                                                                      | Status              | Record                                        |
+| ----- | --------------------------------------------------------------------------------------------- | ------------------- | --------------------------------------------- |
+| D-001 | Foundation package: repository boundaries, source vault, agent harnesses, and first milestone | Approved 2026-09-26 | `ADR-001-foundation.md`                       |
+| D-002 | Application stack and deployment architecture                                                 | Approved 2026-09-26 | `ADR-002-application-stack-and-deployment.md` |
+| D-003 | Role and permission principles                                                                | Approved 2026-09-26 | `ADR-003-role-and-permission-principles.md`   |
 
 IDs are stable. Do not reuse retired decision IDs.
