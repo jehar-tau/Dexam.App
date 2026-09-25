@@ -1,6 +1,6 @@
 # ADR-002 — Application Stack and Deployment Architecture
 
-Status: Proposed
+Status: Approved
 Date: 2026-09-26
 Decision ID: D-002
 Risk: Red — architecture, security, recurring cost, and deployment
@@ -179,4 +179,6 @@ Rejected because it creates unacceptable risk of test actions affecting real stu
 
 ## Approval
 
-Pending product-owner decision.
+Approved by the product owner on 2026-09-26 with the free-first cost strategy and spending controls documented in `../COST_MODEL.md`.
+
+This approval authorizes implementation of the architecture using free tooling and free service tiers. It does not authorize starting a paid subscription, supplying payment details, disabling a spend cap, or accepting usage overages. Those actions require a separate owner-approved Decision Gate.

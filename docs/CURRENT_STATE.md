@@ -13,7 +13,7 @@ Development OS — Setup Round 1.
 - Documented the product/engineering working agreement, decision policy, provisional architecture, testing strategy, roadmap, and setup path.
 - Initialized the local Git repository on `main` and created the foundation commit.
 - D-001 foundation package approved by the product owner.
-- D-002 application stack and deployment architecture drafted for owner review.
+- D-002 application stack and deployment architecture approved with free-first spending constraints.
 - Added a free-first cost model covering development, launch, and growth scenarios; no paid service is authorized.
 
 ## Not yet started
@@ -34,8 +34,8 @@ Development OS — Setup Round 1.
 
 ## Next safe action
 
-Review and approve or modify D-002, then install the local prerequisites and bootstrap the typed frontend plus Supabase local environment.
+Install the free local prerequisites and bootstrap the typed frontend plus Supabase local environment.
 
 ## Blockers
 
-- Application stack and deployment architecture require D-002 before substantial application code.
+- No architecture blocker remains. System-level software installation may require owner interaction or operating-system permission.

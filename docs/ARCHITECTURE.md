@@ -1,6 +1,6 @@
 # Architecture
 
-Status: provisional; D-002 contains the detailed stack and deployment proposal pending approval.
+Status: approved baseline; see `decisions/ADR-002-application-stack-and-deployment.md`.
 
 ## Proposed shape
 
