@@ -12,6 +12,7 @@ Development OS — Setup Round 1.
 - Created the local `dexam-platform` repository structure and canonical agent guidance.
 - Documented the product/engineering working agreement, decision policy, provisional architecture, testing strategy, roadmap, and setup path.
 - Initialized the local Git repository on `main` and created the foundation commit.
+- D-001 foundation package approved by the product owner.
 
 ## Not yet started
 
@@ -31,8 +32,8 @@ Development OS — Setup Round 1.
 
 ## Next safe action
 
-Approve Decision Gate 001, then install the local prerequisites and bootstrap the typed frontend plus Supabase local environment.
+Prepare and approve D-002, then install the local prerequisites and bootstrap the typed frontend plus Supabase local environment.
 
 ## Blockers
 
-- Foundation choices in `decisions/INDEX.md` must be approved before substantial application code.
+- Application stack and deployment architecture require D-002 before substantial application code.
