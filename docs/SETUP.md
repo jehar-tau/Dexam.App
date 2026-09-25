@@ -1,10 +1,10 @@
 # Setup Guide
 
-This guide will evolve as the application scaffold is created. Commands are intentionally not presented as ready-to-run until prerequisites and foundation decisions are approved.
+The D-002 architecture is approved and the foundation scaffold exists. These commands describe the current repository.
 
 ## Current machine state
 
-Git and GitHub SSH access for `jehar-tau` work. GitHub CLI, a user-managed Node.js runtime, Docker, and Supabase CLI are not currently available on the shell path.
+Git and GitHub SSH access for `jehar-tau` work. The repository contains Supabase CLI as a pinned development dependency. A user-managed Node.js runtime and Docker-compatible container runtime are not currently available on the shell path; Codex used its bundled Node 24 runtime for the initial scaffold.
 
 ## Stage 1 — GitHub
 
@@ -19,21 +19,43 @@ git push -u origin main
 
 Change the owner portion if an organization is selected.
 
-## Stage 2 — local prerequisites
+## Local prerequisites
 
-Install a supported Node.js LTS through a version manager, Corepack/pnpm, Docker Desktop, and the Supabase CLI. Record exact versions in the repository when the scaffold is generated. Avoid relying on Codex's bundled runtime because it is not the user's normal development environment.
+Install Node.js 24 through a version manager and enable pnpm 11. Use a free Docker-compatible runtime such as Colima for local Supabase. Avoid relying on Codex's bundled runtime because it is not the user's normal terminal environment.
 
-## Stage 3 — frontend
+Verify the application tools:
 
-Bootstrap a React + TypeScript application with strict types, routing, lint/format rules, Vitest/Testing Library, and Playwright. Build semantic design tokens and the application shell before feature-specific UI.
+```bash
+pnpm install
+pnpm env:check
+pnpm verify
+```
 
-## Stage 4 — backend
+Install the Playwright browser once:
 
-Initialize Supabase locally. Commit configuration, migrations, seed data containing only fictional users, database tests, and edge functions. Never commit generated local credentials or production secrets. Roles and every exposed table require tested RLS.
+```bash
+pnpm exec playwright install chromium
+```
 
-## Stage 5 — continuous integration
+## Frontend
 
-GitHub Actions should install from the lockfile and run formatting checks, lint, typecheck, unit/integration tests, a production build, secret checks, and a deliberate subset of browser tests. Protect `main` once the workflow exists.
+Run `pnpm dev` and open `http://127.0.0.1:5173`. The application includes strict types, routing, lint/format rules, Vitest/Testing Library, Playwright, semantic design-token placeholders, and a temporary foundation shell.
+
+## Backend
+
+Start local Supabase after the container runtime is installed:
+
+```bash
+pnpm supabase:start
+pnpm supabase:status
+pnpm db:test
+```
+
+Configuration, fictional-only seed data, and an initial RLS safety test are committed. Never commit generated local credentials or production secrets. Roles and every exposed table require tested RLS.
+
+## Continuous integration
+
+GitHub Actions installs from the lockfile and runs formatting, lint, typecheck, unit tests, production build, and a Chromium smoke test. Database CI will be added with the first schema migration. Protect `main` after the first workflow run is confirmed.
 
 ## Stage 6 — environments
 

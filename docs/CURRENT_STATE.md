@@ -4,7 +4,7 @@ Last updated: 2026-09-26
 
 ## Current phase
 
-Development OS — Setup Round 1.
+Foundation implementation — application scaffold.
 
 ## Completed
 
@@ -15,12 +15,17 @@ Development OS — Setup Round 1.
 - D-001 foundation package approved by the product owner.
 - D-002 application stack and deployment architecture approved with free-first spending constraints.
 - Added a free-first cost model covering development, launch, and growth scenarios; no paid service is authorized.
+- Added the React/Vite/strict-TypeScript application shell with routing and design-token foundations.
+- Added Vitest/Testing Library unit tests and a passing Playwright Chromium smoke journey.
+- Initialized versioned local Supabase configuration, fictional-only seed policy, and an initial RLS database safety test.
+- Added GitHub Actions checks for formatting, lint, types, unit tests, build, and browser smoke testing.
 
 ## Not yet started
 
-- Application scaffold and dependencies
-- Local Supabase project
-- CI and staging
+- User-managed Node.js and container runtime installation
+- First confirmed GitHub Actions run
+- Running local Supabase stack and database test (blocked on container runtime)
+- Hosted staging environment
 - Detailed product model and role/permission matrix
 - Design tokens and component library
 
@@ -31,11 +36,13 @@ Development OS — Setup Round 1.
 - GitHub CLI is not installed.
 - A user-managed Node.js runtime, Docker, and Supabase CLI are not currently available on the shell path.
 - The Codex workspace provides a bundled `pnpm`, but the project should not rely on that as the developer machine setup.
+- The scaffold was verified with bundled Node.js 24.19.0 and pnpm 11.19.0.
 
 ## Next safe action
 
-Install the free local prerequisites and bootstrap the typed frontend plus Supabase local environment.
+Install the user-managed free prerequisites, confirm CI, and run the local Supabase database safety test.
 
 ## Blockers
 
-- No architecture blocker remains. System-level software installation may require owner interaction or operating-system permission.
+- Local database execution requires installing a Docker-compatible runtime such as Colima.
+- Normal terminal development requires installing Node.js 24 and pnpm 11 outside Codex's bundled runtime.

@@ -2,7 +2,7 @@
 
 Task:  
 Feature/specification:  
-Branch/worktree:  
+Branch/worktree:
 
 ## Completed
 

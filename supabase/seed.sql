@@ -1,0 +1,2 @@
+-- Dexam seed data must always be fictional and safe to delete.
+-- Feature-specific seed records will be added with their approved schemas.

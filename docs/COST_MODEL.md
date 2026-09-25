@@ -13,14 +13,14 @@ Use free, open-source, or usage-based services while validating Dexam, provided 
 
 ## Phase estimates
 
-| Phase | Expected platform cost | What it covers | Important limitations |
-|---|---:|---|---|
-| Local design and development | USD 0/month | GitHub Free, local app, local PostgreSQL/Supabase, tests | Uses the owner's computer; AI subscriptions are separate |
-| Internal demo | USD 0/month | Cloudflare static hosting and local/free backend | No real student records required |
-| Closed pilot | USD 0–25/month | One free hosted Supabase project, free static hosting and basic email | Free database can pause, has small quotas, and lacks production backup/support guarantees |
-| First paid/public launch | About USD 25/month plus tax | One Supabase Pro production project; frontend and normal CI remain free | Video, high-volume email, payments and unusual usage are separate |
-| Early operation, roughly 1,000 active learners | Roughly USD 25–150/month plus transaction fees | Database/auth, ordinary files, email and light analytics within mostly free allowances | Video consumption and large student uploads can raise cost materially |
-| Growth, roughly 10,000 active learners | Roughly USD 100–1,000+/month plus transaction fees | Larger compute, storage, email, analytics and media usage | Usage behavior matters more than user count; video is usually the largest variable |
+| Phase                                          |                             Expected platform cost | What it covers                                                                         | Important limitations                                                                     |
+| ---------------------------------------------- | -------------------------------------------------: | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Local design and development                   |                                        USD 0/month | GitHub Free, local app, local PostgreSQL/Supabase, tests                               | Uses the owner's computer; AI subscriptions are separate                                  |
+| Internal demo                                  |                                        USD 0/month | Cloudflare static hosting and local/free backend                                       | No real student records required                                                          |
+| Closed pilot                                   |                                     USD 0–25/month | One free hosted Supabase project, free static hosting and basic email                  | Free database can pause, has small quotas, and lacks production backup/support guarantees |
+| First paid/public launch                       |                        About USD 25/month plus tax | One Supabase Pro production project; frontend and normal CI remain free                | Video, high-volume email, payments and unusual usage are separate                         |
+| Early operation, roughly 1,000 active learners |     Roughly USD 25–150/month plus transaction fees | Database/auth, ordinary files, email and light analytics within mostly free allowances | Video consumption and large student uploads can raise cost materially                     |
+| Growth, roughly 10,000 active learners         | Roughly USD 100–1,000+/month plus transaction fees | Larger compute, storage, email, analytics and media usage                              | Usage behavior matters more than user count; video is usually the largest variable        |
 
 The upper growth estimates are deliberately broad. We cannot responsibly promise a precise figure before knowing monthly active learners, lesson/video hours watched, assignment file sizes, email/WhatsApp volume, and payment revenue.
 

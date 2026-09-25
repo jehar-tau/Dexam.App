@@ -1,9 +1,11 @@
 # dependencies and builds
 node_modules/
+.pnpm-store/
 dist/
 coverage/
 playwright-report/
 test-results/
+*.tsbuildinfo
 
 # local configuration and secrets
 .env
