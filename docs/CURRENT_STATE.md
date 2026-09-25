@@ -15,7 +15,6 @@ Development OS — Setup Round 1.
 
 ## Not yet started
 
-- GitHub remote repository
 - Application scaffold and dependencies
 - Local Supabase project
 - CI and staging
@@ -25,6 +24,7 @@ Development OS — Setup Round 1.
 ## Environment findings
 
 - Git and GitHub SSH authentication are available for GitHub user `jehar-tau`.
+- The repository is connected to `git@github.com:jehar-tau/Dexam.App.git`; `main` tracks `origin/main`.
 - GitHub CLI is not installed.
 - A user-managed Node.js runtime, Docker, and Supabase CLI are not currently available on the shell path.
 - The Codex workspace provides a bundled `pnpm`, but the project should not rely on that as the developer machine setup.
@@ -35,5 +35,4 @@ Approve Decision Gate 001, then install the local prerequisites and bootstrap th
 
 ## Blockers
 
-- Remote repository creation needs GitHub CLI installation/authentication or creation through the GitHub web UI.
 - Foundation choices in `decisions/INDEX.md` must be approved before substantial application code.
