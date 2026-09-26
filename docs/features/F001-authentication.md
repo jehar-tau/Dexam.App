@@ -83,7 +83,6 @@ An approved student or employee can securely activate, sign in to, recover, and 
 ## Dependencies and open decisions
 
 - D-006 Option B approved on 2026-09-26
-- Member ID format
-- Exact assisted-recovery evidence and approvers
+- D-007 Member ID issuance, activation, and recovery decision
 - Production email delivery and domain configuration
 - Session duration and re-authentication intervals
