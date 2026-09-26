@@ -1,6 +1,6 @@
 # F001 — Authentication
 
-Status: Decision required — governed by proposed D-006
+Status: Approved direction — implementation started
 Risk: Red
 Owner: Product owner with Codex engineering support
 
@@ -82,7 +82,7 @@ An approved student or employee can securely activate, sign in to, recover, and 
 
 ## Dependencies and open decisions
 
-- D-006 authentication and recovery model approval
+- D-006 Option B approved on 2026-09-26
 - Member ID format
 - Exact assisted-recovery evidence and approvers
 - Production email delivery and domain configuration

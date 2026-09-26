@@ -26,12 +26,14 @@ Foundation implementation — identity and access specification.
 - Started the local Supabase stack and passed the initial database/RLS safety test.
 - Drafted F001 Authentication, F002 Roles and Permissions, and D-006 Authentication and Recovery Model.
 - Recorded F008 as a shared, event-driven notification and automation capability for pre-enrolment operations and students.
+- D-006 Option B approved: students use Dexam Member ID/password, employees use verified email/password, and elevated administration requires TOTP MFA.
+- Added the first identity migration with canonical people, authentication links, memberships, deny-by-default RLS, and current-state suspension checks.
 
 ## Not yet started
 
 - First confirmed GitHub Actions run
 - Hosted staging environment
-- D-006 approval and authentication implementation
+- Trusted student activation and employee invitation service implementation
 - Final detailed permission matrix approval and implementation
 - Design tokens and component library
 - F008 channel, consent, preference, and first-milestone notification decisions

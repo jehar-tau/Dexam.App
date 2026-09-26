@@ -1,6 +1,6 @@
 # ADR-006 — Authentication and Recovery Model
 
-Status: Proposed — product-owner approval required
+Status: Approved — Option B
 Date: 2026-09-26
 Decision ID: D-006
 Risk: Red — account security, identity recovery, and operating cost
@@ -51,9 +51,9 @@ This feels simple but creates recurring SMS cost, fails where phones are shared 
 - Internal synthetic authentication addresses must never be used for communication, identity matching, or display.
 - Social login, SMS OTP, passkeys, and institutional SSO remain future decisions.
 
-## Approval requested
+## Approval
 
-Approve Option B, reject it, or request changes. Approval authorizes specification and local implementation; it does not authorize a paid service or production launch.
+Option B was approved by the product owner on 2026-09-26. Approval authorizes specification and local implementation; it does not authorize a paid service or production launch.
 
 ## Sources reviewed
 
