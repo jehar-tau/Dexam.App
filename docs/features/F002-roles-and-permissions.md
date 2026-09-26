@@ -1,6 +1,6 @@
 # F002 — Roles and Permissions
 
-Status: Draft — D-008 approval required before implementation
+Status: Approved direction — implementation next
 Risk: Red
 Governed by: D-003, D-004, and D-005
 
@@ -37,7 +37,7 @@ A request is allowed only when the person and applicable membership are active, 
 | Export sensitive data         | No          | No            | No                   | Explicit grant + MFA   | Explicit grant + MFA       |
 | Change system/security policy | No          | No            | No                   | No                     | Explicit elevated grant    |
 
-The proposed D-008 matrix further separates Sales, the Ordinary Admin `enrolment_operator` permission, and Elevated Admin for student creation, activation-pack issuance, recovery, staff access, and two-person approval.
+The approved D-008 matrix further separates Sales, the Ordinary Admin `enrolment_operator` permission, and Elevated Admin for student creation, activation-pack issuance, recovery, staff access, and two-person approval.
 
 “Admin” is not one unlimited role. Ordinary operational administration and elevated security administration are separate. No role automatically grants raw database, GitHub, hosting, or vendor-dashboard access.
 
@@ -72,7 +72,7 @@ The proposed D-008 matrix further separates Sales, the Ordinary Admin `enrolment
 
 ## Open decisions
 
-- D-008 staff authority and approval-boundary decision
+- D-008 Option B approved on 2026-09-26
 - Who may appoint the first elevated administrator
 - Whether two-person approval is required for selected actions
 - Support-access workflow and whether impersonation is ever allowed

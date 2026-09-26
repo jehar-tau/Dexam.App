@@ -9,6 +9,6 @@
 | D-005 | Lifelong member architecture                                                                  | Strategic principle approved 2026-09-26 | `ADR-005-lifelong-member-architecture.md`            |
 | D-006 | Authentication and recovery model                                                             | Option B approved 2026-09-26            | `ADR-006-authentication-and-recovery-model.md`       |
 | D-007 | Member ID issuance, activation, and recovery                                                  | Option B approved 2026-09-26            | `ADR-007-member-id-activation-and-recovery.md`       |
-| D-008 | Staff authority and approval boundaries                                                       | Proposed — approval required            | `ADR-008-staff-authority-and-approval-boundaries.md` |
+| D-008 | Staff authority and approval boundaries                                                       | Option B approved 2026-09-26            | `ADR-008-staff-authority-and-approval-boundaries.md` |
 
 IDs are stable. Do not reuse retired decision IDs.

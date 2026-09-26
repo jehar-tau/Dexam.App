@@ -1,6 +1,6 @@
 # ADR-008 — Staff Authority and Approval Boundaries
 
-Status: Proposed — product-owner approval required
+Status: Approved — Option B
 Date: 2026-09-26
 Decision ID: D-008
 Risk: Red — student identity, staff privilege, recovery, and sensitive data
@@ -103,6 +103,6 @@ Until a second Elevated Admin exists, an action normally requiring two approvers
 - High-impact operations need a pending-approval record rather than immediate execution.
 - Small-team bootstrap is supported without weakening the long-term two-person rule.
 
-## Approval requested
+## Approval
 
-Approve Option B, reject it, or request changes. Approval authorizes the role/capability schema, RLS policies, first-admin bootstrap tooling, and routine enrolment/activation-pack staff workflow. It does not authorize production access, data export, or recovery-contact replacement.
+Option B was approved by the product owner on 2026-09-26. Approval authorizes the role/capability schema, RLS policies, first-admin bootstrap tooling, and routine enrolment/activation-pack staff workflow. It does not authorize production access, data export, or recovery-contact replacement.

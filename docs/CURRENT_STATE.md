@@ -32,12 +32,13 @@ Foundation implementation — identity and access specification.
 - D-007 Option B approved and its local persistence foundation implemented with immutable Member IDs, server-only hashed action tokens, expiry/invalidation constraints, and security audit events.
 - Added the student activation page, trusted Edge Function, and atomic service-role-only activation finalization with compensation if Auth creation cannot be finalized.
 - Drafted D-008 to separate Sales, routine Enrolment Operator, and Elevated Admin authority and define two-person approval boundaries.
+- D-008 Option B approved: Sales requests enrolment, scoped Enrolment Operators perform routine identity/enrolment work, and Elevated Admins control recovery and high-impact actions.
 
 ## Not yet started
 
 - First confirmed GitHub Actions run
 - Hosted staging environment
-- D-008 approval and authorized staff activation-pack issuance workflow
+- Capability/role schema and authorized staff activation-pack issuance workflow
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Final detailed permission matrix approval and implementation
@@ -56,8 +57,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Obtain product-owner approval for D-008 Option B, then implement the capability schema and authorized enrolment/activation-pack workflow. Implement student sign-in after the staff authority boundary is established.
+Implement the approved D-008 capability schema and authorization tests in a separate feature PR, followed by the authorized enrolment/activation-pack workflow.
 
 ## Blockers
 
-- Staff capability implementation and activation-pack issuance are intentionally blocked on D-008 approval.
+- No product decision currently blocks the capability-schema foundation.
