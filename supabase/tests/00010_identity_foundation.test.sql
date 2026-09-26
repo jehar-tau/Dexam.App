@@ -13,8 +13,8 @@ values
 
 insert into public.people (id, member_id)
 values
-  ('20000000-0000-0000-0000-000000000001', 'DXM-STUDENT001'),
-  ('20000000-0000-0000-0000-000000000002', 'DXM-STUDENT002');
+  ('20000000-0000-0000-0000-000000000001', 'DXM-7K3M9Q2RW5TY'),
+  ('20000000-0000-0000-0000-000000000002', 'DXM-8K3M9Q2RW5TY');
 
 insert into public.auth_identities (person_id, auth_user_id, kind)
 values
@@ -27,7 +27,7 @@ values
   ('20000000-0000-0000-0000-000000000002', 'student', 'active', now());
 
 select throws_ok(
-  $$insert into public.people (member_id) values ('DXM-STUDENT001')$$,
+  $$insert into public.people (member_id) values ('DXM-7K3M9Q2RW5TY')$$,
   '23505',
   null,
   'duplicate Member IDs are rejected'

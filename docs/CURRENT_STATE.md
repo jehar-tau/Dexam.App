@@ -29,12 +29,13 @@ Foundation implementation — identity and access specification.
 - D-006 Option B approved: students use Dexam Member ID/password, employees use verified email/password, and elevated administration requires TOTP MFA.
 - Added the first identity migration with canonical people, authentication links, memberships, deny-by-default RLS, and current-state suspension checks.
 - Drafted D-007 for Member ID issuance, one-time activation, and layered account recovery.
+- D-007 Option B approved and its local persistence foundation implemented with immutable Member IDs, server-only hashed action tokens, expiry/invalidation constraints, and security audit events.
 
 ## Not yet started
 
 - First confirmed GitHub Actions run
 - Hosted staging environment
-- D-007 approval and trusted student activation implementation
+- Trusted student activation server workflow and interface
 - Final detailed permission matrix approval and implementation
 - Design tokens and component library
 - F008 channel, consent, preference, and first-milestone notification decisions
@@ -51,8 +52,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Obtain product-owner approval for D-007 Option B, then implement one-time student activation and recovery locally. Confirm the first GitHub Actions run when repository access tooling is available.
+Implement the trusted student activation service and interface on the approved D-007 persistence foundation. Confirm the first GitHub Actions run when repository access tooling is available.
 
 ## Blockers
 
-- Activation and recovery implementation is intentionally blocked on D-007 approval.
+- No product decision currently blocks the server-side activation foundation.

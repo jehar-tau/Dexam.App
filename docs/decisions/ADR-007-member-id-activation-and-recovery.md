@@ -1,6 +1,6 @@
 # ADR-007 — Member ID Issuance, Activation, and Recovery
 
-Status: Proposed — product-owner approval required
+Status: Approved — Option B
 Date: 2026-09-26
 Decision ID: D-007
 Risk: Red — account takeover, student access, and support operations
@@ -102,9 +102,9 @@ Audit records never contain activation secrets, recovery secrets, passwords, ful
 
 The expiry periods, code presentation, approved delivery routes, and recovery staffing rules can be changed later. The permanent opaque Member ID and the rule that staff cannot know passwords are intended to be durable.
 
-## Approval requested
+## Approval
 
-Approve Option B, reject it, or request changes. Approval authorizes local schema, server workflow, and automated tests. It does not authorize production messaging, collection of government identity, or a paid provider.
+Option B was approved by the product owner on 2026-09-26. Approval authorizes local schema, server workflow, and automated tests. It does not authorize production messaging, collection of government identity, or a paid provider.
 
 ## Sources reviewed
 
