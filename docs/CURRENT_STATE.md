@@ -4,7 +4,7 @@ Last updated: 2026-09-26
 
 ## Current phase
 
-Foundation implementation — application scaffold.
+Foundation implementation — identity and access specification.
 
 ## Completed
 
@@ -24,13 +24,14 @@ Foundation implementation — application scaffold.
 - D-005 lifelong member architecture approved as a strategic direction; college/professional features remain research ideas, not V1 scope.
 - Installed a user-managed Node.js 24/pnpm 11 toolchain, Homebrew, Colima, Docker CLI, and Docker Compose.
 - Started the local Supabase stack and passed the initial database/RLS safety test.
+- Drafted F001 Authentication, F002 Roles and Permissions, and D-006 Authentication and Recovery Model.
 
 ## Not yet started
 
 - First confirmed GitHub Actions run
 - Hosted staging environment
-- Detailed product model and role/permission matrix
-- F001 Authentication and F002 Roles and Permissions specifications
+- D-006 approval and authentication implementation
+- Final detailed permission matrix approval and implementation
 - Design tokens and component library
 
 ## Environment findings
@@ -45,8 +46,8 @@ Foundation implementation — application scaffold.
 
 ## Next safe action
 
-Confirm the first GitHub Actions run and prepare the F001 Authentication and F002 Roles and Permissions specifications using D-003/D-004/D-005.
+Obtain product-owner approval for D-006 Option B, then implement the local identity schema and authentication test harness. Confirm the first GitHub Actions run when repository access tooling is available.
 
 ## Blockers
 
-- No local environment blocker remains.
+- Authentication implementation is intentionally blocked on D-006 approval.
