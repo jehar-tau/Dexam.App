@@ -79,7 +79,7 @@ colima stop
 
 ## Continuous integration
 
-GitHub Actions installs from the lockfile and runs formatting, lint, typecheck, unit tests, production build, and a Chromium smoke test. Database CI will be added with the first schema migration. Protect `main` after the first workflow run is confirmed.
+GitHub Actions installs from the lockfile and runs formatting, lint, typecheck, unit tests, production build, PostgreSQL/RLS security tests against local Supabase, and a Chromium smoke test. Protect `main` after the first workflow run is confirmed.
 
 ## Stage 6 — environments
 
