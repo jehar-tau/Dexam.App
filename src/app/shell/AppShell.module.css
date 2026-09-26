@@ -35,6 +35,12 @@
   text-decoration: none;
 }
 
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
 .link,
 .activeLink {
   color: var(--color-muted);
@@ -51,4 +57,15 @@
   width: min(100% - (2 * var(--page-gutter)), 72rem);
   margin: 0 auto;
   padding: clamp(3rem, 9vw, 8rem) 0;
+}
+
+@media (max-width: 34rem) {
+  .navigation {
+    gap: var(--space-3);
+  }
+
+  .link,
+  .activeLink {
+    font-size: var(--font-size-xs);
+  }
 }

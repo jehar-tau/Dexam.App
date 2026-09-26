@@ -12,7 +12,13 @@ export function AppShell() {
         <NavLink className={styles.brand} to="/" aria-label="Dexam platform home">
           Dexam
         </NavLink>
-        <nav aria-label="Foundation navigation">
+        <nav aria-label="Main navigation" className={styles.navigation}>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/activate"
+          >
+            Activate account
+          </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/health"

@@ -41,6 +41,8 @@ pnpm exec playwright install chromium
 
 Run `pnpm dev` and open `http://127.0.0.1:5173`. The application includes strict types, routing, lint/format rules, Vitest/Testing Library, Playwright, semantic design-token placeholders, and a temporary foundation shell.
 
+Copy `.env.example` to `.env.local`, replace the placeholders with the local values printed by `pnpm supabase:status`, and generate a long random `ACTION_TOKEN_PEPPER`. The real `.env.local` is ignored by Git and must never be committed.
+
 ## Backend
 
 Start local Supabase after the container runtime is installed:
@@ -52,6 +54,14 @@ pnpm db:test
 ```
 
 Configuration, fictional-only seed data, and an initial RLS safety test are committed. Never commit generated local credentials or production secrets. Roles and every exposed table require tested RLS.
+
+Run the public student-activation Edge Function locally in a separate terminal:
+
+```bash
+pnpm supabase functions serve student-activate --env-file .env.local
+```
+
+The function deliberately accepts unauthenticated activation requests, but it alone holds the service-role credential. It returns generic failures, validates the one-time credential, creates the Auth user, and calls a service-role-only database finalization function. Never place `SUPABASE_SERVICE_ROLE_KEY` or `ACTION_TOKEN_PEPPER` in a `VITE_*` variable.
 
 If the Mac has restarted, start the container runtime first:
 
