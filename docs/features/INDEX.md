@@ -7,5 +7,6 @@
 - F005 Coursework
 - F006 Assignment submission
 - F007 Teacher feedback
+- F008 Notifications and automation — planned; shared foundation for marketing operations and students
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

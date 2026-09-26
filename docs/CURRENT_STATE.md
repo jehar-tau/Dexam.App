@@ -25,6 +25,7 @@ Foundation implementation — identity and access specification.
 - Installed a user-managed Node.js 24/pnpm 11 toolchain, Homebrew, Colima, Docker CLI, and Docker Compose.
 - Started the local Supabase stack and passed the initial database/RLS safety test.
 - Drafted F001 Authentication, F002 Roles and Permissions, and D-006 Authentication and Recovery Model.
+- Recorded F008 as a shared, event-driven notification and automation capability for pre-enrolment operations and students.
 
 ## Not yet started
 
@@ -33,6 +34,7 @@ Foundation implementation — identity and access specification.
 - D-006 approval and authentication implementation
 - Final detailed permission matrix approval and implementation
 - Design tokens and component library
+- F008 channel, consent, preference, and first-milestone notification decisions
 
 ## Environment findings
 
