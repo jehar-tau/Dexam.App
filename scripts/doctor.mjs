@@ -10,12 +10,23 @@ checks.push({
   detail: `v${process.versions.node} (required: v${requiredMajor}.x)`,
 })
 
-for (const command of ['git']) {
+const commands = [
+  { name: 'git', args: ['--version'] },
+  { name: 'pnpm', args: ['--version'] },
+  { name: 'colima', args: ['status'] },
+  { name: 'docker', args: ['version', '--format', '{{.Server.Version}}'] },
+]
+
+for (const command of commands) {
   try {
-    const version = execFileSync(command, ['--version'], { encoding: 'utf8' }).trim()
-    checks.push({ name: command, ok: true, detail: version })
+    const version = execFileSync(command.name, command.args, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: 10_000,
+    }).trim()
+    checks.push({ name: command.name, ok: true, detail: version.split('\n')[0] || 'running' })
   } catch {
-    checks.push({ name: command, ok: false, detail: 'not found on PATH' })
+    checks.push({ name: command.name, ok: false, detail: 'not installed or not running' })
   }
 }
 

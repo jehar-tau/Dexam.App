@@ -4,7 +4,7 @@ The D-002 architecture is approved and the foundation scaffold exists. These com
 
 ## Current machine state
 
-Git and GitHub SSH access for `jehar-tau` work. The repository contains Supabase CLI as a pinned development dependency. A user-managed Node.js runtime and Docker-compatible container runtime are not currently available on the shell path; Codex used its bundled Node 24 runtime for the initial scaffold.
+Git and GitHub SSH access for `jehar-tau` work. Homebrew, Node.js 24, pnpm 11, Colima, Docker CLI, Docker Compose, and the repository-pinned Supabase CLI are installed. Colima provides the free local container runtime.
 
 ## Stage 1 — GitHub
 
@@ -21,7 +21,7 @@ Change the owner portion if an organization is selected.
 
 ## Local prerequisites
 
-Install Node.js 24 through a version manager and enable pnpm 11. Use a free Docker-compatible runtime such as Colima for local Supabase. Avoid relying on Codex's bundled runtime because it is not the user's normal terminal environment.
+The current Mac is configured through Homebrew with Node.js 24, pnpm 11, Colima, Docker CLI, and Docker Compose. New login shells load Homebrew and the versioned Node runtime through `~/.zprofile`.
 
 Verify the application tools:
 
@@ -52,6 +52,20 @@ pnpm db:test
 ```
 
 Configuration, fictional-only seed data, and an initial RLS safety test are committed. Never commit generated local credentials or production secrets. Roles and every exposed table require tested RLS.
+
+If the Mac has restarted, start the container runtime first:
+
+```bash
+colima start
+pnpm supabase:start
+```
+
+To release memory when development is finished:
+
+```bash
+pnpm supabase:stop
+colima stop
+```
 
 ## Continuous integration
 
