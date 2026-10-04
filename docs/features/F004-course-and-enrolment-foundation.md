@@ -135,3 +135,7 @@ No personal-data analytics are authorized in this feature. Operational audit eve
 - Trusted-server activation eligibility that rechecks the person, student membership, offering, cohort, and approved active enrolment
 - Initial activation eligibility denial after the person already has a linked authentication identity
 - Database tests for ownership, Sales denial, operator revocation, invalid approval state, duplicate prevention, and suspension
+- Authenticated Enrolment Operator activation-pack issuance through a trusted Edge Function and atomic database operation
+- Cryptographically random link and backup credentials that are returned once while only peppered hashes are stored
+- Reason-required pre-activation reissue that invalidates every earlier unused pack
+- Audit attribution for initial issuance and reissue without recording raw credentials
