@@ -40,12 +40,13 @@ Foundation implementation — identity and access specification.
 - D-009 Option B approved: reusable offerings with optional delivery cohorts and separate enrolment records.
 - Added the F004 offering, optional cohort, enrolment, transition-history, RLS, and activation-eligibility database foundation.
 - Added F004 database security tests; the complete database suite now passes 79 tests, including denial of duplicate initial activation after an account is claimed.
+- Added the trusted Enrolment Operator activation-pack workflow with atomic enrolment activation, secure one-time credential generation, reason-required reissue, invalidation, and audit evidence.
+- Expanded the complete database suite to 97 passing tests, including Sales denial, operator revocation, claimed-account denial, expiry limits, and reissue behavior.
 
 ## Not yet started
 
-- First hosted staging environment
 - Hosted staging environment
-- Authorized staff enrolment transitions and activation-pack issuance workflow
+- Remaining enrolment transitions beyond activation-pack issuance
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -64,8 +65,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Review and merge the F004 database-foundation PR, then implement trusted staff enrolment transitions and activation-pack issuance.
+Review and merge the activation-pack workflow, then begin the Enrolment Operator interface and its executed browser journey.
 
 ## Blockers
 
-- Activation-pack issuance requires the trusted staff enrolment-transition operation that will use the completed F004 eligibility boundary.
+- The Enrolment Operator interface requires a safe local employee sign-in/test fixture before its browser journey can be exercised.
