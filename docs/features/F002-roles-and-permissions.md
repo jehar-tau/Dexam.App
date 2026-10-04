@@ -1,6 +1,6 @@
 # F002 — Roles and Permissions
 
-Status: Approved direction — implementation next
+Status: Approved direction — capability foundation implemented
 Risk: Red
 Governed by: D-003, D-004, and D-005
 
@@ -69,6 +69,20 @@ The approved D-008 matrix further separates Sales, the Ordinary Admin `enrolment
 - Stale-token tests after suspension, role removal, and assignment removal
 - Browser tests that each role sees only its intended navigation and actions
 - Audit-integrity tests for every elevated change
+
+## Implemented foundation
+
+- Stable role and capability catalogues
+- Time-bound, revocable, scoped role assignments
+- Explicit capability grants that depend on an active required role
+- Current-state employee membership, role, and capability checks
+- MFA enforcement for elevated capabilities using the current authentication assurance level
+- Metadata flags identifying actions that require a separate two-person workflow
+- One-time first Elevated Admin bootstrap that refuses a second bootstrap
+- Deny-by-default RLS and service-role-only mutation boundaries
+- Database tests covering Sales, Enrolment Operator, Elevated Admin, revocation, suspension, MFA, student denial, and bootstrap controls
+
+The `requires_two_person` flag records that a capability is eligible only within an approval workflow; it does not itself approve or execute the action. The pending-approval workflow remains a separate implementation step.
 
 ## Open decisions
 

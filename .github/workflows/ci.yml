@@ -36,6 +36,36 @@ jobs:
       - name: Verify source
         run: pnpm verify
 
+  database:
+    name: Database security tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Enable pnpm
+        run: corepack enable && corepack prepare pnpm@11.19.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Start local Supabase
+        run: pnpm supabase:start
+
+      - name: Run database tests
+        run: pnpm db:test
+
+      - name: Stop local Supabase
+        if: ${{ always() }}
+        run: pnpm supabase:stop --no-backup
+
   browser:
     name: Browser smoke test
     runs-on: ubuntu-latest

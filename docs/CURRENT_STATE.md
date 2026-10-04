@@ -33,6 +33,8 @@ Foundation implementation — identity and access specification.
 - Added the student activation page, trusted Edge Function, and atomic service-role-only activation finalization with compensation if Auth creation cannot be finalized.
 - Drafted D-008 to separate Sales, routine Enrolment Operator, and Elevated Admin authority and define two-person approval boundaries.
 - D-008 Option B approved: Sales requests enrolment, scoped Enrolment Operators perform routine identity/enrolment work, and Elevated Admins control recovery and high-impact actions.
+- Added the F002 role/capability schema, current-state authorization helpers, MFA and two-person metadata, one-time Elevated Admin bootstrap, deny-by-default RLS, and database security tests.
+- Added database security tests as a required GitHub Actions job.
 
 ## Not yet started
 
@@ -41,7 +43,7 @@ Foundation implementation — identity and access specification.
 - Capability/role schema and authorized staff activation-pack issuance workflow
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
-- Final detailed permission matrix approval and implementation
+- Two-person approval workflow and elevated administration interface
 - Design tokens and component library
 - F008 channel, consent, preference, and first-milestone notification decisions
 
@@ -57,8 +59,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Implement the approved D-008 capability schema and authorization tests in a separate feature PR, followed by the authorized enrolment/activation-pack workflow.
+Review and merge the F002 capability-schema PR, then specify the minimum course/enrolment records required for the authorized activation-pack issuance workflow.
 
 ## Blockers
 
-- No product decision currently blocks the capability-schema foundation.
+- Activation-pack issuance requires the minimum enrolment data model from F004.
