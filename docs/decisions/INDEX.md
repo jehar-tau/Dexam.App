@@ -10,5 +10,6 @@
 | D-006 | Authentication and recovery model                                                             | Option B approved 2026-09-26            | `ADR-006-authentication-and-recovery-model.md`       |
 | D-007 | Member ID issuance, activation, and recovery                                                  | Option B approved 2026-09-26            | `ADR-007-member-id-activation-and-recovery.md`       |
 | D-008 | Staff authority and approval boundaries                                                       | Option B approved 2026-09-26            | `ADR-008-staff-authority-and-approval-boundaries.md` |
+| D-009 | Offering, cohort, and enrolment structure                                                     | Option B approved 2026-10-04            | `ADR-009-offering-cohort-and-enrolment-structure.md` |
 
 IDs are stable. Do not reuse retired decision IDs.

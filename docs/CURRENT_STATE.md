@@ -35,12 +35,17 @@ Foundation implementation — identity and access specification.
 - D-008 Option B approved: Sales requests enrolment, scoped Enrolment Operators perform routine identity/enrolment work, and Elevated Admins control recovery and high-impact actions.
 - Added the F002 role/capability schema, current-state authorization helpers, MFA and two-person metadata, one-time Elevated Admin bootstrap, deny-by-default RLS, and database security tests.
 - Added database security tests as a required GitHub Actions job.
+- Merged the F002 capability foundation through PR #2 with all required checks passing.
+- Drafted F004 Course and Enrolment Foundation and D-009 for the minimum offering/cohort/enrolment structure.
+- D-009 Option B approved: reusable offerings with optional delivery cohorts and separate enrolment records.
+- Added the F004 offering, optional cohort, enrolment, transition-history, RLS, and activation-eligibility database foundation.
+- Added F004 database security tests; the complete database suite now passes 78 tests.
 
 ## Not yet started
 
-- First confirmed GitHub Actions run
+- First hosted staging environment
 - Hosted staging environment
-- Capability/role schema and authorized staff activation-pack issuance workflow
+- Authorized staff enrolment transitions and activation-pack issuance workflow
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -59,8 +64,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Review and merge the F002 capability-schema PR, then specify the minimum course/enrolment records required for the authorized activation-pack issuance workflow.
+Review and merge the F004 database-foundation PR, then implement trusted staff enrolment transitions and activation-pack issuance.
 
 ## Blockers
 
-- Activation-pack issuance requires the minimum enrolment data model from F004.
+- Activation-pack issuance requires the trusted staff enrolment-transition operation that will use the completed F004 eligibility boundary.
