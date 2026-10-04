@@ -1,6 +1,6 @@
 begin;
 
-select plan(20);
+select plan(21);
 
 select has_table('public', 'offerings', 'offerings exist');
 select has_table('public', 'cohorts', 'optional cohorts exist');
@@ -19,7 +19,8 @@ values
   ('81000000-0000-0000-0000-000000000001', 'DXM-7K3M9Q2RW5TY'),
   ('81000000-0000-0000-0000-000000000002', 'DXM-8K3M9Q2RW5TY'),
   ('81000000-0000-0000-0000-000000000003', null),
-  ('81000000-0000-0000-0000-000000000004', null);
+  ('81000000-0000-0000-0000-000000000004', null),
+  ('81000000-0000-0000-0000-000000000005', 'DXM-9K3M9Q2RW5TY');
 
 insert into public.auth_identities (person_id, auth_user_id, kind)
 values
@@ -33,7 +34,8 @@ values
   ('81000000-0000-0000-0000-000000000001', 'student', 'active', now()),
   ('81000000-0000-0000-0000-000000000002', 'student', 'active', now()),
   ('81000000-0000-0000-0000-000000000003', 'employee', 'active', now()),
-  ('81000000-0000-0000-0000-000000000004', 'employee', 'active', now());
+  ('81000000-0000-0000-0000-000000000004', 'employee', 'active', now()),
+  ('81000000-0000-0000-0000-000000000005', 'student', 'active', now());
 
 insert into public.role_assignments (person_id, role_key, grant_reason)
 values
@@ -70,9 +72,19 @@ values
     '83000000-0000-0000-0000-000000000001',
     'requested', 'authorized_staff',
     '81000000-0000-0000-0000-000000000004', null, null, null
+  ),
+  (
+    '84000000-0000-0000-0000-000000000003',
+    '81000000-0000-0000-0000-000000000005',
+    '82000000-0000-0000-0000-000000000001',
+    '83000000-0000-0000-0000-000000000001',
+    'active', 'authorized_staff',
+    '81000000-0000-0000-0000-000000000004',
+    '81000000-0000-0000-0000-000000000003', now(), now()
   );
 
-select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000001'), true, 'active approved enrolment is activation eligible');
+select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000003'), true, 'unclaimed person with an active approved enrolment is activation eligible');
+select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000001'), false, 'claimed account cannot receive another initial activation pack');
 select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000002'), false, 'requested enrolment is not activation eligible');
 
 select throws_ok(
@@ -106,7 +118,7 @@ select throws_ok(
 
 set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}';
 
-select is((select count(*)::integer from public.enrollments), 2, 'Enrolment Operator can read enrolments');
+select is((select count(*)::integer from public.enrollments), 3, 'Enrolment Operator can read enrolments');
 
 reset role;
 
@@ -122,9 +134,9 @@ reset role;
 
 update public.people
 set status = 'suspended', suspended_at = now()
-where id = '81000000-0000-0000-0000-000000000001';
+where id = '81000000-0000-0000-0000-000000000005';
 
-select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000001'), false, 'suspended student is not activation eligible');
+select is(public.enrollment_can_issue_activation('84000000-0000-0000-0000-000000000003'), false, 'suspended student is not activation eligible');
 
 select lives_ok(
   $$insert into public.enrollments (person_id, offering_id, status, source_type) values ('81000000-0000-0000-0000-000000000001', '82000000-0000-0000-0000-000000000001', 'completed', 'historical_import')$$,

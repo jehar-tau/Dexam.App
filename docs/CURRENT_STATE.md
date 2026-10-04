@@ -39,7 +39,7 @@ Foundation implementation — identity and access specification.
 - Drafted F004 Course and Enrolment Foundation and D-009 for the minimum offering/cohort/enrolment structure.
 - D-009 Option B approved: reusable offerings with optional delivery cohorts and separate enrolment records.
 - Added the F004 offering, optional cohort, enrolment, transition-history, RLS, and activation-eligibility database foundation.
-- Added F004 database security tests; the complete database suite now passes 78 tests.
+- Added F004 database security tests; the complete database suite now passes 79 tests, including denial of duplicate initial activation after an account is claimed.
 
 ## Not yet started
 

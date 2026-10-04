@@ -133,6 +133,11 @@ as $$
       and e.activated_at is not null
       and p.status = 'active'
       and p.member_id is not null
+      and not exists (
+        select 1
+        from public.auth_identities ai
+        where ai.person_id = e.person_id
+      )
       and m.kind = 'student'
       and m.status = 'active'
       and (m.starts_at is null or m.starts_at <= now())
@@ -239,4 +244,4 @@ comment on table public.cohorts is
 comment on table public.enrollments is
   'Time-bound relationship between a canonical person and an offering, optionally within a cohort.';
 comment on function public.enrollment_can_issue_activation(uuid) is
-  'Trusted-server eligibility check. True only for a currently active, approved enrolment and active student identity context.';
+  'Trusted-server eligibility check. True only for an unclaimed person with a currently active, approved enrolment and active student identity context.';

@@ -133,4 +133,5 @@ No personal-data analytics are authorized in this feature. Operational audit eve
 - Append-only enrolment transition records for attributable workflow history
 - Deny-by-default mutation access and student-own versus authorized-operator read policies
 - Trusted-server activation eligibility that rechecks the person, student membership, offering, cohort, and approved active enrolment
+- Initial activation eligibility denial after the person already has a linked authentication identity
 - Database tests for ownership, Sales denial, operator revocation, invalid approval state, duplicate prevention, and suspension
