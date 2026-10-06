@@ -1,0 +1,389 @@
+.workspace {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.pageHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.pageHeader > div:first-child {
+  min-width: 0;
+}
+
+.pageHeader h1 {
+  max-width: 18ch;
+}
+
+.lede,
+.locked > p:last-child,
+.resultIntro > p:last-child {
+  max-width: 42rem;
+  margin-top: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.operator {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 14rem;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--accent-primary);
+}
+
+.operator span,
+.credential > span,
+.expiry span {
+  color: var(--text-secondary);
+  font-size: var(--fs-metadata);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.operator strong {
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.queue {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.queueHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.queueHeader p,
+.student p,
+.reviewHeading p {
+  color: var(--text-secondary);
+}
+
+.queueHeader p {
+  margin-top: var(--space-1);
+  font-size: var(--fs-body-sm);
+}
+
+.enrollmentCard {
+  display: grid;
+  grid-template-columns: auto minmax(10rem, 1fr) minmax(22rem, 2fr) auto;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.student,
+.summary {
+  min-width: 0;
+}
+
+.student h3 {
+  font-size: var(--fs-body);
+}
+
+.student p {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+}
+
+.summary,
+.details {
+  display: grid;
+  margin: 0;
+}
+
+.summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+.summary div,
+.details div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.summary dt,
+.details dt {
+  color: var(--text-secondary);
+  font-size: var(--fs-metadata);
+}
+
+.summary dd,
+.details dd {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.reviewLayout {
+  display: grid;
+  grid-template-columns: 10rem minmax(20rem, 40rem);
+  align-items: start;
+  justify-content: center;
+  gap: var(--space-12);
+}
+
+.reviewCard {
+  overflow: hidden;
+  padding: 0;
+}
+
+.reviewHeading,
+.details,
+.actions {
+  padding: var(--space-6) var(--space-8);
+}
+
+.reviewHeading {
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.reviewHeading h2,
+.resultIntro h2 {
+  margin-top: var(--space-3);
+}
+
+.reviewHeading p {
+  margin-top: var(--space-2);
+}
+
+.details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-8);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.securityNote {
+  padding: 0 var(--space-8);
+}
+
+.securityNote strong,
+.securityNote span {
+  display: block;
+}
+
+.securityNote strong {
+  font-weight: var(--fw-semibold);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.resultLayout {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--space-16) minmax(0, 1fr);
+  gap: var(--space-6) var(--space-8);
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  padding: var(--space-12);
+}
+
+.successMark {
+  display: grid;
+  width: var(--space-16);
+  height: var(--space-16);
+  place-items: center;
+  color: var(--text-on-primary);
+  background: var(--color-success);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-h2);
+}
+
+.credentials,
+.expiry,
+.doneAction,
+.resultLayout > .error {
+  grid-column: 2;
+}
+
+.credentials {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.credential {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.credential > span {
+  grid-column: 1 / -1;
+}
+
+.credential code {
+  align-self: center;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  font-weight: var(--fw-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.credential code.wrap {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.prominent {
+  background: var(--color-warning-soft);
+  border-color: var(--color-warning);
+}
+
+.prominent code {
+  font-size: var(--fs-h3);
+  letter-spacing: var(--ls-wide);
+}
+
+.expiry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-default);
+}
+
+.doneAction {
+  justify-self: end;
+  min-width: 7rem;
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
+
+.toast {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 5;
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-on-primary);
+  background: var(--text-body);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.locked {
+  display: grid;
+  min-height: 28rem;
+  align-content: center;
+}
+
+.locked h1 {
+  max-width: 18ch;
+}
+
+@media (max-width: 52rem) {
+  .pageHeader,
+  .queueHeader {
+    align-items: start;
+  }
+
+  .enrollmentCard {
+    grid-template-columns: auto 1fr;
+  }
+
+  .summary,
+  .enrollmentCard > button {
+    grid-column: 1 / -1;
+  }
+
+  .reviewLayout {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .reviewLayout > button {
+    width: max-content;
+  }
+}
+
+@media (max-width: 38rem) {
+  .pageHeader {
+    display: grid;
+  }
+
+  .operator {
+    padding: var(--space-3) 0 0;
+    border-top: 1px solid var(--border-default);
+    border-left: 0;
+  }
+
+  .details,
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewHeading,
+  .details,
+  .actions {
+    padding: var(--space-5);
+  }
+
+  .securityNote {
+    padding: 0 var(--space-5);
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  .resultLayout {
+    grid-template-columns: 1fr;
+    padding: var(--space-6);
+  }
+
+  .credentials,
+  .expiry,
+  .doneAction,
+  .resultLayout > .error {
+    grid-column: 1;
+  }
+
+  .expiry {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .credential {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .credential code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .credential button {
+    justify-self: start;
+  }
+}

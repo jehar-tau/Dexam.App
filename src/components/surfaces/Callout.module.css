@@ -1,0 +1,45 @@
+.callout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-muted);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body-sm);
+}
+
+.mark {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-body-sm);
+}
+
+.accent {
+  background: var(--accent-extra-soft);
+  border-color: var(--accent-soft);
+}
+
+.accent .mark {
+  color: var(--accent-primary-hover);
+}
+
+.success {
+  background: var(--color-success-soft);
+  border-color: transparent;
+}
+
+.success .mark {
+  color: var(--color-success);
+}
+
+.warning {
+  background: var(--color-warning-soft);
+  border-color: transparent;
+}
+
+.warning .mark {
+  color: var(--color-warning);
+}

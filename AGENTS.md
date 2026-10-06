@@ -19,7 +19,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 - Never bypass authorization or Supabase Row Level Security.
 - Never commit secrets, `.env` files, production credentials, or student personal data.
 - Add tests with implementation. Verify lint, types, unit/integration tests, build, and relevant browser journeys before declaring completion.
-- Use existing design tokens and components before creating new patterns.
+- Treat `docs/DESIGN_SYSTEM.md` and the pinned `dexam-portfolio-design-system` source as the strict UI authority. Use existing design tokens and components before creating new patterns; every reusable pattern needs an approved spec and Storybook story.
 - Update `docs/CURRENT_STATE.md` when repository state materially changes.
 - Do not modify production or incur paid services without explicit approval.
 

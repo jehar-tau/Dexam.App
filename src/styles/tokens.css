@@ -1,22 +1,15 @@
+/* Design tokens, sourced from the shared design system.
+ * See src/styles/design-system/README.md and
+ * docs/decisions/ADR-011-shared-design-system-repository.md.
+ */
+@import './design-system/colors.css';
+@import './design-system/typography.css';
+@import './design-system/spacing.css';
+@import './design-system/effects.css';
+
 :root {
   color-scheme: light;
-  --color-canvas: #f6f4ee;
-  --color-surface: #fffdf8;
-  --color-ink: #161714;
-  --color-muted: #5e6259;
-  --color-border: #dedbd1;
-  --color-border-strong: #aaa99f;
-  --color-accent: #b43d22;
-  --color-focus: #3156ce;
-  --font-sans:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.9rem;
-  --font-size-lg: 1.35rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --radius-sm: 0.35rem;
+
+  /* Dexam-specific: not part of the shared token set */
   --page-gutter: clamp(1.25rem, 4vw, 4rem);
 }

@@ -11,5 +11,7 @@
 | D-007 | Member ID issuance, activation, and recovery                                                  | Option B approved 2026-09-26            | `ADR-007-member-id-activation-and-recovery.md`       |
 | D-008 | Staff authority and approval boundaries                                                       | Option B approved 2026-09-26            | `ADR-008-staff-authority-and-approval-boundaries.md` |
 | D-009 | Offering, cohort, and enrolment structure                                                     | Option B approved 2026-10-04            | `ADR-009-offering-cohort-and-enrolment-structure.md` |
+| D-010 | Design system source of truth and hosting                                                     | Superseded in part by D-011 2026-10-04  | `ADR-010-design-system-tooling.md`                   |
+| D-011 | Shared design system repository (`dexam-portfolio-design-system`)                             | Approved 2026-10-04                     | `ADR-011-shared-design-system-repository.md`         |
 
 IDs are stable. Do not reuse retired decision IDs.

@@ -21,7 +21,11 @@ supabase/.temp/
 .DS_Store
 .idea/
 .vscode/
+.claude/
 
 # temporary handoff state
 HANDOFF.md
 *.log
+
+*storybook.log
+storybook-static

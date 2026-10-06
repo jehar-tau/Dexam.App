@@ -5,8 +5,8 @@
 
 .eyebrow {
   margin: 0 0 var(--space-4);
-  color: var(--color-accent);
-  font-size: var(--font-size-xs);
+  color: var(--accent-primary);
+  font-size: var(--fs-metadata);
   font-weight: 750;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -15,7 +15,7 @@
 .intro {
   max-width: 44rem;
   margin: var(--space-6) 0 0;
-  color: var(--color-muted);
+  color: var(--text-secondary);
   font-size: clamp(1.05rem, 1.8vw, 1.3rem);
   line-height: 1.65;
 }
@@ -29,19 +29,19 @@
 
 .foundation {
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-strong);
+  border-top: 1px solid var(--border-strong);
 }
 
 .foundation dt {
   margin-bottom: var(--space-2);
-  font-size: var(--font-size-sm);
+  font-size: var(--fs-body-sm);
   font-weight: 750;
 }
 
 .foundation dd {
   margin: 0;
-  color: var(--color-muted);
-  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
   line-height: 1.55;
 }
 

@@ -1,6 +1,6 @@
 # Current State
 
-Last updated: 2026-09-26
+Last updated: 2026-10-06
 
 ## Current phase
 
@@ -42,6 +42,16 @@ Foundation implementation — identity and access specification.
 - Added F004 database security tests; the complete database suite now passes 79 tests, including denial of duplicate initial activation after an account is claimed.
 - Added the trusted Enrolment Operator activation-pack workflow with atomic enrolment activation, secure one-time credential generation, reason-required reissue, invalidation, and audit evidence.
 - Expanded the complete database suite to 97 passing tests, including Sales denial, operator revocation, claimed-account denial, expiry limits, and reissue behavior.
+- Merged the activation-pack workflow through PR #4 and synced local `main`.
+- Started frontend development with the first Enrolment Operator queue, review, and one-time activation-pack result flow.
+- Added a development-only fictional preview plus unit and browser coverage; the preview flag is absent from the normal production build.
+- D-010 design system tooling approved: Figma Variables export as the token source of truth, an in-repo component library documented with Storybook, and GitHub Pages hosting.
+- Added the Storybook scaffold and the Storybook GitHub Pages deployment workflow.
+- D-011 approved, partially superseding D-010: the product owner produced a full design system via Claude Design, scoped it to both the portfolio site and Dexam, and it now lives in its own public repository, `dexam-portfolio-design-system`, rather than a future Figma export.
+- Vendored that repository's tokens into `src/styles/design-system/` and rewired `tokens.css`/`global.css` and existing component styles to consume them directly (names now match the shared system, e.g. `--surface-card`, `--text-body`, `--accent-primary`).
+- Ported the first approved generic primitives from the shared design system: Button, Badge, Card, Callout, Avatar, and Data Row.
+- Added a Storybook story and an approved local usage specification for every ported primitive.
+- Refactored the Enrolment Operator queue, final review, and activation-pack result to consume the shared primitives and verified the complete journey at desktop and mobile widths without horizontal overflow.
 
 ## Not yet started
 
@@ -50,7 +60,7 @@ Foundation implementation — identity and access specification.
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
-- Design tokens and component library
+- Porting the remaining shared primitives as a feature needs them (forms, navigation, overlays, tables, and empty states)
 - F008 channel, consent, preference, and first-milestone notification decisions
 
 ## Environment findings
@@ -65,8 +75,8 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Review and merge the activation-pack workflow, then begin the Enrolment Operator interface and its executed browser journey.
+Product-owner review of the executed Enrolment Operator browser journey, followed by preparation of its pull request.
 
 ## Blockers
 
-- The Enrolment Operator interface requires a safe local employee sign-in/test fixture before its browser journey can be exercised.
+- Production use of the Enrolment Operator interface requires employee sign-in and live queue retrieval; the local browser journey uses fictional preview data only.

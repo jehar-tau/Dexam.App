@@ -1,0 +1,24 @@
+/* ============================================================
+   SPACING & LAYOUT TOKENS
+   ============================================================ */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  --container-narrow: 760px;
+  --container-default: 1040px;
+  --container-wide: 1200px;
+
+  /* Block spacing — vertical rhythm between document blocks */
+  --block-gap-sm: var(--space-2);
+  --block-gap: var(--space-4);
+  --block-gap-lg: var(--space-8);
+}

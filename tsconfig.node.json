@@ -11,7 +11,14 @@
     "noEmit": true,
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "vite/client"]
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "eslint.config.js", "tests/e2e"]
+  "include": [
+    "vite.config.ts",
+    "playwright.config.ts",
+    "eslint.config.js",
+    "tests/e2e",
+    ".storybook/main.ts",
+    ".storybook/preview.tsx"
+  ]
 }

@@ -18,3 +18,18 @@ test('student activation route presents the secure account form', async ({ page 
   await expect(page.getByLabel('One-time activation code')).toBeVisible()
   await expect(page.getByLabel('Create password')).toHaveAttribute('type', 'password')
 })
+
+test('Enrolment Operator reviews and issues a fictional activation pack', async ({ page }) => {
+  await page.goto('/staff/enrolments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Activation queue' })).toBeVisible()
+  await page.getByRole('button', { name: 'Review enrolment' }).click()
+  await expect(page.getByRole('heading', { name: 'Issue activation pack?' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Issue activation pack' }).click()
+
+  await expect(
+    page.getByRole('heading', { name: 'Hand this directly to the student.' }),
+  ).toBeVisible()
+  await expect(page.getByText('7K3M9Q2RW5')).toBeVisible()
+})
