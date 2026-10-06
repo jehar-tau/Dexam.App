@@ -11,6 +11,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 
 ## Engineering rules
 
+- Treat the repository as a shared workspace: the product owner may also make changes through Cloud Code or other tools, even though Codex is the primary development agent. Before implementing anything, inspect the current branch, working tree, recent commits, and existing implementation to verify whether the requested work already exists. Preserve unfamiliar changes, avoid duplicate implementations, and reconcile overlapping work instead of overwriting it.
 - Prefer simple, reversible, well-supported technology.
 - Keep the marketing website in `../../Dexam website/Website-Dexam` separate; use it only as a visual/content reference unless a task explicitly integrates it.
 - Every meaningful feature needs a specification in `docs/features/`.
