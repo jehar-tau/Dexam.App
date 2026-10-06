@@ -8,3 +8,4 @@ One file per approved UI pattern, written from `../../templates/COMPONENT_SPEC_T
 - [Callout](callout.md)
 - [Avatar](avatar.md)
 - [Data Row](data-row.md)
+- [Input](input.md)

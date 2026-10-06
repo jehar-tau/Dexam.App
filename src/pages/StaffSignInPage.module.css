@@ -1,0 +1,95 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.75fr);
+  gap: clamp(var(--space-8), 8vw, var(--space-24));
+  align-items: center;
+  min-height: min(42rem, calc(100vh - 13rem));
+}
+
+.intro {
+  max-width: 37rem;
+}
+
+.intro h1 {
+  max-width: 12ch;
+  margin: 0;
+}
+
+.lede {
+  max-width: 35rem;
+  margin: var(--space-5) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+}
+
+.trustList {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  margin: var(--space-8) 0 0;
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+.trustList li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.trustList li::before {
+  color: var(--color-success);
+  content: '✓';
+  font-weight: var(--fw-semibold);
+}
+
+.card {
+  padding: clamp(var(--space-5), 5vw, var(--space-8));
+}
+
+.cardHeader h2,
+.cardHeader p {
+  margin: 0;
+}
+
+.cardHeader p {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body-sm);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-body-sm);
+}
+
+.support {
+  padding-top: var(--space-5);
+  margin: var(--space-5) 0 0;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-default);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+}
+
+@media (max-width: 48rem) {
+  .layout {
+    grid-template-columns: 1fr;
+    align-items: start;
+    min-height: auto;
+  }
+
+  .intro h1 {
+    max-width: 15ch;
+  }
+}

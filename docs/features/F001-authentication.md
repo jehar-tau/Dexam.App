@@ -86,3 +86,17 @@ An approved student or employee can securely activate, sign in to, recover, and 
 - D-007 Option B approved on 2026-09-26
 - Production email delivery and domain configuration
 - Session duration and re-authentication intervals
+
+## Implemented slices
+
+### Employee sign-in and staff route protection — 2026-10-07
+
+- Added verified-email/password sign-in through the public Supabase browser client.
+- Added a session provider with browser persistence and current-device sign-out.
+- Added a staff access boundary that rechecks active employee membership and the route's current capability before rendering protected content.
+- Added a safe local return path after sign-in; external and sign-in-loop destinations are rejected.
+- Added generic credential errors so the interface does not disclose whether an employee email exists.
+- Added the shared Input primitive, approved usage specification, and Storybook states required by the sign-in form.
+- Added unit and browser coverage for credential errors, inactive employees, current capability checks, protected-route redirects, explicit fictional preview, and responsive sign-in rendering.
+
+Employee invitation, recovery, MFA enrolment/challenge, all-device revocation, and student Member ID sign-in remain separate slices.

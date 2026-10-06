@@ -29,11 +29,11 @@ Authorized staff need a clear operational workspace that exposes only the action
 - Initial activation-pack confirmation and result state
 - Copy controls for the link, Member ID, and backup code
 - Loading, denial, error, and already-issued states
-- Fictional development preview while employee sign-in is being implemented
+- Explicitly enabled fictional preview while live queue retrieval is being implemented
 
 ## Out of scope
 
-- Employee invitation and production sign-in implementation
+- Employee invitation and recovery administration
 - Creating or matching canonical people
 - Bulk issuance, exports, printing, messaging, or automatic delivery
 - Activated-account recovery
@@ -42,7 +42,7 @@ Authorized staff need a clear operational workspace that exposes only the action
 
 ## Permissions
 
-The interface is not a security boundary. The trusted backend rechecks current employee membership and `enrollment.operate` capability. The development preview is available only in the local development build and never calls production services.
+The interface is not the only security boundary. The route and trusted backend both recheck current employee membership and `enrollment.operate` capability. The fictional preview requires an explicit build flag plus URL switch, and the flag is absent from the normal production build.
 
 ## Business rules
 
@@ -70,7 +70,7 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 ## Security considerations
 
 - No service-role secret is shipped to the browser.
-- The production path remains unavailable until employee authentication supplies a current access token.
+- The production path requires an employee session plus current membership and capability checks before protected content renders.
 - Copy actions are explicit and the screen warns the operator to use an approved delivery route.
 - Browser tests use fictional values and intercepted local responses.
 
@@ -90,7 +90,7 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 - Success presents the Member ID, activation link, backup code, and expiry distinctly.
 - The screen explains that credentials are shown once and passwords remain private.
 - Loading, error, denial, empty, and successful states remain accessible by keyboard and assistive technology.
-- Local preview code cannot be activated in a production build.
+- The normal production build does not enable fictional preview data.
 - Unit and browser tests cover confirmation and successful pack display.
 
 ## Verification plan
@@ -102,7 +102,6 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 
 ## Open decisions
 
-- Final employee sign-in and session UI details
 - Queue filtering, sorting, assignment, and pagination
 - Approved physical/digital delivery procedures
 - Whether a printable pack is permitted

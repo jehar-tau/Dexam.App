@@ -40,12 +40,12 @@ export function EnrolmentOperatorPage() {
 
   if (!previewEnabled) {
     return (
-      <section className={styles.locked} aria-labelledby="staff-sign-in-title">
+      <section className={styles.locked} aria-labelledby="live-queue-title">
         <p className="eyebrow">Staff workspace</p>
-        <h1 id="staff-sign-in-title">Employee sign-in required.</h1>
+        <h1 id="live-queue-title">The live enrolment queue is next.</h1>
         <p>
-          The Enrolment Operator workspace opens only after a verified employee signs in. Local
-          preview data is disabled in this build.
+          Your employee access is verified. Live enrolment retrieval will be connected in the next
+          delivery slice; no fictional student data is shown here.
         </p>
       </section>
     )

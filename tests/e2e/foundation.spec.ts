@@ -19,6 +19,33 @@ test('student activation route presents the secure account form', async ({ page 
   await expect(page.getByLabel('Create password')).toHaveAttribute('type', 'password')
 })
 
+test('employee sign-in route presents protected staff access', async ({ page }) => {
+  await page.goto('/staff/sign-in')
+
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+  await expect(page.getByLabel('Employee email')).toHaveAttribute('type', 'email')
+  await expect(page.getByLabel('Password')).toHaveAttribute('type', 'password')
+})
+
+test('protected staff route redirects to employee sign-in', async ({ page }) => {
+  await page.goto('/staff/enrolments')
+
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fenrolments$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+})
+
+test('employee sign-in remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/sign-in')
+
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
 test('Enrolment Operator reviews and issues a fictional activation pack', async ({ page }) => {
   await page.goto('/staff/enrolments?preview=1')
 

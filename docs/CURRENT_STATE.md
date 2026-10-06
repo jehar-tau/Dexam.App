@@ -1,10 +1,10 @@
 # Current State
 
-Last updated: 2026-10-06
+Last updated: 2026-10-07
 
 ## Current phase
 
-Foundation implementation — identity and access specification.
+Identity and access implementation — employee sign-in and protected staff routes.
 
 ## Completed
 
@@ -52,6 +52,11 @@ Foundation implementation — identity and access specification.
 - Ported the first approved generic primitives from the shared design system: Button, Badge, Card, Callout, Avatar, and Data Row.
 - Added a Storybook story and an approved local usage specification for every ported primitive.
 - Refactored the Enrolment Operator queue, final review, and activation-pack result to consume the shared primitives and verified the complete journey at desktop and mobile widths without horizontal overflow.
+- Merged the first Enrolment Operator interface and shared design-system primitives through PR #5, then synced local `main`.
+- Added the shared Input primitive with an approved usage specification and Storybook states.
+- Added employee email/password sign-in, persisted browser sessions, current-device sign-out, and safe staff return routing through Supabase Auth.
+- Added a protected staff boundary that rechecks active employee membership and `enrollment.operate` against current database state before rendering the Enrolment Operator workspace.
+- Added generic credential failures, inactive-employee session cleanup, configuration and connectivity states, and responsive unit/browser coverage.
 
 ## Not yet started
 
@@ -60,7 +65,7 @@ Foundation implementation — identity and access specification.
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
-- Porting the remaining shared primitives as a feature needs them (forms, navigation, overlays, tables, and empty states)
+- Porting the remaining shared primitives as a feature needs them (navigation, overlays, tables, and empty states)
 - F008 channel, consent, preference, and first-milestone notification decisions
 
 ## Environment findings
@@ -75,8 +80,9 @@ Foundation implementation — identity and access specification.
 
 ## Next safe action
 
-Product-owner review of the executed Enrolment Operator browser journey, followed by preparation of its pull request.
+Product-owner review of the employee sign-in and protected-route browser journey, followed by preparation of its pull request. After merge, connect the authenticated Enrolment Operator screen to the live scoped enrolment queue.
 
 ## Blockers
 
-- Production use of the Enrolment Operator interface requires employee sign-in and live queue retrieval; the local browser journey uses fictional preview data only.
+- Production use of the Enrolment Operator interface still requires live scoped queue retrieval; the current operator journey uses fictional preview data after the real employee gate.
+- Employee invitation, recovery, MFA, student sign-in, and security-triggered all-device session revocation remain future F001 slices.
