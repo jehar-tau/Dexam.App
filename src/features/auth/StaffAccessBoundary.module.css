@@ -1,0 +1,28 @@
+.state {
+  display: grid;
+  justify-items: start;
+  max-width: 42rem;
+  gap: var(--space-4);
+  padding: clamp(var(--space-8), 8vw, var(--space-16)) 0;
+}
+
+.state h1,
+.state p {
+  margin: 0;
+}
+
+.state p {
+  color: var(--text-secondary);
+  line-height: var(--lh-body);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.state .error {
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
