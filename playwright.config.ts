@@ -21,7 +21,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm preview --host 127.0.0.1 --port ${port}`,
+    command: `pnpm build:e2e && pnpm preview --host 127.0.0.1 --port ${port}`,
     port,
     reuseExistingServer: !process.env.CI,
   },

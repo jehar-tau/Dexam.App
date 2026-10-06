@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true vite build",
     "preview": "vite preview",
     "env:check": "node scripts/doctor.mjs",
     "format": "prettier --write .",
@@ -28,7 +29,10 @@
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
     "db:reset": "supabase db reset",
-    "db:test": "supabase test db"
+    "db:test": "supabase test db",
+    "design:tokens": "node scripts/design/build-tokens.mjs",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -61,6 +65,9 @@
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.70.1",
     "vite": "^8.3.1",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "storybook": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "eslint-plugin-storybook": "^10.6.1"
   }
 }

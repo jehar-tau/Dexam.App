@@ -12,6 +12,7 @@ Use this map instead of reading the entire documentation tree.
 
 - `ARCHITECTURE.md` — system boundaries and provisional technical direction
 - `DESIGN_SYSTEM.md` — design ownership and implementation rules
+- `design/README.md` — Figma token/pattern export pipeline and Storybook catalog
 - `SECURITY.md` — mandatory security and privacy baseline
 - `TESTING.md` — test layers and definition of done
 - `SETUP.md` — local, GitHub, and future environment setup

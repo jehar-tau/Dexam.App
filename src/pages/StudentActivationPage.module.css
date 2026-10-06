@@ -13,7 +13,7 @@
 .introduction > p:last-child {
   max-width: 36rem;
   margin: var(--space-6) 0 0;
-  color: var(--color-muted);
+  color: var(--text-secondary);
   font-size: 1.05rem;
   line-height: 1.65;
 }
@@ -22,8 +22,8 @@
   display: grid;
   gap: var(--space-6);
   padding: clamp(1.5rem, 4vw, 2.5rem);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
   border-radius: calc(var(--radius-sm) * 2);
 }
 
@@ -33,7 +33,7 @@
 }
 
 .field label {
-  font-size: var(--font-size-sm);
+  font-size: var(--fs-body-sm);
   font-weight: 750;
 }
 
@@ -41,9 +41,9 @@
   width: 100%;
   min-height: 3rem;
   padding: 0.7rem 0.85rem;
-  color: var(--color-ink);
+  color: var(--text-body);
   background: white;
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
 }
 
@@ -51,12 +51,12 @@
 .error,
 .success {
   margin: 0;
-  font-size: var(--font-size-sm);
+  font-size: var(--fs-body-sm);
   line-height: 1.5;
 }
 
 .hint {
-  color: var(--color-muted);
+  color: var(--text-secondary);
 }
 
 .error {
@@ -76,7 +76,7 @@
   padding: 0.75rem 1rem;
   color: white;
   font-weight: 750;
-  background: var(--color-ink);
+  background: var(--text-body);
   border: 0;
   border-radius: var(--radius-sm);
   cursor: pointer;

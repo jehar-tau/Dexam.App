@@ -1,0 +1,5 @@
+/* Values that Figma Variables cannot express (CSS-only features such as
+ * color-scheme or clamp()). Merged into the generated src/styles/tokens.css
+ * by scripts/design/build-tokens.mjs. Hand-edit this file; never tokens.css. */
+color-scheme: light;
+--page-gutter: clamp(1.25rem, 4vw, 4rem);

@@ -11,6 +11,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 
 ## Engineering rules
 
+- Treat the repository as a shared workspace: the product owner may also make changes through Cloud Code or other tools, even though Codex is the primary development agent. Before implementing anything, inspect the current branch, working tree, recent commits, and existing implementation to verify whether the requested work already exists. Preserve unfamiliar changes, avoid duplicate implementations, and reconcile overlapping work instead of overwriting it.
 - Prefer simple, reversible, well-supported technology.
 - Keep the marketing website in `../../Dexam website/Website-Dexam` separate; use it only as a visual/content reference unless a task explicitly integrates it.
 - Every meaningful feature needs a specification in `docs/features/`.
@@ -19,7 +20,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 - Never bypass authorization or Supabase Row Level Security.
 - Never commit secrets, `.env` files, production credentials, or student personal data.
 - Add tests with implementation. Verify lint, types, unit/integration tests, build, and relevant browser journeys before declaring completion.
-- Use existing design tokens and components before creating new patterns.
+- Treat `docs/DESIGN_SYSTEM.md` and the pinned `dexam-portfolio-design-system` source as the strict UI authority. Use existing design tokens and components before creating new patterns; every reusable pattern needs an approved spec and Storybook story.
 - Update `docs/CURRENT_STATE.md` when repository state materially changes.
 - Do not modify production or incur paid services without explicit approval.
 
