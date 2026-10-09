@@ -4,6 +4,7 @@ import { AppShell } from './shell/AppShell'
 import { StaffAccessBoundary } from '../features/auth/StaffAccessBoundary'
 import { StudentAccessBoundary } from '../features/auth/StudentAccessBoundary'
 import { FoundationPage } from '../pages/FoundationPage'
+import { ContentWorkspacePage } from '../pages/ContentWorkspacePage'
 import { EnrolmentOperatorPage } from '../pages/EnrolmentOperatorPage'
 import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -43,6 +44,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="enrollment.operate">
             <EnrolmentOperatorPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/content',
+        element: (
+          <StaffAccessBoundary capability="content.manage_drafts">
+            <ContentWorkspacePage />
           </StaffAccessBoundary>
         ),
       },

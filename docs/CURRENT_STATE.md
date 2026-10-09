@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-Coursework pull-request preparation — the versioned Drawing/Aptitude student experience is product-owner approved locally.
+Academic content-authoring visual review — F009 is implemented locally under approved D-015/D-016 Option B; PR #9 contains the approved student coursework foundation.
 
 ## Completed
 
@@ -80,6 +80,13 @@ Coursework pull-request preparation — the versioned Drawing/Aptitude student e
 - Added the protected student coursework browser with Drawing/Aptitude preview content, topic selection, safe plain-text lesson rendering, and workspace navigation.
 - Verified the complete local foundation with 149 database tests, 52 unit/component tests, 13 Chromium browser journeys, a production build, and desktop/mobile visual inspection without horizontal overflow or console errors.
 - Product owner approved the first student coursework interface on 2026-10-10 and confirmed that authorized curriculum/material and assignment editing should be built next.
+- Opened PR #9 for the approved F005 versioned student coursework foundation.
+- Drafted F009 Academic Content Authoring plus D-015 for scoped draft/publish authority and D-016 for conservative private assignment-material uploads.
+- D-015 Option B approved: offering-scoped draft management and separate deliberate publication capabilities.
+- D-016 Option B approved: private PDF/JPEG/PNG/WebP assignment materials, limited to five files and 10 MB per file, with no paid service authorized.
+- Added the F009 content-authoring database foundation with offering-scoped draft/publish checks, immutable version lineage, audited publication, assignment-topic links, and private storage policies.
+- Added the protected staff Content workspace for topic and lesson editing, assignment creation/editing, assignment-specific evaluation guides, conservative private uploads, version copying, and deliberate release notes.
+- Verified F009 locally with 196 passing database tests, 57 unit/component tests, 15 Chromium browser journeys, a production build, and desktop/mobile visual inspection without horizontal overflow or console errors.
 
 ## Not yet started
 
@@ -104,7 +111,7 @@ Coursework pull-request preparation — the versioned Drawing/Aptitude student e
 
 ## Next safe action
 
-Commit and open the F005 pull request, then define the staff curriculum/material editor and F006 assignment-management decisions.
+Collect product-owner visual approval for the local Content workspace, then commit, push, and open the F009 pull request.
 
 ## Blockers
 
