@@ -14,5 +14,7 @@
 | D-010 | Design system source of truth and hosting                                                     | Superseded in part by D-011 2026-10-04  | `ADR-010-design-system-tooling.md`                   |
 | D-011 | Shared design system repository (`dexam-portfolio-design-system`)                             | Approved 2026-10-04                     | `ADR-011-shared-design-system-repository.md`         |
 | D-012 | Live Enrolment Operator queue identity and initial volume                                     | Option B approved 2026-10-07            | `ADR-012-live-enrolment-queue-identity.md`           |
+| D-013 | Coursework hierarchy and curriculum versioning                                                | Option B approved 2026-10-10            | `ADR-013-coursework-hierarchy-and-versioning.md`     |
+| D-014 | Teacher feedback delivery and AI authority                                                    | Option B approved 2026-10-10            | `ADR-014-feedback-delivery-and-ai-authority.md`      |
 
 IDs are stable. Do not reuse retired decision IDs.
