@@ -1,3 +1,5 @@
+import { getSupabaseClient } from '../auth/supabaseClient'
+
 export type ActivationPack = {
   memberId: string
   activationUrl: string
@@ -12,14 +14,16 @@ type ActivationPackResponse = Partial<ActivationPack> & {
 
 const unavailableMessage = 'The activation pack could not be issued. Check access and try again.'
 
-export async function issueActivationPack(
-  enrollmentId: string,
-  accessToken: string,
-): Promise<ActivationPack> {
+export async function issueActivationPack(enrollmentId: string): Promise<ActivationPack> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+  const client = getSupabaseClient()
 
-  if (!supabaseUrl || !anonKey || !accessToken) throw new Error(unavailableMessage)
+  if (!supabaseUrl || !anonKey || !client) throw new Error(unavailableMessage)
+
+  const sessionResult = await client.auth.getSession()
+  const accessToken = sessionResult.data.session?.access_token
+  if (sessionResult.error || !accessToken) throw new Error(unavailableMessage)
 
   let response: Response
   try {

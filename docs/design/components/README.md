@@ -9,3 +9,4 @@ One file per approved UI pattern, written from `../../templates/COMPONENT_SPEC_T
 - [Avatar](avatar.md)
 - [Data Row](data-row.md)
 - [Input](input.md)
+- [Empty State](empty-state.md)

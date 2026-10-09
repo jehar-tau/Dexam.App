@@ -50,6 +50,11 @@ test('Enrolment Operator reviews and issues a fictional activation pack', async 
   await page.goto('/staff/enrolments?preview=1')
 
   await expect(page.getByRole('heading', { name: 'Activation queue' })).toBeVisible()
+  await page.getByRole('searchbox', { name: 'Search queue' }).fill('Nobody')
+  await page.getByRole('button', { name: 'Search' }).click()
+  await expect(page.getByText('No matching enrolments')).toBeVisible()
+  await page.getByRole('button', { name: 'Clear search' }).click()
+  await expect(page.getByText('Aarohi Deshmukh')).toBeVisible()
   await page.getByRole('button', { name: 'Review enrolment' }).click()
   await expect(page.getByRole('heading', { name: 'Issue activation pack?' })).toBeVisible()
 
