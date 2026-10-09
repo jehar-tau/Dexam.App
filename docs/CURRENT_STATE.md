@@ -1,10 +1,10 @@
 # Current State
 
-Last updated: 2026-10-07
+Last updated: 2026-10-10
 
 ## Current phase
 
-Identity and access implementation — employee sign-in and protected staff routes.
+Enrolment operations implementation — live approved-enrolment queue and activation handoff.
 
 ## Completed
 
@@ -57,6 +57,9 @@ Identity and access implementation — employee sign-in and protected staff rout
 - Added employee email/password sign-in, persisted browser sessions, current-device sign-out, and safe staff return routing through Supabase Auth.
 - Added a protected staff boundary that rechecks active employee membership and `enrollment.operate` against current database state before rendering the Enrolment Operator workspace.
 - Added generic credential failures, inactive-employee session cleanup, configuration and connectivity states, and responsive unit/browser coverage.
+- Merged employee sign-in and staff access protection through PR #6 and synced local `main`.
+- D-012 Option B approved: the first live queue uses a constrained operational display name alongside the immutable Member ID and bounded search across those two fields.
+- Implemented the live Enrolment Operator queue with authorization-checked minimal data, oldest-approved-first ordering, search, loading/error/empty states, current-session activation issuance, 109 passing database tests, and the shared Empty State primitive.
 
 ## Not yet started
 
@@ -65,7 +68,7 @@ Identity and access implementation — employee sign-in and protected staff rout
 - Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
-- Porting the remaining shared primitives as a feature needs them (navigation, overlays, tables, and empty states)
+- Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
 - F008 channel, consent, preference, and first-milestone notification decisions
 
 ## Environment findings
@@ -80,9 +83,8 @@ Identity and access implementation — employee sign-in and protected staff rout
 
 ## Next safe action
 
-Product-owner review of the employee sign-in and protected-route browser journey, followed by preparation of its pull request. After merge, connect the authenticated Enrolment Operator screen to the live scoped enrolment queue.
+Product-owner visual review of the completed live queue and activation flow using the explicitly enabled fictional local preview.
 
 ## Blockers
 
-- Production use of the Enrolment Operator interface still requires live scoped queue retrieval; the current operator journey uses fictional preview data after the real employee gate.
 - Employee invitation, recovery, MFA, student sign-in, and security-triggered all-device session revocation remain future F001 slices.

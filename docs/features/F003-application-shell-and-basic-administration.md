@@ -1,6 +1,6 @@
 # F003 — Application Shell and Basic Administration
 
-Status: In progress — first Enrolment Operator slice
+Status: In progress — live Enrolment Operator queue foundation
 Risk: Red
 Owner: Product owner with Codex engineering support
 
@@ -29,7 +29,9 @@ Authorized staff need a clear operational workspace that exposes only the action
 - Initial activation-pack confirmation and result state
 - Copy controls for the link, Member ID, and backup code
 - Loading, denial, error, and already-issued states
-- Explicitly enabled fictional preview while live queue retrieval is being implemented
+- Live, permission-scoped approved-enrolment queue ordered oldest approval first
+- Bounded search by operational student display name or immutable Dexam Member ID
+- Explicitly enabled fictional preview for local interface review
 
 ## Out of scope
 
@@ -50,6 +52,8 @@ The interface is not the only security boundary. The route and trusted backend b
 - The raw activation pack is displayed only in the successful issuance response.
 - Reissue is a separate, reason-required action and is not included in the first screen.
 - The operator must verify the selected enrolment before issuing the pack.
+- The queue shows at most 25 records initially and searches only operational display name and Member ID.
+- A student without a valid operational display name remains out of the queue until trusted staff complete the data.
 
 ## Interface states
 
@@ -71,6 +75,7 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 
 - No service-role secret is shipped to the browser.
 - The production path requires an employee session plus current membership and capability checks before protected content renders.
+- The browser receives queue fields only through an authorization-checked function and cannot browse or edit student profiles directly.
 - Copy actions are explicit and the screen warns the operator to use an approved delivery route.
 - Browser tests use fictional values and intercepted local responses.
 
@@ -80,6 +85,7 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 - D-007 activation-pack format and lifecycle
 - D-008 Enrolment Operator authority
 - D-009 offering, cohort, and enrolment structure
+- D-012 live queue identity and initial volume
 - F001 Authentication
 - F002 Roles and Permissions
 - F004 Course and Enrolment Foundation
@@ -92,6 +98,7 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 - Loading, error, denial, empty, and successful states remain accessible by keyboard and assistive technology.
 - The normal production build does not enable fictional preview data.
 - Unit and browser tests cover confirmation and successful pack display.
+- Database and client tests cover bounded search, minimal returned data, Sales denial, and immediate operator revocation.
 
 ## Verification plan
 
@@ -102,6 +109,15 @@ The screen uses the minimum identity and enrolment fields needed for handoff. Th
 
 ## Open decisions
 
-- Queue filtering, sorting, assignment, and pagination
+- Queue assignment and pagination beyond the approved oldest-first initial page
 - Approved physical/digital delivery procedures
 - Whether a printable pack is permitted
+
+## Live queue implementation — 2026-10-07
+
+- Added an authorization-checked database function that returns only currently eligible approved enrolments and the minimum operational fields required for activation.
+- The function rechecks current `enrollment.operate` authority, excludes suspended or already-claimed students, rejects unbounded result sizes, and orders results deterministically.
+- Added service-side response validation and current-session activation-pack issuance.
+- Added the approved shared Empty State primitive for a successfully loaded queue with no eligible records.
+- D-012 Option B adds a constrained operational display name and bounded display-name/Member-ID search.
+- Connected the responsive queue, review, issuance, loading, retry, and empty states to the live permission-scoped service.
