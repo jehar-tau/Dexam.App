@@ -27,6 +27,41 @@ test('employee sign-in route presents protected staff access', async ({ page }) 
   await expect(page.getByLabel('Password')).toHaveAttribute('type', 'password')
 })
 
+test('student sign-in route presents Member ID access', async ({ page }) => {
+  await page.goto('/sign-in')
+
+  await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
+  await expect(page.getByLabel('Dexam Member ID')).toBeVisible()
+  await expect(page.getByLabel('Password')).toHaveAttribute('type', 'password')
+})
+
+test('protected student route redirects to student sign in', async ({ page }) => {
+  await page.goto('/student')
+
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fstudent$/)
+  await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
+})
+
+test('student workspace shows a fictional self-service preview', async ({ page }) => {
+  await page.goto('/student?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Welcome, Aarohi.' })).toBeVisible()
+  await expect(page.getByText('DXM-2K3M9Q2RW5TY')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Design Entrance Foundation' })).toBeVisible()
+})
+
+test('student workspace remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/student?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Welcome, Aarohi.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
 test('protected staff route redirects to employee sign-in', async ({ page }) => {
   await page.goto('/staff/enrolments')
 

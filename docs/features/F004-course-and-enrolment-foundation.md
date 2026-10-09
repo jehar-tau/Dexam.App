@@ -1,6 +1,6 @@
 # F004 — Course and Enrolment Foundation
 
-Status: In review — database foundation implemented
+Status: In review — database and first student interface implemented
 Risk: Red
 Owner: Product owner with Codex engineering support
 
@@ -139,3 +139,11 @@ No personal-data analytics are authorized in this feature. Operational audit eve
 - Cryptographically random link and backup credentials that are returned once while only peppered hashes are stored
 - Reason-required pre-activation reissue that invalidates every earlier unused pack
 - Audit attribution for initial issuance and reissue without recording raw credentials
+
+## Implemented student interface
+
+- Added a protected self-service workspace that reads the current person's profile and enrolments directly under student-own RLS policies.
+- Shows the permanent Dexam Member ID, current offering, optional cohort, and enrolment status without contact details or cross-student data.
+- Fails closed on incomplete or unauthorized database responses and provides loading, retry, and empty states.
+- Includes an explicitly flagged fictional preview for product review; the preview flag is absent from the normal production build.
+- Added unit and browser coverage for mapped records, cohort-free enrolments, malformed responses, empty records, and mobile overflow.

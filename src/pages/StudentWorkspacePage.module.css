@@ -1,0 +1,187 @@
+.workspace {
+  display: grid;
+  gap: var(--space-12);
+}
+
+.pageHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+  gap: var(--space-8);
+  align-items: end;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.pageHeader h1 {
+  max-width: 16ch;
+}
+
+.lede {
+  max-width: 40rem;
+  margin-top: var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+}
+
+.identity {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-muted);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.identity span,
+.label,
+.enrollmentDetails dt {
+  color: var(--text-secondary);
+  font-size: var(--fs-metadata);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.identity strong {
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+  font-size: var(--fs-body-lg);
+}
+
+.identity small {
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(17rem, 0.8fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.primary,
+.enrollmentList,
+.aside,
+.state {
+  display: grid;
+}
+
+.primary,
+.enrollmentList {
+  gap: var(--space-5);
+}
+
+.sectionHeader,
+.enrollmentHeading {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionHeader h2,
+.enrollmentHeading h3,
+.label {
+  margin: 0;
+}
+
+.count {
+  display: grid;
+  width: var(--space-8);
+  height: var(--space-8);
+  place-items: center;
+  color: var(--text-on-primary);
+  background: var(--text-body);
+  border-radius: var(--radius-full);
+  font-weight: var(--fw-semibold);
+}
+
+.enrollmentCard {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.enrollmentHeading {
+  align-items: start;
+}
+
+.enrollmentHeading h3 {
+  margin-top: var(--space-2);
+  font-size: var(--fs-h3);
+}
+
+.enrollmentDetails {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  padding-top: var(--space-5);
+  margin: 0;
+  border-top: 1px solid var(--border-default);
+}
+
+.enrollmentDetails div {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.enrollmentDetails dd {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.aside {
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface-muted);
+  border-radius: var(--radius-lg);
+}
+
+.aside h2,
+.aside p {
+  margin: 0;
+}
+
+.aside > p:not(:first-child) {
+  color: var(--text-secondary);
+  line-height: var(--lh-body);
+}
+
+.state {
+  max-width: 38rem;
+  min-height: 28rem;
+  gap: var(--space-5);
+  align-content: center;
+}
+
+.state p {
+  color: var(--text-secondary);
+}
+
+.state button {
+  justify-self: start;
+}
+
+@media (max-width: 52rem) {
+  .pageHeader,
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 34rem) {
+  .workspace {
+    gap: var(--space-8);
+  }
+
+  .sectionHeader,
+  .enrollmentHeading {
+    align-items: flex-start;
+  }
+
+  .enrollmentDetails {
+    grid-template-columns: 1fr;
+  }
+}

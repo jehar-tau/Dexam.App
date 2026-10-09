@@ -89,6 +89,15 @@ An approved student or employee can securely activate, sign in to, recover, and 
 
 ## Implemented slices
 
+### Student Member ID sign-in and route protection — 2026-10-10
+
+- Added a public trusted Edge Function that maps the normalized Member ID to the internal synthetic Supabase Auth email without exposing that mapping to the browser.
+- Added application-level rolling throttles for Member ID and network attempts using one-way HMAC keys rather than raw identifiers.
+- Added a student sign-in interface with generic credential errors, safe local return routing, and no account-existence disclosure.
+- Added a current-state student route boundary that checks active person and student membership on each protected-page load and denies stale sessions.
+- Added local session cleanup when post-authentication membership is inactive or cannot be verified.
+- Added unit, database, and browser coverage for normalization, invalid credentials, live membership denial, throttling, redirect behavior, and responsive rendering.
+
 ### Employee sign-in and staff route protection — 2026-10-07
 
 - Added verified-email/password sign-in through the public Supabase browser client.
@@ -99,4 +108,4 @@ An approved student or employee can securely activate, sign in to, recover, and 
 - Added the shared Input primitive, approved usage specification, and Storybook states required by the sign-in form.
 - Added unit and browser coverage for credential errors, inactive employees, current capability checks, protected-route redirects, explicit fictional preview, and responsive sign-in rendering.
 
-Employee invitation, recovery, MFA enrolment/challenge, all-device revocation, and student Member ID sign-in remain separate slices.
+Employee invitation, recovery, MFA enrolment/challenge, and all-device revocation remain separate slices.

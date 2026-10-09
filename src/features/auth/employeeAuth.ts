@@ -48,7 +48,7 @@ export async function signInEmployee(email: string, password: string): Promise<S
   return data.session
 }
 
-export async function signOutEmployee() {
+export async function signOutCurrentSession() {
   const client = requireClient()
   const { error } = await client.auth.signOut({ scope: 'local' })
   if (error) throw new Error('Sign-out failed. Please try again.')

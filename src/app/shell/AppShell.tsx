@@ -40,6 +40,12 @@ export function AppShell() {
           </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/student"
+          >
+            Student portal
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/health"
           >
             System status

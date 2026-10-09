@@ -24,7 +24,8 @@ describe('StaffAccessBoundary', () => {
       configured: true,
       initializing: false,
       session: { user: { id: 'employee-auth-id' } } as AuthContextValue['session'],
-      signIn: vi.fn().mockResolvedValue(undefined),
+      signInEmployee: vi.fn().mockResolvedValue(undefined),
+      signInStudent: vi.fn().mockResolvedValue(undefined),
       signOut: vi.fn().mockResolvedValue(undefined),
     }
     mocks.getEmployeeAccess.mockReset()
