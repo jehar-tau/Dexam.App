@@ -5,7 +5,8 @@ export type AuthContextValue = {
   configured: boolean
   initializing: boolean
   session: Session | null
-  signIn: (email: string, password: string) => Promise<void>
+  signInEmployee: (email: string, password: string) => Promise<void>
+  signInStudent: (memberId: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }
 

@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true vite build",
+    "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true vite build",
     "preview": "vite preview",
     "env:check": "node scripts/doctor.mjs",
     "format": "prettier --write .",

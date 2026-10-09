@@ -82,6 +82,11 @@
   line-height: var(--lh-caption);
 }
 
+.support a {
+  color: var(--text-body);
+  font-weight: var(--fw-semibold);
+}
+
 @media (max-width: 48rem) {
   .layout {
     grid-template-columns: 1fr;

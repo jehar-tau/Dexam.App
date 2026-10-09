@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import styles from './StudentActivationPage.module.css'
 import { activateStudent } from '../features/auth/activateStudent'
@@ -151,7 +152,7 @@ export function StudentActivationPage() {
         ) : null}
         {message ? (
           <p className={styles.success} role="status">
-            {message} You can now sign in using your Member ID.
+            {message} You can now <Link to="/sign-in">sign in using your Member ID</Link>.
           </p>
         ) : null}
 

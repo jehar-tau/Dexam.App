@@ -2,7 +2,8 @@ import type { Session } from '@supabase/supabase-js'
 import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 import { AuthContext, type AuthContextValue } from './AuthContext'
-import { signInEmployee, signOutEmployee } from './employeeAuth'
+import { signInEmployee, signOutCurrentSession } from './employeeAuth'
+import { signInStudent } from './studentAuth'
 import { getSupabaseClient } from './supabaseClient'
 
 export function AuthProvider({ children }: PropsWithChildren) {
@@ -40,12 +41,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
       configured: Boolean(client),
       initializing,
       session,
-      signIn: async (email, password) => {
+      signInEmployee: async (email, password) => {
         const nextSession = await signInEmployee(email, password)
         setSession(nextSession)
       },
+      signInStudent: async (memberId, password) => {
+        const nextSession = await signInStudent(memberId, password)
+        setSession(nextSession)
+      },
       signOut: async () => {
-        await signOutEmployee()
+        await signOutCurrentSession()
         setSession(null)
       },
     }),

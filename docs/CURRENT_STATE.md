@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-Enrolment operations implementation — live approved-enrolment queue and activation handoff.
+Student access implementation — Member ID sign-in and first self-service enrolment workspace.
 
 ## Completed
 
@@ -60,12 +60,18 @@ Enrolment operations implementation — live approved-enrolment queue and activa
 - Merged employee sign-in and staff access protection through PR #6 and synced local `main`.
 - D-012 Option B approved: the first live queue uses a constrained operational display name alongside the immutable Member ID and bounded search across those two fields.
 - Implemented the live Enrolment Operator queue with authorization-checked minimal data, oldest-approved-first ordering, search, loading/error/empty states, current-session activation issuance, 109 passing database tests, and the shared Empty State primitive.
+- Merged the live Enrolment Operator queue through PR #7 and synced local `main` before starting the student slice.
+- Added public student Member ID/password sign-in through a trusted Edge Function; the synthetic Supabase email mapping remains server-side.
+- Added privacy-preserving application throttles for repeated Member ID and network sign-in attempts without storing raw Member IDs, IP addresses, or passwords in the throttle table.
+- Added a current-state student access boundary that rechecks active person and student membership before protected content renders and fails closed if access cannot be verified.
+- Added the first student self-service workspace showing the signed-in student's permanent Member ID and only their own enrolments through existing RLS policies.
+- Added explicit fictional preview, responsive interface states, and unit, database, and browser coverage for student sign-in and workspace access; the complete database suite now passes 121 tests.
+- Product owner visually approved the student Member ID sign-in and first self-service workspace on 2026-10-10.
 
 ## Not yet started
 
 - Hosted staging environment
 - Remaining enrolment transitions beyond activation-pack issuance
-- Student Member ID/password sign-in interface
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
@@ -83,8 +89,8 @@ Enrolment operations implementation — live approved-enrolment queue and activa
 
 ## Next safe action
 
-Product-owner visual review of the completed live queue and activation flow using the explicitly enabled fictional local preview.
+Merge the student sign-in and self-service workspace pull request after all required GitHub checks pass.
 
 ## Blockers
 
-- Employee invitation, recovery, MFA, student sign-in, and security-triggered all-device session revocation remain future F001 slices.
+- Employee invitation, student/employee recovery, MFA, and security-triggered all-device session revocation remain future F001 slices.

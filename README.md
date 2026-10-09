@@ -4,7 +4,7 @@ The authenticated learning and operations platform for Dexam (Design Exam Academ
 
 ## Status
 
-Foundation application scaffold. The repository now contains a typed React shell, local Supabase configuration, unit/component and browser test foundations, and GitHub Actions verification. Product features have not started. See [docs/CURRENT_STATE.md](docs/CURRENT_STATE.md) and [docs/SETUP.md](docs/SETUP.md).
+Active product development. The repository includes secure student activation and Member ID sign-in, employee sign-in, a protected Enrolment Operator workflow, the first student self-service workspace, local Supabase, automated tests, and GitHub Actions verification. See [docs/CURRENT_STATE.md](docs/CURRENT_STATE.md) and [docs/SETUP.md](docs/SETUP.md).
 
 ## Working agreement
 
