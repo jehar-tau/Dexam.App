@@ -1,6 +1,6 @@
 # F009 — Academic Content Authoring
 
-Status: Implemented locally — awaiting product-owner visual approval
+Status: Implemented and product-owner approved locally — PR #10 open
 Risk: Red — staff authority, published academic content, and private files
 Owner: Product owner with Codex engineering support
 

@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-Academic content-authoring visual review — F009 is implemented locally under approved D-015/D-016 Option B; PR #9 contains the approved student coursework foundation.
+Academic content-authoring pull-request review — F009 is approved locally and open as stacked PR #10; PR #9 contains its coursework dependency.
 
 ## Completed
 
@@ -87,6 +87,7 @@ Academic content-authoring visual review — F009 is implemented locally under a
 - Added the F009 content-authoring database foundation with offering-scoped draft/publish checks, immutable version lineage, audited publication, assignment-topic links, and private storage policies.
 - Added the protected staff Content workspace for topic and lesson editing, assignment creation/editing, assignment-specific evaluation guides, conservative private uploads, version copying, and deliberate release notes.
 - Verified F009 locally with 196 passing database tests, 57 unit/component tests, 15 Chromium browser journeys, a production build, and desktop/mobile visual inspection without horizontal overflow or console errors.
+- Product owner approved proceeding with the F009 Content workspace on 2026-10-10; committed and opened stacked PR #10 with all GitHub checks passing.
 
 ## Not yet started
 
@@ -111,7 +112,7 @@ Academic content-authoring visual review — F009 is implemented locally under a
 
 ## Next safe action
 
-Collect product-owner visual approval for the local Content workspace, then commit, push, and open the F009 pull request.
+Review and merge PR #9 first, then retarget or merge the green stacked PR #10 into `main`.
 
 ## Blockers
 
