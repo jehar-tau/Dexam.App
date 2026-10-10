@@ -1,0 +1,131 @@
+.workspace {
+  display: grid;
+  gap: var(--space-8);
+}
+.workspace > *,
+.layout > * {
+  min-width: 0;
+}
+.pageHeader {
+  display: flex;
+  gap: var(--space-6);
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+.pageHeader p {
+  max-width: 42rem;
+  color: var(--text-secondary);
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 0.7fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.releaseForm,
+.releaseHistory,
+.field,
+.targetList,
+.state {
+  display: grid;
+}
+.releaseForm,
+.releaseHistory {
+  gap: var(--space-5);
+}
+.field {
+  gap: var(--space-2);
+}
+.field label,
+.releaseForm legend {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+}
+.field select,
+.field textarea {
+  width: 100%;
+  padding: var(--space-3);
+  color: var(--text-body);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+.releaseForm fieldset {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.releaseForm fieldset label {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.targetList {
+  max-height: 18rem;
+  gap: var(--space-2);
+  overflow: auto;
+}
+.targetList label {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.targetList span {
+  display: grid;
+  gap: var(--space-1);
+}
+.targetList small,
+.releaseHistory article p,
+.releaseHistory article small {
+  color: var(--text-secondary);
+}
+.releaseForm > button {
+  justify-self: start;
+}
+.releaseHistory h2,
+.releaseHistory p,
+.releaseHistory small {
+  margin: 0;
+}
+.releaseHistory article {
+  display: grid;
+  gap: var(--space-3);
+}
+.releaseHeading {
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  justify-content: space-between;
+}
+.state {
+  max-width: 38rem;
+  min-height: 28rem;
+  gap: var(--space-5);
+  align-content: center;
+}
+.state button {
+  justify-self: start;
+}
+@media (max-width: 52rem) {
+  .pageHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 34rem) {
+  .releaseForm fieldset {
+    align-items: start;
+    flex-direction: column;
+  }
+}

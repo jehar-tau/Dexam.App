@@ -133,11 +133,16 @@
 }
 
 .courseworkLink {
-  justify-self: start;
   color: var(--text-link);
   font-size: var(--fs-body-sm);
   font-weight: var(--fw-semibold);
   text-decoration: none;
+}
+
+.learningLinks {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 
 .courseworkLink:hover {

@@ -4,12 +4,14 @@ import { AppShell } from './shell/AppShell'
 import { StaffAccessBoundary } from '../features/auth/StaffAccessBoundary'
 import { StudentAccessBoundary } from '../features/auth/StudentAccessBoundary'
 import { FoundationPage } from '../pages/FoundationPage'
+import { AssignmentDistributionPage } from '../pages/AssignmentDistributionPage'
 import { ContentWorkspacePage } from '../pages/ContentWorkspacePage'
 import { EnrolmentOperatorPage } from '../pages/EnrolmentOperatorPage'
 import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
+import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
@@ -38,6 +40,14 @@ export const router = createBrowserRouter([
           </StudentAccessBoundary>
         ),
       },
+      {
+        path: 'student/assignments',
+        element: (
+          <StudentAccessBoundary>
+            <StudentAssignmentsPage />
+          </StudentAccessBoundary>
+        ),
+      },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
       {
         path: 'staff/enrolments',
@@ -52,6 +62,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="content.manage_drafts">
             <ContentWorkspacePage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/assignments',
+        element: (
+          <StaffAccessBoundary capability="assignment.distribute">
+            <AssignmentDistributionPage />
           </StaffAccessBoundary>
         ),
       },

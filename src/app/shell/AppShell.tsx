@@ -62,6 +62,12 @@ export function AppShell() {
           >
             Content
           </NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/staff/assignments"
+          >
+            Distribution
+          </NavLink>
           {session ? (
             <Button
               disabled={signingOut}

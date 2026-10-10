@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-Academic content-authoring pull-request review — F009 is approved locally and open as stacked PR #10; PR #9 contains its coursework dependency.
+F006 assignment distribution and submission is implemented and product-owner approved locally under D-017/D-018 Option B; the feature commit and pull request are being prepared.
 
 ## Completed
 
@@ -88,6 +88,16 @@ Academic content-authoring pull-request review — F009 is approved locally and 
 - Added the protected staff Content workspace for topic and lesson editing, assignment creation/editing, assignment-specific evaluation guides, conservative private uploads, version copying, and deliberate release notes.
 - Verified F009 locally with 196 passing database tests, 57 unit/component tests, 15 Chromium browser journeys, a production build, and desktop/mobile visual inspection without horizontal overflow or console errors.
 - Product owner approved proceeding with the F009 Content workspace on 2026-10-10; committed and opened stacked PR #10 with all GitHub checks passing.
+- Merged the F005 coursework foundation through PR #9 and the dependent F009 Content workspace through PR #10, then synced local `main`.
+- Started F006 on `feature/f006-assignment-submission` and drafted D-017 for assignment distribution/lifecycle plus D-018 for student submission files/retention.
+- D-017 and D-018 Option B approved: deliberate scoped distribution, soft deadlines, teacher-authorized revisions, private bounded student files, browser-side compression, and 12-month post-enrolment retention.
+- Added the F006 database foundation with scoped assignment distribution, cohort/selected-enrolment snapshotting, retry-safe release, separate private student instances, optional soft deadlines, immutable attempts, correction-authorized revisions, and auditable transitions.
+- Added private student-submission storage with a trusted upload function that validates file signatures, 10-file/10-MB/50-MB limits, direct-storage denial, short-lived authorized reads, draft-only removal, and finalized-file immutability.
+- Added browser-side image orientation correction, metadata removal, maximum 3,200-pixel dimensions, conservative compression, before/after size preview, and a higher-quality safeguard; PDFs remain unchanged.
+- Added service-only retention cleanup for 30-day abandoned draft files and finalized files 12 months after enrolment end, without introducing a paid service.
+- Added the protected staff Assignment Distribution workspace and student Assignments workspace with fictional local previews at `/staff/assignments?preview=1` and `/student/assignments?preview=1`.
+- Verified F006 locally with 253 passing database tests, 66 unit/component tests, 20 Chromium browser journeys, a production build, Edge Function compilation, and desktop/mobile visual inspection without horizontal overflow or console errors.
+- Product owner visually approved the F006 staff distribution and student assignment/submission interfaces on 2026-10-10.
 
 ## Not yet started
 
@@ -97,7 +107,6 @@ Academic content-authoring pull-request review — F009 is approved locally and 
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
 - F008 channel, consent, preference, and first-milestone notification decisions
-- F006 upload limits, due dates, resubmission, publication authority, and student-work retention decisions
 - F007 voice-audio retention/accessibility and AI provider/privacy/cost decisions
 
 ## Environment findings
@@ -112,7 +121,7 @@ Academic content-authoring pull-request review — F009 is approved locally and 
 
 ## Next safe action
 
-Review and merge PR #9 first, then retarget or merge the green stacked PR #10 into `main`.
+Commit and push the approved F006 implementation, open the pull request, and confirm its GitHub checks.
 
 ## Blockers
 

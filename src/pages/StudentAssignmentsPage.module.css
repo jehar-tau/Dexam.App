@@ -1,0 +1,305 @@
+.assignments {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.assignments > *,
+.pageHeader > *,
+.layout > *,
+.detail > *,
+.submissionBuilder > * {
+  min-width: 0;
+}
+.backLink {
+  justify-self: start;
+  color: var(--text-link);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+.backLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pageHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-8);
+  align-items: end;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+.pageHeader p {
+  max-width: 38rem;
+  color: var(--text-secondary);
+}
+.pageHeader dl,
+.detailHeader dl {
+  display: flex;
+  gap: var(--space-6);
+  margin: 0;
+}
+.pageHeader dl div,
+.detailHeader dl div {
+  display: grid;
+  gap: var(--space-1);
+}
+.pageHeader dt,
+.detailHeader dt {
+  color: var(--text-secondary);
+  font-size: var(--fs-metadata);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+.pageHeader dd,
+.detailHeader dd {
+  margin: 0;
+  font-weight: var(--fw-semibold);
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.8fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.assignmentList {
+  display: grid;
+  gap: var(--space-2);
+}
+.assignmentButton,
+.selectedAssignment {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  color: var(--text-body);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.assignmentButton:hover {
+  background: var(--surface-muted);
+}
+.selectedAssignment {
+  background: var(--surface-card);
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+}
+.assignmentButton span,
+.selectedAssignment span,
+.assignmentButton small,
+.selectedAssignment small {
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+}
+.detail,
+.detailHeader,
+.submissionBuilder,
+.pendingArea,
+.uploadedFiles,
+.history,
+.state {
+  display: grid;
+}
+.detail {
+  gap: var(--space-6);
+}
+.detailHeader {
+  gap: var(--space-4);
+}
+.detailHeader > div:first-child {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.detailHeader > div:first-child span {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+}
+.detailHeader h2,
+.detailHeader p,
+.startCard h3,
+.startCard p,
+.builderHeader h3,
+.builderHeader p,
+.pendingArea h4,
+.uploadedFiles h4,
+.submitArea p {
+  margin: 0;
+}
+.detailHeader > p,
+.startCard p {
+  color: var(--text-secondary);
+  line-height: var(--lh-body);
+  overflow-wrap: anywhere;
+}
+.startCard {
+  display: grid;
+  gap: var(--space-4);
+}
+.startCard button {
+  justify-self: start;
+}
+.submissionBuilder {
+  gap: var(--space-5);
+}
+.builderHeader,
+.submitArea,
+.uploadedRow {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+}
+.filePicker {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  text-align: center;
+  background: var(--surface-muted);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+.filePicker span {
+  font-weight: var(--fw-semibold);
+}
+.filePicker small,
+.fileRow small,
+.uploadedRow small {
+  color: var(--text-secondary);
+}
+.filePicker input {
+  width: 100%;
+  max-width: 100%;
+  margin: var(--space-2) auto 0;
+}
+.pendingArea,
+.uploadedFiles,
+.history {
+  gap: var(--space-3);
+}
+.pendingArea > button {
+  justify-self: start;
+}
+.fileRow {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+.fileRow img,
+.pdfIcon {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  background: var(--surface-muted);
+  border-radius: var(--radius-sm);
+}
+.pdfIcon {
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+}
+.fileRow > div:not(.fileActions),
+.uploadedRow > div {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.fileRow strong,
+.uploadedRow strong {
+  overflow-wrap: anywhere;
+}
+.fileActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.uploadedRow {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.submitArea {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-default);
+}
+.submitArea p {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+.history article {
+  display: grid;
+  gap: var(--space-3);
+}
+.history article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.history article p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+.busy {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: var(--fw-semibold);
+}
+.state {
+  max-width: 38rem;
+  min-height: 28rem;
+  gap: var(--space-5);
+  align-content: center;
+}
+.state button {
+  justify-self: start;
+}
+@media (max-width: 56rem) {
+  .pageHeader,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .assignmentList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 40rem) {
+  .assignmentList {
+    grid-template-columns: 1fr;
+  }
+  .pageHeader dl,
+  .detailHeader dl {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .fileRow {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
+  .fileRow img,
+  .pdfIcon {
+    width: 3rem;
+    height: 3rem;
+  }
+  .fileActions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .builderHeader,
+  .submitArea,
+  .uploadedRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

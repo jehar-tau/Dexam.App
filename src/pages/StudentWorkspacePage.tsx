@@ -35,9 +35,11 @@ function displayStatus(status: string) {
 }
 
 function EnrollmentCard({
+  assignmentsUrl,
   enrollment,
   courseworkUrl,
 }: {
+  assignmentsUrl: string
   enrollment: StudentEnrollment
   courseworkUrl: string
 }) {
@@ -67,9 +69,14 @@ function EnrollmentCard({
         </div>
       </dl>
       {enrollment.status === 'active' ? (
-        <Link className={styles.courseworkLink} to={courseworkUrl}>
-          Open coursework <span aria-hidden="true">→</span>
-        </Link>
+        <div className={styles.learningLinks}>
+          <Link className={styles.courseworkLink} to={courseworkUrl}>
+            Open coursework <span aria-hidden="true">→</span>
+          </Link>
+          <Link className={styles.courseworkLink} to={assignmentsUrl}>
+            Open assignments <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       ) : null}
     </Card>
   )
@@ -149,6 +156,9 @@ export function StudentWorkspacePage() {
             <div className={styles.enrollmentList}>
               {workspace.enrollments.map((enrollment) => (
                 <EnrollmentCard
+                  assignmentsUrl={
+                    previewEnabled ? '/student/assignments?preview=1' : '/student/assignments'
+                  }
                   courseworkUrl={
                     previewEnabled ? '/student/coursework?preview=1' : '/student/coursework'
                   }
@@ -168,8 +178,8 @@ export function StudentWorkspacePage() {
             asking you to create another account.
           </p>
           <Callout tone="neutral">
-            Your published curriculum is now available from each active enrolment. Assignments come
-            next.
+            Your published curriculum and privately assigned work are available from each active
+            enrolment.
           </Callout>
         </aside>
       </div>
