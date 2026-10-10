@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F007 Teacher Feedback core implementation is verified locally and visually approved on `feature/f007-teacher-feedback`; pull-request handoff is in progress.
+F007 Teacher Feedback core implementation is verified locally, visually approved, and under review in PR #12.
 
 ## Completed
 
@@ -111,6 +111,7 @@ F007 Teacher Feedback core implementation is verified locally and visually appro
 - Added published feedback to the owning student's assignment history with clear AI-assisted-and-teacher-reviewed disclosure and optional private voice playback.
 - Verified F007 locally with 315 database/security assertions, 71 unit/component tests, 23 Chromium browser journeys, both new Edge Functions in the local runtime, production builds, desktop/mobile visual inspection, and zero preview console errors.
 - Product owner visually approved the F007 teacher feedback experience on 2026-10-10.
+- Opened PR #12 for the approved F007 teacher feedback implementation.
 
 ## Not yet started
 
@@ -134,7 +135,7 @@ F007 Teacher Feedback core implementation is verified locally and visually appro
 
 ## Next safe action
 
-Commit the approved F007 implementation, push the feature branch, and open its review pull request.
+Wait for PR #12 checks, then merge only after explicit product-owner direction.
 
 ## Blockers
 
