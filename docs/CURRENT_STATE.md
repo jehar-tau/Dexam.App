@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F007 Teacher Feedback core implementation is verified locally, visually approved, and under review in PR #12.
+F007 Teacher Feedback is merged. F008 Notifications discovery is active on `feature/f008-notification-foundation`, with D-021 awaiting product-owner approval.
 
 ## Completed
 
@@ -112,6 +112,8 @@ F007 Teacher Feedback core implementation is verified locally, visually approved
 - Verified F007 locally with 315 database/security assertions, 71 unit/component tests, 23 Chromium browser journeys, both new Edge Functions in the local runtime, production builds, desktop/mobile visual inspection, and zero preview console errors.
 - Product owner visually approved the F007 teacher feedback experience on 2026-10-10.
 - Opened PR #12 for the approved F007 teacher feedback implementation.
+- Merged F007 through PR #12 and synchronized local `main` at merge commit `c9bccd5`.
+- Started F008 Notifications discovery and drafted D-021 for a free, event-backed, in-app-only first milestone covering essential assignment, submission-review, and feedback alerts.
 
 ## Not yet started
 
@@ -120,7 +122,8 @@ F007 Teacher Feedback core implementation is verified locally, visually approved
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
-- F008 channel, consent, preference, and first-milestone notification decisions
+- D-021 notification foundation and first-milestone decision
+- Later F008 external-channel, consent, preference, quiet-hour, and digest decisions
 - F007 production transcription/AI provider activation remains a separate future decision; the provider-neutral workflow fails closed until then
 
 ## Environment findings
@@ -135,7 +138,7 @@ F007 Teacher Feedback core implementation is verified locally, visually approved
 
 ## Next safe action
 
-Wait for PR #12 checks, then merge only after explicit product-owner direction.
+Collect the product owner's D-021 decision. If Option B is approved, implement the durable event/outbox and in-app notification foundation before adding any external channel.
 
 ## Blockers
 

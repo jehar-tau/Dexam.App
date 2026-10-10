@@ -1,6 +1,6 @@
 # F008 — Notifications and Automation
 
-Status: Planned — discovery and channel decisions required
+Status: Discovery active — D-021 decision required before implementation
 Risk: Yellow; Red for marketing consent, external messaging, or sensitive content
 
 ## Outcome
@@ -85,6 +85,16 @@ Use a transactional outbox or equivalent database-backed queue so a successful p
 - WhatsApp or SMS only after cost, consent, templates, provider, and legal requirements are approved
 - User-configurable digests and more advanced no-code automation rules
 
+## Proposed first usable milestone — pending D-021
+
+The recommended first slice is an event-backed, in-app-only notification centre using the workflows that already exist:
+
+- Students: assignment published, feedback available, and correction requested
+- Teachers: submitted attempt ready for review inside current teaching scope
+- Shared: unread count, inbox, mark read/all read, authenticated destination links, idempotent delivery, and 12-month inbox retention
+
+Assignment, submission, and feedback functions would record their events transactionally. No external provider, class-scheduling alert, CRM follow-up, marketing broadcast, or paid service is included. See D-021 for alternatives and the approval boundary.
+
 ## Acceptance direction
 
 - Creating the same event twice with the same idempotency key does not send duplicates.
@@ -98,7 +108,7 @@ Use a transactional outbox or equivalent database-backed queue so a successful p
 
 ## Decisions required before implementation
 
-- Which notifications belong in the first usable milestone
+- D-021: first usable milestone, event foundation, in-app-only boundary, and retention
 - Transactional versus promotional category definitions
 - First external channel and provider
 - Consent, preference, retention, and quiet-hour rules
