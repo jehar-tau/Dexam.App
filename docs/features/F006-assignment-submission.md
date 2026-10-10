@@ -1,6 +1,6 @@
 # F006 — Assignment Definition and Submission
 
-Status: Draft — follows F005 and requires submission-policy decisions
+Status: Implemented and product-owner approved locally under D-017 and D-018 Option B
 Risk: Red — student work, private uploads, and academic records
 Owner: Product owner with Codex engineering support
 
@@ -17,8 +17,8 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 ## User flow
 
 1. Academic staff define an assignment within an assignment group and link it to one or more F005 topics.
-2. The assignment records student instructions, required evidence, allowed file types, an optional due date, and an assignment-specific evaluation rubric.
-3. The assignment is published to a cohort or explicitly selected students.
+2. The assignment records student instructions, required evidence, and an assignment-specific evaluation rubric.
+3. An authorized academic staff member deliberately distributes a published assignment version to a cohort or explicitly selected active enrolments, with an optional due date.
 4. Each targeted student receives a separate assignment instance; “not given” means no instance exists.
 5. The student uploads one or more files, checks the submission, and submits an immutable attempt.
 6. The teacher reviews that attempt, requests correction or completes the review.
@@ -31,6 +31,7 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 - Cohort or selected-student publication
 - Separate per-student assignment instances and statuses
 - Multi-file submission attempts for photographed drawing work and documents
+- Built-in browser-side image optimization with preview, size comparison, metadata removal, and an original-quality safeguard
 - Private storage paths, upload completion checks, and retry-safe finalization
 - Assignment-specific evaluation rubric/instructions for human and future AI-assisted review
 - Statuses corresponding to the current workflow: assigned, submitted, correction requested, and review completed
@@ -42,7 +43,8 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 - Automatic scoring or ranking
 - Plagiarism detection
 - Payments, public portfolios, or peer-visible submissions
-- Final file-size, file-type, retention, and resubmission limits until approved
+- AI processing of submission files
+- Permanent portfolio storage or public sharing of student work
 
 ## Permissions
 
@@ -50,11 +52,13 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 - Students cannot change a finalized attempt.
 - Teachers can read submissions only through a current explicit assignment to the relevant cohort/student scope.
 - Sales and Enrolment Operators cannot access student work.
-- Assignment definition and publication require a future approved academic-authoring capability.
+- Assignment definition and content publication use the approved F009 authoring capabilities.
+- Student distribution requires the separate `assignment.distribute` capability proposed in D-017.
 
 ## Business rules
 
 - Assignment definition, publication, student instance, submission attempt, and feedback are separate records.
+- Content publication never distributes an assignment automatically.
 - “Not given” in the legacy tracker maps to no student assignment instance, not a submission status.
 - Submitted work is immutable; corrections create a later attempt linked to the prior attempt.
 - Required image counts, such as “at least 5,” are structured requirements when practical, not only title text.
@@ -67,6 +71,7 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 - Empty: no assignments have been published to the student.
 - Assigned: requirements are visible and submission can begin.
 - Uploading/retry: individual file progress and safe retry are visible.
+- Optimizing: image preview and original/final size are visible before the student accepts the upload.
 - Submitted: the attempt is locked and awaiting review.
 - Correction requested: teacher feedback is available and a new attempt may be allowed.
 - Review complete: final teacher-approved feedback is available.
@@ -77,7 +82,7 @@ Dexam currently tracks assignment groups, individual exercises, and each student
 - Student work is private educational data stored under opaque object keys.
 - Original filenames are normalized and are never used as authorization boundaries.
 - The legacy tracker contains student names and comments; it is a reference only and must not be imported directly.
-- Retention and deletion require a later explicit policy.
+- D-018 defines the proposed bounded retention and deletion policy; no deletion automation is authorized until it is approved.
 
 ## Analytics events
 
@@ -92,7 +97,7 @@ No personal-data product analytics are authorized yet. Durable domain events may
 
 ## Relevant sources and ADRs
 
-Current decision state: D-013, D-015, and D-016 Option B are approved. The private file rules in D-016 cover staff-provided assignment material only; student submission files require a later policy.
+Current decision state: D-013, D-015, D-016, D-017, and D-018 Option B are approved. The private file rules in D-016 cover staff-provided assignment material; D-018 separately governs student submission files.
 
 - D-003 role and permission principles
 - D-004 identity deduplication and revocation
@@ -100,6 +105,8 @@ Current decision state: D-013, D-015, and D-016 Option B are approved. The priva
 - D-013 coursework hierarchy and versioning (Option B approved 2026-10-10)
 - D-015 academic content authoring authority (Option B approved 2026-10-10)
 - D-016 staff-provided assignment material policy (Option B approved 2026-10-10)
+- D-017 assignment distribution and lifecycle (Option B approved 2026-10-10)
+- D-018 student submission file and retention policy (Option B approved 2026-10-10)
 - [Student Assignment Tracker](https://docs.google.com/spreadsheets/d/17WnwLZjqAyoeANuQIHysIp0ZYNpDbSsF9vB-JDQDLxk/edit)
 
 ## Acceptance criteria
@@ -107,6 +114,7 @@ Current decision state: D-013, D-015, and D-016 Option B are approved. The priva
 - Assignment definitions can link to one or more real curriculum topics without duplicating lesson content.
 - Publishing creates separate private student assignment instances.
 - A student can upload multiple files and finalize only their own attempt.
+- Eligible images are compressed locally before upload without upscaling; students can inspect the result and preserve the original when fine detail is affected.
 - Cross-student, Sales, unassigned-teacher, suspended-person, and ended-enrolment access is denied.
 - Finalized attempts cannot be overwritten.
 - Correction and resubmission preserve every attempt and its attributable state transition.
@@ -116,13 +124,10 @@ Current decision state: D-013, D-015, and D-016 Option B are approved. The priva
 
 - Database tests for topic links, publication targeting, statuses, attempt immutability, and resubmission history
 - Storage tests for ownership, object verification, short-lived reads, file restrictions, and revocation
-- Unit tests for requirement mapping, state presentation, and retry-safe upload finalization
-- Browser tests for multi-file upload, submission, correction, resubmission, and mobile behavior
+- Unit tests for requirement mapping, state presentation, image-orientation and compression decisions, and retry-safe upload finalization
+- Browser tests for image preview/compression, multi-file upload, submission, correction, resubmission, and mobile behavior
 
-## Open decisions
+## Approved implementation boundaries
 
-- Allowed file types, number of files, and size limits
-- Default due-date and late-submission behavior
-- Who may publish or withdraw assignments
-- Resubmission limits and whether review completion can be reopened
-- Retention and deletion policy for student work
+- D-017: deliberate distribution authority, optional soft deadlines, reasoned withdrawal, teacher-authorized revisions, and controlled reopening of a completed review
+- D-018: PDF/JPEG/PNG/WebP submissions, browser-side compression, 10-file/10-MB/50-MB limits, private file handling, and bounded retention/deletion

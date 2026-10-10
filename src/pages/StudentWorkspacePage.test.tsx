@@ -39,6 +39,10 @@ describe('StudentWorkspacePage', () => {
       'href',
       '/student/coursework',
     )
+    expect(screen.getByRole('link', { name: /Open assignments/ })).toHaveAttribute(
+      'href',
+      '/student/assignments',
+    )
   })
 
   it('shows a helpful empty state before the first enrolment', async () => {
@@ -61,6 +65,10 @@ describe('StudentWorkspacePage', () => {
     expect(screen.getByRole('link', { name: /Open coursework/ })).toHaveAttribute(
       'href',
       '/student/coursework?preview=1',
+    )
+    expect(screen.getByRole('link', { name: /Open assignments/ })).toHaveAttribute(
+      'href',
+      '/student/assignments?preview=1',
     )
     expect(mocks.getStudentWorkspace).not.toHaveBeenCalled()
   })

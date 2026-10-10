@@ -49,6 +49,13 @@ test('direct coursework route preserves a safe student return path', async ({ pa
   await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
 })
 
+test('direct assignments route preserves a safe student return path', async ({ page }) => {
+  await page.goto('/student/assignments')
+
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fstudent%2Fassignments$/)
+  await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
+})
+
 test('student workspace shows a fictional self-service preview', async ({ page }) => {
   await page.goto('/student?preview=1')
 
@@ -84,6 +91,36 @@ test('student coursework remains usable at a mobile width', async ({ page }) => 
   await page.goto('/student/coursework?preview=1')
 
   await expect(page.getByRole('heading', { name: 'Your coursework.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('student prepares and submits a fictional private assignment', async ({ page }) => {
+  await page.goto('/student/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Your assignments.' })).toBeVisible()
+  await page.getByRole('button', { name: 'Start submission' }).click()
+  await page.getByLabel('Add PDF or images').setInputFiles({
+    name: 'perspective-study.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from('%PDF-1.4\n% fictional assignment\n'),
+  })
+  await expect(page.getByRole('heading', { name: 'Review before upload' })).toBeVisible()
+  await page.getByRole('button', { name: 'Upload reviewed files' }).click()
+  await expect(page.getByRole('heading', { name: 'Uploaded privately' })).toBeVisible()
+  await page.getByRole('button', { name: 'Submit assignment' }).click()
+  await expect(page.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
+  await expect(page.getByText(/Submitted/).first()).toBeVisible()
+})
+
+test('student assignments remain usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/student/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Your assignments.' })).toBeVisible()
   const widths = await page.locator('body').evaluate((body) => {
     const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
     return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
@@ -151,6 +188,27 @@ test('content workspace remains usable at a mobile width', async ({ page }) => {
   await page.goto('/staff/content?preview=1')
 
   await expect(page.getByRole('heading', { name: 'Content workspace' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('academic staff deliberately releases a fictional assignment', async ({ page }) => {
+  await page.goto('/staff/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assignment distribution.' })).toBeVisible()
+  await page.getByLabel('Release note').fill('Weekly perspective practice')
+  await page.getByRole('button', { name: 'Release assignment' }).click()
+  await expect(page.getByText('Assignment released to the cohort.')).toBeVisible()
+})
+
+test('assignment distribution remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assignment distribution.' })).toBeVisible()
   const widths = await page.locator('body').evaluate((body) => {
     const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
     return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
