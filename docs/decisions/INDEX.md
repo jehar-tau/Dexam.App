@@ -23,5 +23,6 @@
 | D-019 | Playable voice feedback, speech-to-text, rubric authority, and retention                      | Option B approved 2026-10-10            | `ADR-019-teacher-voice-feedback-and-rubric-policy.md`     |
 | D-020 | Transcription/AI provider, proofreading, privacy, disclosure, and cost activation             | Option B approved 2026-10-10            | `ADR-020-ai-feedback-provider-privacy-and-cost-gate.md`   |
 | D-021 | Notification foundation, first milestone, channels, and retention                             | Option B approved 2026-10-10            | `ADR-021-notification-foundation-and-first-milestone.md`  |
+| D-022 | CRM prospect identity, ownership, follow-ups, and first milestone                             | Proposed — decision required            | `ADR-022-crm-prospect-identity-and-first-milestone.md`    |
 
 IDs are stable. Do not reuse retired decision IDs.

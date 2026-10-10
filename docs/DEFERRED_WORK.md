@@ -9,6 +9,7 @@ This is the canonical register for functionality Dexam has discussed but is not 
 ## Status vocabulary
 
 - **Next slice** — known missing work that may be proposed after the current slice.
+- **Discovery active** — specification and Decision Gate are being prepared; implementation is not yet approved.
 - **Deferred, foundation ready** — the current architecture deliberately supports it, but a later decision or activation is required.
 - **Waiting for source feature** — cannot be reliable until another domain becomes the source of truth.
 - **Roadmap phase** — intentionally outside the first product milestone.
@@ -74,14 +75,14 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Later product phases
 
-| ID     | Status        | Deferred functionality                                                               | Resume trigger and prerequisites                                                                                                                                                  | Authority               |
-| ------ | ------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| DW-032 | Roadmap phase | CRM: leads, ownership, follow-ups, conversion                                        | Create a feature specification and decisions for lead identity, guardian/contact data, permissions, consent, retention, and conversion into the canonical person/enrolment model. | ROADMAP phase 7         |
-| DW-033 | Roadmap phase | Commerce, Razorpay, verified orders, entitlements, refunds, scholarships, and expiry | Decide products, tax/accounting responsibility, webhook trust, refunds, access entitlement rules, support, security, and cost before provider integration.                        | ROADMAP phase 8, D-005  |
-| DW-034 | Roadmap phase | Assessments, question bank, autosave, scoring, and results                           | Specify exam types, response models, scoring authority, attempts, timing, integrity, accessibility, result visibility, and retention.                                             | ROADMAP phase 9         |
-| DW-035 | Roadmap phase | Ebooks, larger private assets, and video delivery                                    | Validate learning need and usage; then decide storage/CDN/video provider, rights, accessibility, bandwidth, retention, and scale cost.                                            | ROADMAP phase 10, D-002 |
-| DW-036 | Roadmap phase | Student-facing AI, authorization-aware API, and MCP surfaces                         | Build only after internal domain services and authorization are mature; define data exposure, action authority, confirmation, audit, rate limits, and model/provider cost.        | ROADMAP phase 13        |
-| DW-037 | Roadmap phase | Aptitude assessment/product and approved lead integration                            | Specify the product independently, then define if and how consented results create or enrich CRM leads.                                                                           | ROADMAP phase 14        |
+| ID     | Status           | Deferred functionality                                                               | Resume trigger and prerequisites                                                                                                                                           | Authority                    |
+| ------ | ---------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| DW-032 | Discovery active | CRM: leads, ownership, follow-ups, conversion                                        | F010 and D-022 now define the first proposed slice. Implementation waits for product-owner approval; retention and website intake remain later decisions.                  | ROADMAP phase 7, F010, D-022 |
+| DW-033 | Roadmap phase    | Commerce, Razorpay, verified orders, entitlements, refunds, scholarships, and expiry | Decide products, tax/accounting responsibility, webhook trust, refunds, access entitlement rules, support, security, and cost before provider integration.                 | ROADMAP phase 8, D-005       |
+| DW-034 | Roadmap phase    | Assessments, question bank, autosave, scoring, and results                           | Specify exam types, response models, scoring authority, attempts, timing, integrity, accessibility, result visibility, and retention.                                      | ROADMAP phase 9              |
+| DW-035 | Roadmap phase    | Ebooks, larger private assets, and video delivery                                    | Validate learning need and usage; then decide storage/CDN/video provider, rights, accessibility, bandwidth, retention, and scale cost.                                     | ROADMAP phase 10, D-002      |
+| DW-036 | Roadmap phase    | Student-facing AI, authorization-aware API, and MCP surfaces                         | Build only after internal domain services and authorization are mature; define data exposure, action authority, confirmation, audit, rate limits, and model/provider cost. | ROADMAP phase 13             |
+| DW-037 | Roadmap phase    | Aptitude assessment/product and approved lead integration                            | Specify the product independently, then define if and how consented results create or enrich CRM leads.                                                                    | ROADMAP phase 14             |
 
 ## Research horizon — lifelong Dexam
 

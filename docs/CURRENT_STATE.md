@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F007 Teacher Feedback is merged. F008 Notifications Option B is implemented, verified, committed, and pushed on `feature/f008-notification-foundation`; the GitHub pull request is ready to be opened.
+F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups discovery is active on `feature/f010-crm-foundation`; D-022 requires product-owner approval before implementation.
 
 ## Completed
 
@@ -121,6 +121,9 @@ F007 Teacher Feedback is merged. F008 Notifications Option B is implemented, ver
 - Added responsive student and teacher notification centres with exact navigation unread counts, all/unread filters, mark-one/mark-all read actions, protected deep links, and preview flows.
 - Verified F008 locally with 361 database/security assertions, 79 unit/component tests, 26 Chromium browser journeys, production builds, Edge Function compilation/unauthorized-call rejection, and desktop/mobile visual inspection without horizontal overflow.
 - Committed the approved F008 decision and implementation as `c99fd7a` and `ffa4b07`, then pushed `feature/f008-notification-foundation` to GitHub for pull-request review.
+- Merged F008 through PR #13 at `a58bf0a` and synchronized local `main`.
+- Started F010 CRM Leads and Follow-ups discovery so internal marketing/admissions notifications can rely on real lead ownership and follow-up records.
+- Drafted D-022 with a recommended identity-aware, free-first CRM foundation that preserves the separation between Sales work and student enrolment/access authority.
 
 ## Not yet started
 
@@ -146,7 +149,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Open the prepared F008 pull request from `feature/f008-notification-foundation` into `main`, wait for GitHub checks, review, and merge after approval. Do not add an external channel without a later decision.
+Review D-022 and obtain the product owner's Option A, B, or C decision before creating CRM personal-data schema or interfaces. Option B is recommended.
 
 ## Blockers
 

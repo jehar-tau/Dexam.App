@@ -7,7 +7,8 @@
 - F005 Coursework — implemented and merged through PR #9 under D-013 Option B
 - F006 Assignment definition and submission — implemented and merged through PR #11 under D-017/D-018 Option B
 - F007 Teacher feedback — implemented and merged through PR #12 under D-014/D-019/D-020 Option B
-- F008 Notifications and automation — D-021 Option B implemented locally; product-owner visual approval pending
+- F008 Notifications and automation — D-021 Option B implemented and merged through PR #13
 - F009 Academic content authoring — implemented and merged through PR #10 under D-015/D-016 Option B
+- F010 CRM leads and follow-ups — discovery active; D-022 decision required
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

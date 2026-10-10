@@ -2,6 +2,8 @@
 
 Each phase is refined through feature specifications and Decision Gates before implementation.
 
+Current position: the first product milestone through essential in-app notifications is merged. Phase 7 CRM discovery is active under F010 and D-022; no CRM personal-data implementation is approved yet.
+
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.
 3. Identity: login, Student/Teacher/Sales/Admin roles, tested RLS.
