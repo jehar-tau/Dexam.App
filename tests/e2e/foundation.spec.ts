@@ -42,6 +42,13 @@ test('protected student route redirects to student sign in', async ({ page }) =>
   await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
 })
 
+test('direct coursework route preserves a safe student return path', async ({ page }) => {
+  await page.goto('/student/coursework')
+
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Fstudent%2Fcoursework$/)
+  await expect(page.getByRole('heading', { name: 'Continue your learning.' })).toBeVisible()
+})
+
 test('student workspace shows a fictional self-service preview', async ({ page }) => {
   await page.goto('/student?preview=1')
 
@@ -55,6 +62,28 @@ test('student workspace remains usable at a mobile width', async ({ page }) => {
   await page.goto('/student?preview=1')
 
   await expect(page.getByRole('heading', { name: 'Welcome, Aarohi.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('student browses the fictional published curriculum preview', async ({ page }) => {
+  await page.goto('/student/coursework?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Your coursework.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Lines, ovals & circles' })).toBeVisible()
+  await page.getByRole('button', { name: /Perspective/ }).click()
+  await expect(page.getByRole('heading', { name: 'Perspective', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'One-point perspective' })).toBeVisible()
+})
+
+test('student coursework remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/student/coursework?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Your coursework.' })).toBeVisible()
   const widths = await page.locator('body').evaluate((body) => {
     const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
     return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }

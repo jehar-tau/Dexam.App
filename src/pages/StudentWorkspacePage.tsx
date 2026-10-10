@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import { Badge, Button, Callout, Card, EmptyState } from '../components'
 import {
@@ -34,7 +34,13 @@ function displayStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1).replaceAll('_', ' ')
 }
 
-function EnrollmentCard({ enrollment }: { enrollment: StudentEnrollment }) {
+function EnrollmentCard({
+  enrollment,
+  courseworkUrl,
+}: {
+  enrollment: StudentEnrollment
+  courseworkUrl: string
+}) {
   return (
     <Card className={styles.enrollmentCard}>
       <div className={styles.enrollmentHeading}>
@@ -60,6 +66,11 @@ function EnrollmentCard({ enrollment }: { enrollment: StudentEnrollment }) {
           </dd>
         </div>
       </dl>
+      {enrollment.status === 'active' ? (
+        <Link className={styles.courseworkLink} to={courseworkUrl}>
+          Open coursework <span aria-hidden="true">→</span>
+        </Link>
+      ) : null}
     </Card>
   )
 }
@@ -137,7 +148,13 @@ export function StudentWorkspacePage() {
           ) : (
             <div className={styles.enrollmentList}>
               {workspace.enrollments.map((enrollment) => (
-                <EnrollmentCard enrollment={enrollment} key={enrollment.enrollmentId} />
+                <EnrollmentCard
+                  courseworkUrl={
+                    previewEnabled ? '/student/coursework?preview=1' : '/student/coursework'
+                  }
+                  enrollment={enrollment}
+                  key={enrollment.enrollmentId}
+                />
               ))}
             </div>
           )}
@@ -151,7 +168,8 @@ export function StudentWorkspacePage() {
             asking you to create another account.
           </p>
           <Callout tone="neutral">
-            This first release shows only your identity and current enrolments.
+            Your published curriculum is now available from each active enrolment. Assignments come
+            next.
           </Callout>
         </aside>
       </div>

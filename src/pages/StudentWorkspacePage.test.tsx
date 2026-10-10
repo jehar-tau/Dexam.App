@@ -35,6 +35,10 @@ describe('StudentWorkspacePage', () => {
     expect(screen.getByText('DXM-2K3M9Q2RW5TY')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Design Entrance Foundation' })).toBeVisible()
     expect(screen.getByText('Studio Batch')).toBeVisible()
+    expect(screen.getByRole('link', { name: /Open coursework/ })).toHaveAttribute(
+      'href',
+      '/student/coursework',
+    )
   })
 
   it('shows a helpful empty state before the first enrolment', async () => {
@@ -54,6 +58,10 @@ describe('StudentWorkspacePage', () => {
 
     expect(await screen.findByRole('heading', { name: 'Welcome, Aarohi.' })).toBeVisible()
     expect(screen.getByText(/Student workspace · Local preview/)).toBeVisible()
+    expect(screen.getByRole('link', { name: /Open coursework/ })).toHaveAttribute(
+      'href',
+      '/student/coursework?preview=1',
+    )
     expect(mocks.getStudentWorkspace).not.toHaveBeenCalled()
   })
 })

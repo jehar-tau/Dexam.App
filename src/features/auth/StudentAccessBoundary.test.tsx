@@ -21,7 +21,7 @@ function renderBoundary(path = '/student') {
   return renderApp(
     <Routes>
       <Route
-        path="/student"
+        path="/student/*"
         element={
           <StudentAccessBoundary>
             <h1>Protected student workspace</h1>

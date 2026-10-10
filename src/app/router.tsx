@@ -9,6 +9,7 @@ import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
+import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 
@@ -25,6 +26,14 @@ export const router = createBrowserRouter([
         element: (
           <StudentAccessBoundary>
             <StudentWorkspacePage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'student/coursework',
+        element: (
+          <StudentAccessBoundary>
+            <StudentCourseworkPage />
           </StudentAccessBoundary>
         ),
       },

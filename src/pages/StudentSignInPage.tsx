@@ -6,7 +6,12 @@ import { useAuth } from '../features/auth/AuthContext'
 import styles from './SignInPage.module.css'
 
 function safeReturnTo(value: string | null) {
-  if (!value || (value !== '/student' && !value.startsWith('/student?'))) return '/student'
+  if (
+    !value ||
+    (value !== '/student' && !value.startsWith('/student?') && !value.startsWith('/student/'))
+  ) {
+    return '/student'
+  }
   return value
 }
 

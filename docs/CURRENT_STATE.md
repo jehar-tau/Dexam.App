@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-Student access implementation — Member ID sign-in and first self-service enrolment workspace.
+Coursework pull-request preparation — the versioned Drawing/Aptitude student experience is product-owner approved locally.
 
 ## Completed
 
@@ -67,6 +67,19 @@ Student access implementation — Member ID sign-in and first self-service enrol
 - Added the first student self-service workspace showing the signed-in student's permanent Member ID and only their own enrolments through existing RLS policies.
 - Added explicit fictional preview, responsive interface states, and unit, database, and browser coverage for student sign-in and workspace access; the complete database suite now passes 121 tests.
 - Product owner visually approved the student Member ID sign-in and first self-service workspace on 2026-10-10.
+- Merged the approved student Member ID sign-in and self-service workspace through PR #8 and synced local `main`.
+- Drafted F005 Coursework and D-013 for the curriculum hierarchy and versioning boundary required before modules, lessons, assignments, or progress.
+- Reviewed the owner-provided Class Scheduling/Topics and Student Assignment Tracker Google Sheets as read-only product sources.
+- Refined D-013 around the real Drawing and Aptitude topic streams, keeping assignment groups separate and allowing assignments to link to multiple topics.
+- Drafted F006 Assignment Definition and Submission from the real assignment groups and workflow states without importing legacy student-name columns.
+- Drafted F007 Teacher Feedback and D-014 for private teacher voice notes, assignment-specific versioned rubrics, manually triggered bulk AI drafts, and mandatory human approval before student release.
+- D-013 Option B approved: versioned curricula contain ordered subject areas, topics, and optional lessons, while assignment groups remain separate.
+- D-014 Option B approved: AI may prepare assignment-specific drafts after a bounded manual trigger, but a current authorized teacher must approve every student-visible result.
+- Added the D-013 curriculum foundation with immutable published versions, ordered sections/topics/optional lessons, cohort or cohort-free enrolment pinning, and same-offering constraints.
+- Added current-state student curriculum RLS; draft, retired, unassigned, cross-offering, suspended, employee, and ended-enrolment reads fail closed.
+- Added the protected student coursework browser with Drawing/Aptitude preview content, topic selection, safe plain-text lesson rendering, and workspace navigation.
+- Verified the complete local foundation with 149 database tests, 52 unit/component tests, 13 Chromium browser journeys, a production build, and desktop/mobile visual inspection without horizontal overflow or console errors.
+- Product owner approved the first student coursework interface on 2026-10-10 and confirmed that authorized curriculum/material and assignment editing should be built next.
 
 ## Not yet started
 
@@ -76,6 +89,8 @@ Student access implementation — Member ID sign-in and first self-service enrol
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
 - F008 channel, consent, preference, and first-milestone notification decisions
+- F006 upload limits, due dates, resubmission, publication authority, and student-work retention decisions
+- F007 voice-audio retention/accessibility and AI provider/privacy/cost decisions
 
 ## Environment findings
 
@@ -89,7 +104,7 @@ Student access implementation — Member ID sign-in and first self-service enrol
 
 ## Next safe action
 
-Merge the student sign-in and self-service workspace pull request after all required GitHub checks pass.
+Commit and open the F005 pull request, then define the staff curriculum/material editor and F006 assignment-management decisions.
 
 ## Blockers
 
