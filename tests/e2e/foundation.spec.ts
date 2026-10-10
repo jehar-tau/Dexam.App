@@ -128,6 +128,34 @@ test('student assignments remain usable at a mobile width', async ({ page }) => 
   expect(widths.scroll).toBeLessThanOrEqual(widths.client)
 })
 
+test('student reads an update and opens its protected assignment destination', async ({ page }) => {
+  await page.goto('/student/notifications?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Notifications.' })).toBeVisible()
+  await expect(page.getByLabel('2 unread notifications')).toBeVisible()
+  await page
+    .getByRole('heading', { name: 'Teacher feedback available' })
+    .locator('..')
+    .getByRole('link', { name: /Open update/ })
+    .click()
+
+  await expect(page).toHaveURL(/assignment=preview-assignment-lines/)
+  await expect(page.getByRole('heading', { name: 'Line confidence practice' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
+})
+
+test('student notification centre remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/student/notifications?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Notifications.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
 test('protected staff route redirects to employee sign-in', async ({ page }) => {
   await page.goto('/staff/enrolments')
 
@@ -255,6 +283,19 @@ test('teacher feedback review remains usable at a mobile width', async ({ page }
     return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
   })
   expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('teacher opens the submitted work selected by a notification', async ({ page }) => {
+  await page.goto('/staff/notifications?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Notifications.' })).toBeVisible()
+  await page
+    .getByRole('link', { name: /Open update/ })
+    .nth(1)
+    .click()
+  await expect(page).toHaveURL(/instance=preview-instance-two/)
+  await expect(page.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Preview perspective-room.jpg' })).toBeVisible()
 })
 
 test('student sees published teacher-reviewed feedback in assignment history', async ({ page }) => {

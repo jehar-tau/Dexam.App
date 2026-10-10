@@ -44,4 +44,14 @@ describe('StudentAssignmentsPage', () => {
       screen.getByText(/AI-assisted writing, reviewed and published by your teacher/),
     ).toBeVisible()
   })
+
+  it('opens the assignment selected by a notification deep link', async () => {
+    renderApp(<StudentAssignmentsPage />, [
+      '/student/assignments?preview=1&assignment=preview-assignment-lines',
+    ])
+
+    expect(await screen.findByRole('heading', { name: 'Your assignments.' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Line confidence practice' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
+  })
 })

@@ -1,6 +1,6 @@
 # ADR-021 — Notification Foundation and First Milestone
 
-Status: Decision required
+Status: Option B approved 2026-10-10
 Date: 2026-10-10
 Decision ID: D-021
 Risk: Yellow — student/staff attention, private educational context, automation, and future messaging cost; Red if external promotional delivery is added
@@ -70,8 +70,6 @@ Approve Option B. It provides immediate value for the academic workflows Dexam a
 
 Option B would authorize the database event/outbox, in-app notification records, 12-month inbox retention, current-state RLS, idempotent local worker, version-controlled safe templates/rules, notification-centre UI for students and teachers, and integration with assignment release, submission finalization, and feedback publication. It would not authorize external delivery, promotional messages, contact-channel collection, paid services, class-schedule alerts, CRM follow-ups, broadcasts, or production deployment.
 
-## What can continue while pending
+## Approval
 
-Documentation, event naming, threat modelling, and test planning can continue. User-visible notification behavior, retention enforcement, recipient selection, and event emission must wait for approval.
-
-Please choose Option A, B, or C, or give another direction.
+The product owner approved Option B on 2026-10-10 and explicitly confirmed that Option C may be implemented later. Dexam may now build the durable event/outbox, safe version-controlled templates and recipient rules, current-state authorization, 12-month in-app retention, and student/teacher notification centre defined above. External channels and promotional automation remain possible future adapters, but require separate approval before provider selection, consent collection, data transmission, or spending. The restart points and prerequisites are preserved as DW-019 through DW-025 in `../DEFERRED_WORK.md`.

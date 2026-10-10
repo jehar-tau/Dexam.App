@@ -8,6 +8,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 2. Use `docs/INDEX.md` to locate authoritative context.
 3. Read only the feature specification and directly relevant documents. Do not bulk-read `docs/` or any future knowledge repository.
 4. Follow `docs/DECISION_POLICY.md`. Never silently invent product, business, permission, privacy, payment, scoring, AI-authority, or costly architecture decisions.
+5. When planning a new slice or deferring requested scope, consult and update `docs/DEFERRED_WORK.md`; it is the canonical register for work intentionally left out.
 
 ## Engineering rules
 
@@ -22,6 +23,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 - Add tests with implementation. Verify lint, types, unit/integration tests, build, and relevant browser journeys before declaring completion.
 - Treat `docs/DESIGN_SYSTEM.md` and the pinned `dexam-portfolio-design-system` source as the strict UI authority. Use existing design tokens and components before creating new patterns; every reusable pattern needs an approved spec and Storybook story.
 - Update `docs/CURRENT_STATE.md` when repository state materially changes.
+- Add newly deferred functionality to `docs/DEFERRED_WORK.md` with its prerequisites and approval gate; move it to the completion log when implemented or explicitly rejected.
 - Do not modify production or incur paid services without explicit approval.
 
 ## Collaboration contract

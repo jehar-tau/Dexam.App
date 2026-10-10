@@ -22,6 +22,6 @@
 | D-018 | Student submission file limits and retention                                                  | Option B approved 2026-10-10            | `ADR-018-student-submission-file-and-retention-policy.md` |
 | D-019 | Playable voice feedback, speech-to-text, rubric authority, and retention                      | Option B approved 2026-10-10            | `ADR-019-teacher-voice-feedback-and-rubric-policy.md`     |
 | D-020 | Transcription/AI provider, proofreading, privacy, disclosure, and cost activation             | Option B approved 2026-10-10            | `ADR-020-ai-feedback-provider-privacy-and-cost-gate.md`   |
-| D-021 | Notification foundation, first milestone, channels, and retention                             | Decision required                       | `ADR-021-notification-foundation-and-first-milestone.md`  |
+| D-021 | Notification foundation, first milestone, channels, and retention                             | Option B approved 2026-10-10            | `ADR-021-notification-foundation-and-first-milestone.md`  |
 
 IDs are stable. Do not reuse retired decision IDs.

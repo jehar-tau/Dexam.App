@@ -114,7 +114,9 @@ export function StudentAssignmentsPage() {
     retry: false,
   })
   const [localAssignments, setLocalAssignments] = useState(previewAssignments)
-  const [selectedId, setSelectedId] = useState('preview-assignment-perspective')
+  const [selectedId, setSelectedId] = useState(
+    searchParams.get('assignment') ?? 'preview-assignment-perspective',
+  )
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([])
   const [busyMessage, setBusyMessage] = useState('')
   const [error, setError] = useState('')

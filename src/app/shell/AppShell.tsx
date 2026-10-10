@@ -1,14 +1,47 @@
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { Button } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
+import {
+  getPreviewNotifications,
+  getUnreadNotificationCount,
+  type NotificationAudience,
+} from '../../features/notifications/notifications'
 import styles from './AppShell.module.css'
 
 export function AppShell() {
   const { session, signOut } = useAuth()
+  const location = useLocation()
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
+  const notificationAudience: NotificationAudience | null = location.pathname.startsWith('/student')
+    ? 'student'
+    : location.pathname.startsWith('/staff')
+      ? 'teacher'
+      : null
+  const previewEnabled =
+    new URLSearchParams(location.search).get('preview') === '1' &&
+    (notificationAudience === 'student'
+      ? import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true'
+      : notificationAudience === 'teacher'
+        ? import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true'
+        : false)
+  const unreadCountQuery = useQuery({
+    queryKey: ['notification-unread-count', notificationAudience, previewEnabled],
+    queryFn: () =>
+      previewEnabled
+        ? Promise.resolve(
+            getPreviewNotifications(notificationAudience!).filter(
+              (notification) => !notification.readAt,
+            ).length,
+          )
+        : getUnreadNotificationCount(),
+    enabled: Boolean(notificationAudience) && (Boolean(session) || previewEnabled),
+    retry: false,
+  })
+  const unreadCount = unreadCountQuery.data ?? 0
 
   async function handleSignOut() {
     setSignOutError('')
@@ -74,6 +107,19 @@ export function AppShell() {
           >
             Reviews
           </NavLink>
+          {notificationAudience ? (
+            <NavLink
+              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+              to={`${notificationAudience === 'student' ? '/student' : '/staff'}/notifications${previewEnabled ? '?preview=1' : ''}`}
+            >
+              Notifications
+              {unreadCount > 0 ? (
+                <span className={styles.notificationCount} aria-label={`${unreadCount} unread`}>
+                  {unreadCount}
+                </span>
+              ) : null}
+            </NavLink>
+          ) : null}
           {session ? (
             <Button
               disabled={signingOut}
