@@ -92,10 +92,14 @@ No personal-data product analytics are authorized yet. Durable domain events may
 
 ## Relevant sources and ADRs
 
+Current decision state: D-013, D-015, and D-016 Option B are approved. The private file rules in D-016 cover staff-provided assignment material only; student submission files require a later policy.
+
 - D-003 role and permission principles
 - D-004 identity deduplication and revocation
 - D-008 staff authority boundaries
-- D-013 coursework hierarchy and versioning (pending)
+- D-013 coursework hierarchy and versioning (Option B approved 2026-10-10)
+- D-015 academic content authoring authority (Option B approved 2026-10-10)
+- D-016 staff-provided assignment material policy (Option B approved 2026-10-10)
 - [Student Assignment Tracker](https://docs.google.com/spreadsheets/d/17WnwLZjqAyoeANuQIHysIp0ZYNpDbSsF9vB-JDQDLxk/edit)
 
 ## Acceptance criteria

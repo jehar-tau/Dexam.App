@@ -54,7 +54,13 @@ export function AppShell() {
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/staff/enrolments"
           >
-            Staff workspace
+            Enrolments
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/staff/content"
+          >
+            Content
           </NavLink>
           {session ? (
             <Button

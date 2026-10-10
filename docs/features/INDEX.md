@@ -8,5 +8,6 @@
 - F006 Assignment definition and submission — draft informed by the current assignment tracker
 - F007 Teacher feedback — approved direction for voice and human-approved AI assistance under D-014
 - F008 Notifications and automation — planned; shared foundation for marketing operations and students
+- F009 Academic content authoring — implemented and product-owner approved locally under D-015/D-016 Option B; PR #10 open
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

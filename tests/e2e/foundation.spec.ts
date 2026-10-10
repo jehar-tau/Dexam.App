@@ -129,3 +129,31 @@ test('Enrolment Operator reviews and issues a fictional activation pack', async 
   ).toBeVisible()
   await expect(page.getByText('7K3M9Q2RW5')).toBeVisible()
 })
+
+test('content editor changes material and reviews assignment controls in preview', async ({
+  page,
+}) => {
+  await page.goto('/staff/content?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Content workspace' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Perspective', exact: true })).toBeVisible()
+  await page.getByLabel('Topic title').fill('Perspective drawing')
+  await page.getByRole('button', { name: 'Save topic changes' }).click()
+  await expect(page.getByText('Topic material saved to this draft.')).toBeVisible()
+
+  await page.getByRole('tab', { name: /Assignments/ }).click()
+  await expect(page.getByLabel('Student instructions')).toBeVisible()
+  await expect(page.getByText(/maximum 5 files/)).toBeVisible()
+})
+
+test('content workspace remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/content?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Content workspace' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})

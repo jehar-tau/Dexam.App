@@ -91,7 +91,8 @@ values
 update public.curriculum_versions
 set status = 'published',
     published_by_person_id = 'c1000000-0000-4000-8000-000000000004',
-    published_at = now()
+    published_at = now(),
+    release_note = 'Initial test curriculum release'
 where id in (
   'c4000000-0000-4000-8000-000000000001',
   'c4000000-0000-4000-8000-000000000002'
@@ -196,9 +197,12 @@ select is(
   0,
   'student cannot read another offering curriculum'
 );
-select throws_ok(
-  $$update public.curriculum_versions set title = 'Student mutation' where id = 'c4000000-0000-4000-8000-000000000001'$$,
-  '42501', null, 'student cannot mutate curriculum data'
+select is_empty(
+  $$update public.curriculum_versions
+    set title = 'Student mutation'
+    where id = 'c4000000-0000-4000-8000-000000000001'
+    returning 1$$,
+  'student cannot mutate curriculum data'
 );
 
 set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';

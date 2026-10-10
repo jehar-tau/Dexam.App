@@ -16,5 +16,7 @@
 | D-012 | Live Enrolment Operator queue identity and initial volume                                     | Option B approved 2026-10-07            | `ADR-012-live-enrolment-queue-identity.md`           |
 | D-013 | Coursework hierarchy and curriculum versioning                                                | Option B approved 2026-10-10            | `ADR-013-coursework-hierarchy-and-versioning.md`     |
 | D-014 | Teacher feedback delivery and AI authority                                                    | Option B approved 2026-10-10            | `ADR-014-feedback-delivery-and-ai-authority.md`      |
+| D-015 | Academic content authoring and publishing authority                                           | Option B approved 2026-10-10            | `ADR-015-academic-content-authoring-authority.md`    |
+| D-016 | Staff-provided assignment-material file policy                                                | Option B approved 2026-10-10            | `ADR-016-assignment-material-file-policy.md`         |
 
 IDs are stable. Do not reuse retired decision IDs.
