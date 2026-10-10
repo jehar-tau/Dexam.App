@@ -215,3 +215,54 @@ test('assignment distribution remains usable at a mobile width', async ({ page }
   })
   expect(widths.scroll).toBeLessThanOrEqual(widths.client)
 })
+
+test('teacher dictates, proofreads, accepts, and publishes fictional feedback', async ({
+  page,
+}) => {
+  await page.goto('/staff/reviews?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Feedback review.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Aarohi Deshmukh' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Preview line-practice.jpg' })).toBeVisible()
+  await page.getByRole('button', { name: 'Preview line-practice.jpg' }).click()
+  await expect(page.getByRole('dialog', { name: 'line-practice.jpg' })).toBeVisible()
+  await page.getByRole('button', { name: 'Close preview' }).click()
+  await page.getByRole('button', { name: 'Dictate feedback' }).click()
+  await expect(page.getByText('Microphone active')).toBeVisible()
+  await page.getByRole('button', { name: 'Stop dictation' }).click()
+  await expect(page.getByRole('textbox', { name: 'Written feedback' })).toHaveValue(/line control/)
+  await page.getByRole('button', { name: 'Dictate correction' }).click()
+  await expect(page.getByText('Microphone active')).toBeVisible()
+  await page.getByRole('button', { name: 'Stop correction dictation' }).click()
+  await page.getByRole('button', { name: 'Proofread correction with AI' }).click()
+  await expect(page.getByText('Correction wording suggestion')).toBeVisible()
+  await page.getByRole('button', { name: 'Accept correction suggestion' }).click()
+  await page.getByRole('button', { name: 'Proofread with AI' }).click()
+  await expect(page.getByRole('heading', { name: 'Proofreading suggestion' })).toBeVisible()
+  await page.getByRole('button', { name: 'Accept suggestion' }).click()
+  await page.getByRole('button', { name: 'Publish & complete review' }).click()
+  await expect(page.getByText(/assignment is now review completed/i)).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+})
+
+test('teacher feedback review remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/reviews?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Feedback review.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('student sees published teacher-reviewed feedback in assignment history', async ({ page }) => {
+  await page.goto('/student/assignments?preview=1')
+  await page.getByRole('button', { name: /Line confidence practice/ }).click()
+
+  await expect(page.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
+  await expect(
+    page.getByText(/AI-assisted writing, reviewed and published by your teacher/),
+  ).toBeVisible()
+})

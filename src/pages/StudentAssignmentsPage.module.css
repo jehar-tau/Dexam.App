@@ -252,6 +252,34 @@
   margin: 0;
   color: var(--text-secondary);
 }
+.feedback {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-default);
+}
+.feedback > div {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+.feedback h4,
+.feedback p {
+  margin: 0;
+}
+.feedback p {
+  color: var(--text-body);
+  line-height: var(--lh-body);
+  white-space: pre-wrap;
+}
+.feedback small {
+  color: var(--text-secondary);
+  line-height: var(--lh-body);
+}
+.feedback audio {
+  width: 100%;
+}
 .busy {
   margin: 0;
   color: var(--text-secondary);

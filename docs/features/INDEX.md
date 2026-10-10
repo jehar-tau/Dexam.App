@@ -6,7 +6,7 @@
 - F004 Course and enrolment foundation — approved database, activation-pack, and student-own workspace foundation implemented under D-009
 - F005 Coursework — implemented and merged through PR #9 under D-013 Option B
 - F006 Assignment definition and submission — implemented and product-owner approved locally under D-017/D-018 Option B
-- F007 Teacher feedback — approved direction for voice and human-approved AI assistance under D-014
+- F007 Teacher feedback — core implementation verified locally; product-owner visual review pending under D-014/D-019/D-020 Option B
 - F008 Notifications and automation — planned; shared foundation for marketing operations and students
 - F009 Academic content authoring — implemented and merged through PR #10 under D-015/D-016 Option B
 

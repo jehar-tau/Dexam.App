@@ -1,11 +1,18 @@
 import { getStudentAssignments, startStudentAssignmentAttempt } from './studentAssignments'
 
-const mocks = vi.hoisted(() => ({ order: vi.fn(), rpc: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  createSignedUrl: vi.fn(),
+  order: vi.fn(),
+  rpc: vi.fn(),
+}))
 
 vi.mock('../auth/supabaseClient', () => ({
   getSupabaseClient: () => ({
     from: () => ({ select: () => ({ order: mocks.order }) }),
     rpc: mocks.rpc,
+    storage: {
+      from: () => ({ createSignedUrl: mocks.createSignedUrl }),
+    },
   }),
 }))
 
@@ -13,6 +20,73 @@ describe('studentAssignments', () => {
   beforeEach(() => {
     mocks.order.mockReset()
     mocks.rpc.mockReset()
+    mocks.createSignedUrl.mockReset()
+  })
+
+  it('maps published feedback and creates only a short-lived authorized voice URL', async () => {
+    mocks.order.mockResolvedValue({
+      data: [
+        {
+          id: 'instance-id',
+          status: 'review_completed',
+          assigned_at: '2026-10-10T09:00:00.000Z',
+          assignment_release: {
+            due_at: null,
+            status: 'active',
+            assignment_version: {
+              id: 'version-id',
+              group_name: 'Drawing foundations',
+              title: 'Line confidence practice',
+              instructions: 'Complete one page.',
+              assignment_definition: { code: 'LINE_CONTROL' },
+            },
+          },
+          submission_attempts: [
+            {
+              id: 'attempt-id',
+              attempt_number: 1,
+              status: 'submitted',
+              submitted_at: '2026-10-11T09:00:00.000Z',
+              submitted_late: false,
+              submission_files: [],
+              feedback_revisions: [
+                {
+                  written_text: 'Keep the pressure consistent.',
+                  outcome: 'review_completed',
+                  correction_reason: null,
+                  published_at: '2026-10-12T09:00:00.000Z',
+                  ai_assisted: true,
+                  feedback_audio_files: [
+                    {
+                      object_path: 'revision-id/audio-id.webm',
+                      kind: 'voice_note',
+                      status: 'ready',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      error: null,
+    })
+    mocks.createSignedUrl.mockResolvedValue({
+      data: { signedUrl: 'https://private.test/voice' },
+      error: null,
+    })
+
+    const assignments = await getStudentAssignments()
+
+    expect(assignments[0]?.attempts[0]?.feedback).toEqual({
+      writtenText: 'Keep the pressure consistent.',
+      outcome: 'review_completed',
+      correctionReason: null,
+      publishedAt: '2026-10-12T09:00:00.000Z',
+      aiAssisted: true,
+      voiceUrl: 'https://private.test/voice',
+    })
+    expect(mocks.createSignedUrl).toHaveBeenCalledWith('revision-id/audio-id.webm', 900)
   })
 
   it('maps only the private instances, immutable version, attempts, and files returned by RLS', async () => {
@@ -40,6 +114,7 @@ describe('studentAssignments', () => {
               status: 'submitted',
               submitted_at: '2026-10-11T09:00:00.000Z',
               submitted_late: false,
+              feedback_revisions: [],
               submission_files: [
                 {
                   id: 'file-id',
@@ -78,6 +153,7 @@ describe('studentAssignments', () => {
             status: 'submitted',
             submittedAt: '2026-10-11T09:00:00.000Z',
             submittedLate: false,
+            feedback: null,
             files: [
               {
                 id: 'file-id',

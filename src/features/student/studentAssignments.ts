@@ -14,11 +14,21 @@ export type SubmissionFile = {
 
 export type SubmissionAttempt = {
   attemptNumber: number
+  feedback: StudentFeedback | null
   files: SubmissionFile[]
   id: string
   status: string
   submittedAt: string | null
   submittedLate: boolean | null
+}
+
+export type StudentFeedback = {
+  aiAssisted: boolean
+  correctionReason: string | null
+  outcome: string
+  publishedAt: string
+  voiceUrl: string | null
+  writtenText: string
 }
 
 export type StudentAssignment = {
@@ -74,7 +84,42 @@ function parseFile(value: unknown): SubmissionFile | null {
   }
 }
 
-function parseAttempt(value: unknown): SubmissionAttempt | null {
+type ParsedFeedback = StudentFeedback & { voicePath?: string | null }
+type ParsedSubmissionAttempt = Omit<SubmissionAttempt, 'feedback'> & {
+  feedback: ParsedFeedback | null
+}
+type ParsedAssignment = Omit<StudentAssignment, 'attempts'> & {
+  attempts: ParsedSubmissionAttempt[]
+}
+
+function parseFeedback(value: unknown): ParsedFeedback | null {
+  const row = related(value)
+  if (!row) return null
+  const correctionReason = nullableString(row.correction_reason)
+  if (
+    typeof row.written_text !== 'string' ||
+    typeof row.outcome !== 'string' ||
+    typeof row.published_at !== 'string' ||
+    typeof row.ai_assisted !== 'boolean' ||
+    correctionReason === undefined ||
+    !Array.isArray(row.feedback_audio_files)
+  )
+    return null
+  const voice = (row.feedback_audio_files as UnknownRow[]).find(
+    (audio) => audio.kind === 'voice_note' && audio.status === 'ready',
+  )
+  return {
+    writtenText: row.written_text,
+    outcome: row.outcome,
+    correctionReason,
+    publishedAt: row.published_at,
+    aiAssisted: row.ai_assisted,
+    voiceUrl: null,
+    voicePath: voice && typeof voice.object_path === 'string' ? voice.object_path : null,
+  }
+}
+
+function parseAttempt(value: unknown): ParsedSubmissionAttempt | null {
   if (!value || typeof value !== 'object') return null
   const row = value as UnknownRow
   const submittedAt = nullableString(row.submitted_at)
@@ -90,17 +135,19 @@ function parseAttempt(value: unknown): SubmissionAttempt | null {
     return null
   const files = row.submission_files.map(parseFile)
   if (files.some((file) => file === null)) return null
+  const feedback = parseFeedback(row.feedback_revisions)
   return {
     id: row.id,
     attemptNumber: row.attempt_number,
     status: row.status,
     submittedAt,
     submittedLate,
+    feedback,
     files: (files as SubmissionFile[]).sort((a, b) => a.position - b.position),
   }
 }
 
-function parseAssignment(value: unknown): StudentAssignment | null {
+function parseAssignment(value: unknown): ParsedAssignment | null {
   if (!value || typeof value !== 'object') return null
   const row = value as UnknownRow
   const release = related(row.assignment_release)
@@ -137,7 +184,9 @@ function parseAssignment(value: unknown): StudentAssignment | null {
     groupName: version.group_name,
     title: version.title,
     instructions: version.instructions,
-    attempts: (attempts as SubmissionAttempt[]).sort((a, b) => b.attemptNumber - a.attemptNumber),
+    attempts: (attempts as ParsedSubmissionAttempt[]).sort(
+      (a, b) => b.attemptNumber - a.attemptNumber,
+    ),
   }
 }
 
@@ -165,6 +214,10 @@ export async function getStudentAssignments(): Promise<StudentAssignment[]> {
         submission_files(
           id, original_file_name, mime_type, byte_size, original_byte_size,
           was_compressed, position, status
+        ),
+        feedback_revisions(
+          written_text, outcome, correction_reason, published_at, ai_assisted,
+          feedback_audio_files(object_path, kind, status)
         )
       )
     `,
@@ -174,6 +227,24 @@ export async function getStudentAssignments(): Promise<StudentAssignment[]> {
   if (result.error || !Array.isArray(result.data)) throw new Error(unavailableMessage)
   const assignments = result.data.map(parseAssignment)
   if (assignments.some((assignment) => assignment === null)) throw new Error(unavailableMessage)
+  const client = clientOrThrow()
+  await Promise.all(
+    (assignments as ParsedAssignment[]).flatMap((assignment) =>
+      assignment.attempts.map(async (attempt) => {
+        const feedback = attempt.feedback
+        if (!feedback) return
+        const voicePath = feedback.voicePath
+        if (voicePath) {
+          const signed = await client.storage
+            .from('teacher-feedback-audio')
+            .createSignedUrl(voicePath, 15 * 60)
+          if (signed.error) throw new Error(unavailableMessage)
+          feedback.voiceUrl = signed.data.signedUrl
+        }
+        delete feedback.voicePath
+      }),
+    ),
+  )
   return assignments as StudentAssignment[]
 }
 

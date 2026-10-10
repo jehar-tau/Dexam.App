@@ -41,7 +41,7 @@ const previewAssignments: StudentAssignment[] = [
   },
   {
     id: 'preview-assignment-lines',
-    status: 'submitted',
+    status: 'review_completed',
     assignedAt: '2026-10-04T09:00:00.000Z',
     releaseStatus: 'active',
     dueAt: null,
@@ -57,6 +57,15 @@ const previewAssignments: StudentAssignment[] = [
         status: 'submitted',
         submittedAt: '2026-10-08T11:30:00.000Z',
         submittedLate: false,
+        feedback: {
+          writtenText:
+            'Your line control is improving and the circles are more confident. Keep the pressure consistent, especially through the longer curves.',
+          outcome: 'review_completed',
+          correctionReason: null,
+          publishedAt: '2026-10-10T08:45:00.000Z',
+          aiAssisted: true,
+          voiceUrl: null,
+        },
         files: [
           {
             id: 'preview-file-lines',
@@ -141,6 +150,7 @@ export function StudentAssignmentsPage() {
                       status: 'draft',
                       submittedAt: null,
                       submittedLate: null,
+                      feedback: null,
                       files: [],
                     },
                     ...assignment.attempts,
@@ -607,6 +617,39 @@ export function StudentAssignmentsPage() {
                       : ''}
                   </p>
                   {attempt.submittedLate ? <Badge tone="warning">Late</Badge> : null}
+                  {attempt.feedback ? (
+                    <section
+                      className={styles.feedback}
+                      aria-label={`Feedback for attempt ${attempt.attemptNumber}`}
+                    >
+                      <div>
+                        <h4>Teacher feedback</h4>
+                        <Badge tone="success">{displayStatus(attempt.feedback.outcome)}</Badge>
+                      </div>
+                      <p>{attempt.feedback.writtenText}</p>
+                      {attempt.feedback.correctionReason ? (
+                        <Callout tone="warning" icon="warning">
+                          <strong>What to correct:</strong> {attempt.feedback.correctionReason}
+                        </Callout>
+                      ) : null}
+                      {attempt.feedback.voiceUrl ? (
+                        <audio
+                          aria-label={`Voice feedback for attempt ${attempt.attemptNumber}`}
+                          controls
+                          src={attempt.feedback.voiceUrl}
+                        />
+                      ) : null}
+                      <small>
+                        Published{' '}
+                        {new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium' }).format(
+                          new Date(attempt.feedback.publishedAt),
+                        )}
+                        {attempt.feedback.aiAssisted
+                          ? ' · AI-assisted writing, reviewed and published by your teacher'
+                          : ' · Written and published by your teacher'}
+                      </small>
+                    </section>
+                  ) : null}
                 </Card>
               ))}
             </div>
