@@ -45,10 +45,26 @@
 
 .link,
 .activeLink {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
   color: var(--text-secondary);
   font-size: var(--fs-body-sm);
   font-weight: 650;
   text-decoration: none;
+}
+
+.notificationCount {
+  display: inline-grid;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.3rem;
+  place-items: center;
+  color: var(--surface-card);
+  font-size: var(--fs-metadata);
+  line-height: 1;
+  background: var(--accent-primary);
+  border-radius: 999px;
 }
 
 .activeLink {

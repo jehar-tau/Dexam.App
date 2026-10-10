@@ -130,11 +130,13 @@ export function TeacherFeedbackPage() {
     retry: false,
   })
   const queue = previewEnabled ? previewQueue : (queueQuery.data ?? [])
-  const [selectedAttemptId, setSelectedAttemptId] = useState('preview-attempt-one')
+  const [selectedAttemptId, setSelectedAttemptId] = useState(searchParams.get('attempt') ?? '')
   const [publishedAttempts, setPublishedAttempts] = useState<string[]>([])
   const visibleQueue = queue.filter((item) => !publishedAttempts.includes(item.submissionAttemptId))
+  const requestedInstanceId = searchParams.get('instance')
   const selected =
     visibleQueue.find((item) => item.submissionAttemptId === selectedAttemptId) ??
+    visibleQueue.find((item) => item.assignmentInstanceId === requestedInstanceId) ??
     visibleQueue[0] ??
     null
   const filesQuery = useQuery({

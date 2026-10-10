@@ -1,6 +1,6 @@
 # F008 — Notifications and Automation
 
-Status: Planned — discovery and channel decisions required
+Status: D-021 Option B approved — in-app foundation implemented locally; visual approval pending
 Risk: Yellow; Red for marketing consent, external messaging, or sensitive content
 
 ## Outcome
@@ -85,6 +85,18 @@ Use a transactional outbox or equivalent database-backed queue so a successful p
 - WhatsApp or SMS only after cost, consent, templates, provider, and legal requirements are approved
 - User-configurable digests and more advanced no-code automation rules
 
+## Approved first usable milestone — D-021 Option B
+
+The recommended first slice is an event-backed, in-app-only notification centre using the workflows that already exist:
+
+- Students: assignment published, feedback available, and correction requested
+- Teachers: submitted attempt ready for review inside current teaching scope
+- Shared: unread count, inbox, mark read/all read, authenticated destination links, idempotent delivery, and 12-month inbox retention
+
+Assignment, submission, and feedback functions record their events transactionally. No external provider, class-scheduling alert, CRM follow-up, marketing broadcast, or paid service is included. Option C remains possible later through channel adapters after separate provider, consent, privacy, and cost approval.
+
+Deferred communication work is tracked under DW-019 through DW-025 in `../DEFERRED_WORK.md` so Option C, preferences, scheduling, class alerts, and marketing alerts can be resumed from explicit prerequisites rather than reconstructed from chat history.
+
 ## Acceptance direction
 
 - Creating the same event twice with the same idempotency key does not send duplicates.
@@ -96,9 +108,8 @@ Use a transactional outbox or equivalent database-backed queue so a successful p
 - Promotional opt-out stops future promotional delivery without blocking required account/service messages.
 - Every mass send and sensitive operational send is auditable.
 
-## Decisions required before implementation
+## Later decision gates
 
-- Which notifications belong in the first usable milestone
 - Transactional versus promotional category definitions
 - First external channel and provider
 - Consent, preference, retention, and quiet-hour rules

@@ -4,13 +4,14 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F007 Teacher Feedback core implementation is verified locally, visually approved, and under review in PR #12.
+F007 Teacher Feedback is merged. F008 Notifications Option B is implemented, verified, committed, and pushed on `feature/f008-notification-foundation`; the GitHub pull request is ready to be opened.
 
 ## Completed
 
 - Located and inspected the separate marketing website at `../../Dexam website/Website-Dexam`.
 - Created the local `dexam-platform` repository structure and canonical agent guidance.
 - Documented the product/engineering working agreement, decision policy, provisional architecture, testing strategy, roadmap, and setup path.
+- Added `DEFERRED_WORK.md` as the canonical register for missing, postponed, and research-only functionality, with stable IDs, prerequisites, approval gates, and completion history.
 - Initialized the local Git repository on `main` and created the foundation commit.
 - D-001 foundation package approved by the product owner.
 - D-002 application stack and deployment architecture approved with free-first spending constraints.
@@ -112,15 +113,25 @@ F007 Teacher Feedback core implementation is verified locally, visually approved
 - Verified F007 locally with 315 database/security assertions, 71 unit/component tests, 23 Chromium browser journeys, both new Edge Functions in the local runtime, production builds, desktop/mobile visual inspection, and zero preview console errors.
 - Product owner visually approved the F007 teacher feedback experience on 2026-10-10.
 - Opened PR #12 for the approved F007 teacher feedback implementation.
+- Merged F007 through PR #12 and synchronized local `main` at merge commit `c9bccd5`.
+- Started F008 Notifications discovery and drafted D-021 for a free, event-backed, in-app-only first milestone covering essential assignment, submission-review, and feedback alerts.
+- D-021 Option B approved: build the free event/outbox and in-app notification foundation now while preserving external channels as later approved adapters.
+- Added the F008 transactional assignment-event outbox, versioned safe-summary templates, retry-safe recipient materialization, service-only worker/retention cleanup, and 12-month in-app retention.
+- Added current-state student/teacher notification authorization so suspended people, revoked employees, ended enrolments, or removed teaching scope cannot read an inbox record or regain access through its link.
+- Added responsive student and teacher notification centres with exact navigation unread counts, all/unread filters, mark-one/mark-all read actions, protected deep links, and preview flows.
+- Verified F008 locally with 361 database/security assertions, 79 unit/component tests, 26 Chromium browser journeys, production builds, Edge Function compilation/unauthorized-call rejection, and desktop/mobile visual inspection without horizontal overflow.
+- Committed the approved F008 decision and implementation as `c99fd7a` and `ffa4b07`, then pushed `feature/f008-notification-foundation` to GitHub for pull-request review.
 
 ## Not yet started
+
+The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
 - Hosted staging environment
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
-- F008 channel, consent, preference, and first-milestone notification decisions
+- Later F008 external-channel, consent, preference, quiet-hour, and digest decisions
 - F007 production transcription/AI provider activation remains a separate future decision; the provider-neutral workflow fails closed until then
 
 ## Environment findings
@@ -135,7 +146,7 @@ F007 Teacher Feedback core implementation is verified locally, visually approved
 
 ## Next safe action
 
-Wait for PR #12 checks, then merge only after explicit product-owner direction.
+Open the prepared F008 pull request from `feature/f008-notification-foundation` into `main`, wait for GitHub checks, review, and merge after approval. Do not add an external channel without a later decision.
 
 ## Blockers
 

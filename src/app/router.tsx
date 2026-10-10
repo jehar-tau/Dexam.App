@@ -9,6 +9,7 @@ import { ContentWorkspacePage } from '../pages/ContentWorkspacePage'
 import { EnrolmentOperatorPage } from '../pages/EnrolmentOperatorPage'
 import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { NotificationCentrePage } from '../pages/NotificationCentrePage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
 import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
@@ -49,6 +50,14 @@ export const router = createBrowserRouter([
           </StudentAccessBoundary>
         ),
       },
+      {
+        path: 'student/notifications',
+        element: (
+          <StudentAccessBoundary>
+            <NotificationCentrePage />
+          </StudentAccessBoundary>
+        ),
+      },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
       {
         path: 'staff/enrolments',
@@ -79,6 +88,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="feedback.review">
             <TeacherFeedbackPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/notifications',
+        element: (
+          <StaffAccessBoundary>
+            <NotificationCentrePage />
           </StaffAccessBoundary>
         ),
       },

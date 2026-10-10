@@ -97,4 +97,12 @@ describe('TeacherFeedbackPage', () => {
     await user.click(screen.getByRole('button', { name: 'Accept correction suggestion' }))
     expect(screen.getByText(/Correction wording accepted/)).toBeVisible()
   })
+
+  it('opens the submitted work selected by a notification deep link', async () => {
+    renderApp(<TeacherFeedbackPage />, ['/staff/reviews?preview=1&instance=preview-instance-two'])
+
+    expect(await screen.findByRole('heading', { name: 'Feedback review.' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Preview perspective-room.jpg' })).toBeVisible()
+  })
 })
