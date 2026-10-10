@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F006 assignment distribution and submission is implemented and product-owner approved locally under D-017/D-018 Option B; the feature commit and pull request are being prepared.
+F006 assignment distribution and submission is implemented and product-owner approved under D-017/D-018 Option B and is open for review as PR #11.
 
 ## Completed
 
@@ -98,6 +98,7 @@ F006 assignment distribution and submission is implemented and product-owner app
 - Added the protected staff Assignment Distribution workspace and student Assignments workspace with fictional local previews at `/staff/assignments?preview=1` and `/student/assignments?preview=1`.
 - Verified F006 locally with 253 passing database tests, 66 unit/component tests, 20 Chromium browser journeys, a production build, Edge Function compilation, and desktop/mobile visual inspection without horizontal overflow or console errors.
 - Product owner visually approved the F006 staff distribution and student assignment/submission interfaces on 2026-10-10.
+- Opened PR #11 for the approved F006 assignment distribution and student submission implementation.
 
 ## Not yet started
 
@@ -121,7 +122,7 @@ F006 assignment distribution and submission is implemented and product-owner app
 
 ## Next safe action
 
-Commit and push the approved F006 implementation, open the pull request, and confirm its GitHub checks.
+Review and merge PR #11 after its required GitHub checks pass.
 
 ## Blockers
 
