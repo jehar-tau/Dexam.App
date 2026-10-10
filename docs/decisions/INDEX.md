@@ -20,5 +20,7 @@
 | D-016 | Staff-provided assignment-material file policy                                                | Option B approved 2026-10-10            | `ADR-016-assignment-material-file-policy.md`              |
 | D-017 | Assignment distribution, deadlines, and revision lifecycle                                    | Option B approved 2026-10-10            | `ADR-017-assignment-distribution-and-lifecycle.md`        |
 | D-018 | Student submission file limits and retention                                                  | Option B approved 2026-10-10            | `ADR-018-student-submission-file-and-retention-policy.md` |
+| D-019 | Playable voice feedback, speech-to-text, rubric authority, and retention                      | Option B approved 2026-10-10            | `ADR-019-teacher-voice-feedback-and-rubric-policy.md`     |
+| D-020 | Transcription/AI provider, proofreading, privacy, disclosure, and cost activation             | Option B approved 2026-10-10            | `ADR-020-ai-feedback-provider-privacy-and-cost-gate.md`   |
 
 IDs are stable. Do not reuse retired decision IDs.

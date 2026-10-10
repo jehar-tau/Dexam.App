@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F006 assignment distribution and submission is implemented and product-owner approved under D-017/D-018 Option B and is open for review as PR #11.
+F007 Teacher Feedback core implementation is verified locally, visually approved, and under review in PR #12.
 
 ## Completed
 
@@ -99,6 +99,19 @@ F006 assignment distribution and submission is implemented and product-owner app
 - Verified F006 locally with 253 passing database tests, 66 unit/component tests, 20 Chromium browser journeys, a production build, Edge Function compilation, and desktop/mobile visual inspection without horizontal overflow or console errors.
 - Product owner visually approved the F006 staff distribution and student assignment/submission interfaces on 2026-10-10.
 - Opened PR #11 for the approved F006 assignment distribution and student submission implementation.
+- Merged F006 assignment distribution and student submission through PR #11 and synced local `main`.
+- Started F007 Teacher Feedback and drafted D-019 for bounded private voice feedback/rubric authority plus D-020 for a free-first, provider-neutral AI workflow with production inference disabled until a later provider activation.
+- Refined F007 from product-owner input to require both normal playable voice notes and speech-to-text dictation, plus optional teacher-triggered AI proofreading with original/suggestion comparison and explicit acceptance.
+- D-019 and D-020 Option B approved: bounded private voice notes, editable speech-to-text dictation, teacher-controlled AI proofreading, provider-neutral rubric assistance, ₹0 external-processing spend, and a later provider-activation gate.
+- Added F007's current-scope teacher review queue, retry-safe private feedback drafts, immutable publication, and deliberate `review_completed` or `correction_requested` assignment transitions.
+- Added the private `teacher-feedback-audio` storage boundary, trusted signature-checked recording upload/removal, 5-minute/10-MB limits, short-lived authorized reads, accessible written-equivalent gate, 24-hour temporary dictation cleanup, and 12-month post-enrolment retention.
+- Added provider-neutral transcription, proofreading, and bounded rubric-batch request records with explicit human disposition and audit metadata; all external providers remain disabled at ₹0 spend.
+- Added the protected teacher Feedback Review interface at `/staff/reviews`, including editable dictation, original/suggestion proofreading comparison, explicit accept/reject, optional playable voice notes, and deliberate outcome publication.
+- Refined teacher review with compact visible submission thumbnails, an accessible same-page expanded viewer, clearly activated microphone/listening states, and separate dictation plus AI-proofreading controls for correction requests.
+- Added published feedback to the owning student's assignment history with clear AI-assisted-and-teacher-reviewed disclosure and optional private voice playback.
+- Verified F007 locally with 315 database/security assertions, 71 unit/component tests, 23 Chromium browser journeys, both new Edge Functions in the local runtime, production builds, desktop/mobile visual inspection, and zero preview console errors.
+- Product owner visually approved the F007 teacher feedback experience on 2026-10-10.
+- Opened PR #12 for the approved F007 teacher feedback implementation.
 
 ## Not yet started
 
@@ -108,7 +121,7 @@ F006 assignment distribution and submission is implemented and product-owner app
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
 - F008 channel, consent, preference, and first-milestone notification decisions
-- F007 voice-audio retention/accessibility and AI provider/privacy/cost decisions
+- F007 production transcription/AI provider activation remains a separate future decision; the provider-neutral workflow fails closed until then
 
 ## Environment findings
 
@@ -122,7 +135,7 @@ F006 assignment distribution and submission is implemented and product-owner app
 
 ## Next safe action
 
-Review and merge PR #11 after its required GitHub checks pass.
+Wait for PR #12 checks, then merge only after explicit product-owner direction.
 
 ## Blockers
 

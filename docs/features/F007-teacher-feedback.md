@@ -1,12 +1,12 @@
 # F007 — Teacher Feedback
 
-Status: Approved direction — implementation not started
+Status: Core implementation verified locally, visually approved, and opened as PR #12
 Risk: Red — educational evaluation, biometric-adjacent audio, and AI-assisted decisions
 Owner: Product owner with Codex engineering support
 
 ## Purpose and problem
 
-Teachers need to review student submissions and return useful feedback efficiently. Dexam requires recorded voice feedback and may use AI to prepare assignment-specific feedback for a manually selected batch of students. AI must follow the rubric for that assignment and remain under accountable human control.
+Teachers need to review student submissions and return useful feedback efficiently. Dexam requires normal playable voice feedback, speech-to-text dictation that becomes editable writing, and optional AI proofreading of teacher-authored or dictated text. Dexam may also use AI to prepare assignment-specific feedback for a manually selected batch of students. Transcription and AI outputs must remain under accountable human control.
 
 ## Users
 
@@ -16,13 +16,15 @@ Teachers need to review student submissions and return useful feedback efficient
 
 ## User flow
 
-### Human voice feedback
+### Human feedback, voice notes, dictation, and proofreading
 
 1. A scoped teacher opens a submitted attempt.
-2. The teacher records or uploads a voice note and may add written feedback.
-3. The system verifies and stores the private audio object.
-4. The teacher explicitly publishes the feedback.
-5. Only the student who owns the submission can play the published voice note.
+2. The teacher types feedback, records/uploads a normal voice note, uses speech-to-text dictation, or combines these methods.
+3. Dictation produces an editable written draft. Dictation audio remains temporary unless the teacher deliberately keeps it as the normal voice note.
+4. The teacher may manually request AI proofreading, compares the original with the suggestion, and accepts, edits, or rejects it.
+5. The system verifies and privately stores any deliberately retained voice note.
+6. The teacher reviews the complete writing/audio combination and explicitly publishes it.
+7. Only the student who owns the submission can read the published writing or play its published voice note.
 
 ### AI-assisted bulk feedback
 
@@ -36,7 +38,9 @@ Teachers need to review student submissions and return useful feedback efficient
 ## In scope
 
 - Private teacher voice notes attached to a specific submission attempt
-- Optional written feedback
+- Speech-to-text teacher dictation that always returns editable draft writing
+- Typed or dictated written feedback
+- Manually triggered AI proofreading with original/suggestion comparison and teacher acceptance
 - Draft and published feedback lifecycle
 - Assignment-specific evaluation rubrics/instructions with immutable versions
 - Manually triggered, bounded AI-feedback batches
@@ -46,6 +50,7 @@ Teachers need to review student submissions and return useful feedback efficient
 ## Out of scope
 
 - Automatically publishing AI feedback to students
+- Automatically accepting a transcript or proofreading suggestion
 - AI determining grades, admission, suspension, or other consequential outcomes
 - Continuous background evaluation of every upload
 - Student voice collection
@@ -63,6 +68,8 @@ Teachers need to review student submissions and return useful feedback efficient
 ## Business rules
 
 - Voice notes and AI drafts belong to one immutable submission attempt.
+- Dictation transcripts and proofreading suggestions remain drafts until accepted by the teacher.
+- The original teacher text is preserved when proofreading is requested; AI may improve language but must not invent evaluation content.
 - Feedback can be saved as a draft without student visibility.
 - Publication is an explicit attributable action.
 - Each assignment has a versioned rubric describing evaluation dimensions, evidence expectations, prohibited assumptions, and feedback style.
@@ -72,26 +79,31 @@ Teachers need to review student submissions and return useful feedback efficient
 
 ## Interface states
 
-- Recording, paused, preview, upload, retry, and ready-to-publish voice states
+- Recording, paused, preview, upload, retry, and ready-to-publish voice-note states
+- Dictation recording, transcribing, editable transcript, retry, accepted, and discarded states
+- Proofreading idle, processing, comparison, accepted, rejected, edited, and failure states
 - AI batch queued, processing, partially completed, failed, cancelled, and ready-for-review states
 - Feedback draft, validation, published, and permission-denied states
-- Accessible transcript/caption state when an approved transcription path exists
+- Written-first accessible presentation with optional playable audio
 
 ## Data and privacy
 
 - Teacher audio and student work are private educational records.
 - Audio uses opaque private-storage keys and short-lived authorized playback URLs.
+- Dictation-only audio is temporary and is purged after acceptance/discard, with a maximum 24-hour cleanup window.
+- Proofreading receives only the current teacher-written draft; rubric evaluation receives only the minimum selected submission content and rubric.
 - AI receives only the minimum submission content and rubric required for the selected task.
 - Provider retention, training use, region, deletion, and cost require approval before any external AI integration.
 - Hidden model reasoning is not requested or stored; retain output, evidence references, model/config identifier, timestamps, and human disposition.
 
 ## Analytics events
 
-No teacher-performance or student-evaluation analytics are authorized. Operational audit events may record recording upload, AI batch start/end, draft generation, human edits, publication, and failure without recording raw audio or submission content in logs.
+No teacher-performance or student-evaluation analytics are authorized. Operational audit events may record recording upload, dictation request/result state, proofreading request/disposition, AI batch start/end, draft generation, human edits, publication, and failure without recording raw audio, feedback text, or submission content in logs.
 
 ## Security considerations
 
 - Microphone use begins only after an explicit teacher action and browser permission.
+- Transcription and proofreading require explicit teacher actions and never publish automatically.
 - Audio and submission URLs are short-lived and scoped.
 - Uploaded media is validated and served outside executable application content.
 - Prompt injection inside student work is treated as untrusted submission content and cannot override the assignment rubric or system policy.
@@ -103,11 +115,17 @@ No teacher-performance or student-evaluation analytics are authorized. Operation
 - D-004 identity deduplication and revocation
 - D-008 staff authority boundaries
 - D-014 feedback delivery and AI authority (Option B approved 2026-10-10)
+- D-019 playable voice feedback, speech-to-text, accessible writing, rubric authority, and retention (Option B approved 2026-10-10)
+- D-020 transcription/AI provider, proofreading, privacy, disclosure, and cost activation (Option B approved 2026-10-10)
 - [Student Assignment Tracker](https://docs.google.com/spreadsheets/d/17WnwLZjqAyoeANuQIHysIp0ZYNpDbSsF9vB-JDQDLxk/edit)
 
 ## Acceptance criteria
 
 - A scoped teacher can record, preview, replace before publication, and publish a private voice note.
+- Submitted image files appear as compact thumbnails and open in an accessible same-page expanded viewer; other supported files have an in-page document preview with an optional secure original link.
+- A scoped teacher can dictate speech into an editable text draft without automatically retaining or publishing the dictation audio.
+- A teacher can request proofreading, compare the original and suggestion, and accept, edit, or reject the result without losing the original.
+- A teacher can separately dictate and proofread a correction request before explicitly publishing the next-attempt decision.
 - Only the owning student can play published feedback for their submission.
 - A rubric is assignment-specific, versioned, and recoverable for every review.
 - A manually started AI batch is limited to one assignment and an explicit student/cohort selection.
@@ -119,14 +137,24 @@ No teacher-performance or student-evaluation analytics are authorized. Operation
 ## Verification plan
 
 - Database and storage tests for student ownership, teacher scope, audio privacy, rubric versioning, and publication state
-- Unit tests for recording/upload states, AI batch state mapping, and safe failure messages
+- Unit tests for recording/upload, dictation, proofreading comparison, AI batch state mapping, and safe failure messages
 - Adversarial tests for prompt injection, cross-student access, stale teacher scope, replay, and partial batch failure
-- Browser tests for voice recording fallback/upload, teacher approval, student playback, and responsive review flow
+- Browser tests for voice recording fallback/upload, dictation-to-editable-text, proofreading comparison, teacher approval, student playback, and responsive review flow
 
 ## Open decisions
 
 - D-014 Option B approved on 2026-10-10
-- Audio format, maximum duration, transcription, retention, and accessibility policy
-- Approved AI provider/model, cost ceiling, data-processing terms, region, and retention
-- Rubric-authoring authority and approval process
-- Whether students see an “AI-assisted” disclosure and how it is worded
+- D-019 Option B approved on 2026-10-10
+- D-020 Option B approved on 2026-10-10; production external processing and spending remain disabled pending a later activation decision
+
+## Implementation checkpoint — 2026-10-10
+
+- Added a current-scope teacher review queue, retry-safe private drafts, deliberate publication, and `review_completed` or `correction_requested` assignment transitions.
+- Added private bounded playable voice-note and temporary dictation-audio storage with signature checks, direct-storage denial, accessible written-equivalent enforcement, and retention cleanup.
+- Added provider-neutral transcription, proofreading, and rubric-batch request records. All production external processing remains disabled with a ₹0 budget; only deterministic fictional test adapters are authorized.
+- Added the teacher review interface at `/staff/reviews`, including editable dictation, original/suggestion proofreading comparison, explicit accept/reject controls, voice-note recording/upload, and publication gates.
+- Added compact submission thumbnails with an accessible same-page expanded viewer, an explicit active-microphone state, and separate correction-request dictation/proofreading controls.
+- Added published written/voice feedback to the owning student's assignment history with AI-assistance disclosure.
+- Verified 315 database/security assertions, 71 unit/component tests, 23 Chromium browser journeys, both new Edge Functions in the local runtime, desktop/mobile layouts, production builds, and zero preview console errors.
+- Product owner visually approved the teacher feedback review experience on 2026-10-10.
+- Opened PR #12 for the approved F007 implementation.

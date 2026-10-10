@@ -39,5 +39,9 @@ describe('StudentAssignmentsPage', () => {
     expect(screen.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
     expect(screen.getByText('Attempt 1')).toBeVisible()
     expect(screen.getByText(/1 file/)).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
+    expect(
+      screen.getByText(/AI-assisted writing, reviewed and published by your teacher/),
+    ).toBeVisible()
   })
 })

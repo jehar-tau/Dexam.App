@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">Line confidence practice submission</title>
+  <description id="description">A fictional student worksheet showing rows of straight lines, curves, circles, and ellipses.</description>
+  <rect width="1200" height="760" fill="#e9e3d7"/>
+  <g transform="translate(85 48) rotate(-1 515 330)">
+    <rect width="1030" height="665" rx="8" fill="#fffdf8" stroke="#c8c0b1" stroke-width="3"/>
+    <text x="56" y="70" fill="#202938" font-family="Arial, sans-serif" font-size="30" font-weight="700">LINE CONFIDENCE · PRACTICE 02</text>
+    <text x="56" y="108" fill="#667085" font-family="Arial, sans-serif" font-size="18">Aarohi Deshmukh · Drawing foundations</text>
+    <line x1="55" y1="137" x2="975" y2="137" stroke="#d8d1c5" stroke-width="2"/>
+    <g fill="none" stroke="#3b4657" stroke-linecap="round">
+      <path d="M80 190 L308 185 M350 191 L578 179 M620 190 L850 184 M80 225 L309 230 M350 219 L578 226 M620 221 L850 230" stroke-width="5"/>
+      <path d="M80 280 C165 243 236 316 320 276 M350 279 C435 235 520 319 605 272 M635 280 C724 238 812 315 902 271" stroke-width="5"/>
+      <ellipse cx="150" cy="372" rx="64" ry="48" stroke-width="5"/>
+      <ellipse cx="300" cy="371" rx="61" ry="47" stroke-width="5"/>
+      <ellipse cx="451" cy="371" rx="64" ry="48" stroke-width="5"/>
+      <ellipse cx="601" cy="371" rx="63" ry="48" stroke-width="5"/>
+      <ellipse cx="752" cy="371" rx="62" ry="47" stroke-width="5"/>
+      <path d="M80 478 C160 417 235 540 315 476 S470 535 550 471 S705 539 785 474 S925 530 963 483" stroke-width="5"/>
+      <path d="M80 557 L286 600 M305 552 L512 602 M530 552 L736 600 M753 553 L960 602" stroke-width="5"/>
+    </g>
+    <g fill="#98a2b3" font-family="Arial, sans-serif" font-size="16">
+      <text x="80" y="168">STRAIGHT STROKES</text>
+      <text x="80" y="262">CONTROLLED CURVES</text>
+      <text x="80" y="331">ELLIPSES</text>
+      <text x="80" y="452">CONTINUOUS MOTION</text>
+      <text x="80" y="535">DIAGONALS</text>
+    </g>
+  </g>
+</svg>

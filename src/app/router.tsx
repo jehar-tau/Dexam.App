@@ -15,6 +15,7 @@ import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
+import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 
 export const router = createBrowserRouter([
   {
@@ -70,6 +71,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="assignment.distribute">
             <AssignmentDistributionPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/reviews',
+        element: (
+          <StaffAccessBoundary capability="feedback.review">
+            <TeacherFeedbackPage />
           </StaffAccessBoundary>
         ),
       },
