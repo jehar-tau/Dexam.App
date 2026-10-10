@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is implemented and product-owner approved on `feature/f010-crm-foundation` under D-022 Option B; PR #14 is open for review.
+F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F011 CRM Assignment Operations implementation is active on `feature/f011-crm-assignment-operations` under approved D-023 Option B.
 
 ## Completed
 
@@ -132,6 +132,10 @@ F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is im
 - Verified F010 locally with 430 database/security assertions, 88 unit/component tests, 31 Chromium browser journeys, a production build, desktop/mobile visual inspection without horizontal overflow, and zero preview console errors.
 - Product owner approved the F010 CRM workspace, including the reversible dead-enquiry workflow, on 2026-10-11.
 - Opened F010 PR #14 with the verified scope, decision, risk, and security notes. Future approved feature branches should have their pull requests created automatically after push under the repository agent guide.
+- Merged F010 through PR #14 at `384af75`.
+- Audited the remaining roadmap: the internal-pilot path is approximately 55–65% complete, safe public-launch work is approximately 40–50% complete, and later commerce/assessment/media/AI phases remain outside the current milestone.
+- Drafted F011 and D-023 for the next launch-critical CRM gap: an explicit CRM Coordinator grant, unassigned and inactive-owner recovery queues, reason-required single assignment, and no bulk or automated routing.
+- D-023 Option B approved: selected active Sales employees may receive a separate revocable `lead.assign` grant for single-record assignment and inactive-owner recovery without bulk or automated routing.
 
 ## Not yet started
 
@@ -157,7 +161,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Review F010 PR #14, then merge it after required GitHub checks pass and the product owner explicitly approves the merge.
+Implement and verify F011 CRM Assignment Operations, then present the fictional desktop/mobile preview before automatically creating its pull request.
 
 ## Blockers
 

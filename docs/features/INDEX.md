@@ -10,5 +10,6 @@
 - F008 Notifications and automation — D-021 Option B implemented and merged through PR #13
 - F009 Academic content authoring — implemented and merged through PR #10 under D-015/D-016 Option B
 - F010 CRM leads and follow-ups — D-022 Option B implemented and product-owner approved; pull-request review pending
+- F011 CRM assignment operations — D-023 Option B approved; implementation active
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

@@ -24,5 +24,6 @@
 | D-020 | Transcription/AI provider, proofreading, privacy, disclosure, and cost activation             | Option B approved 2026-10-10            | `ADR-020-ai-feedback-provider-privacy-and-cost-gate.md`   |
 | D-021 | Notification foundation, first milestone, channels, and retention                             | Option B approved 2026-10-10            | `ADR-021-notification-foundation-and-first-milestone.md`  |
 | D-022 | CRM prospect identity, ownership, follow-ups, and first milestone                             | Option B approved 2026-10-10            | `ADR-022-crm-prospect-identity-and-first-milestone.md`    |
+| D-023 | CRM assignment authority and unassigned/stranded queue                                        | Option B approved 2026-10-11            | `ADR-023-crm-assignment-authority-and-queue.md`           |
 
 IDs are stable. Do not reuse retired decision IDs.
