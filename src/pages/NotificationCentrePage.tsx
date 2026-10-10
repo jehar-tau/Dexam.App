@@ -25,12 +25,18 @@ export function NotificationCentrePage() {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
-  const audience: NotificationAudience = location.pathname.startsWith('/staff')
-    ? 'teacher'
-    : 'student'
+  const audience: NotificationAudience = location.pathname.startsWith('/student')
+    ? 'student'
+    : searchParams.get('audience') === 'sales'
+      ? 'sales'
+      : 'teacher'
+  const updateDescription =
+    audience === 'sales'
+      ? 'Important enquiry updates, linked back to their protected source.'
+      : 'Important academic updates, linked back to their protected source.'
   const previewEnabled =
     searchParams.get('preview') === '1' &&
-    (audience === 'teacher'
+    (audience !== 'student'
       ? import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true'
       : import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true')
   const queryKey = ['notifications', audience, previewEnabled]
@@ -136,11 +142,11 @@ export function NotificationCentrePage() {
       <header className={styles.pageHeader}>
         <div>
           <p className="eyebrow">
-            {audience === 'student' ? 'Student' : 'Teaching'} updates ·{' '}
-            {previewEnabled ? 'Local preview' : 'Live account'}
+            {audience === 'student' ? 'Student' : audience === 'sales' ? 'Admissions' : 'Teaching'}{' '}
+            updates · {previewEnabled ? 'Local preview' : 'Live account'}
           </p>
           <h1 id="notifications-title">Notifications.</h1>
-          <p>Important academic updates, linked back to their protected source.</p>
+          <p>{updateDescription}</p>
         </div>
         <div className={styles.unreadSummary} aria-label={`${unreadCount} unread notifications`}>
           <strong>{unreadCount}</strong>
@@ -177,7 +183,9 @@ export function NotificationCentrePage() {
           description={
             filter === 'unread'
               ? 'Read updates remain available under All.'
-              : 'New academic updates will appear here.'
+              : audience === 'sales'
+                ? 'New enquiry updates will appear here.'
+                : 'New academic updates will appear here.'
           }
         />
       ) : (

@@ -1,6 +1,6 @@
 import { getSupabaseClient } from '../auth/supabaseClient'
 
-export type NotificationAudience = 'student' | 'teacher'
+export type NotificationAudience = 'sales' | 'student' | 'teacher'
 
 export type InAppNotification = {
   body: string
@@ -73,6 +73,29 @@ const teacherPreviewNotifications: InAppNotification[] = [
   },
 ]
 
+const salesPreviewNotifications: InAppNotification[] = [
+  {
+    id: 'preview-notification-follow-up',
+    eventType: 'lead_follow_up_due',
+    category: 'service',
+    title: 'Lead follow-up due',
+    body: 'An assigned enquiry is ready for follow-up.',
+    destinationPath: '/staff/crm?preview=1&enquiry=preview-enquiry-aarav',
+    createdAt: '2026-10-10T06:30:00.000Z',
+    readAt: null,
+  },
+  {
+    id: 'preview-notification-lead-assigned',
+    eventType: 'lead_assigned',
+    category: 'service',
+    title: 'New enquiry assigned',
+    body: 'A prospective-student enquiry has been assigned to you.',
+    destinationPath: '/staff/crm?preview=1&enquiry=preview-enquiry-meera',
+    createdAt: '2026-10-09T08:30:00.000Z',
+    readAt: null,
+  },
+]
+
 function clientOrThrow() {
   const client = getSupabaseClient()
   if (!client) throw new Error(unavailableMessage)
@@ -106,7 +129,12 @@ function parseNotification(value: unknown): InAppNotification {
 }
 
 export function getPreviewNotifications(audience: NotificationAudience) {
-  const source = audience === 'student' ? studentPreviewNotifications : teacherPreviewNotifications
+  const source =
+    audience === 'student'
+      ? studentPreviewNotifications
+      : audience === 'sales'
+        ? salesPreviewNotifications
+        : teacherPreviewNotifications
   return source.map((notification) => ({ ...notification }))
 }
 

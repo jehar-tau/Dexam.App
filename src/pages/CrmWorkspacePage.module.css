@@ -1,0 +1,223 @@
+.workspace,
+.detail,
+.queue,
+.createForm,
+.actionCard,
+.reviewForm,
+.deadLifecycleCard,
+.restoreCard,
+.state {
+  display: grid;
+}
+.workspace {
+  gap: var(--space-8);
+}
+.workspace > *,
+.layout > * {
+  min-width: 0;
+}
+.pageHeader,
+.sectionHeading,
+.nextStep {
+  display: flex;
+  gap: var(--space-5);
+  align-items: end;
+  justify-content: space-between;
+}
+.pageHeader {
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+.pageHeader p,
+.actionCard p,
+.nextStep p,
+.reviewForm p,
+.deadLifecycleCard p,
+.restoreCard p,
+.queueIntroduction p {
+  color: var(--text-secondary);
+}
+.queueViews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.calloutStack {
+  display: grid;
+  gap: var(--space-1);
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.72fr) minmax(0, 1.28fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.queue {
+  position: sticky;
+  top: var(--space-5);
+  gap: var(--space-4);
+}
+.queueIntroduction {
+  display: grid;
+  gap: var(--space-1);
+}
+.queueIntroduction p {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+}
+.queueSummary {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.queueSummary strong {
+  font-size: var(--fs-h2);
+}
+.queueSummary span,
+.queueItem small,
+.selectedQueueItem small {
+  color: var(--text-secondary);
+}
+.queueList {
+  display: grid;
+  gap: var(--space-2);
+}
+.queueItem,
+.selectedQueueItem {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  color: var(--text-body);
+  text-align: left;
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.queueItem span:first-child,
+.selectedQueueItem span:first-child {
+  display: grid;
+  gap: var(--space-1);
+}
+.selectedQueueItem {
+  border-color: var(--accent-primary);
+  box-shadow: inset 3px 0 0 var(--accent-primary);
+}
+.detail {
+  gap: var(--space-5);
+}
+.summaryCard,
+.createForm,
+.actionCard,
+.reviewForm,
+.deadLifecycleCard,
+.restoreCard {
+  gap: var(--space-5);
+}
+.sectionHeading h2,
+.sectionHeading p,
+.actionCard h3,
+.nextStep h3,
+.reviewForm h3,
+.reviewForm p,
+.deadLifecycleCard h3,
+.deadLifecycleCard p,
+.restoreCard h3,
+.restoreCard p {
+  margin: 0;
+}
+.interest {
+  max-width: 42rem;
+  font-size: var(--fs-body-lg);
+}
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+.meta div {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
+}
+.meta dt {
+  color: var(--text-secondary);
+  font-size: var(--fs-metadata);
+}
+.meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: var(--fw-semibold);
+}
+.actionsGrid,
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+.field label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-semibold);
+}
+.field select,
+.field textarea {
+  width: 100%;
+  padding: var(--space-3);
+  color: var(--text-body);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+.nextStep {
+  align-items: center;
+  padding: var(--space-5);
+}
+.createForm > button,
+.actionCard > button,
+.reviewForm > button,
+.deadLifecycleCard > button,
+.restoreCard > button {
+  justify-self: start;
+}
+.state {
+  max-width: 38rem;
+  min-height: 28rem;
+  gap: var(--space-5);
+  align-content: center;
+}
+.state button {
+  justify-self: start;
+}
+@media (max-width: 52rem) {
+  .pageHeader,
+  .sectionHeading,
+  .nextStep {
+    align-items: start;
+    flex-direction: column;
+  }
+  .layout,
+  .actionsGrid {
+    grid-template-columns: 1fr;
+  }
+  .queue {
+    position: static;
+  }
+}
+@media (max-width: 34rem) {
+  .formGrid,
+  .meta {
+    grid-template-columns: 1fr;
+  }
+}
