@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is implemented and product-owner approved on `feature/f010-crm-foundation` under D-022 Option B; it is ready for pull-request review.
+F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is implemented and product-owner approved on `feature/f010-crm-foundation` under D-022 Option B; PR #14 is open for review.
 
 ## Completed
 
@@ -131,6 +131,7 @@ F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is im
 - Extended F008 with safe `lead_assigned` and `lead_follow_up_due` domain events, Sales-only in-app notifications, protected CRM deep links, current-assignment authorization, and stale-alert cancellation without external messages or paid providers.
 - Verified F010 locally with 430 database/security assertions, 88 unit/component tests, 31 Chromium browser journeys, a production build, desktop/mobile visual inspection without horizontal overflow, and zero preview console errors.
 - Product owner approved the F010 CRM workspace, including the reversible dead-enquiry workflow, on 2026-10-11.
+- Opened F010 PR #14 with the verified scope, decision, risk, and security notes. Future approved feature branches should have their pull requests created automatically after push under the repository agent guide.
 
 ## Not yet started
 
@@ -156,7 +157,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Open and review the F010 pull request, then merge it after required GitHub checks pass.
+Review F010 PR #14, then merge it after required GitHub checks pass and the product owner explicitly approves the merge.
 
 ## Blockers
 

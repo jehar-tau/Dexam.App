@@ -29,3 +29,10 @@ Dexam is an education platform for design-entrance preparation. The product owne
 ## Collaboration contract
 
 Make low-risk implementation decisions independently. Explain recommendations in plain language. Present material choices as a numbered Decision Gate with options, recommendation, reason, impact, and reversibility. Record the approved answer in the appropriate specification or ADR; chat history is not authoritative.
+
+## GitHub workflow
+
+- After the product owner approves a completed slice and asks to commit or push it, verify the change, commit it, push the feature branch, check whether that branch already has a pull request, and create a non-draft pull request automatically when one does not exist.
+- Populate the pull-request title and repository template with the implemented scope, approved decisions, verification evidence, risk, and security/privacy/migration notes. Do not ask the product owner to click GitHub's **Create pull request** button.
+- Prefer the connected GitHub integration. If it lacks the required write permission, use the product owner's authenticated browser session. Ask the product owner to sign in only when authentication actually blocks the operation.
+- Never create duplicate pull requests for the same feature branch. Never merge a pull request without the product owner's explicit approval.
