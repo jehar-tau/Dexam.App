@@ -30,7 +30,11 @@ select has_function(
   'bounded notification retention cleanup exists'
 );
 select is(
-  (select count(*)::integer from public.notification_templates where active),
+  (
+    select count(*)::integer
+    from public.notification_templates
+    where active and audience in ('student', 'teacher')
+  ),
   4,
   'four approved first-milestone templates are active'
 );

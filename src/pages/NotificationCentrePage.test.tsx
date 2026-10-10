@@ -53,6 +53,23 @@ describe('NotificationCentrePage', () => {
     )
   })
 
+  it('shows safe CRM destinations in the Sales preview', async () => {
+    vi.stubEnv('VITE_ENABLE_OPERATOR_PREVIEW', 'true')
+    renderApp(<NotificationCentrePage />, ['/staff/notifications?preview=1&audience=sales'])
+
+    expect(await screen.findByText('Admissions updates · Local preview')).toBeVisible()
+    expect(
+      screen.getByText('Important enquiry updates, linked back to their protected source.'),
+    ).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Lead follow-up due' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'New enquiry assigned' })).toBeVisible()
+    expect(screen.queryByText('Aarav Kulkarni')).not.toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: /Open update/ })[0]).toHaveAttribute(
+      'href',
+      '/staff/crm?preview=1&enquiry=preview-enquiry-aarav',
+    )
+  })
+
   it('fails safely when live notifications cannot be loaded', async () => {
     mocks.getNotifications.mockRejectedValueOnce(new Error('unavailable')).mockResolvedValueOnce([])
     renderApp(<NotificationCentrePage />, ['/student/notifications'])

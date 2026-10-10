@@ -1,6 +1,6 @@
 # ADR-022 — CRM Prospect Identity and First Milestone
 
-Status: Proposed — product-owner decision required
+Status: Option B approved 2026-10-10
 Date: 2026-10-10
 Decision ID: D-022
 Risk: Red — prospect/guardian personal data, identity duplication, Sales authority, consent, and enrolment conversion
@@ -77,4 +77,6 @@ It would not authorize production personal data, public website integration, ext
 
 ## Approval
 
-Pending product-owner selection of Option A, B, or C.
+The product owner approved Option B on 2026-10-10. Dexam may build the identity-aware, manually operated first CRM slice described above, including minimum prospect/contact records, assigned ownership, bounded activity outcomes, follow-up history, enrolment-review handoff, and free in-app assignment/follow-up alerts. This approval does not authorize production personal data, external communication, website intake, campaigns, exports, paid services, or production deployment.
+
+The product owner clarified the approved closed-enquiry behavior on 2026-10-10: Sales may move an owned active enquiry out of the active queue with a reason; it remains in a Recently dead area for seven days and then appears automatically in a common Dead archive. This is a reversible lifecycle state over the same audited record, not deletion or copying. Authorized Sales may restore the enquiry to Contact in progress with a reason, while the closure and restoration history remains attributable.

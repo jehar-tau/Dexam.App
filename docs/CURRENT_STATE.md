@@ -1,10 +1,10 @@
 # Current State
 
-Last updated: 2026-10-10
+Last updated: 2026-10-11
 
 ## Current phase
 
-F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups discovery is active on `feature/f010-crm-foundation`; D-022 requires product-owner approval before implementation.
+F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups is implemented and product-owner approved on `feature/f010-crm-foundation` under D-022 Option B; it is ready for pull-request review.
 
 ## Completed
 
@@ -124,6 +124,13 @@ F008 Notifications is merged through PR #13. F010 CRM Leads and Follow-ups disco
 - Merged F008 through PR #13 at `a58bf0a` and synchronized local `main`.
 - Started F010 CRM Leads and Follow-ups discovery so internal marketing/admissions notifications can rely on real lead ownership and follow-up records.
 - Drafted D-022 with a recommended identity-aware, free-first CRM foundation that preserves the separation between Sales work and student enrolment/access authority.
+- D-022 Option B approved: build the identity-aware, manually operated CRM foundation and free in-app Sales alerts without external messaging, website intake, paid services, or production personal data.
+- Added the F010 CRM foundation with explicit prospect/guardian identities, normalized contact points, possible-match candidates, assigned-owner access, separate assignment authority, immutable ownership/lifecycle history, replaceable follow-ups, and controlled enrolment-review requests.
+- Added a protected Sales CRM workspace at `/staff/crm` for fictional/manual enquiry creation, assigned-queue search, bounded activity logging, follow-up scheduling, deliberate stage changes, and a handoff that cannot create student access.
+- Added reversible dead-enquiry management: reason-required removal from Active, a seven-day Recently dead holding area, automatic time-derived Dead archive placement, follow-up/alert invalidation, and reason-required restoration of the same audited enquiry.
+- Extended F008 with safe `lead_assigned` and `lead_follow_up_due` domain events, Sales-only in-app notifications, protected CRM deep links, current-assignment authorization, and stale-alert cancellation without external messages or paid providers.
+- Verified F010 locally with 430 database/security assertions, 88 unit/component tests, 31 Chromium browser journeys, a production build, desktop/mobile visual inspection without horizontal overflow, and zero preview console errors.
+- Product owner approved the F010 CRM workspace, including the reversible dead-enquiry workflow, on 2026-10-11.
 
 ## Not yet started
 
@@ -149,7 +156,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Review D-022 and obtain the product owner's Option A, B, or C decision before creating CRM personal-data schema or interfaces. Option B is recommended.
+Open and review the F010 pull request, then merge it after required GitHub checks pass.
 
 ## Blockers
 

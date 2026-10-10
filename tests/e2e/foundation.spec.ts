@@ -163,6 +163,13 @@ test('protected staff route redirects to employee sign-in', async ({ page }) => 
   await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
 })
 
+test('direct CRM route preserves a safe staff return path', async ({ page }) => {
+  await page.goto('/staff/crm')
+
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fcrm$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+})
+
 test('employee sign-in remains usable at a mobile width', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/staff/sign-in')
@@ -173,6 +180,73 @@ test('employee sign-in remains usable at a mobile width', async ({ page }) => {
     return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
   })
   expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('Sales manages a fictional assigned enquiry and requests enrolment review', async ({
+  page,
+}) => {
+  await page.goto('/staff/crm?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assigned enquiries.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Aarav Kulkarni' })).toBeVisible()
+  await expect(page.getByText(/not promotional marketing consent/)).toBeVisible()
+
+  await page.getByRole('button', { name: /Meera Patel/ }).click()
+  await expect(page.getByText('Possible existing person')).toBeVisible()
+  await page
+    .getByLabel('Handoff note')
+    .fill('Prospect requested the fictional foundation programme.')
+  await page.getByRole('button', { name: 'Request review' }).click()
+  await expect(page.getByText(/Student access has not been created/)).toBeVisible()
+})
+
+test('Sales removes, archives, and restores a fictional dead enquiry', async ({ page }) => {
+  await page.goto('/staff/crm?preview=1')
+
+  await page
+    .getByLabel('Why is this enquiry dead?')
+    .fill('No response after the agreed follow-up period.')
+  await page.getByRole('button', { name: 'Move to dead enquiries' }).click()
+  await expect(page.getByText(/moved to Recently dead/)).toBeVisible()
+  await expect(page.getByText('Dead enquiry')).toBeVisible()
+
+  await page
+    .getByLabel('Why are you restoring this enquiry?')
+    .fill('The prospect contacted Dexam again.')
+  await page.getByRole('button', { name: 'Restore to active queue' }).click()
+  await expect(page.getByText(/restored to the active queue/)).toBeVisible()
+  await expect(page.getByText('Contact In Progress')).toHaveCount(2)
+
+  await page.getByRole('button', { name: 'Dead archive' }).click()
+  await expect(page.getByRole('heading', { name: 'Dev Malhotra' })).toBeVisible()
+  await expect(page.getByText(/Archived 6 Oct 2026/)).toBeVisible()
+})
+
+test('CRM workspace remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/crm?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assigned enquiries.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('Sales notification opens the assigned enquiry without exposing contact details', async ({
+  page,
+}) => {
+  await page.goto('/staff/notifications?preview=1&audience=sales')
+
+  await expect(page.getByRole('heading', { name: 'Lead follow-up due' })).toBeVisible()
+  await expect(page.getByText('Aarav Kulkarni')).not.toBeVisible()
+  await page
+    .getByRole('link', { name: /Open update/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/enquiry=preview-enquiry-aarav/)
+  await expect(page.getByRole('heading', { name: 'Aarav Kulkarni' })).toBeVisible()
 })
 
 test('Enrolment Operator reviews and issues a fictional activation pack', async ({ page }) => {

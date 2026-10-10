@@ -1,6 +1,6 @@
 # F010 — CRM Leads and Follow-ups
 
-Status: Decision required — D-022
+Status: D-022 Option B implemented and product-owner approved — pull-request review pending
 Risk: Red — prospective-student and guardian contact data, duplicate identity, sales authority, consent, and conversion into enrolment
 
 ## Purpose and problem
@@ -40,9 +40,20 @@ Students and teachers have no CRM access.
 - Activity outcomes such as attempted contact, connected, counselling arranged, no response, and note added
 - One current follow-up task with due time, disposition, replacement/cancellation, and history
 - Pipeline states approved by D-022
+- Reversible dead-enquiry handling: seven-day Recently dead area followed by a common time-derived Dead archive
 - Explicit enrolment-review request handoff
 - In-app `lead_assigned` and `lead_follow_up_due`/overdue notifications through F008
 - Loading, empty, success, validation, retry, permission-denied, suspended-owner, and unassigned states
+
+## Implemented local slice
+
+- Identity-aware prospect and guardian records without creating Auth users, memberships, enrolments, or student access
+- Normalized contact points, possible-match review candidates, explicit person relationships, and request-key idempotency
+- Assigned-owner access checks, separate assignment authority, append-only ownership and lifecycle histories, and immediate current-state revocation
+- Assigned Sales queue/detail workspace with bounded search, manual enquiry creation, activity outcomes, replaceable follow-ups, stage movement, and explicit enrolment-review handoff
+- Free F008 in-app alerts for assignment and due follow-up, with protected CRM deep links and no personal contact details in alert text
+- Fictional local desktop/mobile previews; no external message, paid service, website intake, or production personal data
+- Database, unit/component, and browser coverage for identity, authorization, duplicate candidates, stale alerts, conversion boundaries, responsive behavior, and failure states
 
 ## Out of scope
 
@@ -53,6 +64,7 @@ Students and teachers have no CRM access.
 - Payment collection, discounts, pricing commitments, or order history
 - Student-account creation, enrolment approval, credential issuance, or academic access by Sales
 - Automatic identity merge or automatic conversion based only on phone/email
+- Destructive deletion or copying dead enquiries into a separate ungoverned datastore
 - Analytics exports or unrestricted pipeline downloads
 - AI-written sales messages, AI lead scoring, or automated consequential decisions
 
@@ -75,6 +87,9 @@ Students and teachers have no CRM access.
 - Exactly one current owner exists for an assigned enquiry; every ownership change records actor, reason, and time.
 - Only one current open follow-up is allowed in the first slice. Rescheduling closes/replaces the prior task rather than silently rewriting it.
 - A due alert is derived from the follow-up record. Completing, cancelling, or replacing the task makes obsolete alerts non-actionable.
+- Moving an enquiry to dead requires a bounded reason, removes it from the active queue, cancels its open follow-up, and makes its Sales alerts non-actionable.
+- A dead enquiry remains in Recently dead for seven days and then appears automatically in Dead archive. Both are secure views over the same record; no scheduler, duplicate row, or destructive move is required.
+- Restoring a dead enquiry requires a reason, returns the same record to `contact_in_progress`, and retains its closure/restoration transition history.
 - Read notification state does not complete the follow-up task.
 - Conversion means “request enrolment review,” not “create access.”
 - Promotional consent is separate from permission to contact someone about the enquiry they initiated.
@@ -95,6 +110,7 @@ Transitions are deliberate and historically recorded. A closed enquiry requires 
 ## Interface states
 
 - Assigned queue with overdue/due indicators and last activity
+- Active, Recently dead, and Dead archive areas with closure time, reason, automatic archive time, and a restore action
 - Enquiry detail with identity/contact summary, source, interests, owner, timeline, and next follow-up
 - Create, assign/reassign, log activity, schedule/reschedule, close/reopen, and request-review confirmations
 - Duplicate-candidate warning without disclosing unrelated personal details
@@ -147,6 +163,8 @@ No personal-data product analytics are authorized in the first slice. Operationa
 - Shared phone/contact scenarios do not automatically merge a guardian and student.
 - Repeated creation with the same idempotency key does not create duplicate enquiries.
 - Follow-up completion/reschedule/cancellation makes obsolete due work non-actionable.
+- Closing removes the enquiry from Active, exposes it in Recently dead for seven days, then exposes it in Dead archive without deleting or duplicating it.
+- Restoring returns the same enquiry to Active while preserving closure history.
 - A suspended or revoked employee loses CRM and notification access on the next request.
 - Sales can request enrolment review but cannot create membership, approve enrolment, or issue credentials.
 - No external message or paid-provider request can occur in this slice.
@@ -162,8 +180,9 @@ No personal-data product analytics are authorized in the first slice. Operationa
 
 ## Open decisions
 
-- D-022: prospect identity, CRM first milestone, ownership, lifecycle, follow-up, and conversion boundary
+- D-022 Option B approved: prospect identity, CRM first milestone, ownership, lifecycle, follow-up, and conversion boundary
 - Minimum contact/profile fields and who may correct them
 - CRM data retention/deletion before production launch
 - First website-to-CRM integration and abuse controls
 - External communication/marketing consent remains under a later F008 Option C decision
+- Assigner/unassigned-queue interface, Enrolment Operator handoff inbox, public website intake, retention/deletion operations, and CRM reporting remain explicitly tracked in `../DEFERRED_WORK.md`

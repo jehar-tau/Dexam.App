@@ -18,16 +18,17 @@ export function AppShell() {
   const [signOutError, setSignOutError] = useState('')
   const notificationAudience: NotificationAudience | null = location.pathname.startsWith('/student')
     ? 'student'
-    : location.pathname.startsWith('/staff')
-      ? 'teacher'
-      : null
+    : location.pathname.startsWith('/staff/crm') ||
+        new URLSearchParams(location.search).get('audience') === 'sales'
+      ? 'sales'
+      : location.pathname.startsWith('/staff')
+        ? 'teacher'
+        : null
   const previewEnabled =
     new URLSearchParams(location.search).get('preview') === '1' &&
     (notificationAudience === 'student'
       ? import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true'
-      : notificationAudience === 'teacher'
-        ? import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true'
-        : false)
+      : import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true')
   const unreadCountQuery = useQuery({
     queryKey: ['notification-unread-count', notificationAudience, previewEnabled],
     queryFn: () =>
@@ -42,6 +43,10 @@ export function AppShell() {
     retry: false,
   })
   const unreadCount = unreadCountQuery.data ?? 0
+  const notificationParams = new URLSearchParams()
+  if (previewEnabled) notificationParams.set('preview', '1')
+  if (notificationAudience === 'sales') notificationParams.set('audience', 'sales')
+  const notificationSearch = notificationParams.size ? `?${notificationParams.toString()}` : ''
 
   async function handleSignOut() {
     setSignOutError('')
@@ -65,6 +70,12 @@ export function AppShell() {
           Dexam
         </NavLink>
         <nav aria-label="Main navigation" className={styles.navigation}>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/staff/crm"
+          >
+            CRM
+          </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/activate"
@@ -110,7 +121,7 @@ export function AppShell() {
           {notificationAudience ? (
             <NavLink
               className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to={`${notificationAudience === 'student' ? '/student' : '/staff'}/notifications${previewEnabled ? '?preview=1' : ''}`}
+              to={`${notificationAudience === 'student' ? '/student' : '/staff'}/notifications${notificationSearch}`}
             >
               Notifications
               {unreadCount > 0 ? (
