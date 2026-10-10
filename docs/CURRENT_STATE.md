@@ -4,7 +4,7 @@ Last updated: 2026-10-10
 
 ## Current phase
 
-F007 Teacher Feedback is merged. F008 Notifications Option B is implemented locally on `feature/f008-notification-foundation` and is awaiting product-owner visual approval before commit and pull request.
+F007 Teacher Feedback is merged. F008 Notifications Option B is implemented, verified, committed, and pushed on `feature/f008-notification-foundation`; the GitHub pull request is ready to be opened.
 
 ## Completed
 
@@ -120,6 +120,7 @@ F007 Teacher Feedback is merged. F008 Notifications Option B is implemented loca
 - Added current-state student/teacher notification authorization so suspended people, revoked employees, ended enrolments, or removed teaching scope cannot read an inbox record or regain access through its link.
 - Added responsive student and teacher notification centres with exact navigation unread counts, all/unread filters, mark-one/mark-all read actions, protected deep links, and preview flows.
 - Verified F008 locally with 361 database/security assertions, 79 unit/component tests, 26 Chromium browser journeys, production builds, Edge Function compilation/unauthorized-call rejection, and desktop/mobile visual inspection without horizontal overflow.
+- Committed the approved F008 decision and implementation as `c99fd7a` and `ffa4b07`, then pushed `feature/f008-notification-foundation` to GitHub for pull-request review.
 
 ## Not yet started
 
@@ -145,7 +146,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Obtain product-owner visual approval for the F008 student and teacher notification centres, then commit and open the pull request. Do not add an external channel without a later decision.
+Open the prepared F008 pull request from `feature/f008-notification-foundation` into `main`, wait for GitHub checks, review, and merge after approval. Do not add an external channel without a later decision.
 
 ## Blockers
 
