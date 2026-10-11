@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F011 CRM Assignment Operations is implemented and product-owner approved on `feature/f011-crm-assignment-operations` under D-023 Option B; pull-request review is next.
+F011 CRM Assignment Operations is merged through PR #15 under D-023 Option B. F012 Enrolment Handoff and Identity Resolution is implemented, fully verified, and product-owner approved on `feature/f012-enrolment-handoff` under D-024 Option B; its pull request is pending.
 
 ## Completed
 
@@ -140,6 +140,15 @@ F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F01
 - Added the protected CRM Assignment workspace at `/staff/crm/assignments` with fictional unassigned and inactive-owner recovery previews, minimum allocation details, single-record assignment, safe errors, and responsive desktop/mobile behavior.
 - Verified F011 locally with 463 database/security assertions, 95 unit/component tests, 34 Chromium browser journeys, full format/lint/type/build checks, desktop/mobile inspection without horizontal overflow, and zero preview console errors.
 - Product owner visually approved the F011 CRM Assignment workspace on 2026-10-11.
+- Merged F011 CRM Assignment Operations through PR #15 at `ff98b5f` and synchronized local `main`.
+- Started F012 discovery for the explicit CRM-to-Enrolment Operator handoff, canonical identity resolution, offering/cohort selection, and routine enrolment approval.
+- Drafted D-024 with a recommended guided, single-request Enrolment Operator workflow that reuses the existing activation queue and never auto-merges weak contact matches.
+- D-024 Option B approved: Enrolment Operators deliberately resolve new versus existing students, weak matches, offering/cohort placement, and return or approval while Sales remains unable to create access.
+- Implemented F012's capability-gated handoff inbox, explicit identity-candidate disposition, bounded existing-student search, active offering/cohort selection, reason-required return/resubmission, cryptographic Member ID issuance, and atomic enrolment/CRM conversion.
+- New and unclaimed students reuse the existing activation queue; claimed existing students receive active enrolment without duplicate credentials, people, memberships, or Member IDs.
+- Added Sales-visible returned-review reasons while keeping candidate student records private to current Enrolment Operators.
+- Verified F012 with a clean database reset, 518 passing pgTAP checks, 103 passing unit/component tests, 37 passing Chromium journeys, a production build, and desktop/mobile visual inspection without console errors or horizontal overflow.
+- Product owner approved the F012 fictional Enrolment Operator preview on 2026-10-11.
 
 ## Not yet started
 
@@ -165,7 +174,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Commit and push the approved F011 implementation, then automatically create its pull request for review.
+Commit and push the approved F012 implementation, create its pull request automatically, and wait for explicit merge approval.
 
 ## Blockers
 

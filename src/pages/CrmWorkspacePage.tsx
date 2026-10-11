@@ -40,7 +40,10 @@ const previewEnquiries: CrmEnquiry[] = [
     lastActivityAt: '2026-10-09T11:15:00.000Z',
     lastActivityOutcome: 'connected',
     possibleIdentityMatch: false,
+    reviewDecisionReason: null,
     reviewRequestedAt: null,
+    reviewResolvedAt: null,
+    reviewStatus: null,
     createdAt: '2026-10-08T08:30:00.000Z',
   },
   {
@@ -63,7 +66,10 @@ const previewEnquiries: CrmEnquiry[] = [
     lastActivityAt: '2026-10-10T09:20:00.000Z',
     lastActivityOutcome: 'counselling_arranged',
     possibleIdentityMatch: true,
+    reviewDecisionReason: null,
     reviewRequestedAt: null,
+    reviewResolvedAt: null,
+    reviewStatus: null,
     createdAt: '2026-10-09T08:30:00.000Z',
   },
   {
@@ -86,7 +92,10 @@ const previewEnquiries: CrmEnquiry[] = [
     lastActivityAt: null,
     lastActivityOutcome: null,
     possibleIdentityMatch: false,
+    reviewDecisionReason: null,
     reviewRequestedAt: null,
+    reviewResolvedAt: null,
+    reviewStatus: null,
     createdAt: '2026-10-10T12:30:00.000Z',
   },
   {
@@ -109,7 +118,10 @@ const previewEnquiries: CrmEnquiry[] = [
     lastActivityAt: '2026-10-08T08:20:00.000Z',
     lastActivityOutcome: 'connected',
     possibleIdentityMatch: false,
+    reviewDecisionReason: null,
     reviewRequestedAt: null,
+    reviewResolvedAt: null,
+    reviewStatus: null,
     createdAt: '2026-10-03T08:30:00.000Z',
   },
   {
@@ -132,7 +144,10 @@ const previewEnquiries: CrmEnquiry[] = [
     lastActivityAt: '2026-09-29T08:00:00.000Z',
     lastActivityOutcome: 'no_response',
     possibleIdentityMatch: false,
+    reviewDecisionReason: null,
     reviewRequestedAt: null,
+    reviewResolvedAt: null,
+    reviewStatus: null,
     createdAt: '2026-09-22T08:30:00.000Z',
   },
 ]
@@ -378,7 +393,10 @@ export function CrmWorkspacePage() {
       else
         updateSelected({
           stage: 'enrolment_review_requested',
+          reviewDecisionReason: null,
           reviewRequestedAt: new Date().toISOString(),
+          reviewResolvedAt: null,
+          reviewStatus: 'pending',
         })
       setReviewNote('')
     }, 'Enrolment review requested. Student access has not been created.')
@@ -419,7 +437,10 @@ export function CrmWorkspacePage() {
             lastActivityAt: null,
             lastActivityOutcome: null,
             possibleIdentityMatch: false,
+            reviewDecisionReason: null,
             reviewRequestedAt: null,
+            reviewResolvedAt: null,
+            reviewStatus: null,
             createdAt: new Date().toISOString(),
           },
           ...current,
@@ -716,6 +737,13 @@ export function CrmWorkspacePage() {
                     <strong>Dead enquiry</strong>
                     <span>{selected.closedReason}</span>
                   </div>
+                </Callout>
+              ) : null}
+              {selected.reviewStatus === 'returned' ? (
+                <Callout tone="warning" icon="warning">
+                  <strong>Enrolment review returned</strong>
+                  <span>{selected.reviewDecisionReason}</span>
+                  <span>Correct the handoff details, then submit a new review request below.</span>
                 </Callout>
               ) : null}
               {selected.possibleIdentityMatch ? (

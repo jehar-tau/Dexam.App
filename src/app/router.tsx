@@ -9,6 +9,7 @@ import { ContentWorkspacePage } from '../pages/ContentWorkspacePage'
 import { CrmAssignmentPage } from '../pages/CrmAssignmentPage'
 import { CrmWorkspacePage } from '../pages/CrmWorkspacePage'
 import { EnrolmentOperatorPage } from '../pages/EnrolmentOperatorPage'
+import { EnrolmentHandoffPage } from '../pages/EnrolmentHandoffPage'
 import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { NotificationCentrePage } from '../pages/NotificationCentrePage'
@@ -74,6 +75,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="lead.assign">
             <CrmAssignmentPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/enrolment-handoffs',
+        element: (
+          <StaffAccessBoundary capability="enrollment.operate">
+            <EnrolmentHandoffPage />
           </StaffAccessBoundary>
         ),
       },
