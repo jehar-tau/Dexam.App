@@ -2,7 +2,7 @@
 
 Each phase is refined through feature specifications and Decision Gates before implementation.
 
-Current position: the first product milestone through essential in-app notifications and the Phase 7 CRM foundation, assignment operations, and enrolment handoff are merged through PR #16. F013/D-025 now define the CRM data-lifecycle and privacy-operations gate. Production personal data remains prohibited until retention, deployment, notice, request-route, and privacy gates are approved.
+Current position: the first product milestone through essential in-app notifications and the Phase 7 CRM foundation, assignment operations, enrolment handoff, and governed privacy operations are merged through PR #17. Production personal data remains prohibited until hosted staging, operational ownership, notice, request-route, backup/restore, and final privacy-review gates are approved.
 
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.

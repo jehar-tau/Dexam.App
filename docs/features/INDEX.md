@@ -12,6 +12,6 @@
 - F010 CRM leads and follow-ups — D-022 Option B implemented and merged through PR #14
 - F011 CRM assignment operations — D-023 Option B implemented and merged through PR #15
 - F012 Enrolment handoff and identity resolution — D-024 Option B implemented and merged through PR #16
-- F013 CRM data lifecycle and privacy operations — D-025 Option B implemented under delegated approval; pull request pending
+- F013 CRM data lifecycle and privacy operations — D-025 Option B implemented and merged through PR #17
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

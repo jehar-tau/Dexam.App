@@ -1,6 +1,6 @@
 # F013 — CRM Data Lifecycle and Privacy Operations
 
-Status: Implemented under delegated product-owner approval — D-025 Option B; pull request pending
+Status: Implemented and merged through PR #17 — D-025 Option B
 Risk: Red — prospective-student and guardian personal data, correction, erasure, legal holds, and irreversible operations
 
 ## Purpose and problem

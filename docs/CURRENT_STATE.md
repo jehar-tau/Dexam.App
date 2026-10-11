@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F012 Enrolment Handoff and Identity Resolution is merged through PR #16 under D-024 Option B. F013 CRM Data Lifecycle and Privacy Operations is implemented, fully verified, and awaiting its pull request on `feature/f013-crm-data-lifecycle` under approved D-025 Option B.
+F013 CRM Data Lifecycle and Privacy Operations is implemented and merged through PR #17 under approved D-025 Option B. The repository is synchronized on `main`; production personal data and deployment remain blocked pending staging, operational ownership, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -157,6 +157,7 @@ F012 Enrolment Handoff and Identity Resolution is merged through PR #16 under D-
 - CRM minimization now removes direct contact and free-text content, expires CRM alerts, preserves protected canonical student and academic domains, and records a non-content tombstone for safe backup restoration.
 - Added the protected CRM Privacy workspace at `/staff/crm/privacy` with masked fictional cases, request intake, field-scoped correction, independent erasure approval, and temporary hold/release flows.
 - Verified F013 after a clean reset with 579 database assertions, 114 unit/component tests, 41 Chromium browser journeys, a production build, desktop visual inspection, and mobile overflow coverage.
+- Merged F013 CRM Data Lifecycle and Privacy Operations through PR #17 at `f932c67` after all three GitHub checks passed, then synchronized local `main`.
 
 ## Not yet started
 
@@ -182,7 +183,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Commit and push the verified F013 implementation, create its pull request automatically, merge after all GitHub checks pass under the product owner's delegated approval, then synchronize local `main`.
+Begin the DW-026 hosted-staging discovery and Decision Gate: define ownership, a ₹0-first environment, secrets, migration/seed policy, preview access, monitoring, and backup/restore verification. Do not create external infrastructure, use personal data, or deploy production until the product owner supplies the required account choices and explicitly approves that separate scope.
 
 ## Blockers
 

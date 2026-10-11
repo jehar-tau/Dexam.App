@@ -92,11 +92,10 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## CRM follow-up work
 
-| ID     | Status                     | Deferred functionality                                           | Resume trigger and prerequisites                                                                                                                                                                               | Authority                |
-| ------ | -------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| DW-042 | Pull request pending       | CRM retention, correction, deletion, and data-subject operations | D-025 Option B is implemented and fully verified with fictional data. Merge the F013 pull request before moving this item to the completion log.                                                               | F010, F013, D-022, D-025 |
-| DW-043 | Deferred, foundation ready | Public website enquiry intake and abuse controls                 | Define minimum fields, consent wording, origin authentication, throttling, bot/spam defense, idempotency, failure handling, and website-to-platform trust before connecting the separate marketing repository. | F010, D-022, D-002       |
-| DW-044 | Deferred, foundation ready | CRM pipeline reporting and controlled exports                    | Validate the operational decisions a report supports; then define aggregate privacy, role scope, date filters, export authority, watermark/audit behavior, retention, and download limits.                     | F010, D-022              |
+| ID     | Status                     | Deferred functionality                           | Resume trigger and prerequisites                                                                                                                                                                               | Authority          |
+| ------ | -------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| DW-043 | Deferred, foundation ready | Public website enquiry intake and abuse controls | Define minimum fields, consent wording, origin authentication, throttling, bot/spam defense, idempotency, failure handling, and website-to-platform trust before connecting the separate marketing repository. | F010, D-022, D-002 |
+| DW-044 | Deferred, foundation ready | CRM pipeline reporting and controlled exports    | Validate the operational decisions a report supports; then define aggregate privacy, role scope, date filters, export authority, watermark/audit behavior, retention, and download limits.                     | F010, D-022        |
 
 ## Completion log
 
@@ -106,3 +105,4 @@ Move an item here only after its required implementation is merged or the produc
 - 2026-10-11 — DW-032 completed through F010 / PR #14: the approved first CRM lead, ownership, follow-up, conversion-request, and notification foundation is merged; remaining CRM work has separate IDs.
 - 2026-10-11 — DW-040 completed through F011 / PR #15: explicit CRM Coordinator assignment plus unassigned and inactive-owner recovery queues are merged.
 - 2026-10-11 — DW-041 completed through F012 / PR #16: the Enrolment Operator CRM handoff and identity-resolution inbox is merged.
+- 2026-10-11 — DW-042 completed through F013 / PR #17: purpose-based CRM retention, governed correction, two-person erasure, bounded holds, and privacy operations are merged with production activation still gated.
