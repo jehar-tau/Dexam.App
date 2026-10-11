@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F011 CRM Assignment Operations implementation is active on `feature/f011-crm-assignment-operations` under approved D-023 Option B.
+F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F011 CRM Assignment Operations is implemented and product-owner approved on `feature/f011-crm-assignment-operations` under D-023 Option B; pull-request review is next.
 
 ## Completed
 
@@ -136,6 +136,10 @@ F010 CRM Leads and Follow-ups is merged through PR #14 under D-022 Option B. F01
 - Audited the remaining roadmap: the internal-pilot path is approximately 55–65% complete, safe public-launch work is approximately 40–50% complete, and later commerce/assessment/media/AI phases remain outside the current milestone.
 - Drafted F011 and D-023 for the next launch-critical CRM gap: an explicit CRM Coordinator grant, unassigned and inactive-owner recovery queues, reason-required single assignment, and no bulk or automated routing.
 - D-023 Option B approved: selected active Sales employees may receive a separate revocable `lead.assign` grant for single-record assignment and inactive-owner recovery without bulk or automated routing.
+- Added the F011 trusted database operations for capability-gated unassigned and inactive-owner queues, current active Sales owner discovery, concurrency-safe reason-required assignment, immutable ownership history, and follow-up replacement.
+- Added the protected CRM Assignment workspace at `/staff/crm/assignments` with fictional unassigned and inactive-owner recovery previews, minimum allocation details, single-record assignment, safe errors, and responsive desktop/mobile behavior.
+- Verified F011 locally with 463 database/security assertions, 95 unit/component tests, 34 Chromium browser journeys, full format/lint/type/build checks, desktop/mobile inspection without horizontal overflow, and zero preview console errors.
+- Product owner visually approved the F011 CRM Assignment workspace on 2026-10-11.
 
 ## Not yet started
 
@@ -161,7 +165,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Implement and verify F011 CRM Assignment Operations, then present the fictional desktop/mobile preview before automatically creating its pull request.
+Commit and push the approved F011 implementation, then automatically create its pull request for review.
 
 ## Blockers
 

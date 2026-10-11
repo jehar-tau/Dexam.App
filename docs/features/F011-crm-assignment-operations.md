@@ -1,6 +1,6 @@
 # F011 — CRM Assignment Operations
 
-Status: Approved — D-023 Option B; implementation active
+Status: Implemented and product-owner approved; pull-request review pending
 Risk: Red — prospect personal data, cross-owner visibility, and staff assignment authority
 
 ## Purpose and problem

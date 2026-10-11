@@ -298,7 +298,9 @@ select lives_ok(
   $$select public.assign_crm_enquiry(
     (select enquiry_one from crm_test_ids),
     'b1000000-0000-4000-8000-000000000002',
-    'Balanced fictional workload'
+    'Balanced fictional workload',
+    'b1000000-0000-4000-8000-000000000001',
+    false
   )$$,
   'authorized assigner reassigns the enquiry'
 );
