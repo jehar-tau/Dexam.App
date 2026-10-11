@@ -6,6 +6,7 @@ import { StudentAccessBoundary } from '../features/auth/StudentAccessBoundary'
 import { FoundationPage } from '../pages/FoundationPage'
 import { AssignmentDistributionPage } from '../pages/AssignmentDistributionPage'
 import { ContentWorkspacePage } from '../pages/ContentWorkspacePage'
+import { CrmAssignmentPage } from '../pages/CrmAssignmentPage'
 import { CrmWorkspacePage } from '../pages/CrmWorkspacePage'
 import { EnrolmentOperatorPage } from '../pages/EnrolmentOperatorPage'
 import { HealthPage } from '../pages/HealthPage'
@@ -65,6 +66,14 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="lead.manage_assigned">
             <CrmWorkspacePage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/crm/assignments',
+        element: (
+          <StaffAccessBoundary capability="lead.assign">
+            <CrmAssignmentPage />
           </StaffAccessBoundary>
         ),
       },

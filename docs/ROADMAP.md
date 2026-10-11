@@ -2,7 +2,7 @@
 
 Each phase is refined through feature specifications and Decision Gates before implementation.
 
-Current position: the first product milestone through essential in-app notifications is merged. Phase 7 CRM discovery is active under F010 and D-022; no CRM personal-data implementation is approved yet.
+Current position: the first product milestone through essential in-app notifications and the approved Phase 7 CRM foundation are merged through PR #14. F011 assignment operations is implemented and product-owner approved under D-023 Option B; pull-request review is pending. Production personal data remains prohibited until the retention, deployment, and privacy gates are approved.
 
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.

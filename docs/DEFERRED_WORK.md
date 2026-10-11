@@ -1,6 +1,6 @@
 # Deferred Work Register
 
-Last updated: 2026-10-10
+Last updated: 2026-10-11
 
 This is the canonical register for functionality Dexam has discussed but is not building in the current slice. It prevents useful ideas, incomplete feature slices, and required follow-up work from being lost between tasks.
 
@@ -94,13 +94,13 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## CRM follow-up work
 
-| ID     | Status                     | Deferred functionality                                           | Resume trigger and prerequisites                                                                                                                                                                                | Authority          |
-| ------ | -------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| DW-040 | Next slice                 | Lead assigner and unassigned-queue interface                     | Reuse the implemented `lead.assign` boundary and ownership history; define operational scope, bulk limits, suspension behavior, and reassignment reasons before exposing the interface.                         | F010, D-022, F002  |
-| DW-041 | Next slice                 | Enrolment Operator CRM handoff and identity-resolution inbox     | Consume only explicit enrolment-review requests; reuse canonical duplicate review and enrolment authority without granting broad CRM access or allowing Sales to create accounts.                               | F010, F004, D-008  |
-| DW-042 | Next slice                 | CRM retention, correction, deletion, and data-subject operations | Approve retention periods, lawful/operational basis, correction evidence, deletion/anonymization exceptions, audit remnants, backup behavior, and authorized roles before production personal data is accepted. | F010, D-022        |
-| DW-043 | Deferred, foundation ready | Public website enquiry intake and abuse controls                 | Define minimum fields, consent wording, origin authentication, throttling, bot/spam defense, idempotency, failure handling, and website-to-platform trust before connecting the separate marketing repository.  | F010, D-022, D-002 |
-| DW-044 | Deferred, foundation ready | CRM pipeline reporting and controlled exports                    | Validate the operational decisions a report supports; then define aggregate privacy, role scope, date filters, export authority, watermark/audit behavior, retention, and download limits.                      | F010, D-022        |
+| ID     | Status                     | Deferred functionality                                           | Resume trigger and prerequisites                                                                                                                                                                                | Authority                      |
+| ------ | -------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| DW-040 | Implemented, merge pending | Lead assigner and unassigned-queue interface                     | D-023 Option B is implemented and product-owner approved. Merge the verified F011 branch, then move this item to the completion log.                                                                            | F010, F011, D-022, D-023, F002 |
+| DW-041 | Next slice                 | Enrolment Operator CRM handoff and identity-resolution inbox     | Consume only explicit enrolment-review requests; reuse canonical duplicate review and enrolment authority without granting broad CRM access or allowing Sales to create accounts.                               | F010, F004, D-008              |
+| DW-042 | Next slice                 | CRM retention, correction, deletion, and data-subject operations | Approve retention periods, lawful/operational basis, correction evidence, deletion/anonymization exceptions, audit remnants, backup behavior, and authorized roles before production personal data is accepted. | F010, D-022                    |
+| DW-043 | Deferred, foundation ready | Public website enquiry intake and abuse controls                 | Define minimum fields, consent wording, origin authentication, throttling, bot/spam defense, idempotency, failure handling, and website-to-platform trust before connecting the separate marketing repository.  | F010, D-022, D-002             |
+| DW-044 | Deferred, foundation ready | CRM pipeline reporting and controlled exports                    | Validate the operational decisions a report supports; then define aggregate privacy, role scope, date filters, export authority, watermark/audit behavior, retention, and download limits.                      | F010, D-022                    |
 
 ## Completion log
 

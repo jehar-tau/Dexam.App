@@ -234,6 +234,42 @@ test('CRM workspace remains usable at a mobile width', async ({ page }) => {
   expect(widths.scroll).toBeLessThanOrEqual(widths.client)
 })
 
+test('CRM Coordinator assigns one fictional unassigned enquiry', async ({ page }) => {
+  await page.goto('/staff/crm/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assign enquiries.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Rohan Desai' })).toBeVisible()
+  await expect(page.getByText(/shows only allocation details/)).toBeVisible()
+  await page.getByLabel('Active Sales owner').selectOption('preview-owner-sameer')
+  await page.getByLabel('Assignment reason').fill('Balanced current workload')
+  await page.getByRole('button', { name: 'Assign to Sameer Joshi' }).click()
+  await expect(page.getByText(/Rohan Desai was assigned to Sameer Joshi/)).toBeVisible()
+  await expect(page.getByText('1 waiting')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Needs reassignment' }).click()
+  await expect(page.getByRole('heading', { name: 'Anaya Rao' })).toBeVisible()
+  await expect(page.getByText(/without restoring the previous employee's access/)).toBeVisible()
+})
+
+test('CRM assignment remains usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/crm/assignments?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Assign enquiries.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('direct CRM assignment route preserves a safe staff return path', async ({ page }) => {
+  await page.goto('/staff/crm/assignments')
+
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fcrm%2Fassignments$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+})
+
 test('Sales notification opens the assigned enquiry without exposing contact details', async ({
   page,
 }) => {
