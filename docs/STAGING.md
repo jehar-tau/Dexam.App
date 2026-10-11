@@ -85,7 +85,10 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 ## Current setup checkpoint
 
 - Repository staging controls and the GitHub `staging` environment are prepared.
-- Supabase and Cloudflare project creation is pending owner sign-in; neither provider project nor any deployment credential exists yet.
+- The owner-controlled Supabase Free project is named `Dexam Staging`, project reference `ienwcencjbgdsqxfyxmj`, with URL `https://ienwcencjbgdsqxfyxmj.supabase.co`.
+- `STAGING_PROJECT_ID` and a generated `ACTION_TOKEN_PEPPER` are stored only as GitHub `staging` environment secrets.
+- The Cloudflare Pages GitHub installation is restricted to `jehar-tau/Dexam.App` but awaits the owner's one-time GitHub email verification before the Pages project can be created.
+- `SUPABASE_ACCESS_TOKEN` and `STAGING_DB_PASSWORD` remain unset pending owner-authorized credential setup.
 - No payment method, paid plan, real data, or production deployment has been introduced.
 
 ## Free-tier operations

@@ -162,13 +162,13 @@ F013 CRM Data Lifecycle and Privacy Operations is merged through PR #17. D-026 O
 - Reverified current vendor constraints: Supabase Free has two active projects, 500 MB database size, 1 GB file storage, 5 GB egress, no automatic backups or database branching, and low-activity pausing; Cloudflare Pages Free permits 500 monthly builds and static Vite hosting.
 - D-026 Option B approved: build an owner-controlled, reconstructable, fictional-only staging environment on Supabase Free and Cloudflare Pages without paid services or production authority.
 - Added the F014 repository foundation: strict staging environment validation, public preview denial, SPA routing and safe headers, non-production marking, a non-sensitive backend health operation, complete Edge Function declarations, serialized post-verification database/function deployment, and a staging runbook.
-- Created the empty GitHub `staging` environment. Its deployment secrets remain unset until the owner signs in and the free Supabase project exists; Supabase and Cloudflare project creation and hosted acceptance remain pending.
+- Created the GitHub `staging` environment and stored its project reference plus a generated server-only action-token pepper. The owner-controlled Supabase Free project is named `Dexam Staging` and remains empty; Cloudflare Pages creation is awaiting GitHub's one-time owner email verification. Supabase access-token/database-password secrets and hosted acceptance remain pending.
 
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted staging provider setup and acceptance pending owner sign-in to Supabase and Cloudflare
+- Hosted staging provider setup and acceptance pending GitHub email verification plus remaining deployment-secret configuration
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -188,7 +188,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Have the product owner sign in to Supabase and Cloudflare, then create the two free staging resources, configure exact staging origins and encrypted secrets, run the rebuild/hosted acceptance evidence, and request explicit PR merge approval. Keep the environment fictional-only and production blocked.
+Complete the one-time GitHub verification for the narrowly scoped Cloudflare installation, create the free Pages project, configure exact staging origins and remaining encrypted Supabase secrets, run the rebuild/hosted acceptance evidence, and request explicit PR merge approval. Keep the environment fictional-only and production blocked.
 
 ## Blockers
 
