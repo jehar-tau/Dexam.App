@@ -17,7 +17,7 @@ Staging gives the product owner a stable online acceptance environment. It is no
 
 1. One Supabase Free project named clearly as staging.
 2. One Cloudflare Pages project connected to `jehar-tau/Dexam.App` with `main` as the only build branch.
-3. One GitHub environment named `staging` (created 2026-10-11; secrets remain unset until the Supabase project exists).
+3. One GitHub environment named `staging` (created 2026-10-11; deployment secrets are added only as their provider resources are verified).
 4. Synthetic credentials for acceptance users, stored outside Git and rotated when shared access changes.
 
 ## GitHub staging secrets
@@ -87,8 +87,9 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 - Repository staging controls and the GitHub `staging` environment are prepared.
 - The owner-controlled Supabase Free project is named `Dexam Staging`, project reference `ienwcencjbgdsqxfyxmj`, with URL `https://ienwcencjbgdsqxfyxmj.supabase.co`.
 - `STAGING_PROJECT_ID` and a generated `ACTION_TOKEN_PEPPER` are stored only as GitHub `staging` environment secrets.
-- The Cloudflare Pages GitHub installation is restricted to `jehar-tau/Dexam.App` but awaits the owner's one-time GitHub email verification before the Pages project can be created.
-- `SUPABASE_ACCESS_TOKEN` and `STAGING_DB_PASSWORD` remain unset pending owner-authorized credential setup.
+- GitHub email verification is complete. The Cloudflare Pages GitHub App installation is restricted to `jehar-tau/Dexam.App`, but Cloudflare did not receive the installation callback and still shows the account as disconnected. Re-authorize the installation from the Cloudflare Pages flow before creating the Pages project; do not widen repository access.
+- A named Supabase CLI deployment token was created through Supabase's browser authorization, stored in the owner's macOS Keychain, and verified by listing the owner-controlled `Dexam Staging` project. Copying it into the GitHub `staging` environment as `SUPABASE_ACCESS_TOKEN` still requires the owner's Keychain-access confirmation.
+- `STAGING_DB_PASSWORD` remains unset and must be entered by the owner without placing it in chat, shell history, Git, or documentation.
 - No payment method, paid plan, real data, or production deployment has been introduced.
 
 ## Free-tier operations
