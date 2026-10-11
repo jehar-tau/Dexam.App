@@ -1,6 +1,6 @@
 # F012 — Enrolment Handoff and Identity Resolution
 
-Status: Implemented and product-owner approved — D-024 Option B; pull request pending
+Status: Implemented and merged through PR #16 — D-024 Option B
 Risk: Red — canonical identity, duplicate resolution, enrolment approval, and student access
 
 ## Purpose and problem

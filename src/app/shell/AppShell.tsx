@@ -85,6 +85,12 @@ export function AppShell() {
           </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/staff/crm/privacy"
+          >
+            Privacy
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/activate"
           >
             Activate account

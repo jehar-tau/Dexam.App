@@ -305,6 +305,55 @@ test('direct CRM assignment route preserves a safe staff return path', async ({ 
   await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
 })
 
+test('privacy approver reviews impact and approves fictional CRM erasure', async ({ page }) => {
+  await page.goto('/staff/crm/privacy?preview=1')
+
+  await expect(
+    page.getByRole('heading', { name: 'Protect every enquiry through its full lifecycle.' }),
+  ).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+  await expect(page.getByText('•••• 4018', { exact: true })).toBeVisible()
+  await expect(page.getByText('Enrolment handoff')).toBeVisible()
+  await page
+    .getByLabel('Decision note')
+    .fill('Scope and protected student boundary independently confirmed')
+  await page.getByRole('button', { name: 'Approve erasure' }).click()
+  await expect(page.getByText(/Erasure approved for the trusted worker/)).toBeVisible()
+  await expect(page.getByText(/Approved by You/)).toBeVisible()
+})
+
+test('privacy operator applies a fictional field-scoped correction', async ({ page }) => {
+  await page.goto('/staff/crm/privacy?preview=1')
+
+  await page.getByRole('button', { name: /Mira Kulkarni/ }).click()
+  await page.getByLabel('Field to correct').selectOption('interest_summary')
+  await page.getByLabel('Corrected value').fill('UCEED preparation')
+  await page.getByLabel('Correction reason').fill('Requester confirmed the intended exam')
+  await page.getByRole('button', { name: 'Apply verified correction' }).click()
+  await expect(page.getByText(/readable prior value was not copied/)).toBeVisible()
+})
+
+test('CRM privacy operations remain usable at a mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/crm/privacy?preview=1')
+
+  await expect(
+    page.getByRole('heading', { name: 'Protect every enquiry through its full lifecycle.' }),
+  ).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
+test('direct CRM privacy route preserves a safe staff return path', async ({ page }) => {
+  await page.goto('/staff/crm/privacy')
+
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fcrm%2Fprivacy$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+})
+
 test('Sales notification opens the assigned enquiry without exposing contact details', async ({
   page,
 }) => {
