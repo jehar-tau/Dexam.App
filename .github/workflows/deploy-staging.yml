@@ -1,0 +1,78 @@
+name: Deploy staging backend
+
+on:
+  workflow_run:
+    workflows: [Verify]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Apply verified staging release
+    if: >-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
+
+    steps:
+      - name: Check out verified commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Enable pnpm
+        run: corepack enable && corepack prepare pnpm@11.19.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate required secrets
+        shell: bash
+        env:
+          ACTION_TOKEN_PEPPER: ${{ secrets.ACTION_TOKEN_PEPPER }}
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN"
+          test -n "$SUPABASE_DB_PASSWORD"
+          test -n "$SUPABASE_PROJECT_ID"
+          test -n "$ACTION_TOKEN_PEPPER"
+
+      - name: Link staging project
+        run: pnpm supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Preview pending migrations
+        run: pnpm supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --dry-run
+
+      - name: Apply migrations
+        run: pnpm supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --yes
+
+      - name: Configure server-only function secret
+        env:
+          ACTION_TOKEN_PEPPER: ${{ secrets.ACTION_TOKEN_PEPPER }}
+        run: pnpm supabase secrets set ACTION_TOKEN_PEPPER="$ACTION_TOKEN_PEPPER" --project-ref "$SUPABASE_PROJECT_ID"
+
+      - name: Deploy declared Edge Functions
+        run: pnpm supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID" --use-api
+
+      - name: Record remote migration state
+        run: pnpm supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"

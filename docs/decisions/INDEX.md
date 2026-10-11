@@ -27,5 +27,6 @@
 | D-023 | CRM assignment authority and unassigned/stranded queue                                        | Option B approved 2026-10-11            | `ADR-023-crm-assignment-authority-and-queue.md`           |
 | D-024 | CRM-to-enrolment handoff, identity resolution, and routine approval                           | Option B approved 2026-10-11            | `ADR-024-enrolment-handoff-and-identity-resolution.md`    |
 | D-025 | CRM data lifecycle, correction, erasure, and privacy operations                               | Option B approved 2026-10-11            | `ADR-025-crm-data-lifecycle-and-privacy-operations.md`    |
+| D-026 | Hosted staging ownership, release automation, recovery, and cost boundary                     | Option B approved 2026-10-11            | `ADR-026-hosted-staging-and-release-foundation.md`        |
 
 IDs are stable. Do not reuse retired decision IDs.

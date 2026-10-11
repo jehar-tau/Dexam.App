@@ -1,7 +1,7 @@
 # Cost Model
 
 Status: Planning estimate
-Last reviewed: 2026-09-26
+Last reviewed: 2026-10-11
 
 This document estimates external software and infrastructure costs. It does not include taxes, payment-processing fees, the product owner's existing domain or AI subscriptions, salaries for hired developers/designers, legal/accounting costs, content production, advertising, or hardware.
 
@@ -34,15 +34,16 @@ The upper growth estimates are deliberately broad. We cannot responsibly promise
 
 ### Frontend hosting
 
-- Cloudflare Pages static assets: USD 0 within current platform rules; static asset requests are currently free and unlimited.
+- Cloudflare Pages static assets: USD 0 within current platform rules. The Free plan currently permits 500 builds per month, one concurrent build, 20,000 files per site, 25 MiB per static asset, and unlimited active preview deployments.
 - Control: do not add Cloudflare Pages Functions by default. Trusted backend code belongs in Supabase Edge Functions, avoiding a second backend billing surface.
 
 ### Database, authentication and basic storage
 
-- Supabase Free: USD 0; currently two free active projects, 500 MB database and 1 GB file storage per free project, with projects eligible to pause after inactivity.
+- Supabase Free: USD 0; currently two active projects, 500 MB database size, 1 GB file storage, 5 GB egress, 50,000 monthly active users, and 500,000 Edge Function invocations. Low-activity projects may pause after about one week; automatic backups and database branching are not included.
 - Supabase Pro: starts at USD 25/month; currently includes one default project, 8 GB database disk, 100 GB file storage, 100,000 monthly active users, 250 GB egress, and daily backups.
 - Additional paid project: currently starts around USD 10/month in compute beyond the plan's included compute credit.
 - Control: local environment for daily work, one free staging project, and no paid production project until launch readiness. Keep spend cap on.
+- Staging recovery control: treat free staging as disposable. Recreate it from migrations and fictional bootstrap data rather than relying on provider backups or preserving mutable staging records.
 
 User capacity cannot be inferred from the advertised monthly-active-user quota alone. Database queries, realtime use, file transfer, and media consumption may become limiting first.
 

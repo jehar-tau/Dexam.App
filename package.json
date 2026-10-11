@@ -11,9 +11,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:staging": "node scripts/staging/validate-environment.mjs && tsc -b && vite build",
     "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true vite build",
     "preview": "vite preview",
     "env:check": "node scripts/doctor.mjs",
+    "staging:check": "node scripts/staging/validate-environment.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",

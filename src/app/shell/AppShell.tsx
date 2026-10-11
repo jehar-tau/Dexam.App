@@ -16,6 +16,7 @@ export function AppShell() {
   const location = useLocation()
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState('')
+  const isStaging = import.meta.env.VITE_APP_ENV === 'staging'
   const notificationAudience: NotificationAudience | null = location.pathname.startsWith('/student')
     ? 'student'
     : location.pathname.startsWith('/staff/crm') ||
@@ -65,6 +66,11 @@ export function AppShell() {
       <a className={styles.skipLink} href="#main-content">
         Skip to content
       </a>
+      {isStaging ? (
+        <div className={styles.stagingBanner} role="status">
+          Staging environment · Fictional data only
+        </div>
+      ) : null}
       <header className={styles.header}>
         <NavLink className={styles.brand} to="/" aria-label="Dexam platform home">
           Dexam
