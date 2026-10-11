@@ -391,6 +391,31 @@ enabled = true
 verify_jwt = false
 entrypoint = "./functions/student-sign-in/index.ts"
 
+[functions.staff-issue-activation]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/staff-issue-activation/index.ts"
+
+[functions.student-submission-file]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/student-submission-file/index.ts"
+
+[functions.purge-student-submissions]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/purge-student-submissions/index.ts"
+
+[functions.feedback-audio-file]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/feedback-audio-file/index.ts"
+
+[functions.purge-feedback-audio]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/purge-feedback-audio/index.ts"
+
 [functions.process-notifications]
 enabled = true
 verify_jwt = false

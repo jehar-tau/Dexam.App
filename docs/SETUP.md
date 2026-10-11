@@ -85,6 +85,8 @@ GitHub Actions installs from the lockfile and runs formatting, lint, typecheck, 
 
 Create separate staging and production Supabase projects and deployments. Use environment-scoped GitHub secrets, migrations rather than dashboard-only schema edits, synthetic staging data, and manual approval for production releases.
 
+The approved fictional-only staging setup and recovery procedure are maintained in `STAGING.md` under F014 / D-026. Production remains a separate future decision.
+
 ## Daily workflow
 
 Issue/specification → Decision Gates resolved → feature branch/worktree → implementation and tests → PR → risk-based independent review → staging → owner acceptance when required → merge → controlled production release.

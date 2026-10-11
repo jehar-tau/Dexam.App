@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F013 CRM Data Lifecycle and Privacy Operations is implemented and merged through PR #17 under approved D-025 Option B. The repository is synchronized on `main`; production personal data and deployment remain blocked pending staging, operational ownership, notices, request-route controls, backup/restore validation, and professional privacy review.
+F013 CRM Data Lifecycle and Privacy Operations is merged through PR #17. D-026 Option B is approved and F014 Hosted Staging and Release Foundation implementation is active on `docs/f014-hosted-staging-discovery`; external provider setup and hosted acceptance are not complete. Production personal data and deployment remain blocked pending staging, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -158,12 +158,17 @@ F013 CRM Data Lifecycle and Privacy Operations is implemented and merged through
 - Added the protected CRM Privacy workspace at `/staff/crm/privacy` with masked fictional cases, request intake, field-scoped correction, independent erasure approval, and temporary hold/release flows.
 - Verified F013 after a clean reset with 579 database assertions, 114 unit/component tests, 41 Chromium browser journeys, a production build, desktop visual inspection, and mobile overflow coverage.
 - Merged F013 CRM Data Lifecycle and Privacy Operations through PR #17 at `f932c67` after all three GitHub checks passed, then synchronized local `main`.
+- Started F014 hosted-staging discovery and drafted D-026 with a recommended owner-controlled, reconstructable ₹0 staging environment using one Supabase Free project and Cloudflare Pages.
+- Reverified current vendor constraints: Supabase Free has two active projects, 500 MB database size, 1 GB file storage, 5 GB egress, no automatic backups or database branching, and low-activity pausing; Cloudflare Pages Free permits 500 monthly builds and static Vite hosting.
+- D-026 Option B approved: build an owner-controlled, reconstructable, fictional-only staging environment on Supabase Free and Cloudflare Pages without paid services or production authority.
+- Added the F014 repository foundation: strict staging environment validation, public preview denial, SPA routing and safe headers, non-production marking, a non-sensitive backend health operation, complete Edge Function declarations, serialized post-verification database/function deployment, and a staging runbook.
+- Created the GitHub `staging` environment and stored its project reference, a generated server-only action-token pepper, and a named Supabase deployment token as encrypted environment secrets. The token is also stored in the owner's macOS Keychain and was verified against the owner-controlled, empty `Dexam Staging` project without printing it. GitHub email verification is complete and the Cloudflare GitHub App is limited to `jehar-tau/Dexam.App`, but Cloudflare has not registered the installation callback, so re-authorization, Pages project creation, the database-password secret, and hosted acceptance remain pending.
 
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted staging environment
+- Hosted staging provider setup and acceptance pending Cloudflare GitHub App re-authorization, Pages creation, and remaining deployment-secret configuration
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -175,7 +180,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 - Git and GitHub SSH authentication are available for GitHub user `jehar-tau`.
 - The repository is connected to `git@github.com:jehar-tau/Dexam.App.git`; `main` tracks `origin/main`.
-- GitHub CLI is not installed.
+- GitHub CLI is installed and authenticated as GitHub user `jehar-tau`.
 - Homebrew 7.0.6 is installed under `/opt/homebrew`.
 - User-managed Node.js 24.21.0 and pnpm 11.19.0 are available in login shells.
 - Colima 0.10.3 provides the local Docker runtime; Docker CLI 29.8.1 and Docker Compose 5.5.1 are installed.
@@ -183,7 +188,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Begin the DW-026 hosted-staging discovery and Decision Gate: define ownership, a ₹0-first environment, secrets, migration/seed policy, preview access, monitoring, and backup/restore verification. Do not create external infrastructure, use personal data, or deploy production until the product owner supplies the required account choices and explicitly approves that separate scope.
+Re-authorize the narrowly scoped Cloudflare installation from the Pages flow, create the free Pages project, configure exact staging origins and remaining encrypted Supabase secrets, run the rebuild/hosted acceptance evidence, and request explicit PR merge approval. Keep the environment fictional-only and production blocked.
 
 ## Blockers
 
