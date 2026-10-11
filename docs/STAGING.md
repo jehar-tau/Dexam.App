@@ -86,9 +86,9 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 
 - Repository staging controls and the GitHub `staging` environment are prepared.
 - The owner-controlled Supabase Free project is named `Dexam Staging`, project reference `ienwcencjbgdsqxfyxmj`, with URL `https://ienwcencjbgdsqxfyxmj.supabase.co`.
-- `STAGING_PROJECT_ID` and a generated `ACTION_TOKEN_PEPPER` are stored only as GitHub `staging` environment secrets.
+- `STAGING_PROJECT_ID`, a generated `ACTION_TOKEN_PEPPER`, and the named `SUPABASE_ACCESS_TOKEN` are stored only as GitHub `staging` environment secrets.
 - GitHub email verification is complete. The Cloudflare Pages GitHub App installation is restricted to `jehar-tau/Dexam.App`, but Cloudflare did not receive the installation callback and still shows the account as disconnected. Re-authorize the installation from the Cloudflare Pages flow before creating the Pages project; do not widen repository access.
-- A named Supabase CLI deployment token was created through Supabase's browser authorization, stored in the owner's macOS Keychain, and verified by listing the owner-controlled `Dexam Staging` project. Copying it into the GitHub `staging` environment as `SUPABASE_ACCESS_TOKEN` still requires the owner's Keychain-access confirmation.
+- A named Supabase CLI deployment token was created through Supabase's browser authorization, stored in the owner's macOS Keychain, verified by listing the owner-controlled `Dexam Staging` project, and copied directly into the encrypted GitHub `staging` environment as `SUPABASE_ACCESS_TOKEN` without printing it.
 - `STAGING_DB_PASSWORD` remains unset and must be entered by the owner without placing it in chat, shell history, Git, or documentation.
 - No payment method, paid plan, real data, or production deployment has been introduced.
 
