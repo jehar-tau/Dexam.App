@@ -1,6 +1,6 @@
 # F012 — Enrolment Handoff and Identity Resolution
 
-Status: Decision required — D-024 Option B recommended
+Status: Implemented and product-owner approved — D-024 Option B; pull request pending
 Risk: Red — canonical identity, duplicate resolution, enrolment approval, and student access
 
 ## Purpose and problem
@@ -151,6 +151,17 @@ No external product analytics are authorized. Request, resolution, enrolment, me
 
 ## Open decisions
 
-- D-024 Option A, B, or C
+- D-024 Option B approved 2026-10-11
 - Retention/correction/deletion remains D-022/DW-042 and blocks production personal data
 - Exceptional post-activation identity correction requires a separate elevated workflow
+
+## Implementation evidence
+
+- Added a capability-gated, oldest-first handoff inbox with minimum CRM context and bounded search.
+- Added explicit new-versus-existing student resolution, bounded canonical-student lookup, and a required disposition for every weak identity match.
+- Added active offering/compatible cohort selection plus reason-required return and approval paths.
+- Added server-side Member ID generation and an atomic identity, membership, enrolment, candidate-resolution, and CRM-conversion transaction.
+- Reused the existing activation queue for new or unclaimed students; existing claimed students receive an active enrolment without duplicate credentials.
+- Added Sales-visible returned dispositions and immutable resubmission history without exposing candidate student records.
+- Verified 518 database checks, 103 unit/component tests, 37 Chromium journeys, production build, and desktop/mobile visual states without console errors or horizontal overflow.
+- The product owner approved the fictional Enrolment Operator preview on 2026-10-11.

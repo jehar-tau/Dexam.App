@@ -13,6 +13,7 @@ export type CrmEnquiryStage =
   | 'new'
   | 'qualified'
 export type CrmQueueView = 'active' | 'dead_archive' | 'recently_dead'
+export type CrmEnrolmentReviewStatus = 'approved' | 'pending' | 'returned'
 
 export type CrmEnquiry = {
   archiveAt: string | null
@@ -31,7 +32,10 @@ export type CrmEnquiry = {
   lastActivityOutcome: CrmActivityOutcome | null
   ownerName: string
   possibleIdentityMatch: boolean
+  reviewDecisionReason: string | null
   reviewRequestedAt: string | null
+  reviewResolvedAt: string | null
+  reviewStatus: CrmEnrolmentReviewStatus | null
   source: string
   stage: CrmEnquiryStage
   subjectName: string
@@ -95,7 +99,11 @@ function parseCrmEnquiry(value: unknown): CrmEnquiry {
     !['self', 'guardian', 'other'].includes(String(row.contact_relationship)) ||
     (row.last_activity_outcome !== null &&
       !outcomes.includes(row.last_activity_outcome as CrmActivityOutcome)) ||
-    typeof row.possible_identity_match !== 'boolean'
+    typeof row.possible_identity_match !== 'boolean' ||
+    (row.review_status !== null &&
+      row.review_status !== 'approved' &&
+      row.review_status !== 'pending' &&
+      row.review_status !== 'returned')
   ) {
     throw new Error(unavailableMessage)
   }
@@ -119,7 +127,10 @@ function parseCrmEnquiry(value: unknown): CrmEnquiry {
     lastActivityAt: nullableString(row.last_activity_at),
     lastActivityOutcome: row.last_activity_outcome as CrmActivityOutcome | null,
     possibleIdentityMatch: row.possible_identity_match,
+    reviewDecisionReason: nullableString(row.review_decision_reason),
     reviewRequestedAt: nullableString(row.review_requested_at),
+    reviewResolvedAt: nullableString(row.review_resolved_at),
+    reviewStatus: row.review_status,
     createdAt: string(row.created_at),
   }
 }

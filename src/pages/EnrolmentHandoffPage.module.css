@@ -1,0 +1,296 @@
+.workspace {
+  display: grid;
+  gap: var(--space-6);
+}
+.state {
+  max-width: 48rem;
+  margin: var(--space-8) auto;
+}
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+.pageHeader h1 {
+  margin: var(--space-2) 0;
+}
+.pageHeader p {
+  max-width: 46rem;
+  margin: 0;
+  color: var(--color-text-subtle);
+}
+.headerActions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.workspaceLink {
+  color: var(--color-text);
+  font-weight: 700;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(17rem, 22rem) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.queue {
+  position: sticky;
+  top: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.queueHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.queueHeading h2,
+.queueHeading p {
+  margin: 0;
+}
+.queueHeading p {
+  color: var(--color-text-subtle);
+}
+.queueList {
+  display: grid;
+  gap: var(--space-2);
+}
+.queueItem,
+.queueItemActive {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  text-align: left;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+.queueItem:hover {
+  border-color: var(--color-accent);
+}
+.queueItemActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+.queueItem span:not(.queueName) {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+}
+.queueName {
+  font-weight: 800;
+}
+.detail,
+.approvalForm {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.summaryCard,
+.sectionCard,
+.returnCard {
+  display: grid;
+  gap: var(--space-5);
+}
+.identityHeader,
+.sectionHeading {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+.identityHeader h2,
+.identityHeader p,
+.sectionHeading h3,
+.sectionHeading p {
+  margin: 0;
+}
+.identityHeader p,
+.sectionHeading p {
+  color: var(--color-text-subtle);
+}
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+.summaryGrid div {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+}
+.summaryGrid dt {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+.summaryGrid dd {
+  margin: var(--space-1) 0 0;
+  overflow-wrap: anywhere;
+}
+.step {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: white;
+  background: var(--color-accent);
+  font-weight: 800;
+}
+.modeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.mode,
+.modeActive,
+.studentResult,
+.studentActive {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.mode,
+.modeActive {
+  flex-wrap: wrap;
+}
+.mode strong,
+.modeActive strong {
+  flex: 1;
+}
+.mode span,
+.modeActive span {
+  width: 100%;
+  padding-left: 1.6rem;
+  color: var(--color-text-subtle);
+}
+.modeActive,
+.studentActive {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+.studentSearch,
+.studentResults,
+.candidates {
+  display: grid;
+  gap: var(--space-3);
+}
+.studentSearchControls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: end;
+}
+.studentResult div,
+.studentActive div {
+  display: grid;
+  gap: var(--space-1);
+}
+.studentResult span,
+.studentActive span,
+.studentResult small,
+.studentActive small {
+  color: var(--color-text-subtle);
+}
+.candidate {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.candidate legend {
+  padding: 0 var(--space-2);
+  font-weight: 800;
+}
+.candidate p {
+  margin: 0;
+  color: var(--color-text-subtle);
+}
+.inlineChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.inlineChoices label {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+.field label {
+  font-weight: 700;
+}
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font: inherit;
+}
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+.returnCard {
+  border-color: var(--color-warning);
+}
+.returnCard h3,
+.returnCard p {
+  margin: 0;
+}
+.returnCard p {
+  color: var(--color-text-subtle);
+}
+@media (max-width: 56rem) {
+  .pageHeader {
+    flex-direction: column;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .queue {
+    position: static;
+  }
+  .queueList {
+    grid-template-columns: repeat(2, minmax(15rem, 1fr));
+    overflow-x: auto;
+  }
+}
+@media (max-width: 40rem) {
+  .summaryGrid,
+  .modeGrid {
+    grid-template-columns: 1fr;
+  }
+  .queueList {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+  .studentSearchControls {
+    grid-template-columns: 1fr;
+  }
+  .headerActions {
+    align-items: flex-start;
+  }
+}

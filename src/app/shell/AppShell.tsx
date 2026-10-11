@@ -103,6 +103,12 @@ export function AppShell() {
           </NavLink>
           <NavLink
             className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+            to="/staff/enrolment-handoffs"
+          >
+            Handoffs
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
             to="/staff/enrolments"
           >
             Enrolments

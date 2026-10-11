@@ -1,6 +1,6 @@
 # ADR-024 — Enrolment Handoff and Identity Resolution
 
-Status: Decision required — Option B recommended
+Status: Approved — Option B
 Date: 2026-10-11
 Decision ID: D-024
 Risk: Red — canonical student identity, duplicate resolution, enrolment approval, and account access
@@ -73,4 +73,6 @@ The merged CRM and enrolment foundations remain safe: Sales can submit explicit 
 
 ## Approval
 
-Pending product-owner selection.
+The product owner approved Option B on 2026-10-11. Dexam may build the guided, single-request Enrolment Operator workflow described above, including explicit new-versus-existing student resolution, weak-match disposition, active offering/cohort selection, reason-required return or approval, secure Member ID generation for new students, reuse of the activation queue, direct activation for existing claimed students, and complete authorization/audit tests.
+
+This approval does not authorize fuzzy or AI matching, automatic merges, destructive duplicate deletion, Sales enrolment approval, bulk conversion, payments, exports, external communication, production personal data, or production deployment.

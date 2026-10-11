@@ -163,6 +163,41 @@ test('protected staff route redirects to employee sign-in', async ({ page }) => 
   await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
 })
 
+test('direct enrolment handoff route preserves a safe staff return path', async ({ page }) => {
+  await page.goto('/staff/enrolment-handoffs')
+
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fenrolment-handoffs$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+})
+
+test('operator approves a fictional new-student handoff', async ({ page }) => {
+  await page.goto('/staff/enrolment-handoffs?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Review enrolment handoffs.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Meera Kulkarni' })).toBeVisible()
+  await page.getByLabel('Different people').check()
+  await page
+    .getByLabel('Course and cohort')
+    .selectOption('preview-offering-foundation|preview-cohort-weekend')
+  await page.getByLabel('Approval reason').fill('Identity and course context confirmed.')
+  await page.getByRole('button', { name: 'Approve enrolment' }).click()
+
+  await expect(page.getByText(/added to the activation queue/)).toBeVisible()
+  await expect(page.getByText(/DXM-3F7K9M2RW5TY/)).toBeVisible()
+})
+
+test('enrolment handoff workspace has no mobile horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/staff/enrolment-handoffs?preview=1')
+
+  await expect(page.getByRole('heading', { name: 'Review enrolment handoffs.' })).toBeVisible()
+  const widths = await page.locator('body').evaluate((body) => {
+    const measuredBody = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: measuredBody.clientWidth, scroll: measuredBody.scrollWidth }
+  })
+  expect(widths.scroll).toBeLessThanOrEqual(widths.client)
+})
+
 test('direct CRM route preserves a safe staff return path', async ({ page }) => {
   await page.goto('/staff/crm')
 
