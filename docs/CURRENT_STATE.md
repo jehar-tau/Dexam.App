@@ -4,7 +4,7 @@ Last updated: 2026-10-11
 
 ## Current phase
 
-F011 CRM Assignment Operations is merged through PR #15 under D-023 Option B. F012 Enrolment Handoff and Identity Resolution is implemented, fully verified, and product-owner approved on `feature/f012-enrolment-handoff` under D-024 Option B; its pull request is pending.
+F012 Enrolment Handoff and Identity Resolution is merged through PR #16 under D-024 Option B. F013 CRM Data Lifecycle and Privacy Operations is implemented, fully verified, and awaiting its pull request on `feature/f013-crm-data-lifecycle` under approved D-025 Option B.
 
 ## Completed
 
@@ -149,6 +149,14 @@ F011 CRM Assignment Operations is merged through PR #15 under D-023 Option B. F0
 - Added Sales-visible returned-review reasons while keeping candidate student records private to current Enrolment Operators.
 - Verified F012 with a clean database reset, 518 passing pgTAP checks, 103 passing unit/component tests, 37 passing Chromium journeys, a production build, and desktop/mobile visual inspection without console errors or horizontal overflow.
 - Product owner approved the F012 fictional Enrolment Operator preview on 2026-10-11.
+- Merged F012 Enrolment Handoff and Identity Resolution through PR #16 at `998d58e` and synchronized local `main`.
+- Drafted F013 and D-025 for the next production-data blocker: purpose-based CRM retention, restricted archives, correction evidence without readable old values, separate privacy authority, two-person erasure, time-limited holds, and backup-restoration tombstones.
+- Reviewed the official DPDP Act, notified 2025 Rules, and commencement notification as the current legal baseline; final policy, notices, and production launch still require professional review for Dexam's actual processing context.
+- D-025 Option B approved under the product owner's delegated unattended-run authority: tiered CRM retention, separate privacy authority, minimized correction evidence, two-person erasure, time-limited holds, idempotent execution, and backup-restoration tombstones.
+- Added F013's MFA-gated privacy capabilities, lifecycle due dates, verified cases, keyed non-content correction evidence, server-side erasure dry runs, distinct proposer/approver checks, bounded holds, and service-only idempotent execution.
+- CRM minimization now removes direct contact and free-text content, expires CRM alerts, preserves protected canonical student and academic domains, and records a non-content tombstone for safe backup restoration.
+- Added the protected CRM Privacy workspace at `/staff/crm/privacy` with masked fictional cases, request intake, field-scoped correction, independent erasure approval, and temporary hold/release flows.
+- Verified F013 after a clean reset with 579 database assertions, 114 unit/component tests, 41 Chromium browser journeys, a production build, desktop visual inspection, and mobile overflow coverage.
 
 ## Not yet started
 
@@ -174,7 +182,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Commit and push the approved F012 implementation, create its pull request automatically, and wait for explicit merge approval.
+Commit and push the verified F013 implementation, create its pull request automatically, merge after all GitHub checks pass under the product owner's delegated approval, then synchronize local `main`.
 
 ## Blockers
 
