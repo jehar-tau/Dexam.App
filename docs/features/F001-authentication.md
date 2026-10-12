@@ -84,6 +84,7 @@ An approved student or employee can securely activate, sign in to, recover, and 
 
 - D-006 Option B approved on 2026-09-26
 - D-007 Option B approved on 2026-09-26
+- D-027 identity-operations sequencing pending
 - Production email delivery and domain configuration
 - Session duration and re-authentication intervals
 
