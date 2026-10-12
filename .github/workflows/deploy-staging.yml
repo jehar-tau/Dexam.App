@@ -109,7 +109,32 @@ jobs:
         run: pnpm supabase secrets set ACTION_TOKEN_PEPPER="$ACTION_TOKEN_PEPPER" --project-ref "$SUPABASE_PROJECT_ID"
 
       - name: Deploy declared Edge Functions
-        run: pnpm supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID" --use-api
+        shell: bash
+        run: |
+          shopt -s nullglob
+          function_entries=(supabase/functions/*/index.ts)
+          test "${#function_entries[@]}" -gt 0
+
+          for function_entry in "${function_entries[@]}"; do
+            function_name="$(basename "$(dirname "$function_entry")")"
+
+            for attempt in 1 2 3; do
+              if pnpm supabase functions deploy "$function_name" \
+                --project-ref "$SUPABASE_PROJECT_ID" \
+                --use-api; then
+                break
+              fi
+
+              if [ "$attempt" -eq 3 ]; then
+                echo "Edge Function deployment failed after ${attempt} attempts: ${function_name}" >&2
+                exit 1
+              fi
+
+              retry_delay=$((attempt * 10))
+              echo "Retrying ${function_name} in ${retry_delay} seconds (attempt $((attempt + 1)) of 3)." >&2
+              sleep "$retry_delay"
+            done
+          done
 
       - name: Prepare job-scoped API keys
         shell: bash
