@@ -2,7 +2,7 @@
 
 Each phase is refined through feature specifications and Decision Gates before implementation.
 
-Current position: the first product milestone through essential in-app notifications and the Phase 7 CRM foundation, assignment operations, enrolment handoff, and governed privacy operations are merged through PR #17. F014/D-026 hosted-staging discovery is active. Production personal data remains prohibited until staging, identity/recovery/MFA, operational ownership, notice, request-route, backup/restore, and final privacy-review gates are approved.
+Current position: the first product milestone through essential in-app notifications, the Phase 7 CRM foundation, assignment operations, enrolment handoff, governed privacy operations, and the hosted-staging release foundation are merged through PR #19. The free staging URL and backend release path are live; F014 still requires fictional bootstrap, synthetic role/revocation acceptance, advisor triage, and rebuild rehearsal. Production personal data remains prohibited until staging, identity/recovery/MFA, operational ownership, notice, request-route, backup/restore, and final privacy-review gates are approved.
 
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.

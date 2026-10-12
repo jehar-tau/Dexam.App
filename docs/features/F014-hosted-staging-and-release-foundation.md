@@ -1,6 +1,6 @@
 # F014 — Hosted Staging and Release Foundation
 
-Status: In progress — D-026 Option B approved
+Status: In progress — hosted foundation live; synthetic acceptance and rebuild rehearsal remain under D-026 Option B
 Risk: Red — hosted credentials, migrations, release automation, Auth redirects, and future production boundary
 
 ## Purpose and problem
@@ -141,6 +141,14 @@ No product analytics provider is authorized. Deployment and health status use pr
 - Browser inspection for desktop/mobile layout, non-production marking, console errors, indexing headers, and network target
 - Rebuild rehearsal from repository state using only documented owner-supplied secrets
 - Cost dashboard check confirming free plans and no payment/overage activation
+
+## Hosted verification checkpoint — 2026-10-12
+
+The owner-approved PR #19 deployed merge commit `cc7b144c964e4f74c35de7344e4780ca3419e7a4` to the free Supabase and Cloudflare staging resources. The migration dry run, migration apply, server-only secret configuration, declared Edge Function deployment, remote migration listing, Cloudflare build, `/health`, direct nested-route loading, staging marking, security headers, and public-preview denial passed. All eight Edge Functions rejected empty unauthenticated calls with safe `400` or `401` responses appropriate to their public/protected boundary.
+
+The first database-password attempts failed before migration because the stored password was invalid and then still propagating after reset. The successful retry occurred after rotation propagation; no database changes were made by the failed attempts. This recovery is recorded in `../STAGING.md`.
+
+F014 is not complete. Synthetic Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, and Elevated Admin accounts do not yet have a deterministic hosted bootstrap; inactive/revoked staff behavior has not been exercised against hosted Auth; the provider advisor warnings require explicit triage; and the fictional baseline rebuild rehearsal has not run.
 
 ## Open decisions
 

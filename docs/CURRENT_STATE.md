@@ -1,10 +1,10 @@
 # Current State
 
-Last updated: 2026-10-11
+Last updated: 2026-10-12
 
 ## Current phase
 
-F013 CRM Data Lifecycle and Privacy Operations is merged through PR #17. D-026 Option B is approved and F014 Hosted Staging and Release Foundation implementation is active on `docs/f014-hosted-staging-discovery`; external provider setup and hosted acceptance are not complete. Production personal data and deployment remain blocked pending staging, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is merged through PR #19 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, and unauthenticated-function checks passed; deterministic fictional bootstrap, synthetic role/revocation journeys, provider-advisor triage, and rebuild rehearsal remain before F014 acceptance. Production personal data and deployment remain blocked pending those staging checks, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -162,13 +162,16 @@ F013 CRM Data Lifecycle and Privacy Operations is merged through PR #17. D-026 O
 - Reverified current vendor constraints: Supabase Free has two active projects, 500 MB database size, 1 GB file storage, 5 GB egress, no automatic backups or database branching, and low-activity pausing; Cloudflare Pages Free permits 500 monthly builds and static Vite hosting.
 - D-026 Option B approved: build an owner-controlled, reconstructable, fictional-only staging environment on Supabase Free and Cloudflare Pages without paid services or production authority.
 - Added the F014 repository foundation: strict staging environment validation, public preview denial, SPA routing and safe headers, non-production marking, a non-sensitive backend health operation, complete Edge Function declarations, serialized post-verification database/function deployment, and a staging runbook.
-- Created the GitHub `staging` environment and stored its project reference, a generated server-only action-token pepper, and a named Supabase deployment token as encrypted environment secrets. The token is also stored in the owner's macOS Keychain and was verified against the owner-controlled, empty `Dexam Staging` project without printing it. GitHub email verification is complete and the Cloudflare GitHub App is limited to `jehar-tau/Dexam.App`, but Cloudflare has not registered the installation callback, so re-authorization, Pages project creation, the database-password secret, and hosted acceptance remain pending.
+- Merged F014's hosted-staging foundation through PR #19 at `cc7b144`, configured all four GitHub `staging` secrets, applied the reviewed migrations to the clean owner-controlled `Dexam Staging` project, configured the server-only action-token pepper, deployed all eight declared Edge Functions, and recorded remote migration state.
+- Connected the narrowly scoped Cloudflare GitHub App to `jehar-tau/Dexam.App`, created the free `dexam-staging` Pages project, and deployed the same `main` commit to `https://dexam-staging.pages.dev` with Node 24, pnpm 11.19.0, `pnpm build:staging`, and non-privileged staging browser configuration. Automatic preview-branch deployments are disabled; the strict build guard rejected the one preview attempt made before that provider setting was corrected.
+- Verified hosted `/health`, nested SPA routes, the non-production banner, safe indexing/frame/MIME headers, staff and student preview-bypass denial, and safe unauthenticated rejection for all eight Edge Functions.
+- Set the exact Supabase Auth site URL, disabled public signup/manual linking/anonymous sign-in, retained email confirmation, and confirmed no wildcard redirect URLs. Provider advisors show zero errors but unresolved warning/suggestion sets that remain explicit F014 review work.
 
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted staging provider setup and acceptance pending Cloudflare GitHub App re-authorization, Pages creation, and remaining deployment-secret configuration
+- Hosted staging synthetic-account bootstrap, role/revocation journeys, advisor triage, and rebuild rehearsal
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -188,7 +191,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Re-authorize the narrowly scoped Cloudflare installation from the Pages flow, create the free Pages project, configure exact staging origins and remaining encrypted Supabase secrets, run the rebuild/hosted acceptance evidence, and request explicit PR merge approval. Keep the environment fictional-only and production blocked.
+Add a reviewed, deterministic fictional bootstrap and off-repository synthetic credentials; exercise hosted role and revocation boundaries; triage the Supabase advisor warnings against migrations and pgTAP coverage; then run and record the rebuild rehearsal. Keep staging fictional-only and production blocked.
 
 ## Blockers
 
