@@ -1,10 +1,10 @@
 # Current State
 
-Last updated: 2026-10-12
+Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is merged through PR #21 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, deterministic fictional bootstrap, and nine-account role/revocation checks passed. Provider-advisor hardening is implementation-active on `chore/f014-advisor-triage`; the rebuild rehearsal remains before F014 acceptance. Production personal data and deployment remain blocked pending those staging checks, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is merged through PR #22 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, deterministic fictional bootstrap, nine-account role/revocation checks, database hardening, and the provider-advisor gate passed. The guarded clean rebuild rehearsal is implementation-active on `chore/f014-rebuild-rehearsal` and remains the final F014 acceptance item. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -167,18 +167,18 @@ F014 Hosted Staging and Release Foundation is merged through PR #21 and its owne
 - Verified hosted `/health`, nested SPA routes, the non-production banner, safe indexing/frame/MIME headers, staff and student preview-bypass denial, and safe unauthenticated rejection for all eight Edge Functions.
 - Set the exact Supabase Auth site URL, disabled public signup/manual linking/anonymous sign-in, retained email confirmation, and confirmed no wildcard redirect URLs. Provider advisors show zero errors but unresolved warning/suggestion sets that remain explicit F014 review work.
 - Merged the deterministic fictional bootstrap through PR #21 at `9045098`, then confirmed the protected deployment created or rotated all nine accounts and passed hosted Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, Elevated Admin, revoked-employee, and inactive-employee authorization checks.
+- Merged the database advisor hardening through PR #22 at `50f89c7`. Protected deployment run `38293373701` applied the migration, reduced anonymous privileged-function findings from three to zero, passed the advisor gate with only documented accepted/deferred categories, and repeated all nine hosted authorization checks successfully.
 
 ## Implementation active
 
-- Triaged the live Supabase security and performance advisor report against versioned grants, RLS design, and pgTAP coverage.
-- Added deny-by-default function privileges, removed all anonymous `SECURITY DEFINER` execution, removed direct execution from the CRM trigger function, and preserved only the constant anonymous health operation.
-- Added pgTAP regression coverage and a post-migration staging deployment gate for high-risk advisor findings.
+- Added a guarded manual rebuild mode to the existing serialized staging workflow. It is restricted to the exact fictional staging project, recreates the database from migrations without generic seed data, and must pass the same advisor, function deployment, deterministic bootstrap, authorization, and migration-state checks as a normal release.
+- Added elapsed-time evidence to the protected rebuild job so the recovery limitation and duration can be recorded after the first run.
 
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted execution of the advisor hardening and the clean rebuild rehearsal
+- Hosted execution and evidence capture for the clean rebuild rehearsal
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Review and merge the advisor-hardening slice, confirm the post-migration hosted advisor gate, then run and record the clean rebuild rehearsal. Keep staging fictional-only and production blocked.
+Review and merge the guarded rebuild mode, run `rebuild-fictional-staging` against the exact staging project, and record the protected job evidence. Keep staging fictional-only and production blocked.
 
 ## Blockers
 

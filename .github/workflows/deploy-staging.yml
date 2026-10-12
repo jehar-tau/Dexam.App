@@ -5,6 +5,15 @@ on:
     workflows: [Verify]
     types: [completed]
   workflow_dispatch:
+    inputs:
+      operation:
+        description: Choose the normal release path or deliberately rebuild fictional staging from migrations.
+        required: true
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - rebuild-fictional-staging
 
 permissions:
   contents: read
@@ -62,6 +71,18 @@ jobs:
       - name: Link staging project
         run: pnpm supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
 
+      - name: Rebuild fictional staging from migrations
+        if: github.event_name == 'workflow_dispatch' && inputs.operation == 'rebuild-fictional-staging'
+        shell: bash
+        run: |
+          test "$SUPABASE_PROJECT_ID" = "ienwcencjbgdsqxfyxmj"
+          echo "STAGING_REBUILD_STARTED_AT=$(date +%s)" >> "$GITHUB_ENV"
+          pnpm supabase db reset \
+            --linked \
+            --project-ref "$SUPABASE_PROJECT_ID" \
+            --no-seed \
+            --yes
+
       - name: Preview pending migrations
         run: pnpm supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --dry-run
 
@@ -115,3 +136,11 @@ jobs:
 
       - name: Record remote migration state
         run: pnpm supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Record successful rebuild rehearsal
+        if: github.event_name == 'workflow_dispatch' && inputs.operation == 'rebuild-fictional-staging'
+        shell: bash
+        run: |
+          test -n "$STAGING_REBUILD_STARTED_AT"
+          elapsed_seconds=$(( $(date +%s) - STAGING_REBUILD_STARTED_AT ))
+          echo "Fictional staging rebuild completed and verified in ${elapsed_seconds} seconds."
