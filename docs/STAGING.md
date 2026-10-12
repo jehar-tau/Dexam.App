@@ -1,6 +1,6 @@
 # Hosted Staging Runbook
 
-Status: hosted foundation live; synthetic acceptance and rebuild rehearsal remain under F014 / approved D-026 Option B
+Status: hosted foundation and synthetic acceptance live; advisor hardening and rebuild rehearsal remain under F014 / approved D-026 Option B
 Data classification: fictional test data only
 
 ## Purpose
@@ -104,10 +104,10 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 - `/health` reported both frontend and backend operational and identified the site as a non-production, fictional-data-only environment.
 - Hosted `?preview=1` requests for `/staff/crm` and `/student` were redirected to their protected sign-in pages; public preview shortcuts did not bypass authentication.
 - Empty unauthenticated POSTs to all eight declared Edge Functions failed closed: the two intentionally public student credential operations returned safe `400` responses, and the six protected operations returned `401` without exposing configuration.
-- Supabase Security Advisor reported `0` errors, `86` warnings, and `21` informational suggestions. The rendered warnings were predominantly callable `SECURITY DEFINER` notices and require explicit comparison with the migration grants, current-state authorization checks, and pgTAP coverage before F014 acceptance.
+- Supabase Studio initially summarized `0` errors, `86` warnings, and `21` informational suggestions. The later complete CLI triage returned `87` warnings; its exact categories and dispositions are recorded in `STAGING_ADVISOR_TRIAGE.md`.
 - Supabase Performance Advisor reported `0` errors, `10` warnings, and `122` informational suggestions. These remain triage work and are not silently accepted.
 
-Remaining F014 evidence is the hosted execution of the reviewed deterministic fictional bootstrap and synthetic role/account checks (including inactive/revoked staff), complete advisor triage, and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
+The deterministic fictional bootstrap and all nine hosted role/account checks passed after PR #21. Remaining F014 evidence is the hosted execution of the advisor hardening in `STAGING_ADVISOR_TRIAGE.md` and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
 
 ## Synthetic acceptance accounts
 
@@ -126,6 +126,16 @@ The bootstrap manifest contains only reserved `.invalid` email addresses, clearl
 | Inactive employee denial | `inactive-employee.staging@dexam.invalid`  |
 
 Every deployment rotates these Auth users to the encrypted staging password, upserts the fictional identity and permission baseline, and checks current database state after obtaining a real session. Privacy and security-sensitive permissions must remain denied at password-only `aal1`; successful `aal2` access remains gated by DW-003 rather than being weakened for staging.
+
+## Synthetic acceptance evidence — 2026-10-12
+
+- PR #21 merged as `9045098ff231d18fd1ee7d28548c85208a451261` after its Verify workflow passed.
+- Backend deployment run `38286140338` applied the reviewed release, bootstrapped nine fictional accounts plus one enrolment, and passed all active-role, cross-role, revoked-employee, and inactive-employee checks against real hosted sessions.
+- The bootstrap remained idempotent and no credential, privileged API key, or personal data was printed or committed.
+
+## Advisor handling
+
+The initial hosted report and each disposition are recorded in `STAGING_ADVISOR_TRIAGE.md`. The current branch fixes inherited anonymous privileged-function execution, enforces explicit future function grants, and adds a protected deployment gate. Supabase leaked-password protection remains unavailable on the authorized Free plan and is a production upgrade/security gate, not a reason to spend during fictional staging.
 
 ## Free-tier operations
 
