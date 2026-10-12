@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is merged through PR #22 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, deterministic fictional bootstrap, nine-account role/revocation checks, database hardening, and the provider-advisor gate passed. The guarded clean rebuild rehearsal is implementation-active on `chore/f014-rebuild-rehearsal` and remains the final F014 acceptance item. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is merged through PR #23 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, deterministic fictional bootstrap, nine-account role/revocation checks, database hardening, and the provider-advisor gate passed. The guarded clean rebuild rehearsal remains the final F014 acceptance item; a corrective branch is hardening Edge Function deployment after the external Supabase API returned repeated `500` responses during the pre-rehearsal release. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
