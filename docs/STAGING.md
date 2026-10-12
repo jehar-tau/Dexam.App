@@ -1,6 +1,6 @@
 # Hosted Staging Runbook
 
-Status: hosted foundation, synthetic acceptance, and advisor hardening live; guarded rebuild rehearsal remains under F014 / approved D-026 Option B
+Status: accepted fictional staging foundation; clean rebuild rehearsal passed under F014 / approved D-026 Option B
 Data classification: fictional test data only
 
 ## Purpose
@@ -62,7 +62,7 @@ The Supabase URL and publishable key are intended for browser use and are protec
 ## Release flow
 
 1. A pull request passes the `Verify` workflow.
-2. The owner approves and merges it into `main`.
+2. The pull request merges into `main` after required checks pass and no review concern remains.
 3. The successful `Verify` push run triggers `Deploy staging backend`.
 4. The workflow links only the staging project, previews pending migrations, applies them, configures the server-only pepper, deploys all declared functions, obtains job-scoped API keys without persisting them, reruns the deterministic fictional bootstrap, verifies hosted authorization boundaries, and prints migration identifiers.
 5. Cloudflare builds the same `main` commit with staging public configuration.
@@ -87,7 +87,7 @@ The recovery source is:
 - deterministic fictional bootstrap instructions;
 - safe fixture files that contain no credentials or personal data.
 
-The F014 acceptance run must prove a clean reconstruction and record the time, failures, and manual steps. Production requires a separate durable backup and restore policy.
+The F014 acceptance run proved a clean reconstruction and recorded the time, failures, and manual steps below. Production requires a separate durable backup and restore policy.
 
 ## Current setup checkpoint
 
@@ -113,7 +113,19 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 - Supabase Studio initially summarized `0` errors, `86` warnings, and `21` informational suggestions. The later complete CLI triage returned `87` warnings; its exact categories and dispositions are recorded in `STAGING_ADVISOR_TRIAGE.md`.
 - Supabase Performance Advisor reported `0` errors, `10` warnings, and `122` informational suggestions. These remain triage work and are not silently accepted.
 
-The deterministic fictional bootstrap and all nine hosted role/account checks passed after PR #21. The advisor hardening and automated gate passed after PR #22 in run `38293373701`: anonymous `SECURITY DEFINER` findings fell from three to zero, 82 explicitly granted authenticated functions remained, and the documented free-plan/password and performance findings were accepted. The guarded rebuild rehearsal is the final F014 evidence item. Until it passes, this URL is a development staging environment rather than an accepted production candidate.
+The deterministic fictional bootstrap and all nine hosted role/account checks passed after PR #21. The advisor hardening and automated gate passed after PR #22 in run `38293373701`: anonymous `SECURITY DEFINER` findings fell from three to zero, 82 explicitly granted authenticated functions remained, and the documented free-plan/password and performance findings were accepted. The guarded rebuild rehearsal then passed after PR #25 as recorded below. This is an accepted fictional staging environment, not a production candidate or authorization to use real personal data.
+
+## Clean rebuild evidence — 2026-10-13
+
+- PR #25 merged as `226ec1f67a2c81600c0e55c448cb21c8f18f7c26` after all application, database-security, and browser checks passed with no review concerns.
+- Protected manual run `38298241510` verified the exact fictional staging project, reset the remote database, and reapplied all 21 committed migrations through `20261012120000_database_advisor_hardening.sql` without generic seed data or dashboard edits.
+- The migration dry run and apply step both reported the remote database up to date after reconstruction.
+- The advisor gate passed with 235 recorded accepted/deferred findings: 21 deny-by-default no-policy tables, 72 unindexed foreign-key suggestions, 50 unused-index suggestions, 82 explicitly granted authenticated privileged functions, and 10 overlapping permissive-policy warnings. No blocked exposure category was present.
+- The normal CLI bundling path deployed all eight declared Edge Functions serially. No retry was required during the accepted rehearsal.
+- The protected bootstrap created or rotated nine obviously fictional accounts and one fictional enrolment, then all Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, Elevated Admin, revoked-employee, and inactive-employee checks passed against hosted sessions.
+- Local and remote migration identifiers matched. The workflow recorded `79 seconds` from reset start through the final migration-state check.
+- After reconstruction, `https://dexam-staging.pages.dev/health` returned HTTP 200 with the expected no-indexing, frame-denial, MIME-sniffing, referrer, and restricted-permissions headers.
+- The rehearsal reconstructed database state and deterministic fictional identities. Supabase Free still provides no production-grade backup promise, and production backup/restore, MFA/recovery, notice, request-route, ownership, and professional privacy-review gates remain unresolved.
 
 ## Synthetic acceptance accounts
 

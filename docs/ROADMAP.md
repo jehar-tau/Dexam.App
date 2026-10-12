@@ -2,7 +2,7 @@
 
 Each phase is refined through feature specifications and Decision Gates before implementation.
 
-Current position: the first product milestone through essential in-app notifications, the Phase 7 CRM foundation, assignment operations, enrolment handoff, governed privacy operations, and the hosted-staging release foundation are merged through PR #22. The free staging URL, backend release path, deterministic fictional bootstrap, hosted role/revocation checks, and provider-advisor gate are live. The guarded clean rebuild rehearsal is the final F014 acceptance item. Production personal data remains prohibited until identity/recovery/MFA, operational ownership, notice, request-route controls, backup/restore, and final privacy-review gates are approved.
+Current position: the first product milestone through essential in-app notifications, the Phase 7 CRM foundation, assignment operations, enrolment handoff, governed privacy operations, and the hosted-staging release foundation are merged through PR #25. F014 is accepted: the free staging URL, backend release path, deterministic fictional bootstrap, hosted role/revocation checks, provider-advisor gate, and 79-second clean rebuild rehearsal all passed. The next launch-critical stage returns to Phase 3 identity operations. Production personal data remains prohibited until identity/recovery/MFA, operational ownership, notice, request-route controls, backup/restore, and final privacy-review gates are approved.
 
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.

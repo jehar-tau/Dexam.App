@@ -1,6 +1,6 @@
 # F014 — Hosted Staging and Release Foundation
 
-Status: In progress — hosted foundation, synthetic acceptance, and advisor hardening live; guarded rebuild rehearsal remains under D-026 Option B
+Status: Accepted — hosted foundation, synthetic acceptance, advisor hardening, and clean rebuild rehearsal passed under D-026 Option B
 Risk: Red — hosted credentials, migrations, release automation, Auth redirects, and future production boundary
 
 ## Purpose and problem
@@ -171,6 +171,12 @@ PR #22 merged as `50f89c77882c97f8fa67a89e41db7ee823d4b487`. Protected deploymen
 The existing protected deployment workflow now has a deliberate `rebuild-fictional-staging` mode. It requires manual dispatch from `main`, verifies the exact reviewed staging project reference before resetting, recreates schema from committed migrations without generic seed data, and then runs the same advisor, function deployment, fictional bootstrap, authorization, and migration-state checks as a normal release. A successful run records elapsed time; no success is claimed until that protected run completes.
 
 The first ordinary release after that change encountered repeated Supabase API `500` responses while uploading the eight functions through the server-side `--use-api` bundler. Serial retries isolated the failure to that bundling path; the same source deployed successfully through the CLI's normal local-bundling path. The release workflow now discovers committed function entry points, bundles and deploys them serially, and retries each failed provider request at most twice with bounded backoff. A persistent failure still stops the release before fictional bootstrap or acceptance checks.
+
+## Accepted rebuild checkpoint — 2026-10-13
+
+PR #25 merged as `226ec1f67a2c81600c0e55c448cb21c8f18f7c26`. Protected workflow run `38298241510` then reset only project `ienwcencjbgdsqxfyxmj`, reapplied all 21 committed migrations, passed the 235-finding documented advisor gate, deployed all eight functions through the confirmed local-bundling path, bootstrapped nine fictional identities plus one enrolment, and passed every hosted role/current-state boundary. Local and remote migration identifiers matched through `20261012120000`, and the full guarded operation recorded 79 seconds. The public staging health route remained HTTP 200 with its safe headers after reconstruction.
+
+All F014 acceptance criteria are satisfied for fictional staging. This does not satisfy production backup/restore, identity/recovery/MFA, legal notice, request-route, operational ownership, or professional privacy-review gates, and it does not authorize real personal data or paid services.
 
 ## Open decisions
 
