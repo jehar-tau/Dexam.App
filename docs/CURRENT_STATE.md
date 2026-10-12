@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live at `https://dexam-staging.pages.dev`; it reconstructs from all 21 committed migrations, deploys all eight Edge Functions, bootstraps nine fictional identities and one enrolment, passes the advisor gate and every hosted role/revocation check, and completed the guarded rebuild in 79 seconds. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. Identity operations discovery is now active through D-027 and F015, with a recommended free-first staff MFA, factor-reset approval, and session-revocation slice. No identity behavior is authorized until D-027 is approved. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -173,7 +173,7 @@ F014 Hosted Staging and Release Foundation is accepted through PR #25 and protec
 
 ## Implementation active
 
-- No implementation slice is active. Identity operations discovery is the next safe stage.
+- D-027 and F015 discovery define the next identity-operations sequence and recommended staff MFA/session-security slice. Implementation awaits the product owner's decision.
 
 ## Not yet started
 
@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Return to the launch-critical F001 identity gaps and prepare the next Decision Gate for sequencing student recovery, employee invitation/recovery, TOTP MFA, security-triggered session revocation, and the first two-person elevated-administration interface. Keep staging fictional-only and production blocked.
+Obtain the product owner's D-027 choice. If Option B is approved, implement F015 TOTP enrolment/challenge, guarded factor management, security-triggered global session revocation, and the first two-person lost-factor reset flow. Keep staging fictional-only and production blocked.
 
 ## Blockers
 
