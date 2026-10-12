@@ -1,6 +1,6 @@
 # F014 — Hosted Staging and Release Foundation
 
-Status: In progress — hosted foundation live; synthetic acceptance and rebuild rehearsal remain under D-026 Option B
+Status: In progress — hosted foundation and synthetic acceptance live; advisor hardening and rebuild rehearsal remain under D-026 Option B
 Risk: Red — hosted credentials, migrations, release automation, Auth redirects, and future production boundary
 
 ## Purpose and problem
@@ -154,7 +154,15 @@ At this first hosted checkpoint F014 was not complete: synthetic Student, Teache
 
 The next reviewed slice defines nine deterministic, obviously fictional acceptance accounts: the seven required active boundaries plus revoked and inactive employee denial controls. The protected staging workflow creates or rotates their Auth credentials using one encrypted environment secret, upserts only deterministic fictional application records, and checks real hosted sessions against current membership, role, capability, revocation, and MFA-assurance rules. Privileged API keys are fetched ephemerally through the scoped Supabase deployment token and are neither committed nor stored as a second long-lived GitHub secret.
 
-The Privacy Operator and MFA-sensitive Elevated Admin checks deliberately expect password-only `aal1` denial. F014 does not weaken `requires_mfa`; allowed `aal2` browser journeys remain dependent on DW-003's approved MFA enrolment/recovery interface. This checkpoint is implementation evidence only until the branch is merged and the protected hosted workflow passes.
+The Privacy Operator and MFA-sensitive Elevated Admin checks deliberately expect password-only `aal1` denial. F014 does not weaken `requires_mfa`; allowed `aal2` browser journeys remain dependent on DW-003's approved MFA enrolment/recovery interface.
+
+## Synthetic acceptance checkpoint — 2026-10-12
+
+PR #21 merged as `9045098ff231d18fd1ee7d28548c85208a451261`. Protected backend run `38286140338` then created or rotated the nine fictional accounts, upserted one fictional enrolment, and passed every documented hosted role, cross-role, revoked-employee, inactive-employee, and password-only MFA-denial check. The deterministic bootstrap requirement is complete.
+
+## Advisor-triage checkpoint — 2026-10-12
+
+The live CLI report contained no errors, 87 security warnings, 21 security informational findings, 10 performance warnings, and 122 performance informational findings. The actionable exposure was inherited anonymous execution on three `SECURITY DEFINER` functions and inherited authenticated execution on one trigger function. The next migration removes those grants, restricts future function defaults, preserves only the constant anonymous health check, and adds database and deployment regression gates. Intentional authenticated RPCs, deny-by-default no-policy tables, overlapping read policies, new-staging unused-index signals, and unindexed foreign-key suggestions are documented in `../STAGING_ADVISOR_TRIAGE.md` with their review triggers.
 
 ## Open decisions
 

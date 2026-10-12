@@ -68,6 +68,20 @@ jobs:
       - name: Apply migrations
         run: pnpm supabase db push --linked --password "$SUPABASE_DB_PASSWORD" --yes
 
+      - name: Enforce database advisor gate
+        shell: bash
+        run: |
+          advisor_file="$(mktemp)"
+          trap 'rm -f "$advisor_file"' EXIT
+          pnpm exec supabase db advisors \
+            --linked \
+            --project-ref "$SUPABASE_PROJECT_ID" \
+            --type all \
+            --level info \
+            --fail-on none \
+            --output-format json > "$advisor_file"
+          node scripts/staging/validate-advisor-findings.mjs "$advisor_file"
+
       - name: Configure server-only function secret
         env:
           ACTION_TOKEN_PEPPER: ${{ secrets.ACTION_TOKEN_PEPPER }}
