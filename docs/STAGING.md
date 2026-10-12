@@ -1,6 +1,6 @@
 # Hosted Staging Runbook
 
-Status: hosted foundation and synthetic acceptance live; advisor hardening and rebuild rehearsal remain under F014 / approved D-026 Option B
+Status: hosted foundation, synthetic acceptance, and advisor hardening live; guarded rebuild rehearsal remains under F014 / approved D-026 Option B
 Data classification: fictional test data only
 
 ## Purpose
@@ -70,6 +70,12 @@ The Supabase URL and publishable key are intended for browser use and are protec
 
 If database deployment fails, do not retry by editing the dashboard. Fix or add a migration in a reviewed pull request. Staging may be rebuilt if its fictional state is no longer trustworthy.
 
+### Guarded rebuild mode
+
+The same workflow exposes a manual `rebuild-fictional-staging` operation. It is intentionally unavailable on automatic pushes and fails unless the protected `STAGING_PROJECT_ID` is the reviewed project `ienwcencjbgdsqxfyxmj`.
+
+The operation resets that database from committed migrations with generic seeding disabled, then continues through migration verification, advisor enforcement, server-only secret configuration, Edge Function deployment, deterministic fictional bootstrap, all nine hosted authorization checks, and remote migration-state output. It records elapsed time only after every check passes. Do not use this operation for a future production project.
+
 ## Recovery model
 
 Supabase Free does not provide automatic downloadable backups. Staging therefore has no promise to preserve mutable records or uploaded files.
@@ -107,7 +113,7 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 - Supabase Studio initially summarized `0` errors, `86` warnings, and `21` informational suggestions. The later complete CLI triage returned `87` warnings; its exact categories and dispositions are recorded in `STAGING_ADVISOR_TRIAGE.md`.
 - Supabase Performance Advisor reported `0` errors, `10` warnings, and `122` informational suggestions. These remain triage work and are not silently accepted.
 
-The deterministic fictional bootstrap and all nine hosted role/account checks passed after PR #21. Remaining F014 evidence is the hosted execution of the advisor hardening in `STAGING_ADVISOR_TRIAGE.md` and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
+The deterministic fictional bootstrap and all nine hosted role/account checks passed after PR #21. The advisor hardening and automated gate passed after PR #22 in run `38293373701`: anonymous `SECURITY DEFINER` findings fell from three to zero, 82 explicitly granted authenticated functions remained, and the documented free-plan/password and performance findings were accepted. The guarded rebuild rehearsal is the final F014 evidence item. Until it passes, this URL is a development staging environment rather than an accepted production candidate.
 
 ## Synthetic acceptance accounts
 

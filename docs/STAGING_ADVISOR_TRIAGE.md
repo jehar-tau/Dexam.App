@@ -32,6 +32,10 @@ Migration `20261012120000_database_advisor_hardening.sql`:
 
 The pgTAP suite now proves those boundaries and proves that every public `SECURITY DEFINER` function pins an empty `search_path`.
 
+## Hosted confirmation
+
+PR #22 merged as `50f89c77882c97f8fa67a89e41db7ee823d4b487`. Protected deployment run `38293373701` applied the hardening migration and passed the advisor gate. The post-migration hosted report contained 236 findings: 82 intentional authenticated privileged-function warnings, one Free-plan leaked-password warning, 10 overlapping-policy warnings, and 143 informational findings. Anonymous privileged-function findings fell from three to zero, and the nine synthetic role/revocation checks passed again.
+
 ## Intentionally authenticated privileged functions
 
 The pre-fix report contained 83 authenticated `SECURITY DEFINER` findings. A comparison against versioned grants found that 82 are explicitly granted to `authenticated`; these are the app's guarded RPC or RLS-helper surface. The only finding without an explicit authenticated grant was `sync_crm_privacy_lifecycle`, which inherited access and is fixed by this slice.

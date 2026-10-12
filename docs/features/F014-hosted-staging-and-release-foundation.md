@@ -1,6 +1,6 @@
 # F014 — Hosted Staging and Release Foundation
 
-Status: In progress — hosted foundation and synthetic acceptance live; advisor hardening and rebuild rehearsal remain under D-026 Option B
+Status: In progress — hosted foundation, synthetic acceptance, and advisor hardening live; guarded rebuild rehearsal remains under D-026 Option B
 Risk: Red — hosted credentials, migrations, release automation, Auth redirects, and future production boundary
 
 ## Purpose and problem
@@ -163,6 +163,12 @@ PR #21 merged as `9045098ff231d18fd1ee7d28548c85208a451261`. Protected backend r
 ## Advisor-triage checkpoint — 2026-10-12
 
 The live CLI report contained no errors, 87 security warnings, 21 security informational findings, 10 performance warnings, and 122 performance informational findings. The actionable exposure was inherited anonymous execution on three `SECURITY DEFINER` functions and inherited authenticated execution on one trigger function. The next migration removes those grants, restricts future function defaults, preserves only the constant anonymous health check, and adds database and deployment regression gates. Intentional authenticated RPCs, deny-by-default no-policy tables, overlapping read policies, new-staging unused-index signals, and unindexed foreign-key suggestions are documented in `../STAGING_ADVISOR_TRIAGE.md` with their review triggers.
+
+PR #22 merged as `50f89c77882c97f8fa67a89e41db7ee823d4b487`. Protected deployment run `38293373701` applied the hardening, passed the new advisor gate, and repeated all nine hosted authorization checks. The post-migration report contains zero anonymous privileged-function findings; its remaining 82 authenticated findings match explicit reviewed grants.
+
+## Rebuild-rehearsal implementation checkpoint — 2026-10-13
+
+The existing protected deployment workflow now has a deliberate `rebuild-fictional-staging` mode. It requires manual dispatch from `main`, verifies the exact reviewed staging project reference before resetting, recreates schema from committed migrations without generic seed data, and then runs the same advisor, function deployment, fictional bootstrap, authorization, and migration-state checks as a normal release. A successful run records elapsed time; no success is claimed until that protected run completes.
 
 ## Open decisions
 
