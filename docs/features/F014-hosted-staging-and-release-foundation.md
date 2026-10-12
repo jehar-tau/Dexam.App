@@ -170,7 +170,7 @@ PR #22 merged as `50f89c77882c97f8fa67a89e41db7ee823d4b487`. Protected deploymen
 
 The existing protected deployment workflow now has a deliberate `rebuild-fictional-staging` mode. It requires manual dispatch from `main`, verifies the exact reviewed staging project reference before resetting, recreates schema from committed migrations without generic seed data, and then runs the same advisor, function deployment, fictional bootstrap, authorization, and migration-state checks as a normal release. A successful run records elapsed time; no success is claimed until that protected run completes.
 
-The first ordinary release after that change encountered repeated Supabase API `500` responses while uploading the eight functions as one batch. The release workflow now discovers the committed function entry points, deploys them serially, and retries each failed provider request at most twice with bounded backoff. A persistent failure still stops the release before fictional bootstrap or acceptance checks.
+The first ordinary release after that change encountered repeated Supabase API `500` responses while uploading the eight functions through the server-side `--use-api` bundler. Serial retries isolated the failure to that bundling path; the same source deployed successfully through the CLI's normal local-bundling path. The release workflow now discovers committed function entry points, bundles and deploys them serially, and retries each failed provider request at most twice with bounded backoff. A persistent failure still stops the release before fictional bootstrap or acceptance checks.
 
 ## Open decisions
 
