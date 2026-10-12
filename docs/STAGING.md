@@ -1,6 +1,6 @@
 # Hosted Staging Runbook
 
-Status: implementation foundation under F014 / approved D-026 Option B
+Status: hosted foundation live; synthetic acceptance and rebuild rehearsal remain under F014 / approved D-026 Option B
 Data classification: fictional test data only
 
 ## Purpose
@@ -84,13 +84,28 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 
 ## Current setup checkpoint
 
-- Repository staging controls and the GitHub `staging` environment are prepared.
+- Repository staging controls are merged through PR #19 at commit `cc7b144c964e4f74c35de7344e4780ca3419e7a4`, and the GitHub `staging` environment is active.
 - The owner-controlled Supabase Free project is named `Dexam Staging`, project reference `ienwcencjbgdsqxfyxmj`, with URL `https://ienwcencjbgdsqxfyxmj.supabase.co`.
-- `STAGING_PROJECT_ID`, a generated `ACTION_TOKEN_PEPPER`, and the named `SUPABASE_ACCESS_TOKEN` are stored only as GitHub `staging` environment secrets.
-- GitHub email verification is complete. The Cloudflare Pages GitHub App installation is restricted to `jehar-tau/Dexam.App`, but Cloudflare did not receive the installation callback and still shows the account as disconnected. Re-authorize the installation from the Cloudflare Pages flow before creating the Pages project; do not widen repository access.
+- `STAGING_PROJECT_ID`, `STAGING_DB_PASSWORD`, a generated `ACTION_TOKEN_PEPPER`, and the named `SUPABASE_ACCESS_TOKEN` are stored only as GitHub `staging` environment secrets.
+- GitHub email verification is complete. The Cloudflare Pages GitHub App installation is restricted to `jehar-tau/Dexam.App`, and the connected `dexam-staging` Pages project deploys only `main` to `https://dexam-staging.pages.dev`.
 - A named Supabase CLI deployment token was created through Supabase's browser authorization, stored in the owner's macOS Keychain, verified by listing the owner-controlled `Dexam Staging` project, and copied directly into the encrypted GitHub `staging` environment as `SUPABASE_ACCESS_TOKEN` without printing it.
-- `STAGING_DB_PASSWORD` remains unset and must be entered by the owner without placing it in chat, shell history, Git, or documentation.
+- Supabase Auth uses `https://dexam-staging.pages.dev` as the exact site URL. Public signup, manual linking, and anonymous sign-in are disabled; email confirmation remains enabled. No redirect URLs are currently required because OAuth and email callback flows are not implemented.
 - No payment method, paid plan, real data, or production deployment has been introduced.
+
+## First hosted release evidence — 2026-10-12
+
+- PR #19 passed application, database-security, and browser checks before owner-approved merge.
+- GitHub run `38159997115` initially failed safely during the migration dry run because the first stored database password was not accepted. No migrations were applied during either failed attempt. The owner reset the password and updated the encrypted secret; after Supabase's password rotation propagated, the same protected run succeeded.
+- The successful backend run linked only project `ienwcencjbgdsqxfyxmj`, previewed and applied all committed migrations, configured `ACTION_TOKEN_PEPPER`, deployed all eight declared Edge Functions, and recorded remote migration state.
+- Cloudflare built the same merge commit with `pnpm build:staging` and published `dist` to `https://dexam-staging.pages.dev`.
+- `/`, `/health`, `/staff/reviews`, and `/student/coursework` return the SPA document directly. All checked routes send `X-Robots-Tag: noindex, nofollow, noarchive`, `X-Frame-Options: DENY`, and `X-Content-Type-Options: nosniff`.
+- `/health` reported both frontend and backend operational and identified the site as a non-production, fictional-data-only environment.
+- Hosted `?preview=1` requests for `/staff/crm` and `/student` were redirected to their protected sign-in pages; public preview shortcuts did not bypass authentication.
+- Empty unauthenticated POSTs to all eight declared Edge Functions failed closed: the two intentionally public student credential operations returned safe `400` responses, and the six protected operations returned `401` without exposing configuration.
+- Supabase Security Advisor reported `0` errors, `86` warnings, and `21` informational suggestions. The rendered warnings were predominantly callable `SECURITY DEFINER` notices and require explicit comparison with the migration grants, current-state authorization checks, and pgTAP coverage before F014 acceptance.
+- Supabase Performance Advisor reported `0` errors, `10` warnings, and `122` informational suggestions. These remain triage work and are not silently accepted.
+
+Remaining F014 evidence is the deterministic fictional bootstrap, synthetic role/account journeys (including inactive/revoked staff), complete advisor triage, and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
 
 ## Free-tier operations
 
