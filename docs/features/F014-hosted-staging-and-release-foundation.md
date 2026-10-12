@@ -148,7 +148,13 @@ The owner-approved PR #19 deployed merge commit `cc7b144c964e4f74c35de7344e4780c
 
 The first database-password attempts failed before migration because the stored password was invalid and then still propagating after reset. The successful retry occurred after rotation propagation; no database changes were made by the failed attempts. This recovery is recorded in `../STAGING.md`.
 
-F014 is not complete. Synthetic Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, and Elevated Admin accounts do not yet have a deterministic hosted bootstrap; inactive/revoked staff behavior has not been exercised against hosted Auth; the provider advisor warnings require explicit triage; and the fictional baseline rebuild rehearsal has not run.
+At this first hosted checkpoint F014 was not complete: synthetic Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, and Elevated Admin accounts did not yet have a deterministic hosted bootstrap; inactive/revoked staff behavior had not been exercised against hosted Auth; the provider advisor warnings required explicit triage; and the fictional baseline rebuild rehearsal had not run.
+
+## Synthetic bootstrap implementation checkpoint — 2026-10-12
+
+The next reviewed slice defines nine deterministic, obviously fictional acceptance accounts: the seven required active boundaries plus revoked and inactive employee denial controls. The protected staging workflow creates or rotates their Auth credentials using one encrypted environment secret, upserts only deterministic fictional application records, and checks real hosted sessions against current membership, role, capability, revocation, and MFA-assurance rules. Privileged API keys are fetched ephemerally through the scoped Supabase deployment token and are neither committed nor stored as a second long-lived GitHub secret.
+
+The Privacy Operator and MFA-sensitive Elevated Admin checks deliberately expect password-only `aal1` denial. F014 does not weaken `requires_mfa`; allowed `aal2` browser journeys remain dependent on DW-003's approved MFA enrolment/recovery interface. This checkpoint is implementation evidence only until the branch is merged and the protected hosted workflow passes.
 
 ## Open decisions
 

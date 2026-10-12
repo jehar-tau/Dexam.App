@@ -4,7 +4,7 @@ Last updated: 2026-10-12
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is merged through PR #19 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, and unauthenticated-function checks passed; deterministic fictional bootstrap, synthetic role/revocation journeys, provider-advisor triage, and rebuild rehearsal remain before F014 acceptance. Production personal data and deployment remain blocked pending those staging checks, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is merged through PR #20 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, and unauthenticated-function checks passed. A deterministic nine-account fictional bootstrap and hosted authorization checker are now implementation-active on `feat/f014-synthetic-bootstrap`; hosted execution, provider-advisor triage, and rebuild rehearsal remain before F014 acceptance. Production personal data and deployment remain blocked pending those staging checks, operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -167,11 +167,18 @@ F014 Hosted Staging and Release Foundation is merged through PR #19 and its owne
 - Verified hosted `/health`, nested SPA routes, the non-production banner, safe indexing/frame/MIME headers, staff and student preview-bypass denial, and safe unauthenticated rejection for all eight Edge Functions.
 - Set the exact Supabase Auth site URL, disabled public signup/manual linking/anonymous sign-in, retained email confirmation, and confirmed no wildcard redirect URLs. Provider advisors show zero errors but unresolved warning/suggestion sets that remain explicit F014 review work.
 
+## Implementation active
+
+- Added a deterministic fictional staging manifest for Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, Elevated Admin, revoked employee, and inactive employee boundaries.
+- Added an idempotent protected bootstrap that creates or rotates Auth users, upserts identity/membership/role/capability records and one fictional enrolment, and never commits or logs its password.
+- Added hosted session checks for active role boundaries, cross-role denials, current-state suspension/ended-membership denial, and password-only denial of MFA-required privacy/security capabilities.
+- Generated `STAGING_SYNTHETIC_PASSWORD`, stored it only in the GitHub `staging` environment and the product owner's macOS Keychain, and locally rehearsed the bootstrap twice plus all nine authorization checks successfully.
+
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted staging synthetic-account bootstrap, role/revocation journeys, advisor triage, and rebuild rehearsal
+- Hosted execution of the staging synthetic-account bootstrap and role/revocation checks, advisor triage, and rebuild rehearsal
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -191,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Add a reviewed, deterministic fictional bootstrap and off-repository synthetic credentials; exercise hosted role and revocation boundaries; triage the Supabase advisor warnings against migrations and pgTAP coverage; then run and record the rebuild rehearsal. Keep staging fictional-only and production blocked.
+Review and merge the deterministic fictional bootstrap, confirm its protected hosted run, then triage the Supabase advisor warnings against migrations and pgTAP coverage and run the rebuild rehearsal. Keep staging fictional-only and production blocked.
 
 ## Blockers
 
