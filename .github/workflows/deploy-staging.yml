@@ -120,8 +120,7 @@ jobs:
 
             for attempt in 1 2 3; do
               if pnpm supabase functions deploy "$function_name" \
-                --project-ref "$SUPABASE_PROJECT_ID" \
-                --use-api; then
+                --project-ref "$SUPABASE_PROJECT_ID"; then
                 break
               fi
 

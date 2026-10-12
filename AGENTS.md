@@ -32,7 +32,7 @@ Make low-risk implementation decisions independently. Explain recommendations in
 
 ## GitHub workflow
 
-- After the product owner approves a completed slice and asks to commit or push it, verify the change, commit it, push the feature branch, check whether that branch already has a pull request, and create a non-draft pull request automatically when one does not exist.
+- After a completed slice is verified, commit it, push the feature branch, check whether that branch already has a pull request, and create a non-draft pull request automatically when one does not exist. Do not ask the product owner to create or submit the pull request.
 - Populate the pull-request title and repository template with the implemented scope, approved decisions, verification evidence, risk, and security/privacy/migration notes. Do not ask the product owner to click GitHub's **Create pull request** button.
 - Prefer the connected GitHub integration. If it lacks the required write permission, use the product owner's authenticated browser session. Ask the product owner to sign in only when authentication actually blocks the operation.
-- Never create duplicate pull requests for the same feature branch. Never merge a pull request without the product owner's explicit approval.
+- Never create duplicate pull requests for the same feature branch. The product owner has given standing authorization to merge a pull request when all required checks pass and there are no unresolved review comments or concerns, and then to continue with the next approved implementation step. Do not merge when checks fail or review concerns remain. Pause only for a decision required by the collaboration contract, a paid service, a production action, sensitive-data risk, or another material expansion beyond approved scope.
