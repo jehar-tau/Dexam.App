@@ -51,11 +51,13 @@ jobs:
         shell: bash
         env:
           ACTION_TOKEN_PEPPER: ${{ secrets.ACTION_TOKEN_PEPPER }}
+          STAGING_SYNTHETIC_PASSWORD: ${{ secrets.STAGING_SYNTHETIC_PASSWORD }}
         run: |
           test -n "$SUPABASE_ACCESS_TOKEN"
           test -n "$SUPABASE_DB_PASSWORD"
           test -n "$SUPABASE_PROJECT_ID"
           test -n "$ACTION_TOKEN_PEPPER"
+          test -n "$STAGING_SYNTHETIC_PASSWORD"
 
       - name: Link staging project
         run: pnpm supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
@@ -73,6 +75,29 @@ jobs:
 
       - name: Deploy declared Edge Functions
         run: pnpm supabase functions deploy --project-ref "$SUPABASE_PROJECT_ID" --use-api
+
+      - name: Prepare job-scoped API keys
+        shell: bash
+        run: |
+          api_keys_file="$(mktemp)"
+          trap 'rm -f "$api_keys_file"' EXIT
+          pnpm supabase projects api-keys \
+            --project-ref "$SUPABASE_PROJECT_ID" \
+            --reveal \
+            --output json > "$api_keys_file"
+          node scripts/staging/prepare-api-keys.mjs "$api_keys_file"
+
+      - name: Bootstrap fictional acceptance fixtures
+        env:
+          STAGING_SUPABASE_URL: https://${{ secrets.STAGING_PROJECT_ID }}.supabase.co
+          STAGING_SYNTHETIC_PASSWORD: ${{ secrets.STAGING_SYNTHETIC_PASSWORD }}
+        run: pnpm staging:fixtures:bootstrap
+
+      - name: Verify hosted synthetic authorization
+        env:
+          STAGING_SUPABASE_URL: https://${{ secrets.STAGING_PROJECT_ID }}.supabase.co
+          STAGING_SYNTHETIC_PASSWORD: ${{ secrets.STAGING_SYNTHETIC_PASSWORD }}
+        run: pnpm staging:fixtures:verify
 
       - name: Record remote migration state
         run: pnpm supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"

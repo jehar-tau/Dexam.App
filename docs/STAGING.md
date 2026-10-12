@@ -22,14 +22,15 @@ Staging gives the product owner a stable online acceptance environment. It is no
 
 ## GitHub staging secrets
 
-| Secret                  | Purpose                                                         |
-| ----------------------- | --------------------------------------------------------------- |
-| `SUPABASE_ACCESS_TOKEN` | Scoped CLI deployment token for the staging project             |
-| `STAGING_PROJECT_ID`    | Public project reference used by the deployment workflow        |
-| `STAGING_DB_PASSWORD`   | Server-only password used to apply reviewed migrations          |
-| `ACTION_TOKEN_PEPPER`   | Long random server-only value for one-time action-token hashing |
+| Secret                       | Purpose                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `SUPABASE_ACCESS_TOKEN`      | Scoped CLI deployment token for the staging project                                                                      |
+| `STAGING_PROJECT_ID`         | Public project reference used by the deployment workflow                                                                 |
+| `STAGING_DB_PASSWORD`        | Server-only password used to apply reviewed migrations                                                                   |
+| `ACTION_TOKEN_PEPPER`        | Long random server-only value for one-time action-token hashing                                                          |
+| `STAGING_SYNTHETIC_PASSWORD` | Long credential shared only by the protected bootstrap job and owner Keychain; rotated on every rebuild or access change |
 
-Do not store the service-role key in the frontend or a `VITE_*` variable. Add a service-role secret only to a future bounded bootstrap job if that job is separately reviewed.
+Do not store the service-role key in GitHub, the frontend, or a `VITE_*` variable. The reviewed bootstrap job obtains it ephemerally from the Supabase Management API through the scoped deployment token, masks it immediately, and discards it when the job ends.
 
 ## Cloudflare Pages build configuration
 
@@ -63,7 +64,7 @@ The Supabase URL and publishable key are intended for browser use and are protec
 1. A pull request passes the `Verify` workflow.
 2. The owner approves and merges it into `main`.
 3. The successful `Verify` push run triggers `Deploy staging backend`.
-4. The workflow links only the staging project, previews pending migrations, applies them, configures the server-only pepper, deploys all declared functions, and prints migration identifiers.
+4. The workflow links only the staging project, previews pending migrations, applies them, configures the server-only pepper, deploys all declared functions, obtains job-scoped API keys without persisting them, reruns the deterministic fictional bootstrap, verifies hosted authorization boundaries, and prints migration identifiers.
 5. Cloudflare builds the same `main` commit with staging public configuration.
 6. Hosted acceptance checks `/health`, direct nested-route refresh, sign-in boundaries, and the changed journey.
 
@@ -106,7 +107,25 @@ The F014 acceptance run must prove a clean reconstruction and record the time, f
 - Supabase Security Advisor reported `0` errors, `86` warnings, and `21` informational suggestions. The rendered warnings were predominantly callable `SECURITY DEFINER` notices and require explicit comparison with the migration grants, current-state authorization checks, and pgTAP coverage before F014 acceptance.
 - Supabase Performance Advisor reported `0` errors, `10` warnings, and `122` informational suggestions. These remain triage work and are not silently accepted.
 
-Remaining F014 evidence is the deterministic fictional bootstrap, synthetic role/account journeys (including inactive/revoked staff), complete advisor triage, and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
+Remaining F014 evidence is the hosted execution of the reviewed deterministic fictional bootstrap and synthetic role/account checks (including inactive/revoked staff), complete advisor triage, and a documented rebuild rehearsal. Until those pass, this URL is a development staging environment rather than an accepted production candidate.
+
+## Synthetic acceptance accounts
+
+The bootstrap manifest contains only reserved `.invalid` email addresses, clearly fictional display names, deterministic application identifiers, and one fictional course enrolment. The password is not committed. It is stored as the encrypted `STAGING_SYNTHETIC_PASSWORD` environment secret and in the product owner's macOS Keychain under `Dexam Staging Synthetic Password`.
+
+| Boundary                 | Sign-in identifier                         |
+| ------------------------ | ------------------------------------------ |
+| Student                  | Member ID `DXM-STG22STUDENT`               |
+| Teacher                  | `teacher.staging@dexam.invalid`            |
+| Sales                    | `sales.staging@dexam.invalid`              |
+| CRM Coordinator          | `crm-coordinator.staging@dexam.invalid`    |
+| Enrolment Operator       | `enrolment-operator.staging@dexam.invalid` |
+| Privacy Operator         | `privacy-operator.staging@dexam.invalid`   |
+| Elevated Admin           | `elevated-admin.staging@dexam.invalid`     |
+| Revoked employee denial  | `revoked-employee.staging@dexam.invalid`   |
+| Inactive employee denial | `inactive-employee.staging@dexam.invalid`  |
+
+Every deployment rotates these Auth users to the encrypted staging password, upserts the fictional identity and permission baseline, and checks current database state after obtaining a real session. Privacy and security-sensitive permissions must remain denied at password-only `aal1`; successful `aal2` access remains gated by DW-003 rather than being weakened for staging.
 
 ## Free-tier operations
 
