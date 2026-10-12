@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is merged through PR #24 and its owner-controlled free Supabase/Cloudflare foundation is live at `https://dexam-staging.pages.dev`. Core hosted release, health, routing, preview-denial, deterministic fictional bootstrap, nine-account role/revocation checks, database hardening, and the provider-advisor gate passed. The guarded clean rebuild rehearsal remains the final F014 acceptance item; repeated Supabase server-side bundler `500` responses were isolated from application code, and the same function source deployed successfully through the CLI's normal local-bundling path. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live at `https://dexam-staging.pages.dev`; it reconstructs from all 21 committed migrations, deploys all eight Edge Functions, bootstraps nine fictional identities and one enrolment, passes the advisor gate and every hosted role/revocation check, and completed the guarded rebuild in 79 seconds. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -168,17 +168,17 @@ F014 Hosted Staging and Release Foundation is merged through PR #24 and its owne
 - Set the exact Supabase Auth site URL, disabled public signup/manual linking/anonymous sign-in, retained email confirmation, and confirmed no wildcard redirect URLs. Provider advisors show zero errors but unresolved warning/suggestion sets that remain explicit F014 review work.
 - Merged the deterministic fictional bootstrap through PR #21 at `9045098`, then confirmed the protected deployment created or rotated all nine accounts and passed hosted Student, Teacher, Sales, CRM Coordinator, Enrolment Operator, Privacy Operator, Elevated Admin, revoked-employee, and inactive-employee authorization checks.
 - Merged the database advisor hardening through PR #22 at `50f89c7`. Protected deployment run `38293373701` applied the migration, reduced anonymous privileged-function findings from three to zero, passed the advisor gate with only documented accepted/deferred categories, and repeated all nine hosted authorization checks successfully.
+- Merged the guarded rebuild workflow and deployment hardening through PRs #23–#25. The Supabase server-side bundler's repeated `500` responses were isolated from application code; the normal CLI bundling path deployed the same source successfully and is now used serially with bounded retries.
+- Accepted F014 after protected rebuild run `38298241510` reset the exact fictional staging project, reapplied all 21 migrations, passed the 235-finding documented advisor gate, deployed all eight functions, recreated nine fictional accounts and one enrolment, passed all hosted role/current-state checks, matched remote migration state, and recorded 79 seconds. The public health route remained HTTP 200 with safe headers afterward.
 
 ## Implementation active
 
-- Added a guarded manual rebuild mode to the existing serialized staging workflow. It is restricted to the exact fictional staging project, recreates the database from migrations without generic seed data, and must pass the same advisor, function deployment, deterministic bootstrap, authorization, and migration-state checks as a normal release.
-- Added elapsed-time evidence to the protected rebuild job so the recovery limitation and duration can be recorded after the first run.
+- No implementation slice is active. Identity operations discovery is the next safe stage.
 
 ## Not yet started
 
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
-- Hosted execution and evidence capture for the clean rebuild rehearsal
 - Remaining enrolment transitions beyond activation-pack issuance
 - Student account recovery workflow
 - Two-person approval workflow and elevated administration interface
@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Review and merge the guarded rebuild mode, run `rebuild-fictional-staging` against the exact staging project, and record the protected job evidence. Keep staging fictional-only and production blocked.
+Return to the launch-critical F001 identity gaps and prepare the next Decision Gate for sequencing student recovery, employee invitation/recovery, TOTP MFA, security-triggered session revocation, and the first two-person elevated-administration interface. Keep staging fictional-only and production blocked.
 
 ## Blockers
 

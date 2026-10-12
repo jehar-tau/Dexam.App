@@ -1,6 +1,6 @@
 # Deferred Work Register
 
-Last updated: 2026-10-12
+Last updated: 2026-10-13
 
 This is the canonical register for functionality Dexam has discussed but is not building in the current slice. It prevents useful ideas, incomplete feature slices, and required follow-up work from being lost between tasks.
 
@@ -64,14 +64,13 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Platform, design system, and operations
 
-| ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                                                          | Authority            |
-| ------ | -------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| DW-026 | Final rehearsal            | Hosted staging environment                                     | The free release path, deterministic fictional bootstrap, hosted authorization checks, and advisor gate are live. Run and record the guarded clean rebuild rehearsal before closing F014. | D-002, D-026, F014   |
-| DW-027 | Next slice                 | Production deployment and `app.designexam.com`                 | Proceed only after staging, launch checklist, privacy/security review, backup/restore, operational ownership, and explicit production approval.                                           | D-002                |
-| DW-028 | Next slice                 | Observability, error triage, and product-intelligence baseline | Define a privacy-minimizing event taxonomy, retention, access, alert thresholds, and whether a paid service is justified.                                                                 | ROADMAP phase 11     |
-| DW-029 | Deferred, foundation ready | Remaining shared UI primitives and patterns                    | Port incrementally from the pinned shared design-system repository only when a feature needs them; add an approved spec and Storybook state catalog.                                      | D-011, DESIGN_SYSTEM |
-| DW-030 | Deferred, foundation ready | Chromatic visual-regression hosting                            | Reconsider when component volume/regression risk justifies an external account and snapshot quota; approve cost and data exposure first.                                                  | D-010                |
-| DW-031 | Deferred, foundation ready | Publishable shared runtime component package                   | Reconsider only when a second real application needs runtime components and the shared repository is intentionally restructured as a package.                                             | D-011                |
+| ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                     | Authority            |
+| ------ | -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| DW-027 | Next slice                 | Production deployment and `app.designexam.com`                 | Proceed only after staging, launch checklist, privacy/security review, backup/restore, operational ownership, and explicit production approval.      | D-002                |
+| DW-028 | Next slice                 | Observability, error triage, and product-intelligence baseline | Define a privacy-minimizing event taxonomy, retention, access, alert thresholds, and whether a paid service is justified.                            | ROADMAP phase 11     |
+| DW-029 | Deferred, foundation ready | Remaining shared UI primitives and patterns                    | Port incrementally from the pinned shared design-system repository only when a feature needs them; add an approved spec and Storybook state catalog. | D-011, DESIGN_SYSTEM |
+| DW-030 | Deferred, foundation ready | Chromatic visual-regression hosting                            | Reconsider when component volume/regression risk justifies an external account and snapshot quota; approve cost and data exposure first.             | D-010                |
+| DW-031 | Deferred, foundation ready | Publishable shared runtime component package                   | Reconsider only when a second real application needs runtime components and the shared repository is intentionally restructured as a package.        | D-011                |
 
 ## Later product phases
 
@@ -106,3 +105,4 @@ Move an item here only after its required implementation is merged or the produc
 - 2026-10-11 — DW-040 completed through F011 / PR #15: explicit CRM Coordinator assignment plus unassigned and inactive-owner recovery queues are merged.
 - 2026-10-11 — DW-041 completed through F012 / PR #16: the Enrolment Operator CRM handoff and identity-resolution inbox is merged.
 - 2026-10-11 — DW-042 completed through F013 / PR #17: purpose-based CRM retention, governed correction, two-person erasure, bounded holds, and privacy operations are merged with production activation still gated.
+- 2026-10-13 — DW-026 completed through F014 / PR #25 and protected run `38298241510`: the owner-controlled fictional staging environment rebuilt from all committed migrations, redeployed every function, recreated deterministic fixtures, passed hosted authorization and advisor gates, and recorded 79 seconds.
