@@ -18,6 +18,9 @@ The owner confirmed on 2026-10-13 that D-029 Option B means local email testing 
 
 ## Other existing release gates
 
+- [ ] Approve and verify hosted student assisted recovery activation, exact production callback/handover procedure, two-admin operational availability, production proof/abuse budgets and minimized ledger/audit retention. F017 is fictional-local only; no mandatory student contact or real delivery is implied.
+- [ ] Apply DW-045 uncertainty reconciliation to student as well as employee password mutation, including proof that the external update stopped, independent operational approval, and tested current-provider/session checks. Link expiry never unlocks execution.
+
 - [ ] Complete remaining student/employee recovery and identity workflows under their approved feature decisions.
 - [ ] Establish production security/incident ownership, attributable privileged accounts, emergency procedures, and cross-system offboarding.
 - [ ] Validate production backup/restore and privacy tombstone behavior; fictional rebuilds are not production backups.

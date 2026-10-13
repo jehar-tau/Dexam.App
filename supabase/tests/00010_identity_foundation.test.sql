@@ -40,8 +40,10 @@ select throws_ok(
   'Member IDs must use the approved non-email format'
 );
 
+insert into auth.sessions(id,user_id,created_at,updated_at) values
+  ('10000000-0000-4000-8000-000000000001','10000000-0000-0000-0000-000000000001',now(),now());
 set local role authenticated;
-set local request.jwt.claim.sub = '10000000-0000-0000-0000-000000000001';
+set local request.jwt.claims = '{"sub":"10000000-0000-0000-0000-000000000001","session_id":"10000000-0000-4000-8000-000000000001","role":"authenticated"}';
 
 select is(
   (select count(*)::integer from public.people),
