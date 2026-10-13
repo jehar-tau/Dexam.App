@@ -37,3 +37,5 @@ D-028 — MFA enforcement boundary — Option B approved 2026-10-13 — `ADR-028
 D-029 — Employee invitation and password recovery — Option B approved 2026-10-13 — `ADR-029-employee-invitation-and-recovery.md`.
 
 D-030 — Student assisted recovery — Option B approved 2026-10-14 — `ADR-030-student-assisted-recovery.md`.
+
+D-031 — First teacher teaching workspace — Awaiting owner decision — `ADR-031-teacher-workspace-scope.md`.
