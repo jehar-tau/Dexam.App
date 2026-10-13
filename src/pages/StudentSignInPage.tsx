@@ -110,6 +110,10 @@ export function StudentSignInPage() {
           First visit? <Link to="/activate">Activate your account</Link> using the one-time pack
           provided by Dexam.
         </p>
+        <p className={styles.support}>
+          Forgot your password? Ask Dexam for an independently approved pack, then{' '}
+          <Link to="/student/recover">recover your student account</Link>.
+        </p>
       </Card>
     </section>
   )

@@ -1,6 +1,6 @@
 # F017 — Student assisted account recovery
 
-Status: Implementation authorized — D-030 Option B approved 2026-10-14
+Status: Local implementation verified; pack slice awaiting PR/release — D-030 Option B approved 2026-10-14
 Risk: Red
 
 ## Purpose
@@ -37,3 +37,15 @@ Proposals expire after 15 minutes and have a one-minute deliberate re-proposal c
 ## Deferred rather than dropped
 
 Verified-contact self-service and real delivery, lost-contact replacement, guardian-specific evidence/handover, emergency recovery, and production reconciliation require their own prerequisites/approval. Keep DW-001/DW-045 and `PRODUCTION_READINESS.md` current when this feature is eventually approved.
+
+## Pack and consumption implementation — 2026-10-14
+
+The approval foundation merged in PR #39 and protected fictional staging release `38459283926` succeeded. Migration `20261014004000` adds service-only pack issue/claim/finish and live provider-session checks for student identities as well as employees. `/staff/student-recovery` is protected by current `student_recovery.assist` and recent MFA with preview bypass disabled; `/student/recover` captures and clears only exact fragment credentials before rendering. Password mutation uses an isolated nonpersistent client and the supported Auth Admin password-only API. It cannot replace the canonical account, email, factors, roles, memberships or enrolment.
+
+Implementation limits: a proposal lasts 15 minutes; an issued pack lasts 15 minutes and permits eight incorrect proof attempts. Both recorded administrator sessions must remain live, recently verified (15 minutes) and authorized at issuance, consumption and known-outcome finalization. A late pack therefore may require both administrators to reverify the same recorded sessions, or deliberate cancellation and a fresh independent request. The public worker allows 20 attempts per HMAC Member ID/hour and a shared 100/hour local budget; untrusted forwarding headers cannot increase it. Counters expire after 72 hours. These are conservative fictional-local budgets, not approved production abuse/retention policies.
+
+Link secrets contain 256 random bits; ten-character unambiguous backup codes use rejection sampling. Only purpose-separated HMAC hashes reach the private token ledger. Raw credentials appear once to the authorized issuer in transient component memory, never query caches, persistent storage, logs or audit. The issuer hands the pack privately to the verified student and explicitly hides it after handover; loss requires deliberate cancellation/fresh approval. Student passwords are selected privately (12–128 characters), never entered by staff. Errors sanitize malformed responses and never echo credentials. The local link is fixed to `http://127.0.0.1:5173/student/recover`; no caller-controlled redirect is accepted.
+
+Trusted workers are disabled unless `STUDENT_RECOVERY_MODE=local-only` **and** the API is an exact local endpoint. Hosted execution remains disabled. Durable cutoffs commit before and after provider mutation; consumed proofs cannot execute twice. An uncertain result stays exclusively `executing`, blocks current/new application sessions, and cannot be cancelled or superseded on expiry. Production reconciliation remains DW-045; no operational override is provided.
+
+Verification: 824 database assertions; actual disposable local SDK reset plus Chromium independent admin review/approval/issue/private-hide and student link consumption, wrong proof/replay, old password/JWT/refresh denial, fresh canonical identity, unchanged historical enrolment, supported direct-provider password-change denial, and cleanup. Desktop/mobile screenshots are captured only after credentials are hidden. Independent Codex security reviews found no blocking backend/frontend defect; their schema-error privacy recommendation was applied. Full application/browser suite totals and merge/release evidence are maintained in CURRENT_STATE.

@@ -18,6 +18,8 @@ import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { EmployeeActivationPage } from '../pages/EmployeeActivationPage'
 import { EmployeeInvitationsPage } from '../pages/EmployeeInvitationsPage'
 import { EmployeePasswordRecoveryPage } from '../pages/EmployeePasswordRecoveryPage'
+import { StudentPasswordRecoveryPage } from '../pages/StudentPasswordRecoveryPage'
+import { StudentRecoveryAdminPage } from '../pages/StudentRecoveryAdminPage'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
@@ -35,6 +37,15 @@ export const router = createBrowserRouter([
       { index: true, element: <FoundationPage /> },
       { path: 'activate', element: <StudentActivationPage /> },
       { path: 'sign-in', element: <StudentSignInPage /> },
+      { path: 'student/recover', element: <StudentPasswordRecoveryPage /> },
+      {
+        path: 'staff/student-recovery',
+        element: (
+          <StaffAccessBoundary capability="student_recovery.assist" requireMfa allowPreview={false}>
+            <StudentRecoveryAdminPage />
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'student',
         element: (
