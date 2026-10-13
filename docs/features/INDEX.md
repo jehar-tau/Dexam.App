@@ -14,6 +14,6 @@
 - F012 Enrolment handoff and identity resolution — D-024 Option B implemented and merged through PR #16
 - F013 CRM data lifecycle and privacy operations — D-025 Option B implemented and merged through PR #17
 - F014 Hosted staging and release foundation — accepted through PR #25 and protected rebuild run `38298241510` under D-026 Option B
-- F015 Staff MFA and session security — discovery active; implementation requires D-027
+- F015 Staff MFA and session security — implementation active under D-027 Option B
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

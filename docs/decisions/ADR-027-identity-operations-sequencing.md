@@ -1,4 +1,9 @@
-# DECISION REQUIRED — D-027
+# D-027 — Identity Operations Sequencing
+
+Status: Approved — Option B
+Date: 2026-10-13
+
+The product owner authorized continuation of the recommended Option B on 2026-10-13 after the explicit choice was presented. This authorizes fictional development and staging implementation of F015 within its recorded boundaries.
 
 ## Question
 
@@ -58,9 +63,9 @@ Approve Option B. It closes the clearest existing security gap with no new vendo
 
 ## What can continue while pending
 
-Only documentation, source inspection, and non-mutating technical validation may continue. No MFA, factor-reset, recovery, invitation, or new authority behavior should be implemented before this choice is approved.
+Option B is approved. Implement F015 with tests and reviewed PRs under the standing merge authorization. Employee invitation and student recovery remain subsequent slices.
 
-Please choose A/B/C or give another direction.
+No sequencing choice remains pending.
 
 ## Sources reviewed
 

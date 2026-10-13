@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. Identity operations discovery is now active through D-027 and F015, with a recommended free-first staff MFA, factor-reset approval, and session-revocation slice. No identity behavior is authorized until D-027 is approved. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. D-027 Option B is approved and F015 staff MFA, factor-reset approval, and session-revocation implementation is active. The service layer is tested; user-facing screens and server-enforced recovery safeguards remain unfinished. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -173,7 +173,7 @@ F014 Hosted Staging and Release Foundation is accepted through PR #25 and protec
 
 ## Implementation active
 
-- D-027 and F015 discovery define the next identity-operations sequence and recommended staff MFA/session-security slice. Implementation awaits the product owner's decision.
+- D-027 Option B approved 2026-10-13. F015 implementation has begun with active-employee-checked TOTP state, enrolment, challenge verification, and unfinished-enrolment cancellation helpers. Seven unit tests cover inactive users, safe errors, malformed codes, assurance validation, and verified-factor removal denial. Screens, database safeguards, independent reset approval, session revocation, and hosted acceptance remain unfinished.
 
 ## Not yet started
 
@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Obtain the product owner's D-027 choice. If Option B is approved, implement F015 TOTP enrolment/challenge, guarded factor management, security-triggered global session revocation, and the first two-person lost-factor reset flow. Keep staging fictional-only and production blocked.
+Continue F015 with TOTP screens and database enforcement, then independent lost-factor reset approval and security-triggered session revocation. Validate provider-level factor removal and stale-session behavior before declaring any recovery safeguard complete. Keep staging fictional-only and production blocked.
 
 ## Blockers
 
