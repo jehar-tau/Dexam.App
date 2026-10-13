@@ -52,6 +52,18 @@ The local-only capture adapter accepts reserved `.invalid` recipients and allowl
 
 Independent security review found and resolved separate cleanup failure handling and capture redirect/timeout concerns. Foundation review is not acceptance of the full F016 workflow. Trusted delivery, owned confirmation/finalization, expiry/cancellation races, recovery session invalidation, abuse controls, and the interfaces remain to be built and reviewed.
 
+## Invitation delivery and activation slice — 2026-10-14
+
+Foundation PR #35 is merged. Migration `20261013203000` adds service-only claim, private Auth binding, delivery outcome, and atomic acceptance. Every stage rechecks current issuer/target authority; acceptance requires the same owned live provider OTP session, an unchanged confirmed email, a chosen password, and an unpredictable 256-bit application proof bound to the exact invitation. Only its SHA-256 hash is stored in the private ledger. Cancellation, expiry, and replay deny access. Reissue preserves the explicit canonical person and existing provider identity; it cannot change established email or restore suspended/ended employees.
+
+The public `auth_identities` linkage is deferred until atomic acceptance. A pending employee account therefore cannot resolve the person's existing student business data. No invitation grants a role. The administrator sees only a masked queue and safe outcomes, never provider tokens, application proofs, or passwords.
+
+`/staff/employees` requires current role-grant authority and recent Elevated Admin MFA; it has no preview bypass. `/staff/activate` captures the exact fragment into transient memory and clears the browser URL before rendering. Verification, password selection, and acceptance use an isolated nonpersistent Auth client, not the account shared with other browser tabs. The employee signs in again after completion. Reloading a consumed link is not a resume mechanism; uncertain delivery/activation outcomes require queue inspection and deliberate cancellation/reissue.
+
+Concurrent duplicate delivery remains a fail-closed availability limitation: an overlapping provider operation may invalidate an earlier email token. Do not repeatedly click delivery after an uncertain response. Refresh, inspect status, and cancel/reissue if needed. Production email/provider activation remains disabled and separately gated.
+
+Independent review identified and resolved both cancelled-A/replacement-B proof confusion and cross-tab shared-session password mutation. The database suite passes 715 assertions; application/component tests pass 196; 47 browser journeys pass, including missing-link mobile/desktop states, malformed-fragment removal, and invitation-preview denial. Actual local provider/Edge integration passed exact-proof reissue, no pre-acceptance canonical linkage, and replay denial with disposable cleanup. The real local browser also consumed the captured application link, cleared the URL, chose a password, completed activation, and retained no activation session in localStorage; its disposable people/accounts/mail were removed. Password recovery is not implemented or accepted by this slice.
+
 ## Open decisions
 
 D-029 Option B is approved. Document exact token lifetimes, reissue/throttle budgets, trusted delivery contract, and failure sequencing in the implementation specification; materially new user/security policy returns to the owner. Real delivery and assisted recovery remain later gates. Real authentication email delivery is a mandatory launch requirement in `../PRODUCTION_READINESS.md`, not optional functionality dropped by choosing local testing.

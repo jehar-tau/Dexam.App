@@ -1,6 +1,6 @@
 # Current State
 
-Last updated: 2026-10-13
+Last updated: 2026-10-14
 
 ## Current phase
 
@@ -199,7 +199,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Verify and review the F016 foundation, then continue trusted provider delivery/activation, cancellation/expiry handling, unchanged-email password recovery, and browser journeys. Do not return credential-bearing links to administrators. Keep hosted delivery disabled and preserve the production email checklist.
+F016 foundation PR #35 is merged. The invitation delivery/activation slice is locally implemented and independently reviewed, with service-only exact-proof finalization, deferred canonical Auth linkage, isolated transient browser activation, and a recent-MFA administrator workspace. Local verification passes 715 database assertions, 196 application tests, and 47 browser journeys. Complete actual-browser provider acceptance, document evidence, and merge the verified slice; then implement the approved unchanged-email password recovery workflow. Password recovery remains unfinished. Never expose credentials to administrators; hosted real delivery remains disabled and the production email checklist remains mandatory.
 
 ## Blockers
 

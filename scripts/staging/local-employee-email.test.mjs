@@ -11,7 +11,39 @@ const config = {
 }
 const link =
   'http://127.0.0.1:54321/auth/v1/verify?type=invite&token=fictional-non-secret-token&redirect_to=http%3A%2F%2F127.0.0.1%3A5173%2Fstaff%2Factivate'
+const applicationLink = `http://127.0.0.1:5173/staff/activate#request=fd000000-0000-4000-8000-000000000001&proof=${'a'.repeat(64)}&token_hash=fictional_non_secret_provider_hash&type=invite`
 describe('D-029 local-only employee email', () => {
+  it('captures invitation-bound credentials in the URL fragment, not server-visible query parameters', async () => {
+    const send = vi.fn().mockResolvedValue({ ok: true })
+    await sendCapturedEmployeeEmail(
+      { ...config, linkFormat: 'application-action' },
+      'employee@fixture.invalid',
+      applicationLink,
+      'invite',
+      send,
+    )
+    expect(new URL(applicationLink).search).toBe('')
+    expect(send).toHaveBeenCalledOnce()
+  })
+  it.each([
+    applicationLink.replace('127.0.0.1:5173', 'evil.example.com'),
+    applicationLink.replace('/staff/activate#', '/staff/activate?'),
+    applicationLink.replace('proof=' + 'a'.repeat(64), 'proof=short'),
+    `${applicationLink}&extra=unexpected`,
+    applicationLink.replace('type=invite', 'type=recovery'),
+  ])('rejects malformed or unsafe application confirmation callbacks', async (value) => {
+    const send = vi.fn()
+    await expect(
+      sendCapturedEmployeeEmail(
+        { ...config, linkFormat: 'application-action' },
+        'employee@fixture.invalid',
+        value,
+        'invite',
+        send,
+      ),
+    ).rejects.toThrow('unavailable')
+    expect(send).not.toHaveBeenCalled()
+  })
   it('allows only explicit fictional local capture', () => {
     expect(assertLocalEmployeeEmail(config, 'employee@fixture.invalid')).toBe(config.captureURL)
   })
@@ -69,6 +101,26 @@ describe('D-029 local-only employee email', () => {
     await expect(
       sendCapturedEmployeeEmail(config, 'employee@fixture.invalid', link, 'invite', send),
     ).rejects.toThrow('Employee email delivery is unavailable in this environment.')
+  })
+  it('allows explicitly selected provider recovery for pending-account activation only at the activation callback', async () => {
+    const send = vi.fn().mockResolvedValue({ ok: true })
+    await sendCapturedEmployeeEmail(
+      { ...config, linkType: 'recovery' },
+      'employee@fixture.invalid',
+      link.replace('type=invite', 'type=recovery'),
+      'invite',
+      send,
+    )
+    expect(send).toHaveBeenCalledOnce()
+    await expect(
+      sendCapturedEmployeeEmail(
+        { ...config, linkType: 'password' },
+        'employee@fixture.invalid',
+        link,
+        'invite',
+        send,
+      ),
+    ).rejects.toThrow('unavailable')
   })
 })
 // @vitest-environment node

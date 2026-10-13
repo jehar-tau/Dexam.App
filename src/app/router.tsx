@@ -15,6 +15,8 @@ import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { NotificationCentrePage } from '../pages/NotificationCentrePage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
+import { EmployeeActivationPage } from '../pages/EmployeeActivationPage'
+import { EmployeeInvitationsPage } from '../pages/EmployeeInvitationsPage'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
@@ -65,6 +67,15 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
+      { path: 'staff/activate', element: <EmployeeActivationPage /> },
+      {
+        path: 'staff/employees',
+        element: (
+          <StaffAccessBoundary capability="staff_role.grant" requireMfa allowPreview={false}>
+            <EmployeeInvitationsPage />
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'staff/security/recovery',
         element: (

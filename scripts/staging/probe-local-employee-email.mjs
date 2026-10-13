@@ -68,7 +68,16 @@ try {
   phase = 'single-use verification'
   const credential = link.searchParams.get('token')
   if (!credential) throw new Error('Missing verification token.')
-  await must(await client.auth.verifyOtp({ token_hash: credential, type: 'invite' }))
+  const invitationProof = await must(
+    await client.auth.verifyOtp({ token_hash: credential, type: 'invite' }),
+  )
+  const proofClaims = JSON.parse(
+    Buffer.from(invitationProof.session.access_token.split('.')[1], 'base64url').toString('utf8'),
+  )
+  console.log(
+    'Local invitation proof methods:',
+    proofClaims.amr.map((entry) => entry.method).filter((method) => /^[a-z_]+$/.test(method)),
+  )
   const replay = await client.auth.verifyOtp({ token_hash: credential, type: 'invite' })
   if (!replay.error) throw new Error('Invitation token replay allowed.')
   phase = 'employee password choice'
@@ -101,8 +110,15 @@ try {
   )
     throw new Error('Local recovery adapter did not capture email.')
   phase = 'recovery ownership proof'
-  await must(
+  const recoveryProof = await must(
     await client.auth.verifyOtp({ token_hash: recovery.properties.hashed_token, type: 'recovery' }),
+  )
+  const recoveryClaims = JSON.parse(
+    Buffer.from(recoveryProof.session.access_token.split('.')[1], 'base64url').toString('utf8'),
+  )
+  console.log(
+    'Local recovery proof methods:',
+    recoveryClaims.amr.map((entry) => entry.method).filter((method) => /^[a-z_]+$/.test(method)),
   )
   const recoveryReplay = await client.auth.verifyOtp({
     token_hash: recovery.properties.hashed_token,
