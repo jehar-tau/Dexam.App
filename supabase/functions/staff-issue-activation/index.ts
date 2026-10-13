@@ -5,6 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Origin': '*',
   'Content-Type': 'application/json',
+  'Cache-Control': 'no-store',
 }
 
 const backupAlphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'
@@ -122,8 +123,10 @@ Deno.serve(async (request) => {
   }
 
   const activationUrl = new URL('/activate', appUrl)
-  activationUrl.searchParams.set('memberId', result.member_id)
-  activationUrl.searchParams.set('token', linkToken)
+  activationUrl.hash = new URLSearchParams({
+    memberId: result.member_id,
+    token: linkToken,
+  }).toString()
 
   return json(200, {
     memberId: result.member_id,

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 
 import { StudentActivationPage } from './StudentActivationPage'
 import { renderApp } from '../test/render'
+import * as activation from '../features/auth/activateStudent'
 
 describe('StudentActivationPage', () => {
   beforeEach(() => {
@@ -28,6 +29,38 @@ describe('StudentActivationPage', () => {
 
     expect(screen.getByRole('alert')).toHaveTextContent('The passwords do not match.')
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+  it('uses a captured link without asking for its backup code', async () => {
+    const token = 'a'.repeat(43)
+    vi.spyOn(activation, 'getStudentActivationProof').mockReturnValue({
+      memberId: 'DXM-7K3M9Q2RW5TY',
+      token,
+    })
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        new Response(JSON.stringify({ message: 'Your Dexam account is ready.' }), { status: 200 }),
+      )
+    const user = userEvent.setup()
+    renderApp(<StudentActivationPage />)
+    expect(screen.getByLabelText('Dexam Member ID')).toHaveValue('DXM-7K3M9Q2RW5TY')
+    expect(screen.getByLabelText('Dexam Member ID')).toBeDisabled()
+    expect(screen.queryByLabelText('One-time activation code')).not.toBeInTheDocument()
+    await user.type(screen.getByLabelText('Create password'), 'fictional-private-password')
+    await user.type(screen.getByLabelText('Confirm password'), 'fictional-private-password')
+    await user.click(screen.getByRole('button', { name: 'Activate account' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('Your Dexam account is ready.')
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify({
+          memberId: 'DXM-7K3M9Q2RW5TY',
+          credential: token,
+          credentialType: 'link',
+          password: 'fictional-private-password',
+        }),
+      }),
+    )
   })
 
   it('submits normalized activation details and confirms success', async () => {

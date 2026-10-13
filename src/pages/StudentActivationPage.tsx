@@ -1,8 +1,12 @@
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import styles from './StudentActivationPage.module.css'
-import { activateStudent } from '../features/auth/activateStudent'
+import {
+  activateStudent,
+  clearStudentActivationProof,
+  getStudentActivationProof,
+} from '../features/auth/activateStudent'
 
 const memberIdPattern = /^DXM-[2-9A-HJKMNP-Z]{12}$/
 
@@ -15,13 +19,15 @@ function normalizeActivationCode(value: string) {
 }
 
 export function StudentActivationPage() {
-  const [memberId, setMemberId] = useState('')
+  const [proof, setProof] = useState(getStudentActivationProof)
+  const [memberId, setMemberId] = useState(() => getStudentActivationProof()?.memberId ?? '')
   const [activationCode, setActivationCode] = useState('')
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  useEffect(() => () => clearStudentActivationProof(), [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -35,7 +41,7 @@ export function StudentActivationPage() {
       setError('Check the Dexam Member ID printed in your activation pack.')
       return
     }
-    if (normalizedCode.length !== 10) {
+    if (!proof && normalizedCode.length !== 10) {
       setError('Enter the 10-character activation code from your activation pack.')
       return
     }
@@ -52,13 +58,16 @@ export function StudentActivationPage() {
     try {
       const successMessage = await activateStudent({
         memberId: normalizedMemberId,
-        activationCode: normalizedCode,
+        activationCode: proof?.token ?? normalizedCode,
+        ...(proof ? { credentialType: 'link' as const } : {}),
         password,
       })
       setMessage(successMessage)
       setPassword('')
       setConfirmation('')
       setActivationCode('')
+      setProof(null)
+      clearStudentActivationProof()
     } catch (activationError) {
       setError(
         activationError instanceof Error
@@ -92,25 +101,35 @@ export function StudentActivationPage() {
             spellCheck="false"
             placeholder="DXM-7K3M9Q2RW5TY"
             value={memberId}
+            disabled={Boolean(proof) || submitting || Boolean(message)}
             onChange={(event) => setMemberId(event.target.value)}
             required
           />
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="activation-code">One-time activation code</label>
-          <input
-            id="activation-code"
-            name="activationCode"
-            autoComplete="one-time-code"
-            autoCapitalize="characters"
-            spellCheck="false"
-            value={activationCode}
-            onChange={(event) => setActivationCode(event.target.value)}
-            required
-          />
-          <p className={styles.hint}>The code contains 10 characters and can be used only once.</p>
-        </div>
+        {proof ? (
+          <p>
+            One-time activation link loaded securely and removed from the address bar. Choose your
+            own password below.
+          </p>
+        ) : (
+          <div className={styles.field}>
+            <label htmlFor="activation-code">One-time activation code</label>
+            <input
+              id="activation-code"
+              name="activationCode"
+              autoComplete="one-time-code"
+              autoCapitalize="characters"
+              spellCheck="false"
+              value={activationCode}
+              onChange={(event) => setActivationCode(event.target.value)}
+              required
+            />
+            <p className={styles.hint}>
+              The code contains 10 characters and can be used only once.
+            </p>
+          </div>
+        )}
 
         <div className={styles.field}>
           <label htmlFor="password">Create password</label>
