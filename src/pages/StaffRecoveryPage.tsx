@@ -47,7 +47,10 @@ export function StaffRecoveryPage() {
     }
   }
   return (
-    <section className={styles.layout} aria-labelledby="staff-recovery-title">
+    <section
+      className={`${styles.layout} ${securityStyles.recovery}`}
+      aria-labelledby="staff-recovery-title"
+    >
       <div className={styles.intro}>
         <p className="eyebrow">Independent staff recovery</p>
         <h1 id="staff-recovery-title">Recover a lost authenticator.</h1>

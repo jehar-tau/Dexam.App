@@ -1,5 +1,6 @@
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawn } from 'node:child_process'
 import { randomBytes, randomUUID } from 'node:crypto'
+import { mkdir } from 'node:fs/promises'
 import { createClient } from '@supabase/supabase-js'
 import { totp } from './local-totp.mjs'
 
@@ -34,6 +35,73 @@ const options = {
 const admin = createClient(config.API_URL, config.SERVICE_ROLE_KEY, options)
 const fixtures = []
 let phase = 'fixture creation'
+async function inspectLocalRecoveryScreen(actor) {
+  if (!['127.0.0.1', 'localhost'].includes(new URL(config.API_URL).hostname))
+    throw new Error('Visual acceptance requires local Auth.')
+  const server = spawn(
+    process.execPath,
+    ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', '4187', '--strictPort'],
+    {
+      stdio: 'ignore',
+      env: {
+        ...process.env,
+        VITE_SUPABASE_URL: config.API_URL,
+        VITE_SUPABASE_ANON_KEY: config.ANON_KEY,
+        VITE_ENABLE_OPERATOR_PREVIEW: 'false',
+      },
+    },
+  )
+  let browser
+  try {
+    let ready = false
+    for (let attempt = 0; attempt < 60; attempt++) {
+      if (server.exitCode !== null) throw new Error('Visual server failed.')
+      try {
+        ready = (await fetch('http://127.0.0.1:4187')).ok
+      } catch {
+        ready = false
+      }
+      if (ready) break
+      await new Promise((resolve) => setTimeout(resolve, 200))
+    }
+    if (!ready) throw new Error('Visual server unavailable.')
+    const { chromium } = await import('@playwright/test')
+    browser = await chromium.launch()
+    const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } })
+    const session = await must(await actor.client.auth.getSession())
+    const storageKey = `sb-${new URL(config.API_URL).hostname.split('.')[0]}-auth-token`
+    await context.addInitScript(
+      ({ key, value }) => localStorage.setItem(key, JSON.stringify(value)),
+      { key: storageKey, value: session.session },
+    )
+    const page = await context.newPage()
+    await page.goto('http://127.0.0.1:4187/staff/security/recovery')
+    await page.getByRole('button', { name: 'Execute approved reset' }).waitFor()
+    await mkdir('test-results/f015-recovery', { recursive: true })
+    await page.screenshot({ path: 'test-results/f015-recovery/desktop.png', fullPage: true })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.screenshot({ path: 'test-results/f015-recovery/mobile.png', fullPage: true })
+    if (
+      await page.evaluate(
+        () => globalThis.document.documentElement.scrollWidth > globalThis.innerWidth,
+      )
+    )
+      throw new Error('Recovery screen overflows on mobile.')
+    await page.getByLabel('Employee authenticator').focus()
+    if (
+      !(await page
+        .getByLabel('Employee authenticator')
+        .evaluate((element) => element === globalThis.document.activeElement))
+    )
+      throw new Error('Recovery control is not keyboard focusable.')
+    console.log(
+      'Authenticated local recovery screen accepted at desktop/mobile widths; screenshots contain fictional queue data only.',
+    )
+  } finally {
+    await browser?.close()
+    server.kill('SIGTERM')
+  }
+}
 async function must(result) {
   if (result.error) throw new Error('Fixture operation failed.')
   return result.data
@@ -119,6 +187,11 @@ try {
     }),
   )
   phase = 'trusted Edge execution'
+  if (process.env.STAFF_SECURITY_UI_ACCEPTANCE === 'true') {
+    phase = 'local authenticated visual acceptance'
+    await inspectLocalRecoveryScreen(approver)
+    phase = 'trusted Edge execution'
+  }
   await must(await approver.client.functions.invoke('staff-reset-mfa', { body: { requestId } }))
   phase = 'completed outcome'
   const requests = await must(await approver.client.rpc('list_staff_mfa_reset_requests'))

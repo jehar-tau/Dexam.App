@@ -15,3 +15,29 @@
   overflow-wrap: anywhere;
   font-family: monospace;
 }
+
+.recovery > *,
+.recovery label {
+  min-width: 0;
+}
+
+.recovery label {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.recovery select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: var(--space-2);
+  color: var(--text-body);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  font: inherit;
+}
+
+.recovery p {
+  overflow-wrap: anywhere;
+}

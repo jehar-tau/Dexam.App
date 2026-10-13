@@ -114,8 +114,6 @@ The client uses global provider sign-out only after durable invalidation succeed
 
 Lost-factor independent approval/execution, recent-assurance checks for recovery, audit integration for factor changes, and complete hosted MFA acceptance still remain active work. D-028's direct-provider-removal guarantee continues to be live-state denial; the interface guard is not claimed to control provider writes.
 
-## Dependencies
-
 ## Independent recovery implementation — 2026-10-13
 
 The `/staff/security/recovery` queue requires current global Elevated Admin authority and a live TOTP verification within 15 minutes. Requests expire after 15 minutes; proposer, approver, and target must be different people. Approval and execution recheck both recorded sessions, current roles, employee state, verified factors, and session cutoffs. No hidden one-admin override exists: the separately approved D-008 emergency procedure remains an operational escalation, not this interface.
@@ -125,6 +123,10 @@ The browser receives only non-secret queue and factor metadata. Only the service
 The security route supports explicit fresh verification before returning to this queue. Routine provider enrolment, challenge, and self-removal remain supported Auth operations; provider audit logs remain their source of evidence, without duplicating seeds or browser assertions into application audit records.
 
 Local acceptance uses three disposable fictional accounts and real TOTP through the actual Edge runtime. It proved self-approval denial, independent approval, factor deletion, old-session denial, new password sign-in, sensitive denial before replacement MFA, and restored assigned access after replacement verification. Every disposable fixture was removed. Local checks passed 156 application tests, 656 database assertions, and 43 Chromium journeys. Hosted acceptance is still pending and is now part of the protected staging deploy using an exact-project allowlist and job-scoped keys.
+
+Authenticated visual acceptance at 1440px desktop and 390px mobile also passed, including no horizontal overflow and keyboard-focusable employee selection. The initial mobile select overflow was corrected with scoped token-based layout styles. Screenshots contain only the fictional recovery queue, never an enrolment secret. Reproduce with `STAFF_SECURITY_UI_ACCEPTANCE=true node scripts/staging/verify-local-staff-recovery.mjs` while the local Edge runtime is running; the optional visual runner cannot target hosted Auth.
+
+## Dependencies
 
 - D-028 Option B approved: migration `20261013150000` and the browser service now require live owned session/factor assurance. The local provider probe confirms that replaying the original token after final-factor removal returns false. Recovery/audit/revocation completion remains implementation work.
 - Local email/password provider configuration is corrected while global public signup remains disabled. The reproducible local probe proves provisioned-user sign-in, TOTP enrolment/challenge, and direct final-factor removal, then removes its disposable Auth account.
