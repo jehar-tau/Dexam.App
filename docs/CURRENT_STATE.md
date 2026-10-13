@@ -199,7 +199,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-F016 foundation PR #35 is merged. The invitation delivery/activation slice is locally implemented and independently reviewed, with service-only exact-proof finalization, deferred canonical Auth linkage, isolated transient browser activation, and a recent-MFA administrator workspace. Local verification passes 715 database assertions, 196 application tests, and 47 browser journeys. Complete actual-browser provider acceptance, document evidence, and merge the verified slice; then implement the approved unchanged-email password recovery workflow. Password recovery remains unfinished. Never expose credentials to administrators; hosted real delivery remains disabled and the production email checklist remains mandatory.
+F016 foundation PR #35 and invitation PR #36 are merged. Protected release `38452055191` passed hosted authorization/MFA checks. Employee password recovery is now locally implemented and independently reviewed: exact owned proof, preserved MFA, durable cutoffs before/after mutation, always-live employee sessions, and exclusive fail-closed uncertain mutations. Local verification passes 753 database assertions and 51 browser journeys, plus actual provider/direct-bypass/Chromium acceptance with disposable cleanup. Finish the current full verification, merge/release the recovery slice, and record acceptance before proposing the next student recovery decision. Hosted real email remains disabled. DW-045 records required production reconciliation; never auto-unlock an uncertain external password update on link expiry.
 
 ## Blockers
 

@@ -116,8 +116,11 @@ where id in (
   'd3000000-0000-4000-8000-000000000002'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('d0000000-0000-4000-8000-000000000001','d0000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000004','d0000000-0000-4000-8000-000000000002') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 
 select is(
   public.current_person_can_manage_content('d2000000-0000-4000-8000-000000000001'),
@@ -252,7 +255,7 @@ select throws_ok(
   '42501', null, 'storage policy rejects a sixth material object'
 );
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000003"}';
 
 select is((select count(*)::integer from public.assignment_definitions), 0, 'Sales cannot read assignment definitions');
 select throws_ok(
@@ -260,11 +263,11 @@ select throws_ok(
   '42501', null, 'Sales cannot create assignment definitions'
 );
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000004"}';
 
 select is((select count(*)::integer from public.assignment_versions), 0, 'student cannot read staff assignment drafts');
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 
 select lives_ok(
   $$select public.publish_curriculum_version((select id from public.curriculum_versions where status = 'draft' and offering_id = 'd2000000-0000-4000-8000-000000000001'), 'Reviewed content-authoring release')$$,
@@ -285,7 +288,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 
 select lives_ok(
   $$select public.publish_assignment_version('d8000000-0000-4000-8000-000000000001', 'Reviewed assignment release')$$,
@@ -315,7 +318,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 
 select is_empty(
   $$update public.assignment_versions
@@ -340,7 +343,7 @@ set status = 'suspended', suspended_at = now()
 where id = 'd1000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 
 select is(
   public.current_person_can_manage_content('d2000000-0000-4000-8000-000000000001'),

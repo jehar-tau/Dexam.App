@@ -190,8 +190,11 @@ set status = 'published', published_by_person_id = 'e1000000-0000-4000-8000-0000
     published_at = now(), release_note = 'Fictional assignment release'
 where id = 'e9000000-0000-4000-8000-000000000001';
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('e0000000-0000-4000-8000-000000000001','e0000000-0000-4000-8000-000000000002','e0000000-0000-4000-8000-000000000005','e0000000-0000-4000-8000-000000000004') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000001"}';
 
 select is(
   public.current_person_can_distribute_assignments('e2000000-0000-4000-8000-000000000001'),
@@ -249,7 +252,7 @@ select throws_ok(
   'a new release cannot begin with a past due date'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.student_assignment_instances), 1, 'student sees only their own assignment instance');
 select is((select count(*)::integer from public.assignment_versions), 1, 'student sees the published version distributed to them');
@@ -315,7 +318,7 @@ from public.submission_files limit 1;
 select public.complete_submission_file_upload((select id from public.submission_files limit 1));
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000002"}';
 
 select is((select status::text from public.submission_files limit 1), 'ready', 'trusted upload completion marks the file ready');
 select lives_ok(
@@ -336,7 +339,7 @@ select throws_ok(
   'student cannot self-authorize a revision'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000005"}';
 
 select is((select count(*)::integer from public.student_assignment_instances), 0, 'unassigned teacher cannot read student work');
 select throws_ok(
@@ -347,7 +350,7 @@ select throws_ok(
   'unassigned teacher cannot request correction'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.student_assignment_instances), 2, 'assigned teacher can read work in their offering');
 select lives_ok(
@@ -363,7 +366,7 @@ select is(
   'correction request changes the student lifecycle state'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000002"}';
 
 select lives_ok(
   $$select public.start_assignment_attempt((select id from public.student_assignment_instances limit 1))$$,
@@ -371,7 +374,7 @@ select lives_ok(
 );
 select is((select count(*)::integer from public.submission_attempts), 2, 'revision preserves the original attempt');
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000004"}';
 
 select is((select count(*)::integer from public.assignment_releases), 0, 'Sales cannot read assignment releases');
 select is((select count(*)::integer from public.student_assignment_instances), 0, 'Sales cannot read student assignment instances');
@@ -396,7 +399,7 @@ set status = 'completed', ended_at = now(), updated_at = now()
 where id = 'e4000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.student_assignment_instances), 0, 'ended enrolment immediately removes student assignment access');
 select is(
@@ -412,7 +415,7 @@ update public.people set status = 'suspended', suspended_at = now()
 where id = 'e1000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.student_assignment_instances), 0, 'suspended teacher immediately loses student-work visibility');
 select is(

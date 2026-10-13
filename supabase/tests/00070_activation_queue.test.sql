@@ -133,15 +133,19 @@ select throws_ok(
   '42501', null, 'anonymous users cannot call the queue'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+reset role;
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('a0000000-0000-4000-8000-000000000002','a0000000-0000-4000-8000-000000000001') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000002"}';
 
 select throws_ok(
   $$select * from public.list_student_activation_queue(25, null)$$,
   '42501', null, 'Sales cannot call the activation queue'
 );
 
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000001"}';
 
 select is(
   (select count(*)::integer from public.list_student_activation_queue(25, null)),
@@ -197,7 +201,7 @@ where person_id = 'a1000000-0000-4000-8000-000000000001'
   and capability_key = 'enrollment.operate';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000001"}';
 
 select throws_ok(
   $$select * from public.list_student_activation_queue(25, null)$$,

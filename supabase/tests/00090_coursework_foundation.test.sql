@@ -185,8 +185,11 @@ values (
   'c1000000-0000-4000-8000-000000000004', now(), now()
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('c0000000-0000-4000-8000-000000000001','c0000000-0000-4000-8000-000000000002','c0000000-0000-4000-8000-000000000003','c0000000-0000-4000-8000-000000000004') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 1, 'cohort student sees only their assigned curriculum version');
 select is((select count(*)::integer from public.curriculum_sections), 2, 'cohort student sees all sections in their curriculum');
@@ -205,15 +208,15 @@ select is_empty(
   'student cannot mutate curriculum data'
 );
 
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 1, 'cohort-free student sees their directly pinned curriculum');
 
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 0, 'student without a curriculum assignment sees no curriculum');
 
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000004"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 0, 'employee membership does not grant student curriculum access');
 
@@ -224,7 +227,7 @@ set status = 'suspended', suspended_at = now()
 where id = 'c1000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 0, 'suspension revokes curriculum access immediately');
 
@@ -238,7 +241,7 @@ set status = 'completed', ended_at = now()
 where id = 'c8000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 0, 'an ended enrolment no longer grants curriculum access');
 
@@ -249,7 +252,7 @@ set status = 'retired', retired_at = now()
 where id = 'c4000000-0000-4000-8000-000000000002';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.curriculum_versions), 0, 'a retired curriculum is unavailable to students');
 

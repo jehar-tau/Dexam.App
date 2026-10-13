@@ -203,8 +203,11 @@ values
     'f1000000-0000-4000-8000-000000000003', now() - interval '2 days', now() - interval '12 hours', false
   );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('f0000000-0000-4000-8000-000000000001','f0000000-0000-4000-8000-000000000002','f0000000-0000-4000-8000-000000000004','f0000000-0000-4000-8000-000000000005') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select is(
   public.current_person_can_review_feedback_instance('fb000000-0000-4000-8000-000000000001'),
@@ -292,7 +295,7 @@ from public.feedback_audio_files limit 1;
 select public.complete_feedback_audio_file_upload((select id from public.feedback_audio_files limit 1));
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select is((select status::text from public.feedback_audio_files limit 1), 'ready', 'trusted audio completion marks the object ready');
 select throws_ok(
@@ -334,7 +337,7 @@ select throws_ok(
   'authenticated users cannot alter published feedback'
 );
 
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.feedback_revisions), 1, 'student sees only published feedback for their own work');
 select is((select count(*)::integer from public.feedback_audio_files), 1, 'student can read their published voice note metadata');
@@ -345,7 +348,7 @@ select throws_ok(
   'student cannot create teacher feedback'
 );
 
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000004"}';
 
 select is((select count(*)::integer from public.feedback_revisions), 0, 'Sales cannot read academic feedback');
 select is((select count(*)::integer from public.list_feedback_review_queue()), 0, 'Sales receives no review queue data');
@@ -355,7 +358,7 @@ select throws_ok(
   'Sales cannot start feedback'
 );
 
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000005"}';
 
 select is((select count(*)::integer from public.feedback_revisions), 0, 'teacher assigned elsewhere cannot read feedback');
 select throws_ok(
@@ -364,7 +367,7 @@ select throws_ok(
   'teacher assigned elsewhere cannot review this work'
 );
 
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select is(public.feedback_provider_ready('proofread'), false, 'proofreading provider is disabled by default');
 select lives_ok(
@@ -386,7 +389,7 @@ set mode = 'fictional', provider_key = 'deterministic-fixture', model_config = '
 where capability in ('proofread', 'rubric_draft');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select lives_ok(
   $$select public.request_feedback_assistance(
@@ -410,7 +413,7 @@ select public.complete_feedback_assistance(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select is((select status::text from public.feedback_assistance_requests limit 1), 'ready', 'fictional proofreading result is ready for review');
 select lives_ok(
@@ -452,7 +455,7 @@ update public.people set status = 'suspended', suspended_at = now()
 where id = 'f1000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.list_feedback_review_queue()), 0, 'suspended teacher immediately loses the review queue');
 select is(
@@ -470,7 +473,7 @@ set status = 'completed',
 where id = 'f4000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.feedback_revisions), 0, 'ended enrolment immediately removes student feedback access');
 select throws_ok(

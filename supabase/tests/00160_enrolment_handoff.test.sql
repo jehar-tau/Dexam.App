@@ -75,8 +75,11 @@ values
   ('d1000000-0000-4000-8000-000000000004', 'phone', '+919822223333', '+91 98222 23333', 'd1000000-0000-4000-8000-000000000002'),
   ('d1000000-0000-4000-8000-000000000005', 'phone', '+919811112222', '+91 98111 12222', 'd1000000-0000-4000-8000-000000000002');
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('d0000000-0000-4000-8000-000000000002','d0000000-0000-4000-8000-000000000001','d0000000-0000-4000-8000-000000000003') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 
 select lives_ok(
   $$select * from public.create_crm_enquiry(
@@ -130,7 +133,7 @@ select 'duplicate', id from public.crm_enquiries where request_key = 'd4000000-0
 grant select, update on table f012_ids to authenticated;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 
 select lives_ok($$update f012_ids set request_id = public.request_crm_enrolment_review(enquiry_id, 'Ready for return-path review.') where purpose = 'return'$$, 'Sales requests the return-path review');
 select lives_ok($$update f012_ids set request_id = public.request_crm_enrolment_review(enquiry_id, 'Identity and course evidence supplied.') where purpose = 'new'$$, 'Sales requests new-student review');
@@ -158,7 +161,7 @@ select throws_ok(
   'Sales cannot inspect handoff choices'
 );
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.list_enrolment_handoffs(25, null)), 4, 'operator sees only four explicit pending requests');
 select is((select count(*)::integer from public.list_enrolment_handoffs(25, 'New Student')), 1, 'bounded inbox search finds one subject');
@@ -176,7 +179,7 @@ select is((select status::text from public.crm_enrolment_review_requests where i
 select is((select stage::text from public.crm_enquiries where id = (select enquiry_id from f012_ids where purpose = 'return')), 'qualified', 'returned enquiry goes back to qualified');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 select is((select review_status::text from public.list_crm_enquiries(25, 'Return Prospect')), 'returned', 'assigned Sales sees the returned disposition');
 select lives_ok(
   $$update f012_ids set request_id = public.request_crm_enrolment_review(enquiry_id, 'Corrected cohort evidence supplied.') where purpose = 'return'$$,
@@ -186,7 +189,7 @@ reset role;
 select is((select count(*)::integer from public.crm_enrolment_review_requests r join f012_ids i on i.enquiry_id = r.enquiry_id where i.purpose = 'return'), 2, 'resubmission preserves both request attempts');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 
 select lives_ok(
   $$select * from public.approve_crm_enrolment_review(
@@ -205,7 +208,7 @@ select is((select count(*)::integer from public.memberships m join public.crm_en
 select is((select status::text from public.enrollments where source_reference = (select request_id::text from f012_ids where purpose = 'new')), 'approved', 'new unclaimed student receives an approved enrolment');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select is((select count(*)::integer from public.list_student_activation_queue(25, 'Fictional New Student')), 1, 'new student enters the existing activation queue');
 reset role;
 select is((select status::text from public.crm_enrolment_review_requests where id = (select request_id from f012_ids where purpose = 'new')), 'approved', 'new-student request records approval');
@@ -213,10 +216,10 @@ select is((select stage::text from public.crm_enquiries where id = (select enqui
 select is((select status::text from public.crm_identity_candidates c join f012_ids i on i.enquiry_id = c.enquiry_id where i.purpose = 'new'), 'distinct_people', 'weak evidence is explicitly classified as different people');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000002"}';
 select is((select count(*)::integer from public.list_crm_enquiries(25, 'Fictional New Student', 'active')), 0, 'converted enquiry leaves the active Sales queue');
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select lives_ok(
   $$select * from public.approve_crm_enrolment_review(
     (select request_id from f012_ids where purpose = 'existing'), 'existing',
@@ -234,13 +237,13 @@ select is((select count(*)::integer from public.people where member_id = 'DXM-7K
 select is((select status::text from public.enrollments where source_reference = (select request_id::text from f012_ids where purpose = 'existing')), 'active', 'claimed existing student receives an active enrolment');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select is((select count(*)::integer from public.list_student_activation_queue(25, 'DXM-7K3M9Q2RW5TY')), 0, 'claimed existing student receives no duplicate activation pack');
 reset role;
 select is((select status::text from public.crm_identity_candidates c join f012_ids i on i.enquiry_id = c.enquiry_id where i.purpose = 'existing'), 'resolved', 'same-person candidate evidence is explicitly resolved');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select throws_ok(
   $$select * from public.approve_crm_enrolment_review(
     (select request_id from f012_ids where purpose = 'duplicate'), 'existing',
@@ -255,7 +258,7 @@ reset role;
 select is((select status::text from public.crm_enrolment_review_requests where id = (select request_id from f012_ids where purpose = 'duplicate')), 'pending', 'invalid cohort leaves the request pending');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select throws_ok(
   $$select * from public.approve_crm_enrolment_review(
     (select request_id from f012_ids where purpose = 'duplicate'), 'existing',
@@ -270,7 +273,7 @@ reset role;
 select is((select status::text from public.crm_enrolment_review_requests where id = (select request_id from f012_ids where purpose = 'duplicate')), 'pending', 'duplicate conflict leaves the request pending');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select throws_ok(
   $$select public.return_crm_enrolment_review((select request_id from f012_ids where purpose = 'new'), 'Stale return attempt.')$$,
   '40001', 'enrolment handoff was already resolved',
@@ -281,7 +284,7 @@ reset role;
 update public.capability_grants set revoked_at = now()
 where person_id = 'd1000000-0000-4000-8000-000000000001' and capability_key = 'enrollment.operate';
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000001"}';
 select is(public.current_person_has_capability('enrollment.operate'), false, 'revocation removes handoff authority immediately');
 select throws_ok(
   $$select * from public.list_enrolment_handoffs(25, null)$$,
@@ -289,7 +292,7 @@ select throws_ok(
   'revoked operator cannot reuse a stale session'
 );
 
-set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"d0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"d0000000-0000-4000-8000-000000000003"}';
 select throws_ok(
   $$select * from public.list_enrolment_handoffs(25, null)$$,
   '42501', 'enrolment handoff access denied',

@@ -17,6 +17,7 @@ import { NotificationCentrePage } from '../pages/NotificationCentrePage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { EmployeeActivationPage } from '../pages/EmployeeActivationPage'
 import { EmployeeInvitationsPage } from '../pages/EmployeeInvitationsPage'
+import { EmployeePasswordRecoveryPage } from '../pages/EmployeePasswordRecoveryPage'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
@@ -68,6 +69,7 @@ export const router = createBrowserRouter([
       },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
       { path: 'staff/activate', element: <EmployeeActivationPage /> },
+      { path: 'staff/recover', element: <EmployeePasswordRecoveryPage /> },
       {
         path: 'staff/employees',
         element: (

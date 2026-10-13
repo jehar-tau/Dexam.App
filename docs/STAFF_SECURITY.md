@@ -10,6 +10,27 @@ Routine sign-out affects the current device. **Sign out all devices** establishe
 
 The interface prevents final-factor removal for MFA-required authority. Direct provider removal still denies sensitive operations immediately through live session/factor authorization. Role and membership revocations are also checked from current state.
 
+## Employee invitation and forgotten password — fictional local testing
+
+`/staff/employees` requires a currently authorized Elevated Admin with recent MFA. Review canonical-person duplicates deliberately; only `.invalid` employee addresses are accepted. Prepare/deliver into the local capture inbox. Links expire after one hour; inspect uncertain outcomes and cancel before deliberate reissue to the same person and unchanged email. No work role is granted automatically.
+
+Employees open the captured `/staff/activate` link and choose their own password. Activation uses a transient isolated session; links and passwords must never be copied into administrator notes or screenshots.
+
+`/staff/recover` requests recovery to the unchanged established employee email. The response does not confirm account existence. Valid recovery blocks old application sessions before the provider password changes, then advances the cutoff after its confirmed outcome. Existing MFA stays enrolled and must be verified again for sensitive access. Every employee operation also checks its owned live provider session, so a provider-deleted session cannot continue with a still-valid JWT.
+
+If a password update outcome is uncertain, the request remains exclusively `executing` and employee application access remains blocked. **Do not clear it, retry a second password mutation, or treat link expiry as cancellation.** Escalate for a separately recorded owner-approved operational review that proves the external mutation stopped and verifies provider state. No automatic reconciliation or one-person administrative override is provided. This procedure and retention/ownership must be completed before production email activation.
+
+Local acceptance commands (fictional disposable fixtures and exact cleanup only):
+
+```sh
+node scripts/staging/verify-local-employee-invitation.mjs --browser
+node scripts/staging/verify-local-employee-recovery.mjs
+node scripts/staging/verify-local-employee-recovery.mjs --direct-provider-probe
+node scripts/staging/verify-local-employee-recovery.mjs --browser
+```
+
+Run the local Edge runtime with the ignored local-capture environment file. Never use this configuration on hosted/production services. Real authentication email remains disabled pending its separate launch decision.
+
 ## Lost authenticator
 
 1. Confirm the affected canonical employee and authenticator reference outside the application; never request their password or TOTP seed.

@@ -63,8 +63,11 @@ values
     '91000000-0000-0000-0000-000000000002', null, null
   );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('90000000-0000-0000-0000-000000000001','90000000-0000-0000-0000-000000000002') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1","session_id":"90000000-0000-0000-0000-000000000001"}';
 
 select is(
   (select member_id from public.issue_student_activation_pack(
@@ -112,7 +115,7 @@ select throws_ok(
   'P0001', null, 'requested enrolment cannot issue a pack'
 );
 
-set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal1","session_id":"90000000-0000-0000-0000-000000000002"}';
 
 select throws_ok(
   $$select * from public.issue_student_activation_pack('94000000-0000-0000-0000-000000000001', repeat('e', 64), repeat('f', 64), now() + interval '1 hour', 'sales_attempt')$$,
@@ -126,7 +129,7 @@ set revoked_at = now()
 where person_id = '91000000-0000-0000-0000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"90000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1","session_id":"90000000-0000-0000-0000-000000000001"}';
 
 select throws_ok(
   $$select * from public.issue_student_activation_pack('94000000-0000-0000-0000-000000000001', repeat('e', 64), repeat('f', 64), now() + interval '1 hour', 'revoked_attempt')$$,

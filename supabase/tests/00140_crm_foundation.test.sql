@@ -74,8 +74,11 @@ values (
   'F010 lead assignment authority'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('b0000000-0000-4000-8000-000000000001','b0000000-0000-4000-8000-000000000002','b0000000-0000-4000-8000-000000000003','b0000000-0000-4000-8000-000000000004') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select is(public.current_person_has_capability('lead.manage_assigned'), true, 'Sales receives assigned-lead capability');
 select is(public.current_person_has_capability('lead.assign'), false, 'Sales cannot assign arbitrary leads');
@@ -151,7 +154,7 @@ select
 grant select on table crm_test_ids to authenticated;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select lives_ok(
   $$select public.record_crm_activity(
@@ -189,7 +192,7 @@ select is((select count(*)::integer from public.crm_follow_ups where status = 'o
 select is((select count(*)::integer from public.crm_follow_ups where status = 'replaced'), 1, 'rescheduling preserves immutable replacement history');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select lives_ok(
   $$select public.schedule_crm_follow_up(
@@ -229,7 +232,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 select throws_ok(
   $$select public.schedule_crm_follow_up(
     (select enquiry_two from crm_test_ids),
@@ -246,7 +249,7 @@ set closed_at = now() - interval '8 days'
 where id = (select enquiry_two from crm_test_ids);
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select is(
   (select count(*)::integer from public.list_crm_enquiries(25, null, 'dead_archive')),
@@ -278,7 +281,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.list_crm_enquiries(25, null)), 0, 'another Sales employee cannot see unassigned enquiries');
 select throws_ok(
@@ -291,7 +294,7 @@ select throws_ok(
   'another Sales employee cannot mutate an enquiry'
 );
 
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000003"}';
 
 select is(public.current_person_has_capability('lead.assign'), true, 'approved assigner receives assignment capability');
 select lives_ok(
@@ -321,10 +324,10 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 select is((select count(*)::integer from public.list_crm_enquiries(25, 'Prospect One')), 0, 'prior owner immediately loses enquiry visibility');
 
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000002"}';
 select is((select count(*)::integer from public.list_crm_enquiries(25, 'Prospect One')), 1, 'new owner immediately gains enquiry visibility');
 
 select lives_ok(
@@ -397,7 +400,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 1, 'new owner sees only the current assignment alert');
 select throws_ok(
@@ -407,7 +410,7 @@ select throws_ok(
   'authenticated users cannot query CRM tables directly'
 );
 
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000004"}';
 select throws_ok(
   $$select * from public.list_crm_enquiries(25, null)$$,
   '42501',
@@ -421,7 +424,7 @@ set status = 'suspended', suspended_at = now()
 where id = 'b1000000-0000-4000-8000-000000000002';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000002"}';
 select throws_ok(
   $$select * from public.list_crm_enquiries(25, null)$$,
   '42501',
