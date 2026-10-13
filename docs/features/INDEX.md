@@ -15,6 +15,6 @@
 - F013 CRM data lifecycle and privacy operations — D-025 Option B implemented and merged through PR #17
 - F014 Hosted staging and release foundation — accepted through PR #25 and protected rebuild run `38298241510` under D-026 Option B
 - F015 Staff MFA and session security — fictional staging accepted through PR #33 and protected run `38422519675` under D-027/D-028 Option B
-- F016 Employee invitation and password recovery — decision required under D-029, no implementation authorized yet
+- F016 Employee invitation and password recovery — implementation active under approved D-029 Option B; real delivery remains separately gated
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
