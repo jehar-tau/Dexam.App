@@ -200,7 +200,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Complete final verification and independent review, then create/check/merge the F017 pack PR and verify its fictional staging release. Hosted employee email and student reset execution remain disabled; never auto-unlock an uncertain password mutation on link expiry. Before broader product work, verify the existing initial student activation-link path and fix any approved-flow regression without widening account authority. The approved Storybook catalog is live at `https://jehar-tau.github.io/Dexam.App/`.
+F017 pack PR #40 merged at `5d6a759` after all three checks and independent security review; verify its protected fictional staging release. The initial student activation-link regression is repaired and verified locally (new fragment and legacy query links); finalize its PR/checks/release without widening activation authority. Hosted employee email and student reset execution remain disabled; never auto-unlock an uncertain password mutation on link expiry. Broader teaching/enrolment lifecycle changes still require a feature decision. The approved Storybook catalog is live at `https://jehar-tau.github.io/Dexam.App/`.
 
 ## Blockers
 

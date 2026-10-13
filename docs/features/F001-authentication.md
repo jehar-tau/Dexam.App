@@ -85,7 +85,8 @@ An approved student or employee can securely activate, sign in to, recover, and 
 - D-006 Option B approved on 2026-09-26
 - D-007 Option B approved on 2026-09-26
 - D-027/D-028 Option B approved 2026-10-13; F015 staff MFA/session security accepted for fictional staging
-- D-029 employee invitation/password recovery decision required; F016 is a draft, not implementation authority
+- D-029 Option B approved; F016 employee invitation/password recovery accepted for fictional/local testing
+- D-030 Option B approved; F017 independently approved student assisted recovery merged through PR #40 for fictional/local execution only
 - Production email delivery and domain configuration
 - Session duration and re-authentication intervals
 
@@ -110,4 +111,10 @@ An approved student or employee can securely activate, sign in to, recover, and 
 - Added the shared Input primitive, approved usage specification, and Storybook states required by the sign-in form.
 - Added unit and browser coverage for credential errors, inactive employees, current capability checks, protected-route redirects, explicit fictional preview, and responsive sign-in rendering.
 
-Staff MFA enrolment/challenge, factor management, independently approved lost-factor reset, and durable all-device invalidation are accepted for fictional staging through F015 / PR #33 and protected run `38422519675`. Employee invitation/password recovery remains proposed in F016 under pending D-029; student recovery is a later slice.
+Staff MFA enrolment/challenge, factor management, independently approved lost-factor reset, and durable all-device invalidation are accepted for fictional staging through F015 / PR #33 and protected run `38422519675`. F016 employee email invitation/recovery is accepted for local testing under D-029 Option B, with hosted real email disabled. F017 student assisted recovery merged through PR #40 under D-030 Option B; both administrators independently verify every reset, with hosted execution still disabled and production reconciliation gated.
+
+### Initial student activation-link repair — 2026-10-14
+
+The issuer already created an approved link credential, but the screen submitted only backup codes. New activation packs now place the Member ID and 256-bit base64url token in a fragment rather than the query string and send `Cache-Control: no-store`. The activation module captures an exact Member ID/link pair and clears the location before rendering; the page submits existing `credentialType=link` authority without requiring the backup code. Manual backup-code activation is unchanged. Already-issued query links are temporarily compatible and cleared immediately, but their initial host/log exposure cannot be undone; do not treat compatibility as approval of query credentials for production. No server activation/identity/enrolment policy changed.
+
+Actual disposable local Chromium tests passed for both new fragments and legacy query links: private password selection, canonical sign-in, one claimed account, link and alternate-backup replay denial, responsive desktop/mobile and exact fixture cleanup. Unit/parser/service/page and invalid-URL browser tests cover the regression; independent security review found no blocking defect. Production callback/logging/handover review remains required.
