@@ -12,6 +12,8 @@ The owner confirmed on 2026-10-13 that D-029 Option B means local email testing 
 - [ ] Verify actual invitation and password-recovery delivery to explicitly authorized test recipients, including expiry, replay, cancellation/reissue, mobile behavior, and credential-safe logging.
 - [ ] Verify old-session invalidation, suspension denial, unchanged verified-email policy, and preservation of MFA after password recovery.
 - [ ] Define retry/rate limits, bounce/failure handling, monitoring, and an accountable support/escalation process.
+- [ ] Establish evidence-based reconciliation for uncertain password mutations. Never unlock an `executing` reset merely because its link expired; first prove the external update stopped and verify current provider state under a separately recorded operational approval.
+- [ ] Define recovery-ledger/audit retention and production abuse budgets. Local testing's shared 100-request/hour budget is not a production traffic policy.
 - [ ] Complete a launch review: a local captured email is not proof of real deliverability. Keep authentication delivery separate from marketing notifications.
 
 ## Other existing release gates

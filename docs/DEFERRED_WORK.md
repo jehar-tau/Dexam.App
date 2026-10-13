@@ -94,6 +94,12 @@ When work resumes, read the linked source, verify the current code and recent co
 | DW-043 | Deferred, foundation ready | Public website enquiry intake and abuse controls | Define minimum fields, consent wording, origin authentication, throttling, bot/spam defense, idempotency, failure handling, and website-to-platform trust before connecting the separate marketing repository. | F010, D-022, D-002 |
 | DW-044 | Deferred, foundation ready | CRM pipeline reporting and controlled exports    | Validate the operational decisions a report supports; then define aggregate privacy, role scope, date filters, export authority, watermark/audit behavior, retention, and download limits.                     | F010, D-022        |
 
+## Recovery operational follow-up
+
+| ID     | Status                     | Deferred functionality                                               | Resume trigger and prerequisites                                                                                                                                                                                                                                                                       | Authority                         |
+| ------ | -------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| DW-045 | Required before production | Controlled reconciliation of an uncertain employee password mutation | Define accountable incident ownership, evidence that the external mutation has stopped, current provider-state review, independent approval, minimized audit, and a tested reconciliation path. Never automatically release an executing request on link expiry. Local testing fails closed meanwhile. | F016, D-029, PRODUCTION_READINESS |
+
 ## Completion log
 
 D-028 Option B governs accepted F015 safeguards. Broader elevated actions are still tracked as DW-005; acceptance of lost-factor reset does not silently approve them.

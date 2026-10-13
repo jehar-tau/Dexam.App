@@ -97,8 +97,11 @@ select throws_ok(
   '23514', null, 'activation without approval evidence is rejected'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('80000000-0000-0000-0000-000000000001','80000000-0000-0000-0000-000000000004','80000000-0000-0000-0000-000000000003') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1","session_id":"80000000-0000-0000-0000-000000000001"}';
 
 select is((select count(*)::integer from public.enrollments), 1, 'student sees only their own enrolment');
 select is((select count(*)::integer from public.offerings), 1, 'student sees the offering attached to their enrolment');
@@ -108,7 +111,7 @@ select throws_ok(
   '42501', null, 'student cannot mutate their enrolment'
 );
 
-set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal1","session_id":"80000000-0000-0000-0000-000000000004"}';
 
 select is((select count(*)::integer from public.enrollments), 0, 'Sales cannot browse academic enrolments');
 select throws_ok(
@@ -116,7 +119,7 @@ select throws_ok(
   '42501', null, 'authenticated clients cannot call activation eligibility helper'
 );
 
-set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"80000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1","session_id":"80000000-0000-0000-0000-000000000003"}';
 
 select is((select count(*)::integer from public.enrollments), 3, 'Enrolment Operator can read enrolments');
 

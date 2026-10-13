@@ -49,15 +49,19 @@ select throws_ok(
   '42501', null, 'anonymous users cannot check student access'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+reset role;
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('b0000000-0000-4000-8000-000000000001','b0000000-0000-4000-8000-000000000002') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select ok(
   public.current_person_has_active_student_membership(),
   'active student can pass the current-state access check'
 );
 
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000002"}';
 
 select isnt(
   public.current_person_has_active_student_membership(),
@@ -103,7 +107,7 @@ set status = 'suspended', suspended_at = now()
 where id = 'b1000000-0000-4000-8000-000000000001';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"b0000000-0000-4000-8000-000000000001"}';
 
 select isnt(
   public.current_person_has_active_student_membership(),

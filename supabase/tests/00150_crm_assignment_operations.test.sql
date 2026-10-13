@@ -63,8 +63,11 @@ values (
   'F011 approved CRM Coordinator responsibility'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('c0000000-0000-4000-8000-000000000001','c0000000-0000-4000-8000-000000000002','c0000000-0000-4000-8000-000000000003','c0000000-0000-4000-8000-000000000004') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000001"}';
 select lives_ok(
   $$select * from public.create_crm_enquiry(
     'Fictional Unassigned Prospect', 'Fictional Unassigned Prospect', 'self', 'email',
@@ -74,7 +77,7 @@ select lives_ok(
   'active Sales can create the enquiry used by the assignment queue'
 );
 
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000002"}';
 select lives_ok(
   $$select * from public.create_crm_enquiry(
     'Fictional Stranded Prospect', 'Fictional Guardian', 'guardian', 'phone',
@@ -112,7 +115,7 @@ select
 grant select on table f011_test_ids to authenticated;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 
 select is(public.current_person_has_capability('lead.assign'), true, 'explicit Sales grant enables CRM Coordinator authority');
 select is((select count(*)::integer from public.list_crm_assignment_queue(25, null, 'unassigned')), 1, 'coordinator sees one unassigned enquiry');
@@ -144,7 +147,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 select throws_ok(
   $$select public.assign_crm_enquiry(
     (select unassigned_enquiry from f011_test_ids),
@@ -184,7 +187,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 select throws_ok(
   $$select public.assign_crm_enquiry(
     (select stranded_enquiry from f011_test_ids),
@@ -214,7 +217,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 select throws_ok(
   $$select public.assign_crm_enquiry(
     (select stranded_enquiry from f011_test_ids),
@@ -226,7 +229,7 @@ select throws_ok(
   'assignment requires an explicit coherent expected-owner state'
 );
 
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000004"}';
 select is(public.current_person_has_capability('lead.assign'), false, 'ordinary Sales has no coordinator authority');
 select throws_ok(
   $$select * from public.list_crm_assignment_queue(25, null, 'unassigned')$$,
@@ -256,7 +259,7 @@ where person_id = 'c1000000-0000-4000-8000-000000000003'
   and capability_key = 'lead.assign';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 select is(public.current_person_has_capability('lead.assign'), false, 'revoking the coordinator grant removes authority immediately');
 select throws_ok(
   $$select * from public.list_crm_assignment_queue(25, null, 'unassigned')$$,
@@ -275,7 +278,7 @@ where person_id = 'c1000000-0000-4000-8000-000000000003'
   and role_key = 'sales';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"c0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"c0000000-0000-4000-8000-000000000003"}';
 select is(public.current_person_has_capability('lead.assign'), false, 'the explicit grant is ineffective without its required current Sales role');
 select throws_ok(
   $$select * from public.list_crm_assignment_queue(25, null, 'needs_reassignment')$$,

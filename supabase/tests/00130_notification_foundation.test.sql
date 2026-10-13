@@ -218,8 +218,11 @@ select is(
   'safe summaries do not copy recipient names or private academic content'
 );
 
+-- Explicit owned provider sessions for fictional JWT fixtures; rolled back with this test.
+insert into auth.sessions(id,user_id,aal,created_at,updated_at)
+select id,id,'aal1',now(),now() from auth.users where id in ('a0000000-0000-4000-8000-000000000002','a0000000-0000-4000-8000-000000000003','a0000000-0000-4000-8000-000000000004','a0000000-0000-4000-8000-000000000005','a0000000-0000-4000-8000-000000000001') on conflict(id) do nothing;
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 3, 'student receives only their assignment and feedback alerts');
 select is(public.get_my_unread_notification_count(), 3, 'student unread count reflects visible authorized alerts');
@@ -251,7 +254,7 @@ select is(public.get_my_unread_notification_count(), 2, 'single read updates the
 select is(public.mark_all_notifications_read(), 2, 'mark-all-read updates only remaining authorized alerts');
 select is(public.get_my_unread_notification_count(), 0, 'student can clear their unread count');
 
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000003"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 0, 'another student receives no notification for someone else');
 select is(
@@ -260,15 +263,15 @@ select is(
   'another student cannot authorize an unknown or inaccessible notification'
 );
 
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000004"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 0, 'teacher assigned to another offering receives no review alert');
 
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000005"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 0, 'Sales receives no academic notification data');
 
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 1, 'scoped teacher receives the submission review alert');
 select is(
@@ -284,7 +287,7 @@ where person_id = 'a1000000-0000-4000-8000-000000000001'
   and capability_key = 'feedback.review';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000001"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 0, 'revoked teacher scope immediately hides an existing notification');
 
@@ -293,7 +296,7 @@ update public.people set status = 'suspended', suspended_at = now()
 where id = 'a1000000-0000-4000-8000-000000000002';
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"a0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"a0000000-0000-4000-8000-000000000002"}';
 
 select is((select count(*)::integer from public.list_my_notifications(50)), 0, 'suspended student immediately loses notification access');
 

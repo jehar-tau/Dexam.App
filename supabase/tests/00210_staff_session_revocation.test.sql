@@ -15,6 +15,7 @@ values ('fa100000-0000-4000-8000-000000000001', 'sales', 'Fictional session barr
 insert into auth.sessions (id, user_id, aal, created_at, updated_at)
 values ('fa200000-0000-4000-8000-000000000001', 'fa000000-0000-4000-8000-000000000001', 'aal1', now() - interval '1 hour', now()),
 ('fa200000-0000-4000-8000-000000000002', 'fa000000-0000-4000-8000-000000000001', 'aal1', now() - interval '2 hours', now());
+insert into auth.sessions(id,user_id,aal,created_at,updated_at) values('fa200000-0000-4000-8000-000000000004','fa000000-0000-4000-8000-000000000002','aal1',now(),now());
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"fa000000-0000-4000-8000-000000000001","session_id":"fa200000-0000-4000-8000-000000000001","aal":"aal1","role":"authenticated"}';
 select is(public.current_person_has_capability('lead.manage_assigned'), true, 'ordinary staff access works before invalidation');
@@ -36,7 +37,7 @@ select is(public.current_person_has_capability('lead.manage_assigned'), false, '
 select throws_ok('select public.invalidate_my_staff_sessions()', '42501', null, 'invalidated token cannot repeat the action');
 set local request.jwt.claims = '{"sub":"fa000000-0000-4000-8000-000000000001","session_id":"fa200000-0000-4000-8000-000000000002","aal":"aal1","role":"authenticated"}';
 select is(public.current_person_id(), null::uuid, 'another older device is denied by the same cutoff');
-set local request.jwt.claims = '{"sub":"fa000000-0000-4000-8000-000000000002","aal":"aal1","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"fa000000-0000-4000-8000-000000000002","session_id":"fa200000-0000-4000-8000-000000000004","aal":"aal1","role":"authenticated"}';
 select is(public.current_person_id(), 'fa100000-0000-4000-8000-000000000002'::uuid, 'another employee is unaffected');
 reset role;
 select is((select count(*)::integer from public.security_audit_events where subject_person_id = 'fa100000-0000-4000-8000-000000000001' and event_type = 'staff_sessions_invalidated' and metadata = '{}'::jsonb), 1, 'one secret-free revocation event is recorded');

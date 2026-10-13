@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
@@ -101,7 +101,8 @@ export function StaffSignInPage() {
         </form>
 
         <p className={styles.support}>
-          Access is invite-only. Contact your Dexam administrator if you cannot use your account.
+          <Link to="/staff/recover">Forgot your employee password?</Link> Access is invite-only.
+          Contact your Dexam administrator if you cannot use your account.
         </p>
       </Card>
     </section>
