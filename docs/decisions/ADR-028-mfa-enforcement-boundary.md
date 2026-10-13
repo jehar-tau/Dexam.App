@@ -55,6 +55,8 @@ The disposable local Auth probe reached verified `aal2`, confirmed live assuranc
 
 ## Sources
 
+The same live-state guarantee applies to recovery and all-device invalidation: a durable provider-session creation cutoff denies old application sessions even if a provider refresh token survives cleanup. Recovery does not claim to delete every provider refresh token; its access-denial guarantee is independent of cleanup success. Supported factor deletion is verified by rereading provider state, not by trusting a browser success report.
+
 - Supabase self-service factor removal: https://supabase.com/docs/reference/javascript/auth-mfa-unenroll
 - Supabase session lifetime and termination: https://supabase.com/docs/guides/auth/sessions
 - Supabase user/session checks: https://supabase.com/docs/guides/auth/managing-user-data

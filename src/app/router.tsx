@@ -16,6 +16,7 @@ import { NotFoundPage } from '../pages/NotFoundPage'
 import { NotificationCentrePage } from '../pages/NotificationCentrePage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
+import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
 import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
@@ -64,6 +65,14 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
+      {
+        path: 'staff/security/recovery',
+        element: (
+          <StaffAccessBoundary capability="security_controls.change" requireMfa>
+            <StaffRecoveryPage />
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'staff/security',
         element: (

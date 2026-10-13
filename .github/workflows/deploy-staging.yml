@@ -158,6 +158,12 @@ jobs:
           STAGING_SYNTHETIC_PASSWORD: ${{ secrets.STAGING_SYNTHETIC_PASSWORD }}
         run: pnpm staging:fixtures:verify
 
+      - name: Verify fictional staff MFA recovery
+        env:
+          STAGING_SUPABASE_URL: https://${{ secrets.STAGING_PROJECT_ID }}.supabase.co
+          STAGING_STAFF_SECURITY_ACCEPTANCE: 'true'
+        run: node scripts/staging/verify-staff-recovery.mjs
+
       - name: Record remote migration state
         run: pnpm supabase migration list --linked --password "$SUPABASE_DB_PASSWORD"
 

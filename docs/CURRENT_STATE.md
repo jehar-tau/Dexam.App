@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-D-028 Option B enforcement merged through PR #31 and passed staging deployment. The next local slice adds guarded factor removal and audited self-requested all-device invalidation before provider cleanup, with 624 database assertions and 144 application tests passing. Continue F015 with independently approved lost-factor recovery, recent-assurance checks, factor-change audit integration, and hosted acceptance. Staging remains fictional-only.
+D-028 Option B enforcement and guarded factor removal/all-device invalidation merged through PRs #31 and #32. Independent lost-factor recovery is implemented locally with fresh 15-minute verification, separate proposer/approver/target, service-only execution, durable old-session denial, and minimized audit. Real local TOTP/Edge acceptance passed and fixtures were removed; 156 application tests, 656 database assertions, and 43 browser journeys passed. Next: review/merge recovery and its protected exact-project hosted acceptance, then verify staging before closing F015. Staging remains fictional-only.
 
 ## Blockers
 

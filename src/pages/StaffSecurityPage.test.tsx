@@ -131,4 +131,16 @@ describe('staff authenticator screen', () => {
     expect(mocks.allOut).toHaveBeenCalledOnce()
     expect(await screen.findByRole('alert')).toHaveTextContent('previous sessions are blocked')
   })
+
+  it('supports an explicit recent-verification challenge even while the session is aal2', async () => {
+    mocks.state.mockResolvedValue({
+      currentLevel: 'aal2',
+      factors: [{ id: 'fixture-factor', friendly_name: 'Primary' }],
+    })
+    renderApp(<StaffSecurityPage />, [
+      '/staff/security?verifyAgain=1&returnTo=%2Fstaff%2Fsecurity%2Frecovery',
+    ])
+    expect(await screen.findByLabelText('Six-digit code')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Continue to workspace' })).not.toBeInTheDocument()
+  })
 })
