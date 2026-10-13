@@ -5,13 +5,21 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { Button, Callout } from '../../components'
 import { useAuth } from './AuthContext'
 import { getEmployeeAccess } from './employeeAuth'
+import { getStaffMfaState } from './staffMfa'
 import styles from './StaffAccessBoundary.module.css'
 
 type StaffAccessBoundaryProps = PropsWithChildren<{
   capability?: string
+  requireMfa?: boolean
+  skipMfa?: boolean
 }>
 
-export function StaffAccessBoundary({ capability, children }: StaffAccessBoundaryProps) {
+export function StaffAccessBoundary({
+  capability,
+  requireMfa = false,
+  skipMfa = false,
+  children,
+}: StaffAccessBoundaryProps) {
   const location = useLocation()
   const { configured, initializing, session, signOut } = useAuth()
   const [signOutError, setSignOutError] = useState('')
@@ -20,8 +28,23 @@ export function StaffAccessBoundary({ capability, children }: StaffAccessBoundar
     new URLSearchParams(location.search).get('preview') === '1'
 
   const accessQuery = useQuery({
-    queryKey: ['employee-access', session?.user.id, capability],
-    queryFn: () => getEmployeeAccess(capability),
+    queryKey: [
+      'employee-access',
+      session?.user.id,
+      session?.expires_at,
+      capability,
+      requireMfa,
+      skipMfa,
+    ],
+    queryFn: async () => {
+      const access = await getEmployeeAccess(capability)
+      if (!access.activeEmployee || skipMfa) return { ...access, needsMfa: false }
+      const mfa = await getStaffMfaState()
+      return {
+        ...access,
+        needsMfa: mfa.currentLevel !== 'aal2' && (requireMfa || mfa.factors.length > 0),
+      }
+    },
     enabled: Boolean(session) && !previewEnabled,
     retry: false,
     staleTime: 0,
@@ -84,6 +107,11 @@ export function StaffAccessBoundary({ capability, children }: StaffAccessBoundar
         ) : null}
       </section>
     )
+  }
+
+  if (accessQuery.data.needsMfa) {
+    const returnTo = `${location.pathname}${location.search}`
+    return <Navigate replace to={`/staff/security?returnTo=${encodeURIComponent(returnTo)}`} />
   }
 
   if (!accessQuery.data.activeEmployee || !accessQuery.data.hasCapability) {

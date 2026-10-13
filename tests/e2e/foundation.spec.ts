@@ -1,5 +1,12 @@
 import { expect, test } from '@playwright/test'
 
+test('authenticator setup requires a staff session', async ({ page }) => {
+  await page.goto('/staff/security')
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fsecurity$/)
+  await expect(page.getByRole('heading', { name: 'Welcome back to Dexam.' })).toBeVisible()
+  await expect(page.getByLabel('Six-digit code')).toHaveCount(0)
+})
+
 test('foundation shell is reachable and navigable', async ({ page }) => {
   await page.goto('/')
 

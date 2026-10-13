@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. D-027 Option B is approved and F015 staff MFA, factor-reset approval, and session-revocation implementation is active. The service layer is tested; user-facing screens and server-enforced recovery safeguards remain unfinished. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. D-027 Option B is approved and F015 implementation is active. The staff authenticator setup/challenge screens and route guidance are implemented; server-enforced factor recovery, audit integration, session revocation, and hosted TOTP acceptance remain unfinished. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -173,7 +173,7 @@ F014 Hosted Staging and Release Foundation is accepted through PR #25 and protec
 
 ## Implementation active
 
-- D-027 Option B approved 2026-10-13. F015 implementation has begun with active-employee-checked TOTP state, enrolment, challenge verification, and unfinished-enrolment cancellation helpers. Seven unit tests cover inactive users, safe errors, malformed codes, assurance validation, and verified-factor removal denial. Screens, database safeguards, independent reset approval, session revocation, and hosted acceptance remain unfinished.
+- D-027 Option B approved 2026-10-13. F015 includes the tested service layer plus `/staff/security` enrolment/challenge, hidden manual key, unfinished-setup cancellation, backup enrolment after `aal2`, enrolled-staff challenge routing, and required privacy MFA routing. Local verification passed 134 application tests, 42 Chromium journeys, and 594 database assertions. Verified-factor removal, server safeguards, independent reset approval, audit integration, session revocation, and hosted TOTP acceptance remain unfinished.
 
 ## Not yet started
 
@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Continue F015 with TOTP screens and database enforcement, then independent lost-factor reset approval and security-triggered session revocation. Validate provider-level factor removal and stale-session behavior before declaring any recovery safeguard complete. Keep staging fictional-only and production blocked.
+Continue F015 with server-enforced factor management, independent lost-factor reset approval, audit evidence, and security-triggered session revocation. Validate provider-level factor removal, stale-session behaviour, and the hosted enrolment/challenge journey before declaring F015 complete. Keep staging fictional-only and production blocked.
 
 ## Blockers
 

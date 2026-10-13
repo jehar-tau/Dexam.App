@@ -96,6 +96,16 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - Desktop/mobile visual inspection, keyboard navigation, focus order, labels, error summaries, and no horizontal overflow
 - Hosted fictional acceptance only after local checks and reviewed merge
 
+## Authenticator UI slice — 2026-10-13
+
+The `/staff/security` route now provides deliberate TOTP enrolment, a QR image and separately revealed manual key, challenge verification, unfinished-setup cancellation, and backup-factor enrolment after `aal2`. It uses the approved sign-in layout and existing Input, Card, Button, and Callout primitives. Setup material stays in transient component state and is cleared after verification. Current active employee membership is checked before rendering this route.
+
+Enrolled password-only staff are routed to challenge when opening staff workspaces. The existing privacy route requires MFA enrolment/challenge before its capability check can succeed; database `aal2` enforcement remains authoritative. Local TOTP enrolment and verification are enabled in committed Supabase configuration. Hosted provider behaviour and a complete real TOTP journey remain acceptance work.
+
+Verified-factor removal, provider-level final-factor enforcement, reset approval/execution, recent-MFA policy enforcement, audit integration, and global session revocation remain unfinished. No verified-factor removal control is exposed in this slice.
+
+Verification: 134 unit/component tests, 42 Chromium journeys, 594 database assertions, formatting, lint, types, and build passed locally. Component tests exercise enrolment material, challenge, cancellation failure, generic errors, and safe return paths; boundary tests cover challenge/enrolment routing, provider failures, and inactive employees.
+
 ## Dependencies
 
 - D-004 current-state revocation
