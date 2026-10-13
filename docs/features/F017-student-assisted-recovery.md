@@ -1,6 +1,6 @@
 # F017 — Student assisted account recovery
 
-Status: Local implementation verified; pack slice awaiting PR/release — D-030 Option B approved 2026-10-14
+Status: Accepted for fictional/local execution through PR #40 and protected staging release `38461876121` — D-030 Option B approved 2026-10-14; hosted execution disabled
 Risk: Red
 
 ## Purpose
@@ -36,7 +36,7 @@ Proposals expire after 15 minutes and have a one-minute deliberate re-proposal c
 
 ## Deferred rather than dropped
 
-Verified-contact self-service and real delivery, lost-contact replacement, guardian-specific evidence/handover, emergency recovery, and production reconciliation require their own prerequisites/approval. Keep DW-001/DW-045 and `PRODUCTION_READINESS.md` current when this feature is eventually approved.
+Verified-contact self-service and real delivery, lost-contact replacement, guardian-specific evidence/handover, emergency recovery, and production reconciliation require their own prerequisites/approval. DW-001/DW-045 and `PRODUCTION_READINESS.md` retain these launch gates after local acceptance.
 
 ## Pack and consumption implementation — 2026-10-14
 
