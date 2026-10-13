@@ -1,6 +1,6 @@
 # F015 — Staff MFA and Session Security
 
-Status: Setup/challenge implemented; enforcement and recovery await D-028 — D-027 Option B approved 2026-10-13
+Status: Implementation active — D-027 and D-028 Option B approved 2026-10-13
 Risk: Red — staff account takeover, elevated authority, factor recovery, and session revocation
 
 ## Purpose and problem
@@ -21,7 +21,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 2. If a verified factor exists, the application routes the employee to TOTP challenge before an MFA-required destination.
 3. If MFA-required authority exists but no verified factor exists, the application routes the employee to enrolment.
 4. Enrolment displays a one-session QR code and manual secret; the employee enters a current TOTP code to verify the factor and reach `aal2`.
-5. An `aal2` employee may add a separately stored backup TOTP factor or remove a permitted factor. The final verified factor cannot be removed while MFA-required authority remains active.
+5. An employee with live `aal2` may add a separately stored backup TOTP factor or remove a permitted factor. The interface guards final-factor removal; under D-028, any direct provider removal invalidates sensitive Dexam access through live session/factor checks.
 6. If every factor is lost, one Elevated Admin proposes a reset and a different active Elevated Admin approves it. The trusted server rechecks both actors, deletes the selected factor, revokes all refresh sessions, and records the outcome.
 7. The affected employee signs in again and must re-enrol before regaining MFA-required access.
 
@@ -51,7 +51,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - Public or student sessions cannot access staff factor-management or reset operations.
 - TOTP secrets and verification codes never enter Dexam business tables, logs, analytics, URLs, screenshots, or audit payloads.
 - An employee must be active before enrolment, challenge routing, or factor management can succeed.
-- Factor removal requires `aal2`; deleting the final factor is denied while current authority requires MFA.
+- The interface guards final-factor removal while current authority requires MFA. Sensitive server operations require a live owned `aal2` session with its verified TOTP factor, in addition to token assurance. Direct provider removal must deny sensitive access immediately under D-028.
 - Reset proposer and approver must be different active people with current Elevated Admin authority and recent `aal2` assurance.
 - Approval expires, is single-use, and rechecks target state and both actors at execution time.
 - Reset revokes all refresh sessions. Existing short-lived access tokens remain subject to current database person, membership, capability, and suspension checks.
@@ -81,7 +81,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - An active MFA-required employee can enrol TOTP and reach `aal2` without a paid provider.
 - An enrolled employee at `aal1` is routed to challenge rather than receiving an unexplained denial.
 - Password-only, inactive, revoked, wrong-role, stale-capability, and self-approval attempts fail closed.
-- The final verified factor cannot be removed while the employee holds MFA-required authority.
+- The interface guards final-factor removal while MFA-required authority remains assigned; direct provider deletion or session termination denies sensitive access despite an old `aal2` token.
 - A reset cannot execute without two distinct active authorized people at `aal2`, except through the separately recorded D-008 bootstrap emergency procedure.
 - Successful reset deletes only the approved factor, revokes refresh sessions, records non-secret evidence, and requires re-enrolment before sensitive access.
 - Routine sign-out affects only the current device; security-triggered revocation affects all refresh sessions.
@@ -108,7 +108,7 @@ Verification: 134 unit/component tests, 42 Chromium journeys, 594 database asser
 
 ## Dependencies
 
-- D-028 pending: a live local Auth probe confirmed direct final-factor deletion at `aal2`. The provider-level last-factor guarantee and stale-session enforcement architecture require the recorded choice before factor management and recovery completion.
+- D-028 Option B approved: migration `20261013150000` and the browser service now require live owned session/factor assurance. The local provider probe confirms that replaying the original token after final-factor removal returns false. Recovery/audit/revocation completion remains implementation work.
 - Local email/password provider configuration is corrected while global public signup remains disabled. The reproducible local probe proves provisioned-user sign-in, TOTP enrolment/challenge, and direct final-factor removal, then removes its disposable Auth account.
 
 - D-004 current-state revocation

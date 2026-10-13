@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Resolve D-028's MFA enforcement boundary. A live local probe confirmed that an `aal2` account can delete its last factor directly through Supabase. Recommended Option B revises the server guarantee to immediate loss of sensitive privileges using live session/factor checks, while retaining the interface's last-factor guard. The local email/password provider fix is verified with public signup still disabled. F015 recovery/revocation completion depends on this architecture choice; staging remains fictional-only.
+D-028 Option B is approved. The capability helper and browser service now require live owned session/factor assurance; 609 database assertions and 136 application tests pass, and a real local provider probe confirms old-token denial after final-factor removal. Continue F015 with guarded factor management, independently approved lost-factor recovery, audit evidence, and session revocation. Staging remains fictional-only.
 
 ## Blockers
 

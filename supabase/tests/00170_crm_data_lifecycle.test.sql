@@ -32,6 +32,13 @@ values
   ('e0000000-0000-4000-8000-000000000002', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'f013-approver@dexam.test', ''),
   ('e0000000-0000-4000-8000-000000000003', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'f013-sales@dexam.test', '');
 
+insert into auth.mfa_factors (id, user_id, factor_type, status, created_at, updated_at)
+select id, id, 'totp', 'verified', now(), now() from auth.users
+where id::text like 'e0000000-0000-4000-8000-%';
+insert into auth.sessions (id, user_id, factor_id, aal, created_at, updated_at)
+select id, id, id, 'aal2', now(), now() from auth.users
+where id::text like 'e0000000-0000-4000-8000-%';
+
 insert into public.people (id, display_name)
 values
   ('e1000000-0000-4000-8000-000000000001', 'Fictional Privacy Operator'),
@@ -64,7 +71,7 @@ values
   ('e1000000-0000-4000-8000-000000000002', 'privacy.erase_approve', 'elevated_admin', 'F013 independent erasure approval');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","session_id":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
 
 select lives_ok(
   $$select * from public.create_crm_enquiry(
@@ -122,7 +129,7 @@ grant select, update on table f013_ids to authenticated;
 grant select on table f013_ids to service_role;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
 select is(public.current_person_has_capability('privacy.manage'), false, 'AAL1 cannot use the MFA-gated privacy capability');
 select throws_ok(
   $$select public.create_crm_privacy_case(
@@ -133,7 +140,7 @@ select throws_ok(
   'AAL1 privacy case creation fails closed'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select is(public.current_person_has_capability('privacy.manage'), true, 'AAL2 activates the explicit privacy grant');
 select lives_ok(
   $$update f013_ids set case_id = public.create_crm_privacy_case(
@@ -151,14 +158,14 @@ select lives_ok(
 );
 select is((select count(*)::integer from public.list_crm_privacy_cases(50, 'open')), 2, 'privacy operator sees only the two open cases');
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","session_id":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
 select throws_ok(
   $$select * from public.list_crm_privacy_cases(50, 'open')$$,
   '42501', 'privacy operations access denied',
   'ordinary Sales cannot infer privacy cases'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$select public.apply_crm_privacy_correction(
     (select case_id from f013_ids where purpose = 'correction'),
@@ -183,7 +190,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$update f013_ids set case_id = public.create_crm_privacy_case(
     enquiry_id, 'correction', 'self', 'member_account',
@@ -215,7 +222,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select throws_ok(
   $$select public.decide_crm_erasure(
     (select case_id from f013_ids where purpose = 'erasure'), true,
@@ -225,7 +232,7 @@ select throws_ok(
   'proposer cannot approve irreversible erasure even with the capability'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$select public.decide_crm_erasure(
     (select case_id from f013_ids where purpose = 'erasure'), true,
@@ -241,7 +248,7 @@ select is(
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select is((select count(*)::integer from public.preview_crm_erasure((select case_id from f013_ids where purpose = 'erasure'))), 4, 'dry run groups the affected data without exposing hidden values');
 select lives_ok(
   $$update f013_ids set hold_id = public.place_crm_privacy_hold(
@@ -266,7 +273,7 @@ select throws_ok(
 reset role;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$select public.release_crm_privacy_hold(
     (select hold_id from f013_ids where purpose = 'erasure'),
@@ -312,13 +319,13 @@ select lives_ok(
 reset role;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000003","session_id":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
 select is((select count(*)::integer from public.list_crm_enquiries(25, null, 'dead_archive')), 0, 'minimized enquiry disappears from Sales archives');
 reset role;
 select is((select status::text from public.crm_privacy_holds limit 1), 'released', 'released hold remains attributable history');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$update f013_ids set case_id = public.create_crm_privacy_case(
     enquiry_id, 'erasure', 'self', 'member_account',
@@ -334,7 +341,7 @@ select lives_ok(
   'operator proposes CRM-only minimization for the converted student'
 );
 
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
 select lives_ok(
   $$select public.decide_crm_erasure(
     (select case_id from f013_ids where purpose = 'converted'), true,
@@ -369,7 +376,7 @@ update public.capability_grants set revoked_at = now()
 where person_id = 'e1000000-0000-4000-8000-000000000001'
   and capability_key = 'privacy.manage';
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
 select is(public.current_person_has_capability('privacy.manage'), false, 'revocation removes privacy authority immediately');
 select throws_ok(
   $$select * from public.list_crm_privacy_cases(50, 'all')$$,

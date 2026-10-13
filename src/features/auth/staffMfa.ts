@@ -20,8 +20,14 @@ export async function getStaffMfaState() {
   if (assurance.error || factors.error || !assurance.data || !factors.data) {
     throw new Error(unavailable)
   }
+  let currentLevel = assurance.data.currentLevel
+  if (currentLevel === 'aal2') {
+    const live = await client.rpc('current_session_has_live_mfa')
+    if (live.error) throw new Error(unavailable)
+    if (live.data !== true) currentLevel = 'aal1'
+  }
   return {
-    currentLevel: assurance.data.currentLevel,
+    currentLevel,
     factors: factors.data.totp.filter((factor) => factor.status === 'verified'),
   }
 }

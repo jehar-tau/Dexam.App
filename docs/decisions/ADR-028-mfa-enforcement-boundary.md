@@ -1,8 +1,10 @@
 # Decision required — D-028: MFA enforcement boundary
 
-Status: Pending product-owner decision
+Status: Approved — Option B
 Date: 2026-10-13
 Risk: Red — MFA removal, session validity, and high-privilege recovery
+
+The product owner explicitly approved Option B on 2026-10-13. The interface retains a last-factor guard; the server guarantee is live-state denial of sensitive privileges after factor/session removal. This supersedes D-027's literal provider-side deletion prohibition.
 
 ## Question
 
@@ -43,7 +45,13 @@ Choose B. The important security outcome is that a removed authenticator cannot 
 
 ## Work while pending
 
-The independently verified local email/password provider fix and reproducible local probe may merge. The protected final-factor management and recovery/revocation design remain pending because they depend on this choice. Existing setup/challenge screens remain implemented; F015 is incomplete.
+Option B is approved. Continue F015 using read-only live provider metadata checks and supported provider mutation APIs. Recovery, audit, and revocation remain implementation work rather than a pending policy choice.
+
+## Implementation evidence
+
+Migration `20261013150000` adds a narrowly scoped boolean RPC and updates the existing capability helper in place. Sensitive access requires an `aal2` token plus an owned, unexpired live `aal2` session associated with a verified TOTP factor owned by that user. No provider-owned table or trigger is modified. Browser MFA state uses the same RPC before reporting verified assurance.
+
+The disposable local Auth probe reached verified `aal2`, confirmed live assurance, removed its final factor through the supported self-service API, and replayed the original token. Live MFA changed from true to false; the fixture account was removed. Database regressions cover missing/malformed sessions, wrong owners, session downgrade/expiry/deletion, unverified/deleted factors, and loss of sensitive capability with an unchanged role and stale JWT.
 
 ## Sources
 
