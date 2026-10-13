@@ -49,6 +49,8 @@ export async function sendCapturedEmployeeEmail(
 ) {
   const origin = assertLocalEmployeeEmail(config, email)
   try {
+    const linkType = config.linkType ?? purpose
+    if (!['invite', 'recovery'].includes(linkType)) throw new Error(message)
     if (
       !['invite', 'recovery'].includes(purpose) ||
       typeof actionLink !== 'string' ||
@@ -56,26 +58,45 @@ export async function sendCapturedEmployeeEmail(
     )
       throw new Error(message)
     const link = new URL(actionLink)
-    if (
-      !apiOrigins.has(link.origin) ||
-      link.username ||
-      link.password ||
-      link.pathname !== '/auth/v1/verify' ||
-      link.hash ||
-      link.searchParams.get('type') !== purpose ||
-      !link.searchParams.get('token')
-    )
-      throw new Error(message)
-    const redirect = new URL(link.searchParams.get('redirect_to'))
-    if (
-      !['http://127.0.0.1:5173', 'http://localhost:5173'].includes(redirect.origin) ||
-      redirect.username ||
-      redirect.password ||
-      redirect.search ||
-      redirect.hash ||
-      redirect.pathname !== (purpose === 'invite' ? '/staff/activate' : '/staff/recover')
-    )
-      throw new Error(message)
+    if (config.linkFormat === 'application-action') {
+      const params = new URLSearchParams(link.hash.slice(1))
+      if (
+        !['http://127.0.0.1:5173', 'http://localhost:5173'].includes(link.origin) ||
+        link.username ||
+        link.password ||
+        link.search ||
+        link.pathname !== (purpose === 'invite' ? '/staff/activate' : '/staff/recover') ||
+        [...params.keys()].length !== 4 ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          params.get('request') ?? '',
+        ) ||
+        !/^[0-9a-f]{64}$/.test(params.get('proof') ?? '') ||
+        !/^[A-Za-z0-9_-]{16,512}$/.test(params.get('token_hash') ?? '') ||
+        params.get('type') !== linkType
+      )
+        throw new Error(message)
+    } else {
+      if (
+        !apiOrigins.has(link.origin) ||
+        link.username ||
+        link.password ||
+        link.pathname !== '/auth/v1/verify' ||
+        link.hash ||
+        link.searchParams.get('type') !== linkType ||
+        !link.searchParams.get('token')
+      )
+        throw new Error(message)
+      const redirect = new URL(link.searchParams.get('redirect_to'))
+      if (
+        !['http://127.0.0.1:5173', 'http://localhost:5173'].includes(redirect.origin) ||
+        redirect.username ||
+        redirect.password ||
+        redirect.search ||
+        redirect.hash ||
+        redirect.pathname !== (purpose === 'invite' ? '/staff/activate' : '/staff/recover')
+      )
+        throw new Error(message)
+    }
     const result = await fetcher(`${origin}/api/v1/send`, {
       method: 'POST',
       redirect: 'error',

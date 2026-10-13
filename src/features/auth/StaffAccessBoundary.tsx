@@ -12,18 +12,21 @@ type StaffAccessBoundaryProps = PropsWithChildren<{
   capability?: string
   requireMfa?: boolean
   skipMfa?: boolean
+  allowPreview?: boolean
 }>
 
 export function StaffAccessBoundary({
   capability,
   requireMfa = false,
   skipMfa = false,
+  allowPreview = true,
   children,
 }: StaffAccessBoundaryProps) {
   const location = useLocation()
   const { configured, initializing, session, signOut } = useAuth()
   const [signOutError, setSignOutError] = useState('')
   const previewEnabled =
+    allowPreview &&
     import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true' &&
     new URLSearchParams(location.search).get('preview') === '1'
 
