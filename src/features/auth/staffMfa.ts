@@ -70,3 +70,40 @@ export async function cancelStaffTotpEnrollment(factorId: string) {
   const result = await client.auth.mfa.unenroll({ factorId })
   if (result.error) throw new Error('We could not cancel setup. Please try again.')
 }
+
+export async function signOutAllStaffSessions() {
+  const client = await requireActiveClient()
+  const invalidation = await client.rpc('invalidate_my_staff_sessions')
+  if (invalidation.error)
+    throw new Error('We could not block your other sessions. Please try again.')
+  let cleanupFailed: boolean
+  try {
+    const result = await client.auth.signOut({ scope: 'global' })
+    cleanupFailed = Boolean(result.error)
+  } catch {
+    cleanupFailed = true
+  }
+  if (cleanupFailed) {
+    try {
+      await client.auth.signOut({ scope: 'local' })
+    } catch {
+      /* Durable denial is already established. */
+    }
+    throw new Error('Your previous sessions are blocked. Sign in again to continue.')
+  }
+}
+
+export async function removeStaffTotpFactor(factorId: string) {
+  const client = await requireActiveClient()
+  const state = await getStaffMfaState()
+  if (state.currentLevel !== 'aal2')
+    throw new Error('Verify your authenticator before removing a factor.')
+  if (!state.factors.some((factor) => factor.id === factorId))
+    throw new Error('That authenticator is not available.')
+  const required = await client.rpc('current_person_requires_mfa')
+  if (required.error || typeof required.data !== 'boolean') throw new Error(unavailable)
+  if (required.data && state.factors.length <= 1)
+    throw new Error('Add and verify a backup authenticator before removing your last one.')
+  const result = await client.auth.mfa.unenroll({ factorId })
+  if (result.error) throw new Error('We could not remove that authenticator. Please try again.')
+}

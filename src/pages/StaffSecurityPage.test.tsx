@@ -5,6 +5,8 @@ import { StaffSecurityPage } from './StaffSecurityPage'
 import { safeSecurityReturn } from '../features/auth/securityReturn'
 
 const mocks = vi.hoisted(() => ({
+  allOut: vi.fn(),
+  remove: vi.fn(),
   state: vi.fn(),
   enroll: vi.fn(),
   verify: vi.fn(),
@@ -18,6 +20,8 @@ vi.mock('../features/auth/staffMfa', () => ({
   enrollStaffTotp: mocks.enroll,
   verifyStaffTotp: mocks.verify,
   cancelStaffTotpEnrollment: mocks.cancel,
+  signOutAllStaffSessions: mocks.allOut,
+  removeStaffTotpFactor: mocks.remove,
 }))
 
 describe('staff authenticator screen', () => {
@@ -31,6 +35,8 @@ describe('staff authenticator screen', () => {
     })
     mocks.verify.mockResolvedValue(undefined)
     mocks.cancel.mockResolvedValue(undefined)
+    mocks.allOut.mockResolvedValue(undefined)
+    mocks.remove.mockResolvedValue(undefined)
   })
 
   it('shows setup material only after deliberate enrolment and hides the key initially', async () => {
@@ -98,5 +104,31 @@ describe('staff authenticator screen', () => {
     expect(safeSecurityReturn('/staff/crm/privacy?case=fictional')).toBe(
       '/staff/crm/privacy?case=fictional',
     )
+  })
+
+  it('presents a final-factor guard error without hiding the factor', async () => {
+    const user = userEvent.setup()
+    mocks.state.mockResolvedValue({
+      currentLevel: 'aal2',
+      factors: [{ id: 'fixture-factor', friendly_name: 'Primary' }],
+    })
+    mocks.remove.mockRejectedValue(
+      new Error('Add and verify a backup authenticator before removing your last one.'),
+    )
+    renderApp(<StaffSecurityPage />)
+    await user.click(await screen.findByRole('button', { name: 'Remove Primary' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('backup authenticator')
+    expect(screen.getByText('Primary')).toBeVisible()
+  })
+
+  it('invokes all-device sign-out and displays a safe failure', async () => {
+    const user = userEvent.setup()
+    mocks.allOut.mockRejectedValue(
+      new Error('Your previous sessions are blocked. Sign in again to continue.'),
+    )
+    renderApp(<StaffSecurityPage />)
+    await user.click(await screen.findByRole('button', { name: 'Sign out all devices' }))
+    expect(mocks.allOut).toHaveBeenCalledOnce()
+    expect(await screen.findByRole('alert')).toHaveTextContent('previous sessions are blocked')
   })
 })

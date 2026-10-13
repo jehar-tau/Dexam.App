@@ -106,6 +106,14 @@ Verified-factor removal, provider-level final-factor enforcement, reset approval
 
 Verification: 134 unit/component tests, 42 Chromium journeys, 594 database assertions, formatting, lint, types, and build passed locally. Component tests exercise enrolment material, challenge, cancellation failure, generic errors, and safe return paths; boundary tests cover challenge/enrolment routing, provider failures, and inactive employees.
 
+## Session revocation and factor management — 2026-10-13
+
+The security screen now includes factor removal with verified-session and last-factor checks against current assigned authority, plus explicit all-device sign-out. A private cutoff ledger invalidates application sessions before provider cleanup; identity resolution denies any old device even if it refreshes its token. A genuinely new provider session created after the cutoff can resolve the unchanged canonical identity again. One minimized security audit event records the application invalidation, without claiming provider cleanup succeeded.
+
+The client uses global provider sign-out only after durable invalidation succeeds. If provider cleanup fails, it attempts local cleanup and reports the blocked-session state safely. Current-device sign-out continues to use local scope.
+
+Lost-factor independent approval/execution, recent-assurance checks for recovery, audit integration for factor changes, and complete hosted MFA acceptance still remain active work. D-028's direct-provider-removal guarantee continues to be live-state denial; the interface guard is not claimed to control provider writes.
+
 ## Dependencies
 
 - D-028 Option B approved: migration `20261013150000` and the browser service now require live owned session/factor assurance. The local provider probe confirms that replaying the original token after final-factor removal returns false. Recovery/audit/revocation completion remains implementation work.
