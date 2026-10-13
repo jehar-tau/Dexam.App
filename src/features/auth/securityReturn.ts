@@ -6,7 +6,7 @@ export function safeSecurityReturn(value: string | null) {
   if (
     !url.pathname.startsWith('/staff/') ||
     url.pathname.startsWith('/staff/sign-in') ||
-    url.pathname.startsWith('/staff/security')
+    url.pathname === '/staff/security'
   ) {
     return '/staff/notifications'
   }

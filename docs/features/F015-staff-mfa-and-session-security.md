@@ -22,7 +22,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 3. If MFA-required authority exists but no verified factor exists, the application routes the employee to enrolment.
 4. Enrolment displays a one-session QR code and manual secret; the employee enters a current TOTP code to verify the factor and reach `aal2`.
 5. An employee with live `aal2` may add a separately stored backup TOTP factor or remove a permitted factor. The interface guards final-factor removal; under D-028, any direct provider removal invalidates sensitive Dexam access through live session/factor checks.
-6. If every factor is lost, one Elevated Admin proposes a reset and a different active Elevated Admin approves it. The trusted server rechecks both actors, deletes the selected factor, revokes all refresh sessions, and records the outcome.
+6. If every factor is lost, one Elevated Admin proposes a reset and a different active Elevated Admin approves it. The trusted server rechecks both actors, durably invalidates previous application sessions before deleting the selected factor, and records the outcome. Any surviving provider refresh token cannot recover application access from an old session.
 7. The affected employee signs in again and must re-enrol before regaining MFA-required access.
 
 ## In scope if D-027 Option B is approved
@@ -54,7 +54,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - The interface guards final-factor removal while current authority requires MFA. Sensitive server operations require a live owned `aal2` session with its verified TOTP factor, in addition to token assurance. Direct provider removal must deny sensitive access immediately under D-028.
 - Reset proposer and approver must be different active people with current Elevated Admin authority and recent `aal2` assurance.
 - Approval expires, is single-use, and rechecks target state and both actors at execution time.
-- Reset revokes all refresh sessions. Existing short-lived access tokens remain subject to current database person, membership, capability, and suspension checks.
+- Reset durably invalidates all previous application sessions, including refreshed tokens from those sessions. Provider factor deletion uses the supported administrator API; the application does not depend on provider cleanup to enforce denial.
 - Current-device sign-out explicitly uses local scope so a routine sign-out does not unexpectedly remove every device.
 - No operation silently grants, restores, or widens a role or capability.
 
@@ -83,7 +83,7 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - Password-only, inactive, revoked, wrong-role, stale-capability, and self-approval attempts fail closed.
 - The interface guards final-factor removal while MFA-required authority remains assigned; direct provider deletion or session termination denies sensitive access despite an old `aal2` token.
 - A reset cannot execute without two distinct active authorized people at `aal2`, except through the separately recorded D-008 bootstrap emergency procedure.
-- Successful reset deletes only the approved factor, revokes refresh sessions, records non-secret evidence, and requires re-enrolment before sensitive access.
+- Successful reset deletes only the approved factor, invalidates previous sessions including refreshed tokens, records non-secret evidence, and requires verified MFA before sensitive access.
 - Routine sign-out affects only the current device; security-triggered revocation affects all refresh sessions.
 - No secret or personal data is exposed in the browser bundle, database audit payloads, logs, test artifacts, or repository.
 
@@ -115,6 +115,16 @@ The client uses global provider sign-out only after durable invalidation succeed
 Lost-factor independent approval/execution, recent-assurance checks for recovery, audit integration for factor changes, and complete hosted MFA acceptance still remain active work. D-028's direct-provider-removal guarantee continues to be live-state denial; the interface guard is not claimed to control provider writes.
 
 ## Dependencies
+
+## Independent recovery implementation — 2026-10-13
+
+The `/staff/security/recovery` queue requires current global Elevated Admin authority and a live TOTP verification within 15 minutes. Requests expire after 15 minutes; proposer, approver, and target must be different people. Approval and execution recheck both recorded sessions, current roles, employee state, verified factors, and session cutoffs. No hidden one-admin override exists: the separately approved D-008 emergency procedure remains an operational escalation, not this interface.
+
+The browser receives only non-secret queue and factor metadata. Only the service-role worker can claim or finish execution. It establishes the target's durable session cutoff before invoking the supported factor-deletion API, verifies actual factor absence, and records minimized proposal, decision, execution, cancellation, expiry, and completion audit events. Concurrent retries are idempotent for the same outcome. A interrupted execution can be resumed while unexpired and both actors remain authorized; expired executing requests require operational review and remain fail-closed rather than silently clearing the cutoff.
+
+The security route supports explicit fresh verification before returning to this queue. Routine provider enrolment, challenge, and self-removal remain supported Auth operations; provider audit logs remain their source of evidence, without duplicating seeds or browser assertions into application audit records.
+
+Local acceptance uses three disposable fictional accounts and real TOTP through the actual Edge runtime. It proved self-approval denial, independent approval, factor deletion, old-session denial, new password sign-in, sensitive denial before replacement MFA, and restored assigned access after replacement verification. Every disposable fixture was removed. Local checks passed 156 application tests, 656 database assertions, and 43 Chromium journeys. Hosted acceptance is still pending and is now part of the protected staging deploy using an exact-project allowlist and job-scoped keys.
 
 - D-028 Option B approved: migration `20261013150000` and the browser service now require live owned session/factor assurance. The local provider probe confirms that replaying the original token after final-factor removal returns false. Recovery/audit/revocation completion remains implementation work.
 - Local email/password provider configuration is corrected while global public signup remains disabled. The reproducible local probe proves provisioned-user sign-in, TOTP enrolment/challenge, and direct final-factor removal, then removes its disposable Auth account.

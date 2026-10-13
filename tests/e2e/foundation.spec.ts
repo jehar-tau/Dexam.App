@@ -7,6 +7,12 @@ test('authenticator setup requires a staff session', async ({ page }) => {
   await expect(page.getByLabel('Six-digit code')).toHaveCount(0)
 })
 
+test('staff recovery requires a staff session', async ({ page }) => {
+  await page.goto('/staff/security/recovery')
+  await expect(page).toHaveURL(/\/staff\/sign-in\?returnTo=%2Fstaff%2Fsecurity%2Frecovery$/)
+  await expect(page.getByRole('button', { name: 'Execute approved reset' })).toHaveCount(0)
+})
+
 test('foundation shell is reachable and navigable', async ({ page }) => {
   await page.goto('/')
 

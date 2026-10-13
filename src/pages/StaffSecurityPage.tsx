@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
@@ -35,6 +35,7 @@ export function StaffSecurityPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [complete, setComplete] = useState(false)
+  const verifyAgain = params.get('verifyAgain') === '1' && !complete
 
   async function run(action: () => Promise<void>) {
     setBusy(true)
@@ -91,14 +92,14 @@ export function StaffSecurityPage() {
               <h2>
                 {setup
                   ? 'Set up your authenticator'
-                  : complete || state.data.currentLevel === 'aal2'
+                  : complete || (state.data.currentLevel === 'aal2' && !verifyAgain)
                     ? 'Authenticator verified'
                     : factors.length
                       ? 'Enter your authenticator code'
                       : 'Add an authenticator'}
               </h2>
             </div>
-            {complete || (!setup && state.data.currentLevel === 'aal2') ? (
+            {complete || (!setup && state.data.currentLevel === 'aal2' && !verifyAgain) ? (
               <>
                 <p role="status">Your staff session has two-factor verification.</p>
                 <Button
@@ -126,7 +127,8 @@ export function StaffSecurityPage() {
                 {showKey ? <p className={securityStyles.key}>{setup.secret}</p> : null}
               </div>
             ) : null}
-            {!setup && (factors.length === 0 || state.data.currentLevel === 'aal2') ? (
+            {!setup &&
+            (factors.length === 0 || (state.data.currentLevel === 'aal2' && !verifyAgain)) ? (
               <form
                 className={styles.form}
                 onSubmit={(event) => {
@@ -154,7 +156,10 @@ export function StaffSecurityPage() {
                 </Button>
               </form>
             ) : null}
-            {setup || (factors.length > 0 && state.data.currentLevel !== 'aal2' && !complete) ? (
+            {setup ||
+            (factors.length > 0 &&
+              (state.data.currentLevel !== 'aal2' || verifyAgain) &&
+              !complete) ? (
               <form className={styles.form} onSubmit={(event) => void verify(event)}>
                 {!setup && factors.length > 1 ? (
                   <label>
@@ -208,7 +213,7 @@ export function StaffSecurityPage() {
                 {error}
               </p>
             ) : null}
-            {state.data.currentLevel === 'aal2' && !setup ? (
+            {state.data.currentLevel === 'aal2' && !setup && !verifyAgain ? (
               <div className={securityStyles.setup}>
                 <h3>Your authenticators</h3>
                 {factors.map((factor) => (
@@ -248,6 +253,9 @@ export function StaffSecurityPage() {
             >
               Sign out all devices
             </Button>
+            <p className={styles.support}>
+              <Link to="/staff/security/recovery">Elevated Admin recovery queue</Link>
+            </p>
           </>
         )}
       </Card>
