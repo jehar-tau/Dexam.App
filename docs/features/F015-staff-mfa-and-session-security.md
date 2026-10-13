@@ -1,6 +1,6 @@
 # F015 — Staff MFA and Session Security
 
-Status: Decision required — D-027
+Status: Implementation active — D-027 Option B approved 2026-10-13
 Risk: Red — staff account takeover, elevated authority, factor recovery, and session revocation
 
 ## Purpose and problem
@@ -102,4 +102,4 @@ Dexam already denies MFA-required database operations to password-only `aal1` se
 - D-006 Option B authentication model
 - D-008 Option B staff authority and two-person boundaries
 - D-026 fictional staging boundary
-- Pending D-027 sequencing approval
+- D-027 Option B approved 2026-10-13
