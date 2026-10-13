@@ -157,6 +157,14 @@ export function AppShell() {
             </NavLink>
           ) : null}
           {session ? (
+            <NavLink
+              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+              to="/staff/security"
+            >
+              Staff security
+            </NavLink>
+          ) : null}
+          {session ? (
             <Button
               disabled={signingOut}
               onClick={() => void handleSignOut()}

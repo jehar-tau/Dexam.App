@@ -1,0 +1,17 @@
+.setup {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.qr {
+  width: min(100%, 15rem);
+  height: auto;
+  background: white;
+  padding: var(--space-3);
+}
+
+.key {
+  overflow-wrap: anywhere;
+  font-family: monospace;
+}

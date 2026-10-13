@@ -15,6 +15,7 @@ import { HealthPage } from '../pages/HealthPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { NotificationCentrePage } from '../pages/NotificationCentrePage'
 import { StaffSignInPage } from '../pages/StaffSignInPage'
+import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
 import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
@@ -64,6 +65,14 @@ export const router = createBrowserRouter([
       },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
       {
+        path: 'staff/security',
+        element: (
+          <StaffAccessBoundary skipMfa>
+            <StaffSecurityPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
         path: 'staff/crm',
         element: (
           <StaffAccessBoundary capability="lead.manage_assigned">
@@ -82,7 +91,7 @@ export const router = createBrowserRouter([
       {
         path: 'staff/crm/privacy',
         element: (
-          <StaffAccessBoundary capability="privacy.manage">
+          <StaffAccessBoundary capability="privacy.manage" requireMfa>
             <CrmPrivacyPage />
           </StaffAccessBoundary>
         ),
