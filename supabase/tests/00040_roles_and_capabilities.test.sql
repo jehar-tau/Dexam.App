@@ -8,7 +8,7 @@ select has_table('public', 'role_assignments', 'role assignments exist');
 select has_table('public', 'capability_grants', 'explicit capability grants exist');
 
 select is((select count(*)::integer from public.app_roles), 5, 'five approved role labels are seeded');
-select is((select count(*)::integer from public.capabilities where requires_two_person), 6, 'six approved high-impact capabilities require two people');
+select is((select count(*)::integer from public.capabilities where requires_two_person), 7, 'seven approved high-impact capabilities including D-030 student recovery require two people');
 
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password)
 values
