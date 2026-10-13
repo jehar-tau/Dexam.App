@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-D-028 Option B is approved. The capability helper and browser service now require live owned session/factor assurance; 609 database assertions and 136 application tests pass, and a real local provider probe confirms old-token denial after final-factor removal. Continue F015 with guarded factor management, independently approved lost-factor recovery, audit evidence, and session revocation. Staging remains fictional-only.
+D-028 Option B enforcement merged through PR #31 and passed staging deployment. The next local slice adds guarded factor removal and audited self-requested all-device invalidation before provider cleanup, with 624 database assertions and 144 application tests passing. Continue F015 with independently approved lost-factor recovery, recent-assurance checks, factor-change audit integration, and hosted acceptance. Staging remains fictional-only.
 
 ## Blockers
 

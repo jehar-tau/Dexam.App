@@ -10,6 +10,8 @@ import {
   enrollStaffTotp,
   getStaffMfaState,
   verifyStaffTotp,
+  signOutAllStaffSessions,
+  removeStaffTotpFactor,
 } from '../features/auth/staffMfa'
 import styles from './SignInPage.module.css'
 import securityStyles from './StaffSecurityPage.module.css'
@@ -206,6 +208,46 @@ export function StaffSecurityPage() {
                 {error}
               </p>
             ) : null}
+            {state.data.currentLevel === 'aal2' && !setup ? (
+              <div className={securityStyles.setup}>
+                <h3>Your authenticators</h3>
+                {factors.map((factor) => (
+                  <div key={factor.id}>
+                    <p>{factor.friendly_name || 'Authenticator'}</p>
+                    <Button
+                      variant="secondary"
+                      disabled={busy}
+                      onClick={() =>
+                        void run(async () => {
+                          await removeStaffTotpFactor(factor.id)
+                          setComplete(false)
+                          await state.refetch()
+                          await queryClient.invalidateQueries({ queryKey: ['employee-access'] })
+                        })
+                      }
+                    >
+                      Remove {factor.friendly_name || 'authenticator'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            <p className={styles.support}>
+              If you suspect someone else has access, sign out all devices. You will need to sign in
+              again.
+            </p>
+            <Button
+              variant="secondary"
+              disabled={busy}
+              onClick={() =>
+                void run(async () => {
+                  await signOutAllStaffSessions()
+                  void navigate('/staff/sign-in', { replace: true })
+                })
+              }
+            >
+              Sign out all devices
+            </Button>
           </>
         )}
       </Card>

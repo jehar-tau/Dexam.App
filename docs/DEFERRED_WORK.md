@@ -98,7 +98,7 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Completion log
 
-D-028 Option B is approved for DW-003, DW-004, and DW-005. Live session/factor enforcement and stale-token denial are implemented and tested; factor-management UI, recovery approvals, audit, and global revocation remain active F015 work.
+D-028 Option B is approved for DW-003, DW-004, and DW-005. Live session/factor enforcement merged through PR #31. Guarded factor management and audited self-requested all-device invalidation are implemented locally; reset-triggered revocation, recovery approvals, factor-change audit, and hosted acceptance remain active F015 work.
 
 Move an item here only after its required implementation is merged or the product owner explicitly rejects it. Record the date, pull request/decision, and outcome so its history remains discoverable.
 
