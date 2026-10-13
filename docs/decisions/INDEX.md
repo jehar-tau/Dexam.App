@@ -35,3 +35,5 @@ IDs are stable. Do not reuse retired decision IDs.
 D-028 — MFA enforcement boundary — Option B approved 2026-10-13 — `ADR-028-mfa-enforcement-boundary.md`.
 
 D-029 — Employee invitation and password recovery — Option B approved 2026-10-13 — `ADR-029-employee-invitation-and-recovery.md`.
+
+D-030 — Student assisted recovery — Option B approved 2026-10-14 — `ADR-030-student-assisted-recovery.md`.

@@ -1,6 +1,6 @@
 # F016 — Employee invitation and password recovery
 
-Status: Implementation active — D-029 Option B approved 2026-10-13
+Status: Accepted for fictional/local scope through PRs #35–#37 — production delivery and reconciliation remain gated
 Risk: Red
 
 ## Purpose and problem
@@ -66,7 +66,7 @@ Independent review identified and resolved both cancelled-A/replacement-B proof 
 
 ## Employee password recovery slice — 2026-10-14
 
-Invitation PR #36 is merged; protected deployment `38452055191` passed the advisor gate, all nine existing hosted authorization checks, and hosted staff MFA recovery. Password recovery is now implemented locally and independently reviewed; merge/release verification remains pending.
+Invitation PR #36 is merged; protected deployment `38452055191` passed the advisor gate, all nine existing hosted authorization checks, and hosted staff MFA recovery. Password recovery PR #37 merged at `8e349d56fddbc5be7ed932949c4f056c1e963718` after all three required checks passed and no review comments remained. Protected release `38455643685` succeeded for that exact commit, including the advisor gate, all nine existing role/current-state checks, hosted staff MFA recovery, and disposable cleanup. The three hosted email delivery/reset workers were independently probed and returned HTTP 503 (disabled), not usable real-email paths. Local acceptance is complete; hosted/real delivery remains disabled.
 
 Migration `20261014001000` creates a private recovery ledger and service-only preparation, proof delivery, exclusive claim, and provider-outcome finalization. Only an active person with an active employee membership and unchanged confirmed `employee_email` identity is eligible. Public requests always acknowledge generically; account lookup, provider generation, and local capture run after acknowledgment using the supported background-task mechanism. No account-existence or delivery outcome is returned. HMAC-only counters allow five requests per recipient per hour and a shared local-testing budget of 100/hour; forwarding headers cannot rotate this shared bucket. Deliberate reissue has a one-minute cooldown, invalidates prior unclaimed requests, and never replaces an executing password mutation. Counter windows older than 72 hours are removed; production retention for operational recovery records remains a launch policy gate.
 

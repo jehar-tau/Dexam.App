@@ -19,3 +19,7 @@ The enforced, reviewable truth for implementation is the shared **`dexam-portfol
 - Patterns/components implemented here: one spec per pattern in `design/components/*.md` (states, composition rules, accessibility, do/don't, and the exact shared-repository source path/commit). A pattern is not approved for reuse until it has both a spec and a Storybook story here.
 - Catalog: components live in `src/components/`, documented and visually inspectable in Storybook (`pnpm storybook`), published at the GitHub Pages site built by `.github/workflows/deploy-storybook.yml`.
 - Shared tokens are currently vendored verbatim and pinned to a source commit in `src/styles/design-system/README.md`. Updates are a manual, reviewed sync until an automated import is justified.
+
+## Published catalog
+
+[Dexam component library](https://jehar-tau.github.io/Dexam.App/) is live on the already-approved GitHub Pages host. On 2026-10-14, its existing deployment failure was traced to Pages not being enabled; enabling workflow hosting and retrying deployment run `38455303786` succeeded. The static catalog and `index.json` return HTTP 200 with 29 entries. This publishes approved component examples only, not application credentials, real student data, or a production backend. No new vendor or paid service was added.
