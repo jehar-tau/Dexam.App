@@ -31,3 +31,5 @@
 | D-027 | Identity-operations sequencing and first staff security slice                                 | Option B approved 2026-10-13            | `ADR-027-identity-operations-sequencing.md`               |
 
 IDs are stable. Do not reuse retired decision IDs.
+
+D-028 — MFA enforcement boundary — Decision required — `ADR-028-mfa-enforcement-boundary.md`.
