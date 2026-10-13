@@ -65,14 +65,12 @@ try {
     }),
   )
   await must(
-    await admin
-      .from('capability_grants')
-      .insert({
-        person_id: operatorPerson,
-        capability_key: 'enrollment.operate',
-        required_role_key: 'ordinary_admin',
-        grant_reason: 'Disposable least-authority activation operator',
-      }),
+    await admin.from('capability_grants').insert({
+      person_id: operatorPerson,
+      capability_key: 'enrollment.operate',
+      required_role_key: 'ordinary_admin',
+      grant_reason: 'Disposable least-authority activation operator',
+    }),
   )
   await must(
     await admin.from('offerings').insert({
