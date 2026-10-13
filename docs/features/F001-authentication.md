@@ -84,7 +84,8 @@ An approved student or employee can securely activate, sign in to, recover, and 
 
 - D-006 Option B approved on 2026-09-26
 - D-007 Option B approved on 2026-09-26
-- D-027 Option B approved 2026-10-13; F015 staff MFA/session security implementation active
+- D-027/D-028 Option B approved 2026-10-13; F015 staff MFA/session security accepted for fictional staging
+- D-029 employee invitation/password recovery decision required; F016 is a draft, not implementation authority
 - Production email delivery and domain configuration
 - Session duration and re-authentication intervals
 
@@ -109,4 +110,4 @@ An approved student or employee can securely activate, sign in to, recover, and 
 - Added the shared Input primitive, approved usage specification, and Storybook states required by the sign-in form.
 - Added unit and browser coverage for credential errors, inactive employees, current capability checks, protected-route redirects, explicit fictional preview, and responsive sign-in rendering.
 
-Employee invitation, recovery, MFA enrolment/challenge, and all-device revocation remain separate slices.
+Staff MFA enrolment/challenge, factor management, independently approved lost-factor reset, and durable all-device invalidation are accepted for fictional staging through F015 / PR #33 and protected run `38422519675`. Employee invitation/password recovery remains proposed in F016 under pending D-029; student recovery is a later slice.

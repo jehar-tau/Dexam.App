@@ -1,6 +1,6 @@
 # F015 — Staff MFA and Session Security
 
-Status: Implementation active — D-027 and D-028 Option B approved 2026-10-13
+Status: Accepted for fictional staging — D-027 and D-028 Option B approved 2026-10-13
 Risk: Red — staff account takeover, elevated authority, factor recovery, and session revocation
 
 ## Purpose and problem
@@ -125,6 +125,12 @@ The security route supports explicit fresh verification before returning to this
 Local acceptance uses three disposable fictional accounts and real TOTP through the actual Edge runtime. It proved self-approval denial, independent approval, factor deletion, old-session denial, new password sign-in, sensitive denial before replacement MFA, and restored assigned access after replacement verification. Every disposable fixture was removed. Local checks passed 156 application tests, 656 database assertions, and 43 Chromium journeys. Hosted acceptance is still pending and is now part of the protected staging deploy using an exact-project allowlist and job-scoped keys.
 
 Authenticated visual acceptance at 1440px desktop and 390px mobile also passed, including no horizontal overflow and keyboard-focusable employee selection. The initial mobile select overflow was corrected with scoped token-based layout styles. Screenshots contain only the fictional recovery queue, never an enrolment secret. Reproduce with `STAFF_SECURITY_UI_ACCEPTANCE=true node scripts/staging/verify-local-staff-recovery.mjs` while the local Edge runtime is running; the optional visual runner cannot target hosted Auth.
+
+## Hosted acceptance — 2026-10-13
+
+PR #33 merged at `d086989ee54d0fb3ae92690413d49d30ac3537b8` after all three required checks passed with no review concerns. Main verification run `38422174342` and protected deployment run `38422519675` passed. The deployment applied the recovery migration, passed the advisor gate, deployed all nine declared functions, repeated all nine existing hosted authorization checks, and passed the real TOTP recovery acceptance on the exact fictional staging project. It confirmed independent approval, Edge execution, previous-session denial, new sign-in, sensitive denial before replacement MFA, and restoration after replacement verification. All disposable recovery fixtures were removed.
+
+F015's approved fictional-stage scope is accepted. This is not production approval, real employee onboarding, or approval of a real email channel. Employee invitation/password recovery is proposed separately in F016 / D-029. Broader elevated administration and production incident/audit ownership remain tracked in the deferred register. Operational guidance is in `../STAFF_SECURITY.md`.
 
 ## Dependencies
 
