@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 Hosted Staging and Release Foundation is accepted through PR #25 and protected rebuild run `38298241510`. The owner-controlled free Supabase/Cloudflare staging environment is live and reconstructable. D-027 Option B is approved and F015 implementation is active. The staff authenticator setup/challenge screens and route guidance are implemented; server-enforced factor recovery, audit integration, session revocation, and hosted TOTP acceptance remain unfinished. Production personal data and deployment remain blocked pending operational ownership, identity/recovery/MFA completion, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. The free owner-controlled Supabase/Cloudflare staging environment is live. The next feature, F016 employee invitation/password recovery, requires D-029 approval; Option B recommends free local email capture with real delivery disabled. Production personal data and deployment remain blocked pending operational ownership, remaining identity/recovery flows, notices, request-route controls, backup/restore validation, and professional privacy review.
 
 ## Completed
 
@@ -173,7 +173,8 @@ F014 Hosted Staging and Release Foundation is accepted through PR #25 and protec
 
 ## Implementation active
 
-- D-027 Option B approved 2026-10-13. F015 includes the tested service layer plus `/staff/security` enrolment/challenge, hidden manual key, unfinished-setup cancellation, backup enrolment after `aal2`, enrolled-staff challenge routing, and required privacy MFA routing. Local verification passed 134 application tests, 42 Chromium journeys, and 594 database assertions. Verified-factor removal, server safeguards, independent reset approval, audit integration, session revocation, and hosted TOTP acceptance remain unfinished.
+- F015 completed its approved fictional-stage scope: enrolment/challenge, backup factor, guarded removal, live MFA enforcement, durable previous-session denial, recent verification, independent recovery, supported provider deletion, and minimized audit. PRs #31–#33 merged after checks/review inspection. Local verification passed 156 application tests, 656 database assertions, 43 Chromium journeys, actual TOTP/Edge acceptance, and desktop/mobile visual checks. Protected run `38422519675` repeated nine existing role checks and real hosted recovery acceptance; disposable fixtures were removed. See `STAFF_SECURITY.md` for use/failure/escalation guidance.
+- F016 / D-029 is discovery only. Do not implement invite/recovery authority or real email delivery before the decision is approved.
 
 ## Not yet started
 
@@ -198,8 +199,8 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-D-028 Option B enforcement and guarded factor removal/all-device invalidation merged through PRs #31 and #32. Independent lost-factor recovery is implemented locally with fresh 15-minute verification, separate proposer/approver/target, service-only execution, durable old-session denial, and minimized audit. Real local TOTP/Edge acceptance passed and fixtures were removed; 156 application tests, 656 database assertions, and 43 browser journeys passed. Next: review/merge recovery and its protected exact-project hosted acceptance, then verify staging before closing F015. Staging remains fictional-only.
+Ask for D-029 employee invitation/password recovery selection. Recommended Option B builds the ₹0 local fictional workflow, preserves unchanged-email recovery and current MFA/suspension rules, and defers real sender/SMTP activation. Do not pre-empt this new authority decision. Staging remains fictional-only.
 
 ## Blockers
 
-- Employee invitation, student/employee recovery, MFA, and security-triggered all-device session revocation remain future F001 slices.
+- D-029 is required for F016 employee invitation/password recovery. Student recovery, real email delivery, broader elevated actions, and production security/incident ownership remain separate gates; F015 MFA and all-device invalidation are no longer blockers for fictional staging.

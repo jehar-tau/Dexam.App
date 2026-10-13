@@ -157,6 +157,12 @@ The initial hosted report and each disposition are recorded in `STAGING_ADVISOR_
 
 ## Free-tier operations
 
+### F015 security acceptance — 2026-10-13
+
+PR #33 merged as `d086989ee54d0fb3ae92690413d49d30ac3537b8`. Main verification run `38422174342` and protected deployment run `38422519675` passed. All nine declared functions deployed; the existing nine hosted role/account checks and real TOTP independent-recovery acceptance passed. The three additional disposable recovery accounts and their application fixture records were removed. The nested `/staff/security/recovery` route returned HTTP 200, and its trusted worker returned HTTP 401 to an unauthenticated POST.
+
+Normal protected deployments now repeat the exact-project fictional recovery probe after the deterministic fixtures. It checks independent approval, actual factor deletion, stale-session denial, new sign-in, and replacement MFA. Credentials remain job-scoped; cleanup failures fail the workflow. See `STAFF_SECURITY.md` for local reproduction, safe partial-failure handling, and the separate emergency approval boundary. Real email delivery and production remain disabled.
+
 - A low-activity Supabase Free project may pause. Resume it manually when staging review is needed.
 - Do not schedule hidden keepalive traffic to defeat provider pausing.
 - Review database, storage, egress, function, and build usage before every pilot expansion.
