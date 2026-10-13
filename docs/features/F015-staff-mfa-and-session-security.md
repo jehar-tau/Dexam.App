@@ -1,6 +1,6 @@
 # F015 — Staff MFA and Session Security
 
-Status: Implementation active — D-027 Option B approved 2026-10-13
+Status: Setup/challenge implemented; enforcement and recovery await D-028 — D-027 Option B approved 2026-10-13
 Risk: Red — staff account takeover, elevated authority, factor recovery, and session revocation
 
 ## Purpose and problem
@@ -107,6 +107,9 @@ Verified-factor removal, provider-level final-factor enforcement, reset approval
 Verification: 134 unit/component tests, 42 Chromium journeys, 594 database assertions, formatting, lint, types, and build passed locally. Component tests exercise enrolment material, challenge, cancellation failure, generic errors, and safe return paths; boundary tests cover challenge/enrolment routing, provider failures, and inactive employees.
 
 ## Dependencies
+
+- D-028 pending: a live local Auth probe confirmed direct final-factor deletion at `aal2`. The provider-level last-factor guarantee and stale-session enforcement architecture require the recorded choice before factor management and recovery completion.
+- Local email/password provider configuration is corrected while global public signup remains disabled. The reproducible local probe proves provisioned-user sign-in, TOTP enrolment/challenge, and direct final-factor removal, then removes its disposable Auth account.
 
 - D-004 current-state revocation
 - D-006 Option B authentication model

@@ -198,7 +198,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Continue F015 with server-enforced factor management, independent lost-factor reset approval, audit evidence, and security-triggered session revocation. Validate provider-level factor removal, stale-session behaviour, and the hosted enrolment/challenge journey before declaring F015 complete. Keep staging fictional-only and production blocked.
+Resolve D-028's MFA enforcement boundary. A live local probe confirmed that an `aal2` account can delete its last factor directly through Supabase. Recommended Option B revises the server guarantee to immediate loss of sensitive privileges using live session/factor checks, while retaining the interface's last-factor guard. The local email/password provider fix is verified with public signup still disabled. F015 recovery/revocation completion depends on this architecture choice; staging remains fictional-only.
 
 ## Blockers
 

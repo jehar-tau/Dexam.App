@@ -98,6 +98,8 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Completion log
 
+D-028 is pending for DW-003, DW-004, and DW-005: the direct provider API permits final-factor deletion, so provider-table prevention versus immediate live-state privilege denial must be selected before F015 recovery completion. The local email/password provider correction and loopback-only MFA probe are independent fixes; they do not approve either option.
+
 Move an item here only after its required implementation is merged or the product owner explicitly rejects it. Record the date, pull request/decision, and outcome so its history remains discoverable.
 
 - 2026-10-11 — DW-023 completed through F010 / PR #14: free in-app CRM assignment and due-follow-up alerts now derive from durable CRM state.
