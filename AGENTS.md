@@ -30,6 +30,8 @@ Dexam is an education platform for design-entrance preparation. The product owne
 
 Make low-risk implementation decisions independently. Explain recommendations in plain language. Present material choices as a numbered Decision Gate with options, recommendation, reason, impact, and reversibility. Record the approved answer in the appropriate specification or ADR; chat history is not authoritative.
 
+Whenever requesting a decision or permission, display every proposed option with its cost/impact and recommendation. Never ask the owner to approve an isolated option without showing its alternatives.
+
 ## GitHub workflow
 
 - After a completed slice is verified, commit it, push the feature branch, check whether that branch already has a pull request, and create a non-draft pull request automatically when one does not exist. Do not ask the product owner to create or submit the pull request.

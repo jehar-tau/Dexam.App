@@ -14,6 +14,7 @@ Use this map instead of reading the entire documentation tree.
 - `DESIGN_SYSTEM.md` — design ownership and implementation rules
 - `design/README.md` — Figma token/pattern export pipeline and Storybook catalog
 - `SECURITY.md` — mandatory security and privacy baseline
+- `PRODUCTION_READINESS.md` — mandatory launch gates, including replacing local email capture with verified real authentication delivery
 - `STAFF_SECURITY.md` — fictional-stage MFA, session invalidation, independent recovery, and failure/escalation operations
 - `TESTING.md` — test layers and definition of done
 - `SETUP.md` — local, GitHub, and future environment setup

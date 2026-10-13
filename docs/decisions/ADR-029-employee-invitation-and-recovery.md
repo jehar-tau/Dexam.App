@@ -1,6 +1,6 @@
 # Decision required — D-029: Employee invitation and password recovery
 
-Status: Decision required — recommended Option B
+Status: Approved — Option B
 Date: 2026-10-13
 Risk: Red — staff identity, account activation, password recovery, and email delivery
 
@@ -55,7 +55,7 @@ Choose B. It follows the approved staff-first sequence, preserves the free-first
 
 ## What can continue while pending
 
-Complete F015 verification and operational documentation. Prepare the F016 specification and test plan, but do not implement invitation/recovery permissions or send authentication emails until this gate is approved.
+The product owner approved Option B on 2026-10-13 and explicitly confirmed real email is required at launch. F016 fictional/local implementation is authorized. Real recipients, provider activation, DNS changes, paid services, and production deployment remain separately gated. Track those requirements in `../PRODUCTION_READINESS.md`; local email capture is never evidence of live deliverability.
 
 ## Sources
 

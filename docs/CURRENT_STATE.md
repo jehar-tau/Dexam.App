@@ -4,7 +4,7 @@ Last updated: 2026-10-13
 
 ## Current phase
 
-F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. The free owner-controlled Supabase/Cloudflare staging environment is live. The next feature, F016 employee invitation/password recovery, requires D-029 approval; Option B recommends free local email capture with real delivery disabled. Production personal data and deployment remain blocked pending operational ownership, remaining identity/recovery flows, notices, request-route controls, backup/restore validation, and professional privacy review.
+F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. D-029 Option B is approved and F016 implementation has started: fictional local employee invitations/password recovery, with real email delivery disabled. The free staging environment remains fictional-only. `PRODUCTION_READINESS.md` records required real-email and other launch work; approval of local testing does not approve production or a paid provider.
 
 ## Completed
 
@@ -174,7 +174,7 @@ F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 st
 ## Implementation active
 
 - F015 completed its approved fictional-stage scope: enrolment/challenge, backup factor, guarded removal, live MFA enforcement, durable previous-session denial, recent verification, independent recovery, supported provider deletion, and minimized audit. PRs #31–#33 merged after checks/review inspection. Local verification passed 156 application tests, 656 database assertions, 43 Chromium journeys, actual TOTP/Edge acceptance, and desktop/mobile visual checks. Protected run `38422519675` repeated nine existing role checks and real hosted recovery acceptance; disposable fixtures were removed. See `STAFF_SECURITY.md` for use/failure/escalation guidance.
-- F016 / D-029 is discovery only. Do not implement invite/recovery authority or real email delivery before the decision is approved.
+- F016 / D-029 Option B approved 2026-10-13. The first invitation foundation adds recent-admin authority, canonical-person duplicate review, private masked queue/cancellation, pending employee membership with no role/Auth grant, and a strictly local fictional email adapter. The real provider invitation probe confirmed captured mail, ownership proof, replay denial, employee-chosen password, and disposable cleanup. Delivery/activation/recovery interfaces and trusted finalization remain unfinished. Independent security review is authorized; initial cleanup/redirect findings were fixed.
 
 ## Not yet started
 
@@ -199,8 +199,8 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Ask for D-029 employee invitation/password recovery selection. Recommended Option B builds the ₹0 local fictional workflow, preserves unchanged-email recovery and current MFA/suspension rules, and defers real sender/SMTP activation. Do not pre-empt this new authority decision. Staging remains fictional-only.
+Verify and review the F016 foundation, then continue trusted provider delivery/activation, cancellation/expiry handling, unchanged-email password recovery, and browser journeys. Do not return credential-bearing links to administrators. Keep hosted delivery disabled and preserve the production email checklist.
 
 ## Blockers
 
-- D-029 is required for F016 employee invitation/password recovery. Student recovery, real email delivery, broader elevated actions, and production security/incident ownership remain separate gates; F015 MFA and all-device invalidation are no longer blockers for fictional staging.
+- D-029 is approved for fictional/local F016 implementation. Student recovery, real email delivery, broader elevated actions, and production security/incident ownership remain separate gates; F015 MFA and all-device invalidation are accepted for fictional staging.

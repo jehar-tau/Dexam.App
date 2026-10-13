@@ -1,6 +1,6 @@
 # F016 — Employee invitation and password recovery
 
-Status: Decision required — D-029 Option B recommended, not approved
+Status: Implementation active — D-029 Option B approved 2026-10-13
 Risk: Red
 
 ## Purpose and problem
@@ -44,6 +44,14 @@ Loading, no authority, duplicate review required, pending invitation, activation
 - Local fictional emails reach the capture inbox; no test sends to a real recipient.
 - Browser flows are keyboard accessible, responsive, use approved primitives, and retain no credential-bearing screenshots or traces.
 
-## Open decision
+## First foundation slice — 2026-10-13
 
-D-029 must be approved before implementation. After approval, document exact token lifetimes, reissue/throttle budgets, trusted delivery contract, and failure sequencing in the implementation specification; materially new user/security policy returns to the owner. Real delivery and assisted recovery remain later gates even if Option B is selected.
+Migration `20261013200000` adds a private invitation ledger and narrowly granted recent-Elevated-Admin RPCs for duplicate search, preparation, masked queue, and cancellation. Preparation creates or links only the deliberate canonical person and a pending employee membership. It does not create an Auth identity, activate access, or grant a role. Suspended/ended memberships and established-email replacement are denied. Invitations use the existing local provider's one-hour expiry as the initial upper bound, with a one-minute deliberate reissue cooldown; no provider setting has been pushed to staging.
+
+The local-only capture adapter accepts reserved `.invalid` recipients and allowlisted loopback/local container origins only. It refuses hosted Auth, disabled configuration, unsafe callbacks, redirects, and transport failures; messages are plain text and never released to an SMTP relay. Its 18 security assertions are part of the normal Vitest suite. The provider probe reached real captured invitation delivery, email confirmation, replay denial, and employee-chosen password using one disposable local Auth account; account and captured mail were removed. No credential-bearing payload was printed or saved.
+
+Independent security review found and resolved separate cleanup failure handling and capture redirect/timeout concerns. Foundation review is not acceptance of the full F016 workflow. Trusted delivery, owned confirmation/finalization, expiry/cancellation races, recovery session invalidation, abuse controls, and the interfaces remain to be built and reviewed.
+
+## Open decisions
+
+D-029 Option B is approved. Document exact token lifetimes, reissue/throttle budgets, trusted delivery contract, and failure sequencing in the implementation specification; materially new user/security policy returns to the owner. Real delivery and assisted recovery remain later gates. Real authentication email delivery is a mandatory launch requirement in `../PRODUCTION_READINESS.md`, not optional functionality dropped by choosing local testing.
