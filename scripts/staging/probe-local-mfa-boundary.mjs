@@ -74,17 +74,30 @@ try {
   phase = 'assurance'
   const before = await client.auth.mfa.getAuthenticatorAssuranceLevel()
   if (before.data?.currentLevel !== 'aal2') throw new Error('Local fixture did not reach aal2.')
+  phase = 'live-assurance'
+  const liveBefore = await client.rpc('current_session_has_live_mfa')
+  if (liveBefore.error || liveBefore.data !== true) throw new Error('Live MFA was not confirmed.')
+  const staleTokenClient = createClient(config.API_URL, config.ANON_KEY, {
+    ...options,
+    global: { headers: { Authorization: `Bearer ${verified.data.access_token}` } },
+  })
   phase = 'removal'
   const removed = await client.auth.mfa.unenroll({ factorId })
   phase = 'factor-state'
   const factors = await admin.auth.admin.mfa.listFactors({ userId })
   if (factors.error) throw new Error('Local factor-state verification failed.')
+  phase = 'stale-token-denial'
+  const liveAfter = await staleTokenClient.rpc('current_session_has_live_mfa')
+  if (liveAfter.error || liveAfter.data !== false)
+    throw new Error('Stale MFA assurance was not denied.')
   console.log(
     JSON.stringify({
       localOnly: true,
       reachedAal2: true,
       directFinalFactorRemovalAllowed: !removed.error,
       remainingFactors: factors.data.factors.length,
+      liveMfaBeforeRemoval: liveBefore.data,
+      staleTokenMfaAfterRemoval: liveAfter.data,
     }),
   )
 } catch {

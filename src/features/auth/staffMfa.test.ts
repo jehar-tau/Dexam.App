@@ -12,11 +12,13 @@ const mocks = vi.hoisted(() => ({
   enroll: vi.fn(),
   verify: vi.fn(),
   unenroll: vi.fn(),
+  rpc: vi.fn(),
 }))
 
 vi.mock('./employeeAuth', () => ({ getEmployeeAccess: mocks.access }))
 vi.mock('./supabaseClient', () => ({
   getSupabaseClient: () => ({
+    rpc: mocks.rpc,
     auth: {
       mfa: {
         getAuthenticatorAssuranceLevel: mocks.assurance,
@@ -36,6 +38,7 @@ describe('staff MFA', () => {
     mocks.assurance.mockResolvedValue({ data: { currentLevel: 'aal2' }, error: null })
     mocks.factors.mockResolvedValue({ data: { totp: [], all: [] }, error: null })
     mocks.verify.mockResolvedValue({ error: null })
+    mocks.rpc.mockResolvedValue({ data: true, error: null })
   })
 
   it('denies inactive employees before touching MFA APIs', async () => {
@@ -63,6 +66,18 @@ describe('staff MFA', () => {
 
   it('fails closed when assurance cannot be checked', async () => {
     mocks.assurance.mockResolvedValue({ data: null, error: new Error('provider detail') })
+    await expect(getStaffMfaState()).rejects.toThrow('verify staff security')
+  })
+
+  it('downgrades stale token assurance when the database reports no live MFA', async () => {
+    mocks.rpc.mockResolvedValue({ data: false, error: null })
+    await expect(getStaffMfaState()).resolves.toMatchObject({ currentLevel: 'aal1' })
+    expect(mocks.rpc).toHaveBeenCalledWith('current_session_has_live_mfa')
+    await expect(verifyStaffTotp('factor-id', '123456')).rejects.toThrow('verify staff security')
+  })
+
+  it('fails closed when live session validation is unavailable', async () => {
+    mocks.rpc.mockResolvedValue({ data: null, error: new Error('provider detail') })
     await expect(getStaffMfaState()).rejects.toThrow('verify staff security')
   })
 

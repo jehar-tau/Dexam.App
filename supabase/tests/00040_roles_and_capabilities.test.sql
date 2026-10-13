@@ -17,6 +17,13 @@ values
   ('70000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'elevated@dexam.test', ''),
   ('70000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'student@members.dexam.invalid', '');
 
+insert into auth.mfa_factors (id, user_id, factor_type, status, created_at, updated_at)
+select id, id, 'totp', 'verified', now(), now() from auth.users
+where id::text like '70000000-0000-0000-0000-%';
+insert into auth.sessions (id, user_id, factor_id, aal, created_at, updated_at)
+select id, id, id, 'aal2', now(), now() from auth.users
+where id::text like '70000000-0000-0000-0000-%';
+
 insert into public.people (id, member_id)
 values
   ('71000000-0000-0000-0000-000000000001', null),
@@ -57,7 +64,7 @@ values (
 );
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000001","session_id":"70000000-0000-0000-0000-000000000001","role":"authenticated","aal":"aal1"}';
 
 select is(public.current_person_has_role('sales'), true, 'Sales role is recognized from current state');
 select is(public.current_person_has_capability('lead.manage_assigned'), true, 'Sales receives assigned-lead capability');
@@ -72,7 +79,7 @@ select throws_ok(
   'authenticated employees cannot grant themselves roles'
 );
 
-set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000002","session_id":"70000000-0000-0000-0000-000000000002","role":"authenticated","aal":"aal1"}';
 
 select is(public.current_person_has_capability('enrollment.operate'), true, 'approved Enrolment Operator receives the scoped capability');
 
@@ -93,11 +100,11 @@ select is(public.bootstrap_first_elevated_admin('71000000-0000-0000-0000-0000000
 select is(public.bootstrap_first_elevated_admin('71000000-0000-0000-0000-000000000001'), false, 'bootstrap cannot create a second Elevated Admin');
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000003","session_id":"70000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal1"}';
 
 select is(public.current_person_has_capability('employee.suspend'), false, 'Elevated Admin capability is denied without MFA');
 
-set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}';
+set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000003","session_id":"70000000-0000-0000-0000-000000000003","role":"authenticated","aal":"aal2"}';
 
 select is(public.current_person_has_capability('employee.suspend'), true, 'Elevated Admin capability is enabled with MFA');
 select is(public.current_person_has_capability('elevated_role.manage'), true, 'two-person capability reports eligibility but still requires workflow approval');
@@ -112,7 +119,7 @@ set local role authenticated;
 
 select is(public.current_person_has_capability('employee.suspend'), false, 'person suspension immediately overrides Elevated Admin capability');
 
-set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal1"}';
+set local request.jwt.claims = '{"sub":"70000000-0000-0000-0000-000000000004","session_id":"70000000-0000-0000-0000-000000000004","role":"authenticated","aal":"aal1"}';
 
 select is(public.current_person_has_active_employee_membership(), false, 'student membership does not become employee authority');
 select is((select count(*)::integer from public.app_roles), 0, 'students cannot read the staff role catalogue');

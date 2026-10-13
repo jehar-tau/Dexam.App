@@ -32,4 +32,4 @@
 
 IDs are stable. Do not reuse retired decision IDs.
 
-D-028 — MFA enforcement boundary — Decision required — `ADR-028-mfa-enforcement-boundary.md`.
+D-028 — MFA enforcement boundary — Option B approved 2026-10-13 — `ADR-028-mfa-enforcement-boundary.md`.

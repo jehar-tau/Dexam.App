@@ -98,7 +98,7 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Completion log
 
-D-028 is pending for DW-003, DW-004, and DW-005: the direct provider API permits final-factor deletion, so provider-table prevention versus immediate live-state privilege denial must be selected before F015 recovery completion. The local email/password provider correction and loopback-only MFA probe are independent fixes; they do not approve either option.
+D-028 Option B is approved for DW-003, DW-004, and DW-005. Live session/factor enforcement and stale-token denial are implemented and tested; factor-management UI, recovery approvals, audit, and global revocation remain active F015 work.
 
 Move an item here only after its required implementation is merged or the product owner explicitly rejects it. Record the date, pull request/decision, and outcome so its history remains discoverable.
 
