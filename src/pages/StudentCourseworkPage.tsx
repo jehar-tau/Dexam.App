@@ -9,6 +9,7 @@ import {
   type StudentCurriculum,
 } from '../features/student/getStudentCoursework'
 import styles from './StudentCourseworkPage.module.css'
+import { LessonFiles } from '../features/content/LessonMaterialPanel'
 
 const previewCoursework: StudentCurriculum[] = [
   {
@@ -325,6 +326,7 @@ export function StudentCourseworkPage() {
                       <p className={styles.lessonSummary}>{lesson.summary}</p>
                     ) : null}
                     {lesson.body ? <p className={styles.lessonBody}>{lesson.body}</p> : null}
+                    <LessonFiles lessonId={lesson.id} preview={previewEnabled} />
                   </div>
                 </Card>
               ))}

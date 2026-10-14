@@ -22,5 +22,6 @@
 - F020 Student learning progress — D-033 B approved; private checklist implemented and merged through PR #47
 - F021 Class schedule foundation — D-034 B implemented through PR #49; protected fictional release `38522570468` passed
 - F022 Fictional in-app worker operations — PR #50 merged; protected release `38525635333` verified a real scheduled tick and existing authorization/MFA checks
+- F023 Private lesson files — D-037 B approved; locally implemented, verification/review and release active
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

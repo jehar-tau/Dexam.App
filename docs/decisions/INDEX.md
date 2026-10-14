@@ -50,4 +50,4 @@ D-035 — Native fictional in-app worker — engineering follow-up within approv
 
 D-036 — Advance class reminders — Option A selected 2026-10-14; deferred, existing alerts only — `ADR-036-class-reminder-scope.md`.
 
-D-037 — Private lesson materials — awaiting owner selection — `ADR-037-private-lesson-materials.md`.
+D-037 — Private lesson materials — Option B approved 2026-10-14; fictional/local only — `ADR-037-private-lesson-materials.md`.

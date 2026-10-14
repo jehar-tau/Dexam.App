@@ -2,6 +2,8 @@
 
 Status: Not ready for production. This checklist records required work, not permission to configure a provider, spend money, send real messages, or deploy production.
 
+F023 lesson files additionally require verified Storage cleanup scheduling/ownership, storage/egress capacity review, metadata/audit retention review, and operational handling of uncertain uploads before real data. Local object deletion and the service-only worker do not prove production scheduling. Do not add a credential-bearing Cron command or treat SQL maintenance as Storage deletion.
+
 F022 supplies only fictional native in-app delivery. Production still requires capacity review, operational ownership, failure alert/escalation policy and separately scheduled Storage file/audio cleanup. Private worker success becomes unhealthy after three minutes without a success; Free-project pausing can stop delivery. No production job is activated by migrations.
 
 The owner confirmed on 2026-10-13 that D-029 Option B means local email testing now and real authentication email delivery before launch. Keep evidence beside each completed item; never infer production readiness from fictional staging acceptance.
