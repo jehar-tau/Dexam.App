@@ -206,5 +206,6 @@ F021/D-034 B merged PR #49; protected release `38522570468` passed. F022 merged 
 
 - D-036 Option A selected: advance reminders deferred; retain existing approved alerts. No reminder jobs or preferences may be added without a new decision. Production ownership/escalation and Storage cleanup remain gated.
 
-- D-032 B is approved; no owner decision blocks F019 implementation. D-031 A continues to defer the broader teacher workspace.
+- F019/D-032 B is implemented and released. D-031 A continues to defer the broader teacher workspace.
+- D-037 awaits a lesson-material decision before adding file storage/access/retention beyond approved assignment attachments. Existing text coursework is unchanged. F022 regression follow-up explicitly verifies account-switch/late-response isolation and live-refresh/preview-polling behavior. Local verification passed 245 application tests, 955 database assertions, 63 browser journeys and full format/lint/types/build checks; PR checks/merge remain.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.

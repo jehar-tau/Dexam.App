@@ -14,4 +14,6 @@ Production remains prohibited. Free-project pausing may stop jobs; fictional sta
 
 ## Verification
 
+Post-release regression coverage explicitly tests one-minute live refresh, preview isolation from backend polling, switching accounts without showing previous cached updates, and a late previous-account response that must not appear in the new account. These tests change no runtime behavior or communication policy.
+
 Anonymous/authenticated configuration, execution and health-read denial; target/fixture guards; bounded work and preserved existing notification behavior; same-offering cohort integrity; health outcomes without payloads; idempotent configuration; exact Cron command and permissions; real scheduled tick after deployment; own-job-only log retention; independent security review and clean CI.
