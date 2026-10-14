@@ -204,5 +204,7 @@ F019 / D-032 B merged through PR #45 (`31bb4c4`) and protected fictional-stage r
 
 ## Blockers
 
+- D-034 Option B approved 2026-10-14; F021 implementation started on `feat/f021-class-scheduling`. No runtime scheduling changes are merged yet. Next engineering step: scoped session/revision ledger and permission/time/replay tests, followed by revision-aware outbox integration, frontend, independent review and full verification. Preserve existing assignment/CRM notification processing.
+
 - D-032 B is approved; no owner decision blocks F019 implementation. D-031 A continues to defer the broader teacher workspace.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.
