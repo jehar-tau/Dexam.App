@@ -48,4 +48,4 @@ D-034 — Class schedule foundation — Option B approved 2026-10-14 — `ADR-03
 
 D-035 — Native fictional in-app worker — engineering follow-up within approved in-app scope — `ADR-035-fictional-native-inapp-worker.md`.
 
-D-036 — Advance class reminders — awaiting owner selection — `ADR-036-class-reminder-scope.md`.
+D-036 — Advance class reminders — Option A selected 2026-10-14; deferred, existing alerts only — `ADR-036-class-reminder-scope.md`.

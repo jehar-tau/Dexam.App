@@ -1,6 +1,10 @@
-# DECISION REQUIRED — D-036: Advance class reminders
+# D-036: Advance class reminders
 
-Status: Awaiting owner decision; no reminder runtime approved
+Status: Option A selected by owner, 2026-10-14; advance reminders deferred
+
+## Recorded decision
+
+Keep existing schedule/change/cancellation alerts and the fictional native delivery worker. Do not implement advance reminder jobs, new preferences or external delivery. Options B/C remain proposals only; reopening requires a new explicit owner decision. No extra vendor spending, production or real data is authorized.
 
 ## Question
 

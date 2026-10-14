@@ -204,7 +204,7 @@ F021/D-034 B merged PR #49; protected release `38522570468` passed. F022 merged 
 
 ## Blockers
 
-- D-036 awaits owner choice before any advance reminder implementation. Current approved alerts are operational; production ownership/escalation and Storage cleanup remain gated.
+- D-036 Option A selected: advance reminders deferred; retain existing approved alerts. No reminder jobs or preferences may be added without a new decision. Production ownership/escalation and Storage cleanup remain gated.
 
 - D-032 B is approved; no owner decision blocks F019 implementation. D-031 A continues to defer the broader teacher workspace.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.
