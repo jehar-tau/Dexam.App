@@ -1,6 +1,8 @@
-# DECISION REQUIRED — D-037: Private lesson materials
+# D-037: Private lesson materials
 
-Status: Awaiting owner selection; no lesson-file runtime approved
+Status: Option B approved by owner, 2026-10-14; fictional/local implementation only
+
+The owner selected the bounded private lesson-file policy below. Options A/C are alternatives, not implementation authority. Production capacity and verified cleanup ownership remain gates. D-031 A and D-036 A remain unchanged.
 
 ## Question
 

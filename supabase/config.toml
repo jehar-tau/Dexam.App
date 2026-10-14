@@ -387,6 +387,16 @@ enabled = true
 verify_jwt = false
 entrypoint = "./functions/student-activate/index.ts"
 
+[functions.lesson-material-file]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/lesson-material-file/index.ts"
+
+[functions.purge-lesson-materials]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/purge-lesson-materials/index.ts"
+
 [functions.student-sign-in]
 enabled = true
 verify_jwt = false

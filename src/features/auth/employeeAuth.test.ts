@@ -17,6 +17,16 @@ vi.mock('./supabaseClient', () => ({
 }))
 
 describe('employeeAuth', () => {
+  it('uses the scoped-content entrance check without demanding a global grant', async () => {
+    mocks.rpc
+      .mockResolvedValueOnce({ data: true, error: null })
+      .mockResolvedValueOnce({ data: true, error: null })
+    expect(await getEmployeeAccess('content.manage_drafts')).toEqual({
+      activeEmployee: true,
+      hasCapability: true,
+    })
+    expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'current_person_can_open_content_workspace')
+  })
   beforeEach(() => {
     mocks.rpc.mockReset()
     mocks.signInWithPassword.mockReset()

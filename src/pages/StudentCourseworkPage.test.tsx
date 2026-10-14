@@ -6,6 +6,8 @@ import { StudentCourseworkPage } from './StudentCourseworkPage'
 
 const mocks = vi.hoisted(() => ({ getStudentCoursework: vi.fn() }))
 
+vi.mock('../features/content/LessonMaterialPanel', () => ({ LessonFiles: () => null }))
+
 vi.mock('../features/student/getStudentCoursework', () => ({
   getStudentCoursework: mocks.getStudentCoursework,
 }))

@@ -72,9 +72,10 @@ export async function getEmployeeAccess(capability?: string): Promise<EmployeeAc
     return { activeEmployee: true, hasCapability: true }
   }
 
-  const capabilityResult = await client.rpc('current_person_has_capability', {
-    p_capability_key: capability,
-  })
+  const capabilityResult =
+    capability === 'content.manage_drafts'
+      ? await client.rpc('current_person_can_open_content_workspace')
+      : await client.rpc('current_person_has_capability', { p_capability_key: capability })
 
   if (capabilityResult.error) {
     throw new Error('Employee permissions could not be verified.')

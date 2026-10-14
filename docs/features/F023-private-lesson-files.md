@@ -1,0 +1,20 @@
+# F023 — Private lesson files
+
+Status: Implementation active under D-037 Option B
+Risk: Red — private storage, publication immutability and retention
+
+Existing scoped content staff may add/remove bounded PDF/JPEG/PNG/WebP files to draft lessons; at most five files and 10 MB each. Trusted file handling checks signatures, MIME, extension and size, stores opaque private objects, and rechecks current authority at finalization. Images reuse conservative browser compression; PDFs remain unchanged. Publication pins file references. Curriculum copying preserves shared immutable file references; removing a draft reference cannot delete a published/shared object.
+
+Only existing authorized content staff and active students assigned the published version can request short-lived attachment downloads. No direct browser Storage access, public URLs, new Teacher/Sales/operator authority, archive access, analytics, real personal data, paid service or production activation.
+
+Unattached uploads expire after 30 days. Attached draft assets remain until deliberate removal/deletion. Published assets become cleanup-eligible only after all relevant versions are retired for 12 months and no active enrolment/cohort references them. Maintenance claims deletion before Storage removal, denying new references/downloads and preventing a copy-versus-purge race. Missing/deleted files fail closed; uncertain Storage outcomes stay fenced and retryable. Physical cleanup requires a successful service maintenance run; scheduling/operational ownership remains a production gate.
+
+Verification must cover cross-offering/student/draft/revoked denials; five-file/size/type limits; post-lock authority; publish/upload races; copy/remove/purge shared references; active references and retention cutoff; supported SDK/Edge upload/download, MIME/signature failure and cleanup; responsive existing patterns; independent security review; complete CI.
+
+## Local evidence
+
+255 app tests, 1007 DB assertions, 63 browser journeys, full format/lint/types/build checks and actual SDK/Edge/Chromium acceptance passed. The actual runner verifies signature rejection, direct Storage denial, draft attach/remove, attachment download with original safe filename, closed-course denial, a copy transaction demonstrably holding the asset lock while purge skips it, committed draft-reference protection, and real orphan-object retention purge. All exact disposable Storage/Auth/domain fixtures were removed. A failed cleanup ordering was reconciled against exact known fixture IDs; original trigger flags restored. Desktop/mobile layouts inspected; all file actions reuse existing approved primitives.
+
+Independent review identified and corrected post-lock purge eligibility, null-limit bounding, uncertain-upload grace, and private lineage-helper exposure. Recent uncertain assets count toward pending capacity; unavailable source files prevent an exact copy rather than silently disappearing. Failed ready/unattached uploads receive safe compensation; uncertain reserved uploads stay fenced for the 30-day grace. Production still requires operational cleanup/uncertainty review.
+
+Actual browser acceptance exposed an existing D-015 entry bug: scoped content editors were blocked by a global-only check. A private-data-free boolean now admits existing current global or offering-scoped draft capability; every actual read/action is still scoped by RLS/RPC. No new grant is added. A separate transaction held the asset lock while an attachment RPC demonstrably queued; employee revocation then denied the attachment after lock release. Independent security review cleared the final code. PR/CI/protected release remain.

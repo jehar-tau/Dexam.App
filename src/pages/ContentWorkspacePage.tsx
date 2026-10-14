@@ -22,6 +22,7 @@ import {
   validateMaterialFile,
 } from '../features/content/contentWorkspace'
 import styles from './ContentWorkspacePage.module.css'
+import { LessonFiles } from '../features/content/LessonMaterialPanel'
 
 const previewOffering: ContentOffering = {
   id: 'preview-offering-foundation',
@@ -258,6 +259,9 @@ function LessonEditor({ lesson, preview }: { lesson: ContentLesson; preview: boo
           </Button>
         </div>
       </form>
+      <div className={styles.form}>
+        <LessonFiles lessonId={lesson.id} editable preview={preview} />
+      </div>
     </Card>
   )
 }
