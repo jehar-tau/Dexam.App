@@ -44,12 +44,13 @@ const users = [],
 let browser,
   frontend,
   writer,
+  classBlocker,
   phase = 'fixture creation'
 async function must(result) {
   if (result.error) {
     console.error(
       'Rejected operation status:',
-      result.error.context?.status ?? result.error.code ?? 'unavailable',
+      result.error.status ?? result.error.context?.status ?? (result.error.code || 'unavailable'),
     )
     throw new Error('Fixture operation rejected.')
   }
@@ -64,6 +65,7 @@ try {
     [ids.operator, 'employee'],
     [ids.student, 'student'],
   ]) {
+    phase = 'fictional ' + kind + ' identity creation'
     const email =
       kind === 'student'
         ? memberId.toLowerCase() + '@members.dexam.invalid'
@@ -120,6 +122,14 @@ try {
     },
   ])
   await insert('capability_grants', [
+    {
+      person_id: ids.operator,
+      capability_key: 'class.schedule',
+      required_role_key: 'ordinary_admin',
+      scope_type: 'offering',
+      scope_id: ids.offering,
+      grant_reason: 'Disposable scheduling scope',
+    },
     {
       person_id: ids.operator,
       capability_key: 'enrollment.operate',
@@ -323,6 +333,202 @@ try {
   }
   await bind(staffContext, operator)
   const studentSession = await bind(studentContext, student)
+  phase = 'class scheduling and current agenda'
+  await staffPage.goto('http://127.0.0.1:5173/staff/classes')
+  await staffPage.getByLabel('Offering', { exact: true }).selectOption(ids.offering)
+  const classStart = new Date(Date.now() + 2 * 86400000).toISOString()
+  const classEnd = new Date(Date.now() + 2 * 86400000 + 3600000).toISOString()
+  await staffPage.getByLabel('Class title', { exact: true }).fill('Disposable scheduled class')
+  await staffPage.getByLabel('Start time with UTC offset').fill(classStart)
+  await staffPage.getByLabel('End time with UTC offset').fill(classEnd)
+  await staffPage
+    .getByLabel(
+      'I checked this audience and time, and confirm this schedule change or cancellation.',
+    )
+    .check()
+  await staffPage.getByRole('button', { name: 'Schedule class', exact: true }).click()
+  await expect(staffPage.getByRole('status')).toHaveText('Class schedule saved.')
+  await staffPage.screenshot({
+    path: 'test-results/f019-closeout/classes-desktop.png',
+    fullPage: true,
+  })
+  await staffPage.setViewportSize({ width: 390, height: 844 })
+  if (!(await staffPage.locator('body').evaluate((body) => body.scrollWidth <= body.clientWidth)))
+    throw new Error('Scheduling mobile overflow.')
+  await staffPage.screenshot({
+    path: 'test-results/f019-closeout/classes-mobile.png',
+    fullPage: true,
+  })
+  await staffPage.setViewportSize({ width: 1440, height: 900 })
+  let classRow = await must(
+    await admin.from('class_sessions').select('*').eq('offering_id', ids.offering).single(),
+  )
+  await must(await admin.rpc('process_notification_outbox', { p_limit: 100 }))
+  const agendaPage = await studentContext.newPage()
+  await agendaPage.goto('http://127.0.0.1:5173/student/agenda')
+  await expect(
+    agendaPage.getByRole('heading', { name: 'Disposable scheduled class' }),
+  ).toBeVisible()
+  await agendaPage.screenshot({
+    path: 'test-results/f019-closeout/agenda-desktop.png',
+    fullPage: true,
+  })
+  await agendaPage.setViewportSize({ width: 390, height: 844 })
+  if (!(await agendaPage.locator('body').evaluate((body) => body.scrollWidth <= body.clientWidth)))
+    throw new Error('Agenda mobile overflow.')
+  await agendaPage.screenshot({
+    path: 'test-results/f019-closeout/agenda-mobile.png',
+    fullPage: true,
+  })
+  await staffPage
+    .getByRole('button', { name: 'Review class change: Disposable scheduled class', exact: true })
+    .click()
+  await staffPage
+    .getByLabel('Start time with UTC offset')
+    .fill(new Date(Date.now() + 3 * 86400000).toISOString())
+  await staffPage
+    .getByLabel('End time with UTC offset')
+    .fill(new Date(Date.now() + 3 * 86400000 + 3600000).toISOString())
+  await staffPage
+    .getByLabel(
+      'I checked this audience and time, and confirm this schedule change or cancellation.',
+    )
+    .check()
+  await staffPage.getByRole('button', { name: 'Save rescheduled class', exact: true }).click()
+  await expect(staffPage.getByRole('status')).toHaveText('Class schedule saved.')
+  classRow = await must(
+    await admin.from('class_sessions').select('*').eq('id', classRow.id).single(),
+  )
+  if (classRow.revision !== 2) throw new Error('Rescheduling did not create a revision.')
+  await must(await admin.rpc('process_notification_outbox', { p_limit: 100 }))
+  const changedAlerts = await must(await student.rpc('list_my_notifications', { p_limit: 100 }))
+  if (
+    changedAlerts
+      .filter((row) => row.event_type.startsWith('class_'))
+      .map((row) => row.event_type)
+      .join(',') !== 'class_rescheduled'
+  )
+    throw new Error('Reschedule alert not current.')
+  // A blocked exact-request writer must recheck authority when its lock is released.
+  const blockedKey = randomUUID()
+  const blocker = spawn(
+    'docker',
+    [
+      'exec',
+      '-i',
+      'supabase_db_dexam-platform',
+      'psql',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-At',
+      '-v',
+      'ON_ERROR_STOP=1',
+    ],
+    { stdio: ['pipe', 'pipe', 'pipe'] },
+  )
+  classBlocker = blocker
+  const blockerReady = new Promise((resolve, reject) => {
+    blocker.stdout.on('data', (data) => {
+      if (String(data).includes('CLASS_LOCK_HELD')) resolve()
+    })
+    blocker.on('error', reject)
+  })
+  const blockerDone = new Promise((resolve, reject) =>
+    blocker.on('exit', (code) =>
+      code === 0 ? resolve() : reject(new Error('Class blocker failed.')),
+    ),
+  )
+  blocker.stdin.write(
+    `begin;select pg_advisory_xact_lock(hashtextextended('${blockedKey}',0));select 'CLASS_LOCK_HELD';\n`,
+  )
+  await blockerReady
+  const queued = operator
+    .rpc('save_class_session', {
+      p_session_id: classRow.id,
+      p_offering_id: ids.offering,
+      p_cohort_id: null,
+      p_title: classRow.title,
+      p_starts_at: classRow.starts_at,
+      p_ends_at: classRow.ends_at,
+      p_timezone: 'Asia/Kolkata',
+      p_location: null,
+      p_expected_revision: classRow.revision,
+      p_cancel: false,
+      p_confirmed: true,
+      p_request_key: blockedKey,
+    })
+    .then((result) => result)
+  let waiting = false
+  for (let i = 0; i < 50; i++) {
+    const count = execFileSync(
+      'docker',
+      [
+        'exec',
+        'supabase_db_dexam-platform',
+        'psql',
+        '-U',
+        'postgres',
+        '-d',
+        'postgres',
+        '-At',
+        '-c',
+        "select count(*) from pg_stat_activity where wait_event_type='Lock' and wait_event='advisory'",
+      ],
+      { encoding: 'utf8' },
+    ).trim()
+    if (Number(count) > 0) {
+      waiting = true
+      break
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+  if (!waiting) {
+    blocker.stdin.end('rollback;')
+    await blockerDone
+    throw new Error('Queued save did not reach its lock.')
+  }
+  await must(
+    await admin
+      .from('capability_grants')
+      .update({ revoked_at: new Date().toISOString() })
+      .eq('person_id', ids.operator)
+      .eq('capability_key', 'class.schedule'),
+  )
+  blocker.stdin.end('commit;')
+  await blockerDone
+  const rejected = await queued
+  if (rejected.error?.code !== '42501') throw new Error('Queued save bypassed revoked authority.')
+  await must(
+    await admin
+      .from('capability_grants')
+      .update({ revoked_at: null })
+      .eq('person_id', ids.operator)
+      .eq('capability_key', 'class.schedule'),
+  )
+  await staffPage
+    .getByRole('button', { name: 'Review class change: Disposable scheduled class', exact: true })
+    .click()
+  await staffPage
+    .getByLabel(
+      'I checked this audience and time, and confirm this schedule change or cancellation.',
+    )
+    .check()
+  await staffPage.getByRole('button', { name: 'Cancel this class', exact: true }).click()
+  await expect(staffPage.getByRole('status')).toHaveText('Class cancelled.')
+  await must(await admin.rpc('process_notification_outbox', { p_limit: 100 }))
+  const alerts = await must(await student.rpc('list_my_notifications', { p_limit: 100 }))
+  if (
+    alerts
+      .filter((row) => row.event_type.startsWith('class_'))
+      .map((row) => row.event_type)
+      .join(',') !== 'class_cancelled'
+  )
+    throw new Error('Obsolete schedule alert survived.')
+  console.log(
+    'F021 actual scheduling, student agenda, cancellation/latest alerts, queued-write revocation and responsive acceptance passed.',
+  )
   phase = 'private explicit study checklist'
   const studyPage = await studentContext.newPage()
   await studyPage.goto('http://127.0.0.1:5173/student/study-checklist')
@@ -438,6 +644,8 @@ try {
   if (!(await student.rpc('finalize_submission_attempt', { p_submission_attempt_id: draft })).error)
     throw new Error('Post-closeout finalization accepted.')
   phase = 'own read-only archive and real file retrieval'
+  if ((await must(await student.rpc('list_my_class_agenda'))).length)
+    throw new Error('Closed course agenda remains visible.')
   await studyPage.reload()
   await expect(studyPage.getByText('Read-only archive', { exact: true })).toBeVisible()
   await expect(
@@ -547,6 +755,7 @@ try {
   )
   process.exitCode = 1
 } finally {
+  classBlocker?.kill('SIGTERM')
   if (browser) await browser.close()
   try {
     if (frontend?.pid) process.kill(-frontend.pid, 'SIGTERM')
@@ -577,6 +786,8 @@ try {
       'student_topic_marks',
       'notifications',
       'domain_events',
+      'class_session_revisions',
+      'class_sessions',
       'feedback_revisions',
       'submission_files',
       'submission_attempts',
@@ -603,6 +814,8 @@ try {
       `enrollment_id='${ids.enrollment}'`,
       `recipient_person_id in ('${ids.operator}','${ids.student}')`,
       `actor_person_id in ('${ids.operator}','${ids.student}')`,
+      `session_id in (select id from public.class_sessions where offering_id='${ids.offering}')`,
+      `offering_id='${ids.offering}'`,
       `submission_attempt_id in ('${attempts.join("','") || randomUUID()}')`,
       `submission_attempt_id in ('${attempts.join("','") || randomUUID()}')`,
       `assignment_instance_id in ('${ids.instance}','${ids.otherInstance}')`,

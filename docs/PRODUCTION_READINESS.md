@@ -18,6 +18,8 @@ The owner confirmed on 2026-10-13 that D-029 Option B means local email testing 
 
 ## Other existing release gates
 
+- [ ] Verify and operationally own scheduled class-history cleanup and notification delivery. Session/history retention expires 12 months after the latest scheduled end or cancellation; deletion occurs on the next successful maintenance run. Fictional scheduling grants must not become real staff grants without explicit provisioning and review.
+
 - [ ] Configure and verify scheduled submission/checklist retention cleanup, failures/alerts and accountable ownership before actual student data. Checklist reads expire at 12 months after course end; timely physical deletion requires a successful maintenance run. Fictional local purge tests are not proof of production scheduling.
 
 - [ ] Confirm initial student activation uses exact approved production callbacks, fragment credentials, private handover and credential-safe host/referrer/logging behavior. Previously issued query links cannot have their original exposure undone; allow them to expire or deliberately reissue before real onboarding.
