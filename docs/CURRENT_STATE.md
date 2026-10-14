@@ -4,7 +4,7 @@ Last updated: 2026-10-14
 
 ## Current phase
 
-F024/D-038 Option B is locally verified and independently reviewed: restricted read-only curriculum comparison and aggregate enrolment counts, with no student changes or default preview grants. Actual curriculum migration remains deferred. PR and protected fictional release pending.
+F024/D-038 Option B is accepted through PR #56 (`69ac443`) and protected fictional release `38603078466`: restricted read-only curriculum comparison and aggregate enrolment counts, with no student changes or default preview grants. Actual curriculum migration remains deferred. D-039 next-milestone selection is pending.
 
 F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. F016 is accepted for fictional/local scope through PRs #35–#37 under D-029 Option B, with real email delivery disabled. F017 independently approved student assisted recovery is accepted locally through PR #40 and protected staging release `38461876121` under D-030 Option B; hosted reset execution is disabled. Initial activation-link repair merged through PR #41 and protected release `38463409962` succeeded. D-031 Option A was selected 2026-10-14: retain the existing teacher review queue and defer F018's broader teaching reader. The free staging environment remains fictional-only. `PRODUCTION_READINESS.md` records required real-email, uncertain-mutation reconciliation, and other launch work; local acceptance never approves production or a paid provider.
 
@@ -202,6 +202,8 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
+D-039 presents all next-milestone choices: curriculum-upgrade policy discovery, fictional pilot readiness (recommended), or production-launch planning. Pause expansion until the owner chooses; none authorizes real data, production or spending. F024 is complete for approved fictional scope: 259 app tests, 1040 DB assertions, 63 browser journeys, real SDK/Chromium minimal comparison/unchanged enrolment/revocation acceptance and independent review. Protected release `38603078466` passed migration/advisor/functions/hosted authorization/MFA recovery; public health returned 200. Feature-specific comparison evidence is local, not a claim of hosted granted-account execution.
+
 F021/D-034 B merged PR #49; protected release `38522570468` passed. F022 merged PR #50 (`838251e`) after clean checks and independent review. Protected fictional release `38525635333` passed advisor, real scheduled tick, hosted authorization and MFA recovery checks. Local evidence: 241 app tests, 955 DB assertions, 63 browser journeys and real native Cron acceptance with own fixture/job/log cleanup. D-036 Option A defers advance reminders; no reminder runtime, real data, production or paid services approved.
 
 ## Blockers
@@ -209,5 +211,5 @@ F021/D-034 B merged PR #49; protected release `38522570468` passed. F022 merged 
 - D-036 Option A selected: advance reminders deferred; retain existing approved alerts. No reminder jobs or preferences may be added without a new decision. Production ownership/escalation and Storage cleanup remain gated.
 
 - F019/D-032 B is implemented and released. D-031 A continues to defer the broader teacher workspace.
-- F023/D-037 B accepted through PR #54 (`ef3d12e`) and protected fictional release `38594311834`. Local verification: 255 app tests, 1007 DB assertions, 63 browser journeys and actual SDK/Edge/Chromium file/concurrency/physical-purge acceptance with exact fixture cleanup. Independent review and CI passed; hosted release repeated migration/advisor/function/authorization/MFA/native-tick checks. D-031 A and D-036 A unchanged. D-038 now requires a curriculum-upgrade preview/policy choice; no migration/reporting authority or runtime approved. F022 regressions merged PR #53.
+- F023/D-037 B accepted through PR #54 (`ef3d12e`) and protected fictional release `38594311834`. Local verification: 255 app tests, 1007 DB assertions, 63 browser journeys and actual SDK/Edge/Chromium file/concurrency/physical-purge acceptance with exact fixture cleanup. Independent review and CI passed; hosted release repeated migration/advisor/function/authorization/MFA/native-tick checks. D-031 A and D-036 A unchanged. D-038 B's read-only preview is now F024; actual curriculum migration remains deferred. F022 regressions merged PR #53.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.
