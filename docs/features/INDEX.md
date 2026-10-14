@@ -18,5 +18,6 @@
 - F016 Employee invitation and password recovery — fictional/local scope accepted through PRs #35–#37 under D-029 Option B; real delivery/reconciliation remain mandatory production gates
 - F017 Student assisted account recovery — local implementation verified and merged through PR #40 under D-030 Option B; independent approval required for every reset, hosted execution disabled
 - F018 Teacher teaching workspace — deferred under D-031 Option A selected 2026-10-14; retain existing review queue without new teacher reading authority
+- F019 Enrolment closeout and student work history — draft only; D-032 required before new lifecycle/access behavior
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
