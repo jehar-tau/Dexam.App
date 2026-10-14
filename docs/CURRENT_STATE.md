@@ -200,9 +200,9 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-D-031 Option A remains selected: keep the existing teacher review queue unchanged; F018/DW-010 stays deferred. F019/D-032 now proposes the next missing enrolment closeout/access boundary: A (immediate academic lock with download opportunity before closeout), B (recommended bounded private finalized-work/published-feedback archive for 12 months after manual course end), or C (broader lifecycle discovery). All options preserve Member ID/other enrolments and require no extra vendor spending for fictional/local work. Await the owner choice before adding lifecycle or read-access behavior; no implementation is authorized by the draft. Existing authentication/activation acceptance is unchanged: PR #41 passed 226 application tests, 824 database assertions and 58 browser journeys, and protected staging release `38463409962` succeeded. Latest D-031 documentation release `38509604032` also passed. Hosted employee email/student reset execution and production remain gated.
+D-032 Option B approved 2026-10-14. F019 implements scoped manual completion/withdrawal and a private finalized-work/published-feedback archive until 12 months after course end, preserving Member ID, account and other courses. Local acceptance passed 232 application tests, 862 database assertions and actual SDK/Chromium closeout/upload serialization, late-write denial, private storage download, membership suspension and responsive UI; independent security review found no unresolved blocker after the retention-purge fix. Regression/PR checks remain required before merge. D-031 Option A remains selected; F018/DW-010 stays deferred. Hosted email/student reset execution, real personal data, paid services and production remain gated.
 
 ## Blockers
 
-- D-032 requires the owner's course-closeout/past-work-access choice before F019 implementation. D-031 A continues to defer the broader teacher workspace.
+- D-032 B is approved; no owner decision blocks F019 implementation. D-031 A continues to defer the broader teacher workspace.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.

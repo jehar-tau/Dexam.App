@@ -64,7 +64,9 @@ function EnrollmentCard({
           <dd>
             {enrollment.status === 'active'
               ? 'Learning access is available'
-              : 'Contact Dexam support'}
+              : ['completed', 'withdrawn'].includes(enrollment.status)
+                ? 'Course ended; retained finalized work is read-only in your archive'
+                : 'Contact Dexam support'}
           </dd>
         </div>
       </dl>
@@ -77,6 +79,9 @@ function EnrollmentCard({
             Open assignments <span aria-hidden="true">→</span>
           </Link>
         </div>
+      ) : null}
+      {['completed', 'withdrawn'].includes(enrollment.status) ? (
+        <Link to="/student/archive">Open private work archive</Link>
       ) : null}
     </Card>
   )

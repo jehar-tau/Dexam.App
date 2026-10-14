@@ -40,4 +40,4 @@ D-030 — Student assisted recovery — Option B approved 2026-10-14 — `ADR-03
 
 D-031 — First teacher teaching workspace — Option A selected 2026-10-14: existing review queue only; broader workspace deferred — `ADR-031-teacher-workspace-scope.md`.
 
-D-032 — Enrolment closeout and past-work access — Awaiting owner decision — `ADR-032-enrolment-closeout-and-history.md`.
+D-032 — Enrolment closeout and past-work access — Option B approved 2026-10-14 — `ADR-032-enrolment-closeout-and-history.md`.
