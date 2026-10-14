@@ -1,6 +1,8 @@
-# DECISION REQUIRED — D-038: Curriculum upgrade preview
+# D-038: Curriculum upgrade preview
 
-Status: Awaiting owner selection; no version migration runtime approved
+Status: Option B approved by owner, 2026-10-14; fictional/local read-only preview only
+
+Approval does not authorize actual migration, student notices, private progress inspection, Teacher authority, real data or production.
 
 ## Question
 

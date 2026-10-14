@@ -23,5 +23,6 @@
 - F021 Class schedule foundation — D-034 B implemented through PR #49; protected fictional release `38522570468` passed
 - F022 Fictional in-app worker operations — PR #50 merged; protected release `38525635333` verified a real scheduled tick and existing authorization/MFA checks
 - F023 Private lesson files — D-037 B accepted through PR #54 and protected fictional release `38594311834`; production remains gated
+- F024 Curriculum impact preview — D-038 B implemented and independently reviewed locally; restricted read-only comparison, no student migration or default grants
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
