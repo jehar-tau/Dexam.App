@@ -5,6 +5,7 @@ import { renderApp } from '../test/render'
 import { NotificationCentrePage } from './NotificationCentrePage'
 
 const mocks = vi.hoisted(() => ({ getNotifications: vi.fn() }))
+vi.mock('../features/auth/AuthContext', () => ({ useAuth: () => ({ session: null }) }))
 
 vi.mock('../features/notifications/notifications', async (importOriginal) => {
   const original = await importOriginal<typeof import('../features/notifications/notifications')>()

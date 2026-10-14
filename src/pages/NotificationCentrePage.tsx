@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
 
 import { Badge, Button, Callout, EmptyState } from '../components'
+import { useAuth } from '../features/auth/AuthContext'
 import {
   getNotifications,
   getPreviewNotifications,
@@ -22,6 +23,7 @@ function notificationTime(value: string) {
 }
 
 export function NotificationCentrePage() {
+  const { session } = useAuth()
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
@@ -39,12 +41,15 @@ export function NotificationCentrePage() {
     (audience !== 'student'
       ? import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true'
       : import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true')
-  const queryKey = ['notifications', audience, previewEnabled]
+  const queryKey = ['notifications', audience, previewEnabled, session?.user.id]
   const notificationsQuery = useQuery({
     queryKey,
     queryFn: () =>
       previewEnabled ? Promise.resolve(getPreviewNotifications(audience)) : getNotifications(),
     retry: false,
+    refetchInterval: previewEnabled ? false : 60_000,
+    staleTime: 0,
+    gcTime: 0,
   })
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
   const [error, setError] = useState('')
@@ -61,7 +66,7 @@ export function NotificationCentrePage() {
     const updated = updater(current)
     queryClient.setQueryData(queryKey, updated)
     queryClient.setQueryData(
-      ['notification-unread-count', audience, previewEnabled],
+      ['notification-unread-count', audience, previewEnabled, session?.user.id],
       updated.filter((notification) => !notification.readAt).length,
     )
   }
@@ -70,7 +75,7 @@ export function NotificationCentrePage() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey }),
       queryClient.invalidateQueries({
-        queryKey: ['notification-unread-count', audience, previewEnabled],
+        queryKey: ['notification-unread-count', audience, previewEnabled, session?.user.id],
       }),
     ])
   }

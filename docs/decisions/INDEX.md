@@ -45,3 +45,5 @@ D-032 — Enrolment closeout and past-work access — Option B approved 2026-10-
 D-033 — Student learning progress — Option B approved 2026-10-14 — `ADR-033-student-learning-progress.md`.
 
 D-034 — Class schedule foundation — Option B approved 2026-10-14 — `ADR-034-class-schedule-foundation.md`.
+
+D-035 — Native fictional in-app worker — engineering follow-up within approved in-app scope — `ADR-035-fictional-native-inapp-worker.md`.
