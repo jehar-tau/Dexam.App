@@ -17,6 +17,6 @@
 - F015 Staff MFA and session security — fictional staging accepted through PR #33 and protected run `38422519675` under D-027/D-028 Option B
 - F016 Employee invitation and password recovery — fictional/local scope accepted through PRs #35–#37 under D-029 Option B; real delivery/reconciliation remain mandatory production gates
 - F017 Student assisted account recovery — local implementation verified and merged through PR #40 under D-030 Option B; independent approval required for every reset, hosted execution disabled
-- F018 Teacher teaching workspace — draft only, D-031 required; no new teacher reading authority implemented
+- F018 Teacher teaching workspace — deferred under D-031 Option A selected 2026-10-14; retain existing review queue without new teacher reading authority
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
