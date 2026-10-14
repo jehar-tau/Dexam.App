@@ -20,6 +20,8 @@ import { EmployeeInvitationsPage } from '../pages/EmployeeInvitationsPage'
 import { EmployeePasswordRecoveryPage } from '../pages/EmployeePasswordRecoveryPage'
 import { StudentPasswordRecoveryPage } from '../pages/StudentPasswordRecoveryPage'
 import { StudentRecoveryAdminPage } from '../pages/StudentRecoveryAdminPage'
+import { EnrollmentCloseoutPage } from '../pages/EnrollmentCloseoutPage'
+import { StudentWorkArchivePage } from '../pages/StudentWorkArchivePage'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
@@ -38,6 +40,22 @@ export const router = createBrowserRouter([
       { path: 'activate', element: <StudentActivationPage /> },
       { path: 'sign-in', element: <StudentSignInPage /> },
       { path: 'student/recover', element: <StudentPasswordRecoveryPage /> },
+      {
+        path: 'student/archive',
+        element: (
+          <StudentAccessBoundary allowPreview={false}>
+            <StudentWorkArchivePage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/enrolment-closeout',
+        element: (
+          <StaffAccessBoundary allowPreview={false}>
+            <EnrollmentCloseoutPage />
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'staff/student-recovery',
         element: (

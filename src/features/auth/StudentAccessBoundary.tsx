@@ -7,11 +7,15 @@ import { useAuth } from './AuthContext'
 import { getStudentAccess } from './studentAuth'
 import styles from './StaffAccessBoundary.module.css'
 
-export function StudentAccessBoundary({ children }: PropsWithChildren) {
+export function StudentAccessBoundary({
+  children,
+  allowPreview = true,
+}: PropsWithChildren<{ allowPreview?: boolean }>) {
   const location = useLocation()
   const { configured, initializing, session, signOut } = useAuth()
   const [signOutError, setSignOutError] = useState('')
   const previewEnabled =
+    allowPreview &&
     import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true' &&
     new URLSearchParams(location.search).get('preview') === '1'
 

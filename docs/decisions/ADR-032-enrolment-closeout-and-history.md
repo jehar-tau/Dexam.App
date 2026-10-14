@@ -1,6 +1,6 @@
 # Decision required — D-032: Enrolment closeout and past-work access
 
-Status: Awaiting owner decision — no implementation authorized
+Status: Approved — Option B, 2026-10-14
 Date: 2026-10-14
 Risk: Red — student access, historical work and retention
 
@@ -55,4 +55,6 @@ Choose B. It implements the already-approved download opportunity without retain
 
 Current scoped `enrollment.operate` authority, an explicit completion/withdrawal choice, symbolic reason and deliberate confirmation; backend end time is now (no backdating), immutable history/audit and concurrent-state/replay protection. No account deletion, Member ID change, role/membership grant, other-enrolment mutation, silent outstanding-token reuse or automatic feedback publication. An ended enrolment cannot issue new student credentials or academic access. Detailed specification and tests follow the selected option before implementation acceptance.
 
-No D-032 answer is recorded. Only discovery/documentation may proceed while the choice is pending.
+## Owner approval
+
+The owner approved Option B on 2026-10-14. Implement manual active-enrolment completion/withdrawal and the bounded private finalized-work/published-feedback archive using fictional/local data and the existing stack. Preserve D-031 A and all production/provider gates. A/C remain alternatives, not authorized scope. No D-032 answer is pending.

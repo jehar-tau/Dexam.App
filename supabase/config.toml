@@ -477,6 +477,10 @@ verify_jwt = false
 [functions.student-reset-password]
 enabled = true
 verify_jwt = false
+
+[functions.student-work-archive-file]
+enabled = true
+verify_jwt = false
 # Directory under `supabase/` where declarative files are written.
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting. When omitted, SQL is
