@@ -200,7 +200,7 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-D-032 Option B approved 2026-10-14. F019 implements scoped manual completion/withdrawal and a private finalized-work/published-feedback archive until 12 months after course end, preserving Member ID, account and other courses. Local acceptance passed 232 application tests, 862 database assertions and actual SDK/Chromium closeout/upload serialization, late-write denial, private storage download, membership suspension and responsive UI; independent security review found no unresolved blocker after the retention-purge fix. Regression/PR checks remain required before merge. D-031 Option A remains selected; F018/DW-010 stays deferred. Hosted email/student reset execution, real personal data, paid services and production remain gated.
+F019 / D-032 B merged through PR #45 (`31bb4c4`) after clean CI and independent security review. Verification: 232 application tests, 862 database assertions, 60 browser regression journeys and actual SDK/Chromium closeout/upload serialization, late-write denial, private downloads, suspension and responsive UI. Fictional fixtures removed. Protected fictional-stage release is being verified; production remains prohibited. D-031 A keeps F018/DW-010 deferred. F020/D-033 proposes A (defer progress), B (recommended private student-controlled self-reported topic checklist, not academic achievement) or C (teacher-verified progress discovery). Await owner choice before storing progress or adding visibility. Hosted email/student reset execution, real personal data and paid services remain gated.
 
 ## Blockers
 
