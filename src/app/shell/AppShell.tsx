@@ -193,6 +193,14 @@ export function AppShell() {
           {session ? (
             <NavLink
               className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
+              to="/staff/curriculum-impact"
+            >
+              Curriculum preview
+            </NavLink>
+          ) : null}
+          {session ? (
+            <NavLink
+              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
               to="/staff/security"
             >
               Staff security

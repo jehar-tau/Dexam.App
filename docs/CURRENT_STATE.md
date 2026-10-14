@@ -4,6 +4,8 @@ Last updated: 2026-10-14
 
 ## Current phase
 
+F024/D-038 Option B is locally verified and independently reviewed: restricted read-only curriculum comparison and aggregate enrolment counts, with no student changes or default preview grants. Actual curriculum migration remains deferred. PR and protected fictional release pending.
+
 F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. F016 is accepted for fictional/local scope through PRs #35–#37 under D-029 Option B, with real email delivery disabled. F017 independently approved student assisted recovery is accepted locally through PR #40 and protected staging release `38461876121` under D-030 Option B; hosted reset execution is disabled. Initial activation-link repair merged through PR #41 and protected release `38463409962` succeeded. D-031 Option A was selected 2026-10-14: retain the existing teacher review queue and defer F018's broader teaching reader. The free staging environment remains fictional-only. `PRODUCTION_READINESS.md` records required real-email, uncertain-mutation reconciliation, and other launch work; local acceptance never approves production or a paid provider.
 
 ## Completed

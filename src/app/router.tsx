@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import { AppShell } from './shell/AppShell'
+import { CurriculumImpactPage } from '../pages/CurriculumImpactPage'
 import { StaffAccessBoundary } from '../features/auth/StaffAccessBoundary'
 import { StudentAccessBoundary } from '../features/auth/StudentAccessBoundary'
 import { FoundationPage } from '../pages/FoundationPage'
@@ -38,6 +39,14 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppShell />,
     children: [
+      {
+        path: 'staff/curriculum-impact',
+        element: (
+          <StaffAccessBoundary allowPreview={false}>
+            <CurriculumImpactPage />
+          </StaffAccessBoundary>
+        ),
+      },
       { index: true, element: <FoundationPage /> },
       { path: 'activate', element: <StudentActivationPage /> },
       { path: 'sign-in', element: <StudentSignInPage /> },

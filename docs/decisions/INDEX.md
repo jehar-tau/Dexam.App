@@ -52,4 +52,4 @@ D-036 — Advance class reminders — Option A selected 2026-10-14; deferred, ex
 
 D-037 — Private lesson materials — Option B approved 2026-10-14; fictional/local only — `ADR-037-private-lesson-materials.md`.
 
-D-038 — Existing-student curriculum upgrades — awaiting selection — `ADR-038-curriculum-upgrade-scope.md`.
+D-038 — Existing-student curriculum upgrades — Option B approved: restricted read-only impact preview; actual migrations deferred — `ADR-038-curriculum-upgrade-scope.md`.

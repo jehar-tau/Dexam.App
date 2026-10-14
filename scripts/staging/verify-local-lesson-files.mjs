@@ -291,6 +291,120 @@ try {
   })
   if (!(await editor.rpc('remove_lesson_file', { p_lesson_id: lesson, p_file_id: asset })).error)
     throw new Error('Published mutation')
+  phase = 'read-only curriculum impact preview'
+  await must(
+    await admin.from('role_assignments').insert({
+      person_id: personIds[0],
+      role_key: 'ordinary_admin',
+      scope_type: 'offering',
+      scope_id: offering,
+      grant_reason: 'Disposable scoped preview administration',
+    }),
+  )
+  await must(
+    await admin.from('capability_grants').insert(
+      ['content.publish', 'enrollment.operate', 'curriculum.upgrade_preview'].map(
+        (capability_key) => ({
+          person_id: personIds[0],
+          capability_key,
+          required_role_key: 'ordinary_admin',
+          scope_type: 'offering',
+          scope_id: offering,
+          grant_reason: 'Disposable explicit preview authority',
+        }),
+      ),
+    ),
+  )
+  const targetVersion = await must(
+    await editor.rpc('clone_curriculum_version', {
+      p_source_curriculum_version_id: curriculum,
+      p_title: 'Disposable comparison version',
+    }),
+  )
+  const targetLesson = sql(
+    `select id from public.curriculum_lessons where public.lesson_version_id(id)='${targetVersion}';`,
+  )
+  await must(
+    await editor.rpc('remove_lesson_file', { p_lesson_id: targetLesson, p_file_id: asset }),
+  )
+  await must(
+    await admin
+      .from('curriculum_lessons')
+      .update({ body_markdown: 'Private changed lesson body never returned by preview.' })
+      .eq('id', targetLesson),
+  )
+  await must(
+    await editor.rpc('publish_curriculum_version', {
+      p_curriculum_version_id: targetVersion,
+      p_release_note: 'Disposable preview publication',
+    }),
+  )
+  const beforePreview = JSON.stringify(
+    await must(await admin.from('enrollments').select('*').eq('id', enrollment)),
+  )
+  const impact = await must(
+    await editor.rpc('preview_curriculum_upgrade', {
+      p_offering_id: offering,
+      p_source_id: curriculum,
+      p_target_id: targetVersion,
+    }),
+  )
+  if (impact.affected.total !== 1 || impact.affected.direct !== 1 || impact.counts.changed !== 2)
+    throw new Error('Impact totals incorrect')
+  const serialized = JSON.stringify(impact)
+  if (
+    personIds.some((person) => serialized.includes(person)) ||
+    serialized.includes(asset) ||
+    serialized.includes('Private changed lesson body')
+  )
+    throw new Error('Impact private data exposed')
+  if (
+    JSON.stringify(await must(await admin.from('enrollments').select('*').eq('id', enrollment))) !==
+    beforePreview
+  )
+    throw new Error('Preview changed enrolment')
+  const impactPage = await staffContext.newPage()
+  await impactPage.goto('http://127.0.0.1:5173/staff/curriculum-impact')
+  await impactPage.getByLabel('Offering', { exact: true }).selectOption(offering)
+  await impactPage.getByLabel('Current version', { exact: true }).selectOption(curriculum)
+  await impactPage.getByLabel('Compare with version', { exact: true }).selectOption(targetVersion)
+  await impactPage.getByRole('button', { name: 'Compare versions', exact: true }).click()
+  await expect(impactPage.getByRole('heading', { name: 'Read-only impact' })).toBeVisible()
+  await expect(impactPage.getByText('No migration action is available.')).toBeVisible()
+  await impactPage.screenshot({
+    path: 'test-results/f024-curriculum-impact/desktop.png',
+    fullPage: true,
+  })
+  await impactPage.setViewportSize({ width: 390, height: 844 })
+  if (!(await impactPage.locator('body').evaluate((body) => body.scrollWidth <= body.clientWidth)))
+    throw new Error('Impact mobile overflow')
+  await impactPage.screenshot({
+    path: 'test-results/f024-curriculum-impact/mobile.png',
+    fullPage: true,
+  })
+  await must(
+    await admin
+      .from('capability_grants')
+      .update({ revoked_at: new Date().toISOString() })
+      .eq('person_id', personIds[0])
+      .eq('capability_key', 'curriculum.upgrade_preview'),
+  )
+  if (
+    !(
+      await editor.rpc('preview_curriculum_upgrade', {
+        p_offering_id: offering,
+        p_source_id: curriculum,
+        p_target_id: targetVersion,
+      })
+    ).error
+  )
+    throw new Error('Revoked preview available')
+  await impactPage.reload()
+  await expect(impactPage.getByText(/No offering is available/)).toBeVisible()
+  await expect(impactPage.getByRole('heading', { name: 'Read-only impact' })).toHaveCount(0)
+  console.log(
+    'F024 actual SDK/Chromium preview passed: explicit scoped authority, published-version differences, minimal aggregates, unchanged enrolment, revocation denial and responsive UI.',
+  )
   phase = 'retention serialization and current access'
   await must(
     await admin
@@ -399,7 +513,7 @@ try {
   )
 } catch (error) {
   console.error('Failure category:', error instanceof Error ? error.name : 'unknown')
-  const ownPage = browser?.contexts()[0]?.pages()[0]
+  const ownPage = browser?.contexts()[0]?.pages().at(-1)
   if (ownPage)
     await ownPage.screenshot({ path: 'test-results/f023-lesson-files/failure.png', fullPage: true })
   console.error(
