@@ -50,6 +50,9 @@ export function StudentWorkArchivePage() {
           Lessons, reference materials and new submissions are not part of this archive.
         </p>
         <Link to="/student">Back to student workspace</Link>
+        <p>
+          <Link to="/student/study-checklist">View your private study checklist</Link>
+        </p>
       </div>
       <div>
         {archive.isPending ? (

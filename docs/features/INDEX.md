@@ -19,6 +19,6 @@
 - F017 Student assisted account recovery — local implementation verified and merged through PR #40 under D-030 Option B; independent approval required for every reset, hosted execution disabled
 - F018 Teacher teaching workspace — deferred under D-031 Option A selected 2026-10-14; retain existing review queue without new teacher reading authority
 - F019 Enrolment closeout and student work history — D-032 B approved; implemented and merged through PR #45
-- F020 Student learning progress — draft only; D-033 required before progress records or visibility changes
+- F020 Student learning progress — D-033 B approved; private topic checklist implemented, verification/merge in progress
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

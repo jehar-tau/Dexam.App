@@ -42,4 +42,4 @@ D-031 — First teacher teaching workspace — Option A selected 2026-10-14: exi
 
 D-032 — Enrolment closeout and past-work access — Option B approved 2026-10-14 — `ADR-032-enrolment-closeout-and-history.md`.
 
-D-033 — Student learning progress — Awaiting owner decision — `ADR-033-student-learning-progress.md`.
+D-033 — Student learning progress — Option B approved 2026-10-14 — `ADR-033-student-learning-progress.md`.
