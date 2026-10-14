@@ -21,6 +21,6 @@
 - F019 Enrolment closeout and student work history — D-032 B approved; implemented and merged through PR #45
 - F020 Student learning progress — D-033 B approved; private checklist implemented and merged through PR #47
 - F021 Class schedule foundation — D-034 B implemented through PR #49; protected fictional release `38522570468` passed
-- F022 Fictional in-app worker operations — native bounded delivery and private fresh-health monitoring; local verification active
+- F022 Fictional in-app worker operations — PR #50 merged; protected release `38525635333` verified a real scheduled tick and existing authorization/MFA checks
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
