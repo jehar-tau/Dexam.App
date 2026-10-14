@@ -223,6 +223,37 @@ async function bootstrap() {
     },
   ])
 
+  const scheduler = accounts.find((account) => account.key === 'enrolment_operator')
+  if (!scheduler) throw new Error('Fictional scheduler is absent.')
+  await upsertRows('role_assignments', [
+    {
+      id: '10000000-0000-4000-8000-000000001001',
+      person_id: scheduler.personId,
+      role_key: 'ordinary_admin',
+      scope_type: 'offering',
+      scope_id: academicFixture.offeringId,
+      starts_at: fixedTimestamp,
+      ends_at: null,
+      revoked_at: null,
+      granted_by_person_id: elevatedAdmin.personId,
+      grant_reason: 'D034 fictional offering-scoped scheduler',
+    },
+  ])
+  await upsertRows('capability_grants', [
+    {
+      id: '10000000-0000-4000-8000-000000001002',
+      person_id: scheduler.personId,
+      capability_key: 'class.schedule',
+      required_role_key: 'ordinary_admin',
+      scope_type: 'offering',
+      scope_id: academicFixture.offeringId,
+      starts_at: fixedTimestamp,
+      ends_at: null,
+      revoked_at: null,
+      granted_by_person_id: elevatedAdmin.personId,
+      grant_reason: 'D034 fictional offering-scoped scheduler',
+    },
+  ])
   const people = await requireSuccess(
     'Verifying synthetic people',
     admin

@@ -20,6 +20,6 @@
 - F018 Teacher teaching workspace — deferred under D-031 Option A selected 2026-10-14; retain existing review queue without new teacher reading authority
 - F019 Enrolment closeout and student work history — D-032 B approved; implemented and merged through PR #45
 - F020 Student learning progress — D-033 B approved; private checklist implemented and merged through PR #47
-- F021 Class schedule foundation — draft only; D-034 required before scheduling or class alerts
+- F021 Class schedule foundation — D-034 B approved; implementation started, no scheduling runtime merged yet
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

@@ -34,6 +34,7 @@ select is(
     select count(*)::integer
     from public.notification_templates
     where active and audience in ('student', 'teacher')
+      and event_type in ('assignment_published','submission_ready_for_review','feedback_available','correction_requested')
   ),
   4,
   'four approved first-milestone templates are active'

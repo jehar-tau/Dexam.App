@@ -38,8 +38,12 @@ Deno.serve(async (request) => {
     return json(503, { message: 'Notification retention cleanup could not complete.' })
   }
 
+  const classCleanup = await admin.rpc('purge_expired_class_sessions', { p_limit: 100 })
+  if (classCleanup.error)
+    return json(503, { message: 'Schedule retention cleanup could not complete.' })
   return json(200, {
     processing: processing.data?.[0] ?? { processed_count: 0, failed_count: 0 },
     purged: cleanup.data ?? 0,
+    classesPurged: classCleanup.data ?? 0,
   })
 })

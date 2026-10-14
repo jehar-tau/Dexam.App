@@ -1,6 +1,6 @@
 # DECISION REQUIRED — D-034
 
-Status: Awaiting owner decision; no scheduling implementation authorized
+Status: Option B approved 2026-10-14
 
 ## Question
 
@@ -33,3 +33,7 @@ B addresses the requested class-change use case using the existing in-app founda
 ## What can continue while pending
 
 Finish F020 checks/release and low-risk engineering verification. Do not add scheduling records, permissions or class notifications before the owner chooses. No option approves real personal data, production, paid services or another vendor.
+
+## Approved decision
+
+The owner approved Option B on 2026-10-14. Implement only scoped Ordinary Admin one-off scheduling, own-active-course/cohort student agenda and generic in-app revision-aware alerts, with the stated session/history retention. No attendance, recurrence, reminder scheduling, external delivery, teacher authority, production or paid services are approved. F020 protected fictional staging release `38517869882` passed before this slice.

@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-import { accounts, isAllowedSupabaseUrl } from './synthetic-fixtures.mjs'
+import { accounts, academicFixture, isAllowedSupabaseUrl } from './synthetic-fixtures.mjs'
 
 const supabaseUrl = process.env.STAGING_SUPABASE_URL
 const publicKey = process.env.STAGING_PUBLIC_KEY
@@ -111,6 +111,13 @@ async function verifyEmployee(account) {
       `${account.label} ${capability} boundary`,
     )
   }
+  await verifyRpc(
+    client,
+    'current_person_can_schedule_classes',
+    { p_offering_id: academicFixture.offeringId },
+    account.key === 'enrolment_operator',
+    `${account.label} explicit scheduling boundary`,
+  )
   await client.auth.signOut({ scope: 'local' })
   console.log(`Verified ${account.label} boundary.`)
 }

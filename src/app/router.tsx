@@ -23,6 +23,7 @@ import { StudentRecoveryAdminPage } from '../pages/StudentRecoveryAdminPage'
 import { EnrollmentCloseoutPage } from '../pages/EnrollmentCloseoutPage'
 import { StudentWorkArchivePage } from '../pages/StudentWorkArchivePage'
 import { StudentStudyChecklistPage } from '../pages/StudentStudyChecklistPage'
+import { ClassSchedulingPage, StudentAgendaPage } from '../pages/ClassSchedulePages'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
@@ -41,6 +42,22 @@ export const router = createBrowserRouter([
       { path: 'activate', element: <StudentActivationPage /> },
       { path: 'sign-in', element: <StudentSignInPage /> },
       { path: 'student/recover', element: <StudentPasswordRecoveryPage /> },
+      {
+        path: 'student/agenda',
+        element: (
+          <StudentAccessBoundary allowPreview={false}>
+            <StudentAgendaPage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/classes',
+        element: (
+          <StaffAccessBoundary allowPreview={false}>
+            <ClassSchedulingPage />
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'student/study-checklist',
         element: (

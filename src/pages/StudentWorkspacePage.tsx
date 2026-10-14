@@ -135,7 +135,12 @@ export function StudentWorkspacePage() {
             Your learning journey, enrolments, and future Dexam services will live here.
           </p>
           {!previewEnabled ? (
-            <Link to="/student/study-checklist">Open your private study checklist</Link>
+            <>
+              <Link to="/student/study-checklist">Open your private study checklist</Link>
+              <p>
+                <Link to="/student/agenda">View your class agenda</Link>
+              </p>
+            </>
           ) : null}
         </div>
         <div className={styles.identity} aria-label="Dexam identity">
