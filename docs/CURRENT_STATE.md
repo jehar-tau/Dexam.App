@@ -200,11 +200,11 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-F021/D-034 B merged through PR #49 (`4981a01`); protected fictional staging release `38522570468` passed. F022 native in-app delivery is locally accepted: 241 app tests, 955 DB assertions, 63 Chromium journeys and a real scheduled Cron tick with exact fixture/job/log cleanup. Independent security review cleared the fresh-health guard. PR/CI and protected hosted tick verification remain before release acceptance. No production, external delivery or new reminder behavior is approved.
+F021/D-034 B merged PR #49; protected release `38522570468` passed. F022 merged PR #50 (`838251e`) after clean checks and independent review. Protected fictional release `38525635333` passed advisor, real scheduled tick, hosted authorization and MFA recovery checks. Local evidence: 241 app tests, 955 DB assertions, 63 browser journeys and real native Cron acceptance with own fixture/job/log cleanup. Next gate D-036 selects advance reminder behavior; no reminder runtime, real data, production or paid services approved.
 
 ## Blockers
 
-- No owner decision blocks F022 fictional worker delivery; complete PR checks, merge and protected scheduled-tick verification. Production operational ownership/escalation and Storage cleanup remain gated.
+- D-036 awaits owner choice before any advance reminder implementation. Current approved alerts are operational; production ownership/escalation and Storage cleanup remain gated.
 
 - D-032 B is approved; no owner decision blocks F019 implementation. D-031 A continues to defer the broader teacher workspace.
 - F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates.

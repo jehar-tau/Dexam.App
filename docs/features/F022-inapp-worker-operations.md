@@ -1,7 +1,7 @@
 # F022 — Fictional in-app worker operations
 
-Status: Implementation active — operational follow-up within D-002/D-021/D-034 approved boundaries
-Local acceptance: 241 application tests, 955 database assertions, 63 browser journeys and an actual native scheduled tick (no manual invocation). Exact own job, disposable markers and test logs were removed; prior health restored. Independent security review cleared. A success older than three minutes is unhealthy, including after a statement timeout leaves the previous row unchanged. PR/hosted acceptance remains.
+Status: Accepted fictional scope through PR #50 (`838251e`) and protected release `38525635333`; real scheduled tick verified
+Local acceptance: 241 application tests, 955 database assertions, 63 browser journeys and an actual native scheduled tick (no manual invocation). Exact own job, disposable markers and test logs removed; prior health restored. Independent security review cleared. A success older than three minutes is unhealthy, including after a statement timeout leaves the previous row unchanged. Protected release `38525635333` observed a new healthy scheduled tick and passed existing hosted authorization/MFA checks.
 Risk: Red — service-only background processing and maintenance
 
 ## Purpose and scope
