@@ -4,7 +4,7 @@ Last updated: 2026-10-14
 
 ## Current phase
 
-F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. F016 is accepted for fictional/local scope through PRs #35–#37 under D-029 Option B, with real email delivery disabled. F017 independently approved student assisted recovery is accepted locally through PR #40 and protected staging release `38461876121` under D-030 Option B; hosted reset execution is disabled. Initial activation-link repair merged through PR #41. D-031/F018 teacher workspace scope awaits an owner decision. The free staging environment remains fictional-only. `PRODUCTION_READINESS.md` records required real-email, uncertain-mutation reconciliation, and other launch work; local acceptance never approves production or a paid provider.
+F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 staff MFA/session security is accepted for fictional staging through PR #33 and protected deployment run `38422519675` under approved D-027/D-028 Option B. F016 is accepted for fictional/local scope through PRs #35–#37 under D-029 Option B, with real email delivery disabled. F017 independently approved student assisted recovery is accepted locally through PR #40 and protected staging release `38461876121` under D-030 Option B; hosted reset execution is disabled. Initial activation-link repair merged through PR #41 and protected release `38463409962` succeeded. D-031 Option A was selected 2026-10-14: retain the existing teacher review queue and defer F018's broader teaching reader. The free staging environment remains fictional-only. `PRODUCTION_READINESS.md` records required real-email, uncertain-mutation reconciliation, and other launch work; local acceptance never approves production or a paid provider.
 
 ## Completed
 
@@ -182,7 +182,7 @@ F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 st
 The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps are summarized here only for handoff convenience.
 
 - Remaining enrolment transitions beyond activation-pack issuance
-- Student account recovery workflow
+- Optional verified-contact student self-service recovery and production assisted-recovery activation/reconciliation (F017 local assisted recovery is complete)
 - Two-person approval workflow and elevated administration interface
 - Porting the remaining shared primitives as a feature needs them (navigation, overlays, and tables)
 - Later F008 external-channel, consent, preference, quiet-hour, and digest decisions
@@ -200,8 +200,8 @@ The complete, maintained register is `DEFERRED_WORK.md`. Immediate known gaps ar
 
 ## Next safe action
 
-Initial activation-link repair merged through PR #41 at `468071e` after clean checks and independent security review (226 application tests, 824 database assertions, 58 browser journeys, actual provider/Chromium fragment and legacy-query activation/replay/cleanup, desktop/mobile visual QA). Verify its protected fictional staging release. D-031 now requires the owner to select A (review queue only), B (recommended read-only assigned-offering curriculum/assignment reader), or C (broader roster/schedule/attendance discovery). All options are documented with costs/impact in ADR-031; do not implement F018 until answered. Hosted employee email and student reset execution remain disabled; uncertain mutation expiry never unlocks execution. The approved Storybook catalog is live at `https://jehar-tau.github.io/Dexam.App/`.
+Initial activation-link repair merged through PR #41 at `468071e` after clean checks and independent security review (226 application tests, 824 database assertions, 58 browser journeys, actual provider/Chromium fragment and legacy-query activation/replay/cleanup, desktop/mobile visual QA). Protected fictional staging release `38463409962` succeeded at source `62e88cb`. D-031 Option A is selected: keep the existing teacher review queue unchanged and retain F018/DW-010 for a later explicit scope approval. No teacher-workspace implementation remains authorized or pending for this choice. Future product slices must follow their own feature decisions; do not treat the earlier B recommendation as approval. Hosted employee email and student reset execution remain disabled; uncertain mutation expiry never unlocks execution. The approved Storybook catalog is live at `https://jehar-tau.github.io/Dexam.App/`.
 
 ## Blockers
 
-- D-029 is approved for fictional/local F016 implementation. Student recovery, real email delivery, broader elevated actions, and production security/incident ownership remain separate gates; F015 MFA and all-device invalidation are accepted for fictional staging.
+- F016/F017 local recovery is accepted. Real email delivery, hosted student-recovery activation, uncertainty reconciliation, broader elevated actions and production security/incident ownership remain separate gates. D-031 A defers the broader teacher workspace; no unanswered D-031 decision remains.

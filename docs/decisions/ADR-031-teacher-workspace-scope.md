@@ -1,6 +1,6 @@
-# Decision required — D-031: First teacher teaching workspace
+# D-031: First teacher teaching workspace
 
-Status: Awaiting owner decision — no implementation authorized
+Status: Approved — Option A (review queue only; broader workspace deferred)
 Date: 2026-10-14
 Risk: Yellow — teacher curriculum and assignment-reading authority
 
@@ -36,8 +36,12 @@ Extend discovery to cohort rosters, class scheduling/cancellation and attendance
 - Impact: More complete classroom operations, but larger personal-data and business-rule decisions before development.
 - Reversibility: Modules can be staged later; collected real attendance/personal data cannot be recalled, and none is authorized here.
 
-## Recommendation and gate
+## Original recommendation and gate
 
-Choose B to make the existing coursework and review tools useful together without expanding into student rosters or class operations prematurely. The owner must approve the exact read-only teacher access boundary before implementation. A/C remain available alternatives, not silently rejected. No option authorizes production, real data, paid services or AI-provider activation.
+Engineering recommended B to connect coursework and review tools without expanding into rosters or class operations prematurely. The owner selected A instead, as recorded below. B/C remain available alternatives but require a future explicit scope approval before implementation. No option authorizes production, real data, paid services or AI-provider activation.
 
-Until answered, implementation is paused only for F018; routine verified PR/release work and existing-flow bug repairs may continue.
+## Owner decision — 2026-10-14
+
+The owner chose Option A: retain the existing submission/feedback review queue and defer the broader teacher teaching reader. No new teacher curriculum/assignment-reading authority, screen, roster, scheduling or attendance is authorized. Existing approved review permissions and material access within those reviews are unchanged.
+
+Options B/C remain documented alternatives for later, not approved scope or discarded requirements. F018 and DW-010 retain the resume prerequisites: an explicit owner decision selecting the desired scope and confirming its permission/privacy boundary. No D-031 answer remains pending. Routine verified work within previously approved scope may continue; do not implement F018 because a prior recommendation favored B.
