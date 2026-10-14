@@ -1,11 +1,15 @@
-import { screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 
 import { renderApp } from '../test/render'
 import { NotificationCentrePage } from './NotificationCentrePage'
 
-const mocks = vi.hoisted(() => ({ getNotifications: vi.fn() }))
-vi.mock('../features/auth/AuthContext', () => ({ useAuth: () => ({ session: null }) }))
+const mocks = vi.hoisted(() => ({ getNotifications: vi.fn(), userId: 'fictional-first' }))
+vi.mock('../features/auth/AuthContext', () => ({
+  useAuth: () => ({ session: { user: { id: mocks.userId } } }),
+}))
 
 vi.mock('../features/notifications/notifications', async (importOriginal) => {
   const original = await importOriginal<typeof import('../features/notifications/notifications')>()
@@ -13,7 +17,10 @@ vi.mock('../features/notifications/notifications', async (importOriginal) => {
 })
 
 describe('NotificationCentrePage', () => {
-  beforeEach(() => mocks.getNotifications.mockReset())
+  beforeEach(() => {
+    mocks.getNotifications.mockReset()
+    mocks.userId = 'fictional-first'
+  })
 
   afterEach(() => vi.unstubAllEnvs())
 
@@ -79,5 +86,123 @@ describe('NotificationCentrePage', () => {
       await screen.findByRole('heading', { name: 'Your notifications could not be loaded.' }),
     ).toBeVisible()
     expect(screen.getByText(/Protected content remains private/)).toBeVisible()
+  })
+
+  it('never renders cached first-account updates while the second account loads', async () => {
+    const first = {
+      id: 'fictional-first-update',
+      title: 'First account private update',
+      body: 'Fictional only',
+      category: 'academic',
+      createdAt: '2026-10-14T00:00:00Z',
+      readAt: null,
+      destinationPath: '/student/agenda',
+      eventType: 'class_scheduled',
+    }
+    mocks.getNotifications.mockResolvedValueOnce([first])
+    let resolveSecond!: (value: unknown[]) => void
+    mocks.getNotifications.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSecond = resolve
+        }),
+    )
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const tree = () => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/student/notifications']}>
+          <NotificationCentrePage />
+        </MemoryRouter>
+      </QueryClientProvider>
+    )
+    const view = render(tree())
+    expect(await screen.findByRole('heading', { name: first.title })).toBeVisible()
+    mocks.userId = 'fictional-second'
+    view.rerender(tree())
+    expect(screen.queryByRole('heading', { name: first.title })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Loading your updates…' })).toBeVisible()
+    await act(async () => {
+      resolveSecond([])
+      await Promise.resolve()
+    })
+    expect(await screen.findByText('No notifications yet')).toBeVisible()
+    view.unmount()
+    client.clear()
+  })
+
+  it('isolates a late response from a previous account', async () => {
+    let resolveFirst!: (value: unknown[]) => void
+    mocks.getNotifications.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirst = resolve
+        }),
+    )
+    mocks.getNotifications.mockResolvedValueOnce([])
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const tree = () => (
+      <QueryClientProvider client={client}>
+        <MemoryRouter initialEntries={['/student/notifications']}>
+          <NotificationCentrePage />
+        </MemoryRouter>
+      </QueryClientProvider>
+    )
+    const view = render(tree())
+    mocks.userId = 'fictional-second'
+    view.rerender(tree())
+    expect(await screen.findByText('No notifications yet')).toBeVisible()
+    await act(async () => {
+      resolveFirst([
+        {
+          id: 'fictional-late',
+          title: 'Late first-account private update',
+          body: 'Fictional only',
+          category: 'academic',
+          createdAt: '2026-10-14T00:00:00Z',
+          readAt: null,
+          destinationPath: '/student/agenda',
+          eventType: 'class_scheduled',
+        },
+      ])
+      await Promise.resolve()
+    })
+    expect(screen.queryByText('Late first-account private update')).not.toBeInTheDocument()
+    expect(screen.getByText('No notifications yet')).toBeVisible()
+    view.unmount()
+    client.clear()
+  })
+
+  it('refreshes live updates after one minute without a manual action', async () => {
+    vi.useFakeTimers()
+    mocks.getNotifications.mockResolvedValue([])
+    const view = renderApp(<NotificationCentrePage />, ['/student/notifications'])
+    try {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10)
+      })
+      expect(mocks.getNotifications).toHaveBeenCalledTimes(1)
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(60_000)
+      })
+      expect(mocks.getNotifications).toHaveBeenCalledTimes(2)
+    } finally {
+      view.unmount()
+      vi.useRealTimers()
+    }
+  })
+
+  it('does not poll the live backend from fictional preview', async () => {
+    vi.stubEnv('VITE_ENABLE_STUDENT_PREVIEW', 'true')
+    vi.useFakeTimers()
+    const view = renderApp(<NotificationCentrePage />, ['/student/notifications?preview=1'])
+    try {
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(120_000)
+      })
+      expect(mocks.getNotifications).not.toHaveBeenCalled()
+    } finally {
+      view.unmount()
+      vi.useRealTimers()
+    }
   })
 })
