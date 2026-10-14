@@ -14,6 +14,14 @@ import {
 const supabaseUrl = process.env.STAGING_SUPABASE_URL
 const serviceRoleKey = process.env.STAGING_SERVICE_ROLE_KEY
 const password = process.env.STAGING_SYNTHETIC_PASSWORD
+const enableNativeJob = process.env.ENABLE_FICTIONAL_INAPP_JOB === 'true'
+if (
+  enableNativeJob &&
+  (supabaseUrl !== 'https://ienwcencjbgdsqxfyxmj.supabase.co' ||
+    process.env.SUPABASE_PROJECT_ID !== 'ienwcencjbgdsqxfyxmj')
+) {
+  throw new Error('Native worker activation is limited to the exact fictional staging project.')
+}
 
 if (!isAllowedSupabaseUrl(supabaseUrl) || !serviceRoleKey || !password) {
   throw new Error('Staging URL, service-role key, and synthetic password are required.')
@@ -266,6 +274,41 @@ async function bootstrap() {
   )
   if (people.length !== accounts.length) {
     throw new Error('Synthetic fixture verification returned an incomplete account set.')
+  }
+  if (enableNativeJob) {
+    await requireSuccess(
+      'Configuring fictional native worker',
+      admin.rpc('configure_fictional_inapp_job', {
+        p_project_ref: process.env.SUPABASE_PROJECT_ID,
+      }),
+    )
+    const initial = await requireSuccess(
+      'Checking native worker',
+      admin.rpc('get_fictional_inapp_job_status'),
+    )
+    const before = initial.health?.attempted_at
+    let observed = false
+    for (let attempt = 0; attempt < 18; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+      const status = await requireSuccess(
+        'Verifying scheduled native worker',
+        admin.rpc('get_fictional_inapp_job_status'),
+      )
+      if (
+        status.scheduled &&
+        status.health?.attempted_at !== before &&
+        status.health?.succeeded === true &&
+        status.healthy === true
+      ) {
+        observed = true
+        break
+      }
+    }
+    if (!observed)
+      throw new Error('The fictional native worker did not report a successful scheduled tick.')
+    console.log(
+      'Verified exact fictional native job and a real successful scheduled tick; no credentials in Cron commands.',
+    )
   }
 
   console.log(`Bootstrapped ${accounts.length} fictional staging accounts and one enrolment.`)

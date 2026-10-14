@@ -31,7 +31,7 @@ export function AppShell() {
       ? import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true'
       : import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true')
   const unreadCountQuery = useQuery({
-    queryKey: ['notification-unread-count', notificationAudience, previewEnabled],
+    queryKey: ['notification-unread-count', notificationAudience, previewEnabled, session?.user.id],
     queryFn: () =>
       previewEnabled
         ? Promise.resolve(
@@ -42,6 +42,8 @@ export function AppShell() {
         : getUnreadNotificationCount(),
     enabled: Boolean(notificationAudience) && (Boolean(session) || previewEnabled),
     retry: false,
+    refetchInterval: previewEnabled ? false : 60_000,
+    gcTime: 0,
   })
   const unreadCount = unreadCountQuery.data ?? 0
   const notificationParams = new URLSearchParams()

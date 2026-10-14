@@ -148,6 +148,7 @@ jobs:
 
       - name: Bootstrap fictional acceptance fixtures
         env:
+          ENABLE_FICTIONAL_INAPP_JOB: 'true'
           STAGING_SUPABASE_URL: https://${{ secrets.STAGING_PROJECT_ID }}.supabase.co
           STAGING_SYNTHETIC_PASSWORD: ${{ secrets.STAGING_SYNTHETIC_PASSWORD }}
         run: pnpm staging:fixtures:bootstrap
