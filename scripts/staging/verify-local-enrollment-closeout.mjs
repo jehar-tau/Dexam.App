@@ -2,7 +2,7 @@
 import { execFileSync, spawn } from 'node:child_process'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
-import { chromium } from '@playwright/test'
+import { chromium, expect } from '@playwright/test'
 const config = JSON.parse(
   execFileSync('pnpm', ['exec', 'supabase', 'status', '--output', 'json'], {
     encoding: 'utf8',
@@ -185,6 +185,12 @@ try {
       })
       .eq('id', ids.curriculum),
   )
+  await must(
+    await admin
+      .from('enrollments')
+      .update({ curriculum_version_id: ids.curriculum })
+      .eq('id', ids.enrollment),
+  )
   await insert('assignment_definitions', {
     id: ids.definition,
     offering_id: ids.offering,
@@ -317,6 +323,36 @@ try {
   }
   await bind(staffContext, operator)
   const studentSession = await bind(studentContext, student)
+  phase = 'private explicit study checklist'
+  const studyPage = await studentContext.newPage()
+  await studyPage.goto('http://127.0.0.1:5173/student/study-checklist')
+  await studyPage.getByRole('button', { name: 'Mark as studied: Perspective', exact: true }).click()
+  await expect(
+    studyPage.getByRole('button', { name: 'Undo study mark: Perspective', exact: true }),
+  ).toBeVisible()
+  await studyPage.getByRole('button', { name: 'Undo study mark: Perspective', exact: true }).click()
+  await expect(
+    studyPage.getByRole('button', { name: 'Mark as studied: Perspective', exact: true }),
+  ).toBeVisible()
+  await studyPage.getByRole('button', { name: 'Mark as studied: Perspective', exact: true }).click()
+  await expect(
+    studyPage.getByRole('button', { name: 'Undo study mark: Perspective', exact: true }),
+  ).toBeVisible()
+  await studyPage.screenshot({
+    path: 'test-results/f019-closeout/checklist-desktop.png',
+    fullPage: true,
+  })
+  await studyPage.setViewportSize({ width: 390, height: 844 })
+  if (
+    await studyPage.evaluate(
+      () => globalThis.document.documentElement.scrollWidth > globalThis.innerWidth,
+    )
+  )
+    throw new Error('Checklist overflows mobile.')
+  await studyPage.screenshot({
+    path: 'test-results/f019-closeout/checklist-mobile.png',
+    fullPage: true,
+  })
   await staffPage.goto('http://127.0.0.1:5173/staff/enrolment-closeout')
   await staffPage.getByLabel('Search Member ID or name').fill(memberId)
   await staffPage.getByRole('button', { name: 'Review course closeout' }).click()
@@ -361,7 +397,7 @@ try {
     ),
   )
   writer.stdin.end(
-    `begin;set local role authenticated;set local request.jwt.claims='${JSON.stringify({ sub: users[1], session_id: jwt.session_id, role: 'authenticated', aal: 'aal1' })}';select * from public.reserve_submission_file('${draft}','Concurrent fictional.pdf','application/pdf',32,32,false,null,null);select 'RESERVATION_HELD';select pg_sleep(2);commit;`,
+    `begin;set local role authenticated;set local request.jwt.claims='${JSON.stringify({ sub: users[1], session_id: jwt.session_id, role: 'authenticated', aal: 'aal1' })}';select * from public.reserve_submission_file('${draft}','Concurrent fictional.pdf','application/pdf',32,32,false,null,null);select public.set_student_topic_mark('${ids.enrollment}','${ids.topic}',true);select 'RESERVATION_HELD';select pg_sleep(2);commit;`,
   )
   await reserved
   const started = Date.now()
@@ -402,6 +438,21 @@ try {
   if (!(await student.rpc('finalize_submission_attempt', { p_submission_attempt_id: draft })).error)
     throw new Error('Post-closeout finalization accepted.')
   phase = 'own read-only archive and real file retrieval'
+  await studyPage.reload()
+  await expect(studyPage.getByText('Read-only archive', { exact: true })).toBeVisible()
+  await expect(
+    studyPage.getByRole('button', { name: /Mark as studied|Undo study mark/ }),
+  ).toHaveCount(0)
+  if (
+    !(
+      await student.rpc('set_student_topic_mark', {
+        p_enrollment_id: ids.enrollment,
+        p_topic_id: ids.topic,
+        p_studied: false,
+      })
+    ).error
+  )
+    throw new Error('Closed checklist writable.')
   const page = await studentContext.newPage()
   await page.goto('http://127.0.0.1:5173/student/archive')
   await page.getByText('Published fictional drawing feedback.', { exact: true }).waitFor()
@@ -448,6 +499,45 @@ try {
     ).error
   )
     throw new Error('Suspension bypassed archive.')
+  if ((await must(await student.rpc('list_student_topic_checklist'))).length)
+    throw new Error('Suspension bypassed checklist.')
+  phase = 'checklist archive expiry and bounded retention'
+  await must(
+    await admin.from('memberships').update({ status: 'active' }).eq('person_id', ids.student),
+  )
+  await must(
+    await admin
+      .from('enrollments')
+      .update({ requested_at: '2024-01-01T00:00:00Z', ended_at: '2024-02-01T00:00:00Z' })
+      .eq('id', ids.enrollment),
+  )
+  if ((await must(await student.rpc('list_student_topic_checklist'))).length)
+    throw new Error('Expired checklist still visible.')
+  // Refuse global cleanup if any unrelated expired marks exist in this local stack.
+  const due = execFileSync(
+    'docker',
+    [
+      'exec',
+      'supabase_db_dexam-platform',
+      'psql',
+      '-U',
+      'postgres',
+      '-d',
+      'postgres',
+      '-At',
+      '-c',
+      `select count(*) from public.student_topic_marks m join public.enrollments e on e.id=m.enrollment_id where e.status in ('completed','withdrawn') and e.ended_at+interval '12 months'<=clock_timestamp() and e.id<>'${ids.enrollment}'`,
+    ],
+    { encoding: 'utf8' },
+  ).trim()
+  if (due !== '0') throw new Error('Unrelated retention candidates exist; cleanup refused.')
+  if ((await must(await admin.rpc('purge_expired_student_topic_marks', { p_limit: 1 }))) !== 1)
+    throw new Error('Expired mark was not purged.')
+  if ((await must(await admin.rpc('purge_expired_student_topic_marks', { p_limit: 1 }))) !== 0)
+    throw new Error('Purge retry not idempotent.')
+  console.log(
+    'F020 acceptance passed: explicit mark/undo, concurrent closeout serialization, archived write denial, membership denial, exact expiry, bounded purge and responsive UI.',
+  )
   console.log(
     'F019 local provider/browser acceptance passed: scoped closeout, reservation serialization, late completion/finalization denial, private finalized/published archive, actual short-lived download, identity/other-course invariance, suspension denial and responsive UI.',
   )
@@ -484,6 +574,7 @@ try {
     // Test-only immutable fixture cleanup in one LOCAL transaction. FK/RLS are NOT disabled;
     // unknown references abort cleanup. Restore every original user-trigger flag before commit.
     const tables = [
+      'student_topic_marks',
       'notifications',
       'domain_events',
       'feedback_revisions',
@@ -495,12 +586,12 @@ try {
       'assignment_topic_links',
       'assignment_versions',
       'assignment_definitions',
-      'curriculum_topics',
-      'curriculum_sections',
-      'curriculum_versions',
       'enrollment_closeouts',
       'enrollment_transitions',
       'enrollments',
+      'curriculum_topics',
+      'curriculum_sections',
+      'curriculum_versions',
       'capability_grants',
       'role_assignments',
       'memberships',
@@ -509,6 +600,7 @@ try {
       'offerings',
     ]
     const conditions = [
+      `enrollment_id='${ids.enrollment}'`,
       `recipient_person_id in ('${ids.operator}','${ids.student}')`,
       `actor_person_id in ('${ids.operator}','${ids.student}')`,
       `submission_attempt_id in ('${attempts.join("','") || randomUUID()}')`,
@@ -520,12 +612,12 @@ try {
       `assignment_version_id='${ids.version}'`,
       `id='${ids.version}'`,
       `id='${ids.definition}'`,
-      `id='${ids.topic}'`,
-      `id='${ids.section}'`,
-      `id='${ids.curriculum}'`,
       `enrollment_id='${ids.enrollment}'`,
       `enrollment_id in ('${ids.enrollment}','${ids.otherEnrollment}')`,
       `id in ('${ids.enrollment}','${ids.otherEnrollment}')`,
+      `id='${ids.topic}'`,
+      `id='${ids.section}'`,
+      `id='${ids.curriculum}'`,
       `person_id='${ids.operator}'`,
       `person_id='${ids.operator}'`,
       `person_id in ('${ids.operator}','${ids.student}')`,

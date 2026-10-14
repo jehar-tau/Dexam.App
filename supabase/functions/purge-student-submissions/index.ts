@@ -55,5 +55,14 @@ Deno.serve(async (request) => {
     purged += 1
   }
 
-  return json(200, { examined: candidates.length, purged })
+  const checklistCleanup = await admin.rpc('purge_expired_student_topic_marks', { p_limit: 500 })
+  if (checklistCleanup.error) {
+    console.error('private checklist retention cleanup failed', checklistCleanup.error.code)
+    return json(503, { message: 'Retention cleanup could not complete.' })
+  }
+  return json(200, {
+    examined: candidates.length,
+    purged,
+    checklistMarksPurged: checklistCleanup.data ?? 0,
+  })
 })

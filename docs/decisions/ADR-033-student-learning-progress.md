@@ -1,6 +1,6 @@
 # DECISION REQUIRED — D-033
 
-Status: Awaiting owner decision; no progress implementation authorized
+Status: Option B approved 2026-10-14
 
 ## Question
 
@@ -31,3 +31,7 @@ B offers a simple planning aid without claiming academic achievement or increasi
 ## What can continue while pending
 
 Finish F019 release verification and low-risk engineering checks. Do not add progress storage, analytics or new student/staff behavior until the owner chooses. Real personal data, production, paid services and external delivery remain prohibited.
+
+## Approved decision
+
+The owner approved Option B on 2026-10-14: private student-controlled topic checklist with the stated current-course, bounded-archive and retention rules. No staff reporting, passive tracking, academic achievement claim or teacher-authority expansion is approved. F019 release verification succeeded through protected run `38514161346`; PR #46 recorded the proposal before this approval.

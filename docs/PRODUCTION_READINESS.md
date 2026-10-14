@@ -18,6 +18,8 @@ The owner confirmed on 2026-10-13 that D-029 Option B means local email testing 
 
 ## Other existing release gates
 
+- [ ] Configure and verify scheduled submission/checklist retention cleanup, failures/alerts and accountable ownership before actual student data. Checklist reads expire at 12 months after course end; timely physical deletion requires a successful maintenance run. Fictional local purge tests are not proof of production scheduling.
+
 - [ ] Confirm initial student activation uses exact approved production callbacks, fragment credentials, private handover and credential-safe host/referrer/logging behavior. Previously issued query links cannot have their original exposure undone; allow them to expire or deliberately reissue before real onboarding.
 
 - [ ] Approve and verify hosted student assisted recovery activation, exact production callback/handover procedure, two-admin operational availability, production proof/abuse budgets and minimized ledger/audit retention. F017 is fictional-local only; no mandatory student contact or real delivery is implied.
