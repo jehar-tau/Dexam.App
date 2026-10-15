@@ -1,4 +1,5 @@
 import { getSupabaseClient } from '../auth/supabaseClient'
+import { captureAccountOperation } from '../auth/accountOperation'
 
 export type ContentStatus = 'draft' | 'published' | 'retired'
 
@@ -367,38 +368,66 @@ export async function uploadAssignmentMaterial(
   const validationError = validateMaterialFile(file, currentCount)
   if (validationError) throw new Error(validationError)
 
-  const client = clientOrThrow()
-  const extension =
-    file.type === 'application/pdf'
-      ? 'pdf'
-      : file.type === 'image/jpeg'
-        ? 'jpg'
-        : file.type === 'image/png'
-          ? 'png'
-          : 'webp'
-  const objectPath = `${offeringId}/${assignmentVersionId}/${crypto.randomUUID()}.${extension}`
-  const upload = await client.storage
-    .from('assignment-materials')
-    .upload(objectPath, file, { contentType: file.type, upsert: false })
-  if (upload.error) throw new Error('The file could not be uploaded. Check it and try again.')
+  const operation = await captureAccountOperation(clientOrThrow())
+  const client = operation.client
+  let objectPath: string | undefined,
+    uploadConfirmed = false,
+    metadataStarted = false
+  try {
+    operation.assertCurrent()
+    const extension =
+      file.type === 'application/pdf'
+        ? 'pdf'
+        : file.type === 'image/jpeg'
+          ? 'jpg'
+          : file.type === 'image/png'
+            ? 'png'
+            : 'webp'
+    objectPath = `${offeringId}/${assignmentVersionId}/${crypto.randomUUID()}.${extension}`
+    const upload = await client.storage
+      .from('assignment-materials')
+      .upload(objectPath, file, { contentType: file.type, upsert: false })
+    if (upload.error) throw new Error('The file could not be uploaded. Check it and try again.')
+    uploadConfirmed = true
+    operation.assertCurrent()
 
-  const personResult = await client.rpc('current_person_id')
-  if (personResult.error || typeof personResult.data !== 'string') {
-    await client.storage.from('assignment-materials').remove([objectPath])
-    throw new Error('The file could not be attached. Check your access and try again.')
-  }
+    const personResult = await client.rpc('current_person_id')
+    operation.assertCurrent()
+    if (personResult.error || typeof personResult.data !== 'string') {
+      throw new Error('The file could not be attached. Check your access and try again.')
+    }
 
-  const metadata = await client.from('assignment_materials').insert({
-    assignment_version_id: assignmentVersionId,
-    object_path: objectPath,
-    original_file_name: file.name,
-    mime_type: file.type,
-    byte_size: file.size,
-    position: currentCount + 1,
-    created_by_person_id: personResult.data,
-  })
-  if (metadata.error) {
-    await client.storage.from('assignment-materials').remove([objectPath])
-    throw new Error('The file could not be attached. Check your access and try again.')
+    metadataStarted = true
+    const metadata = await client.from('assignment_materials').insert({
+      assignment_version_id: assignmentVersionId,
+      object_path: objectPath,
+      original_file_name: file.name,
+      mime_type: file.type,
+      byte_size: file.size,
+      position: currentCount + 1,
+      created_by_person_id: personResult.data,
+    })
+    if (metadata.error) {
+      throw new Error('The file could not be attached. Check your access and try again.')
+    }
+  } catch (error) {
+    // Only compensate before an attachment was attempted. A lost response may hide a committed
+    // metadata row; deleting its object would destroy a referenced file. Never clean up as B.
+    if (uploadConfirmed && !metadataStarted && objectPath) {
+      const cleanup = await client.storage.from('assignment-materials').remove([objectPath])
+      if (cleanup.error)
+        throw new Error(
+          'The upload was not attached. An unconfirmed file needs authorized cleanup.',
+          { cause: error },
+        )
+    } else if (uploadConfirmed && metadataStarted) {
+      throw new Error(
+        'The attachment could not be confirmed. The file needs authorized review before cleanup.',
+        { cause: error },
+      )
+    }
+    throw error
+  } finally {
+    operation.dispose()
   }
 }

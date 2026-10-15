@@ -3,6 +3,7 @@ import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { Badge, Button, Callout, EmptyState } from '../components'
+import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
 import {
   getFeedbackReviewQueue,
   getReviewSubmissionFiles,
@@ -119,6 +120,7 @@ async function audioDuration(file: File) {
 }
 
 export function TeacherFeedbackPage() {
+  const lifetime = useWorkspaceLifetime()
   const [searchParams] = useSearchParams()
   const previewEnabled =
     import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true' && searchParams.get('preview') === '1'
@@ -164,6 +166,19 @@ export function TeacherFeedbackPage() {
   const recordingChunksRef = useRef<Blob[]>([])
   const recordingLimitRef = useRef<number | null>(null)
 
+  useEffect(
+    () => () => {
+      if (recordingLimitRef.current !== null) window.clearTimeout(recordingLimitRef.current)
+      const recorder = recorderRef.current
+      if (recorder) {
+        recorder.onstop = null
+        if (recorder.state !== 'inactive') recorder.stop()
+        recorder.stream.getTracks().forEach((track) => track.stop())
+      }
+    },
+    [],
+  )
+
   useEffect(() => {
     if (!selected) return
     // The keyed review selection intentionally initializes one isolated private draft workspace.
@@ -191,6 +206,7 @@ export function TeacherFeedbackPage() {
   }, [expandedFile])
 
   async function ensureDraft() {
+    lifetime.assertActive()
     if (!selected) throw new Error('Choose a submitted assignment first.')
     if (revisionId) return revisionId
     if (previewEnabled) {
@@ -199,6 +215,7 @@ export function TeacherFeedbackPage() {
       return id
     }
     const id = await startFeedbackDraft(selected.submissionAttemptId)
+    lifetime.assertActive()
     setRevisionId(id)
     return id
   }
@@ -209,6 +226,7 @@ export function TeacherFeedbackPage() {
     nextVoiceConfirmed = voiceEquivalentConfirmed,
   ) {
     const id = await ensureDraft()
+    lifetime.assertActive()
     if (!previewEnabled) {
       await saveFeedbackDraft({
         revisionId: id,
@@ -241,6 +259,7 @@ export function TeacherFeedbackPage() {
     setBusy(kind === 'voice_note' ? 'Adding private voice feedback…' : 'Preparing dictation…')
     try {
       const duration = knownDuration ?? (await audioDuration(file))
+      lifetime.assertActive()
       if (duration > 300 || file.size > 10 * 1024 * 1024) {
         throw new Error('Recordings must be 5 minutes or less and no larger than 10 MB.')
       }
@@ -250,6 +269,7 @@ export function TeacherFeedbackPage() {
         )
       }
       const id = await saveDraft()
+      lifetime.assertActive()
       if (!previewEnabled) {
         const uploaded = await uploadFeedbackAudio({
           revisionId: id,
@@ -257,6 +277,7 @@ export function TeacherFeedbackPage() {
           kind,
           durationSeconds: duration,
         })
+        lifetime.assertActive()
         if (kind === 'dictation_temp') {
           await requestTranscription(id, uploaded.file.id)
           setNotice(
@@ -305,8 +326,11 @@ export function TeacherFeedbackPage() {
       )
       return
     }
+    let acquiredStream: MediaStream | undefined
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      acquiredStream = stream
+      lifetime.assertActive()
       const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
       recordingChunksRef.current = []
       recorder.ondataavailable = (event) => {
@@ -329,6 +353,9 @@ export function TeacherFeedbackPage() {
         setRecordingTarget(null)
       }, 300_000)
     } catch {
+      if (recorderRef.current) recorderRef.current.onstop = null
+      recorderRef.current = null
+      acquiredStream?.getTracks().forEach((track) => track.stop())
       setError('Microphone permission was not granted. You can upload an audio file instead.')
     }
   }
@@ -370,6 +397,7 @@ export function TeacherFeedbackPage() {
     setBusy('Preparing a proofreading suggestion…')
     try {
       const id = await saveDraft()
+      lifetime.assertActive()
       if (!previewEnabled) await requestProofreading(id, writtenText)
       setProofreadOriginal(writtenText)
       setProofreadSuggestion(previewEnabled ? previewProofread(writtenText) : '')
@@ -441,6 +469,7 @@ export function TeacherFeedbackPage() {
     setBusy('Publishing feedback to the student…')
     try {
       const id = await saveDraft()
+      lifetime.assertActive()
       if (!previewEnabled) {
         await publishFeedback({
           revisionId: id,

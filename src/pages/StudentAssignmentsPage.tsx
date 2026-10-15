@@ -3,6 +3,7 @@ import { type ChangeEvent, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
 import { Badge, Button, Callout, Card, EmptyState } from '../components'
+import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
 import {
   finalizeStudentAssignmentAttempt,
   getStudentAssignments,
@@ -103,6 +104,7 @@ function dueLabel(value: string | null) {
 }
 
 export function StudentAssignmentsPage() {
+  const lifetime = useWorkspaceLifetime()
   const [searchParams] = useSearchParams()
   const previewEnabled =
     import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true' && searchParams.get('preview') === '1'
@@ -272,6 +274,7 @@ export function StudentAssignmentsPage() {
         )
       } else {
         for (const pending of pendingFiles) {
+          lifetime.assertActive()
           await uploadStudentSubmissionFile(draftAttempt.id, pending.prepared)
         }
         await refresh()

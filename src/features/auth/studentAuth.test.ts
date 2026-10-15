@@ -4,10 +4,24 @@ const mocks = vi.hoisted(() => ({
   rpc: vi.fn(),
   setSession: vi.fn(),
   signOut: vi.fn(),
+  sharedSetSession: vi.fn(),
+  sharedSignOut: vi.fn(),
+  listener: undefined as ((event: string) => void) | undefined,
 }))
 
 vi.mock('./supabaseClient', () => ({
   getSupabaseClient: () => ({
+    auth: {
+      setSession: mocks.sharedSetSession,
+      signOut: mocks.sharedSignOut,
+      onAuthStateChange: (listener: typeof mocks.listener) => {
+        mocks.listener = listener
+        return { data: { subscription: { unsubscribe: vi.fn() } } }
+      },
+    },
+    rpc: mocks.rpc,
+  }),
+  createEmployeeActivationClient: () => ({
     auth: {
       setSession: mocks.setSession,
       signOut: mocks.signOut,
@@ -23,11 +37,40 @@ describe('studentAuth', () => {
     mocks.rpc.mockReset()
     mocks.setSession.mockReset()
     mocks.signOut.mockReset().mockResolvedValue({ error: null })
+    mocks.sharedSetSession
+      .mockReset()
+      .mockImplementation((args: unknown) => mocks.setSession(args) as Promise<unknown>)
+    mocks.sharedSignOut.mockReset()
   })
 
   afterEach(() => {
     vi.unstubAllEnvs()
     vi.restoreAllMocks()
+  })
+
+  it('does not commit a late login response after another account signs in', async () => {
+    let finish!: (value: Response) => void
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          finish = resolve
+        }),
+    )
+    mocks.setSession.mockResolvedValue({
+      data: { session: { access_token: 'fictional', refresh_token: 'fictional' } },
+      error: null,
+    })
+    mocks.rpc.mockResolvedValue({ data: true, error: null })
+    const pending = signInStudent('DXM-7K3M9Q2RW5TY', 'fictional')
+    mocks.listener?.('SIGNED_IN')
+    finish(
+      new Response(JSON.stringify({ accessToken: 'fictional', refreshToken: 'fictional' }), {
+        status: 200,
+      }),
+    )
+    await expect(pending).rejects.toThrow('session changed')
+    expect(mocks.sharedSetSession).not.toHaveBeenCalled()
+    expect(mocks.sharedSignOut).not.toHaveBeenCalled()
   })
 
   it('normalizes Member IDs without exposing an internal email identity', () => {

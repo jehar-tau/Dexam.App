@@ -17,6 +17,7 @@ Use this map instead of reading the entire documentation tree.
 - `PRODUCTION_READINESS.md` — mandatory launch gates, including replacing local email capture with verified real authentication delivery
 - `STAFF_SECURITY.md` — fictional-stage MFA, session invalidation, independent recovery, and failure/escalation operations
 - `TESTING.md` — test layers and definition of done
+- `PILOT_READINESS.md` — fictional milestone evidence, acceptance gaps and distinct real-launch gates
 - `SETUP.md` — local, GitHub, and future environment setup
 - `COST_MODEL.md` — free-first budget, scale scenarios, and spending controls
 - `ROADMAP.md` — build sequence and milestone boundaries

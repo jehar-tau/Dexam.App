@@ -51,6 +51,8 @@ export function StaffAccessBoundary({
     enabled: Boolean(session) && !previewEnabled,
     retry: false,
     staleTime: 0,
+    gcTime: 0,
+    refetchInterval: 30_000,
   })
 
   async function handleSignOut() {
