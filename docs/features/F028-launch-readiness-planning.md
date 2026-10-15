@@ -1,6 +1,8 @@
 # F028 — Launch-readiness planning
 
-Status: D-042 Option A approved 2026-10-15; plan prepared, review active
+Status: D-042 Option A approved 2026-10-15; plan merged through PR #63; initial owner inputs recorded
+
+Owner inputs: plan for up to 50 students in the first three months; Rohin is nominated as second Admin. Support/incident ownership, coverage and the non-target admin recovery staffing gap remain unresolved. This nomination creates no account or authority; eligibility and provisioning require their existing gates.
 
 Deliver a concrete sequenced plan using repository evidence and current primary vendor sources. `LAUNCH_PLAN.md` covers dependencies, engineering ownership, human decisions, acceptance evidence, backup/Storage separation, local-only delivery/recovery gaps, exceptional-outcome safeguards, capacity assumptions, cost subtotals and explicit exclusions.
 
