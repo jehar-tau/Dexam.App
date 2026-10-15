@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-
 import { Button } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
 import {
@@ -9,14 +8,14 @@ import {
   getUnreadNotificationCount,
   type NotificationAudience,
 } from '../../features/notifications/notifications'
+import { WorkspaceNavigation } from './WorkspaceNavigation'
 import styles from './AppShell.module.css'
 
 export function AppShell() {
   const { session, signOut } = useAuth()
   const location = useLocation()
-  const [signingOut, setSigningOut] = useState(false)
-  const [signOutError, setSignOutError] = useState('')
-  const isStaging = import.meta.env.VITE_APP_ENV === 'staging'
+  const [signingOut, setSigningOut] = useState(false),
+    [signOutError, setSignOutError] = useState('')
   const notificationAudience: NotificationAudience | null = location.pathname.startsWith('/student')
     ? 'student'
     : location.pathname.startsWith('/staff/crm') ||
@@ -30,14 +29,12 @@ export function AppShell() {
     (notificationAudience === 'student'
       ? import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true'
       : import.meta.env.VITE_ENABLE_OPERATOR_PREVIEW === 'true')
-  const unreadCountQuery = useQuery({
+  const unread = useQuery({
     queryKey: ['notification-unread-count', notificationAudience, previewEnabled, session?.user.id],
     queryFn: () =>
       previewEnabled
         ? Promise.resolve(
-            getPreviewNotifications(notificationAudience!).filter(
-              (notification) => !notification.readAt,
-            ).length,
+            getPreviewNotifications(notificationAudience!).filter((n) => !n.readAt).length,
           )
         : getUnreadNotificationCount(),
     enabled: Boolean(notificationAudience) && (Boolean(session) || previewEnabled),
@@ -45,12 +42,9 @@ export function AppShell() {
     refetchInterval: previewEnabled ? false : 60_000,
     gcTime: 0,
   })
-  const unreadCount = unreadCountQuery.data ?? 0
   const notificationParams = new URLSearchParams()
   if (previewEnabled) notificationParams.set('preview', '1')
   if (notificationAudience === 'sales') notificationParams.set('audience', 'sales')
-  const notificationSearch = notificationParams.size ? `?${notificationParams.toString()}` : ''
-
   async function handleSignOut() {
     setSignOutError('')
     setSigningOut(true)
@@ -62,13 +56,12 @@ export function AppShell() {
       setSigningOut(false)
     }
   }
-
   return (
     <div className={styles.app}>
       <a className={styles.skipLink} href="#main-content">
         Skip to content
       </a>
-      {isStaging ? (
+      {import.meta.env.VITE_APP_ENV === 'staging' ? (
         <div className={styles.stagingBanner} role="status">
           Staging environment · Fictional data only
         </div>
@@ -78,134 +71,12 @@ export function AppShell() {
           Dexam
         </NavLink>
         <nav aria-label="Main navigation" className={styles.navigation}>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/crm"
-            end
-          >
-            CRM
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/crm/assignments"
-          >
-            CRM assignment
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/crm/privacy"
-          >
-            Privacy
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/activate"
-          >
-            Activate account
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/student"
-          >
-            Student portal
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/health"
-          >
-            System status
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/enrolment-handoffs"
-          >
-            Handoffs
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/enrolments"
-          >
-            Enrolments
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/content"
-          >
-            Content
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/assignments"
-          >
-            Distribution
-          </NavLink>
-          <NavLink
-            className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-            to="/staff/reviews"
-          >
-            Reviews
-          </NavLink>
-          {notificationAudience ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to={`${notificationAudience === 'student' ? '/student' : '/staff'}/notifications${notificationSearch}`}
-            >
-              Notifications
-              {unreadCount > 0 ? (
-                <span className={styles.notificationCount} aria-label={`${unreadCount} unread`}>
-                  {unreadCount}
-                </span>
-              ) : null}
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/employees"
-            >
-              Employees
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/student-recovery"
-            >
-              Student recovery
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/enrolment-closeout"
-            >
-              Course closeout
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/classes"
-            >
-              Classes
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/curriculum-impact"
-            >
-              Curriculum preview
-            </NavLink>
-          ) : null}
-          {session ? (
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : styles.link)}
-              to="/staff/security"
-            >
-              Staff security
-            </NavLink>
-          ) : null}
+          <WorkspaceNavigation
+            audience={notificationAudience}
+            notificationSearch={notificationParams.size ? `?${notificationParams.toString()}` : ''}
+            previewEnabled={previewEnabled}
+            unreadCount={unread.data ?? 0}
+          />
           {session ? (
             <Button
               disabled={signingOut}

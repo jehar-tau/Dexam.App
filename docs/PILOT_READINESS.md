@@ -36,13 +36,13 @@ Exact own-request/UUID cleanup removes private submission objects, domain/histor
 
 ## Remaining fictional-pilot acceptance work
 
-The consolidated `pnpm pilot:verify` passed on 2026-10-15: 285 app tests, 1040 DB assertions, 63 Chromium smoke journeys and all nine actual local acceptance scripts, including exact cleanup and the real scheduled tick. Independent review cleared harness/runner safety; desktop/mobile composed-workflow screenshots were inspected. `pilot:check` validates local services/DB/ports/Edge first, without resetting data or replaying provider logs.
+The consolidated `pnpm pilot:verify` passed again for F026 on 2026-10-15: 295 app tests, 1075 DB assertions, 63 Chromium smoke journeys and all nine actual local acceptance scripts, including exact cleanup and the real scheduled tick. Independent review cleared harness/runner safety; desktop/mobile composed-workflow screenshots were inspected. `pilot:check` validates local services/DB/ports/Edge first, without resetting data or replaying provider logs.
 
-Remaining: implement owner-approved D-040 B existing-authority-aware navigation, then review approved screens with the owner using fictional accounts. Automated responsive checks do not replace the designer's final UX review. Some authoring/distribution steps are SDK/API checks, not proof of every staff form click.
+F026 owner-approved D-040 B navigation passed actual role/route/revocation browser acceptance; required PR CI and protected fictional release remain prerequisites. Next is owner review of approved screens using fictional accounts. Automated responsive checks do not replace the designer's final UX review. Some authoring/distribution steps are SDK/API checks, not proof of every staff form click.
 
 These acceptance tasks use existing approved rules. New policy choices still require a Decision Gate. No calendar completion estimate or percentage is claimed from test counts.
 
-Visual QA identified shared staff-heavy navigation on the student screens; direct access is still denied by existing gates. D-040 presents the owner-visible options before changing navigation. The stale coursework message promising future assignments was corrected to link to the already-working assignments workspace, preserving explicit fictional preview routing.
+Visual QA identified shared staff-heavy navigation on student screens; direct access was still denied by existing gates. Owner approved D-040 B. F026 replaces the shared list with current-account boolean visibility flags using existing authority, preserves dual memberships and staff security/MFA entry, and aligns scoped distribution/review entrances with their existing backend scopes. No new authority, sidebar pattern or Teacher reader. Navigation refreshes every 30 seconds while foregrounded and fails closed on errors; server authorization remains decisive. The stale coursework message promising future assignments was corrected to link to the already-working assignments workspace, preserving explicit fictional preview routing.
 
 ## Required before real launch — not included by D-039 B
 
