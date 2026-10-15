@@ -26,6 +26,6 @@
 - F024 Curriculum impact preview — D-038 B accepted through PR #56 and protected fictional release `38603078466`; no student migration or default grants
 - F025 Fictional pilot readiness — D-039 B active: account isolation fixes, real workflow reruns and explicit remaining acceptance gaps; no production approval
 - F026 Authorized navigation — D-040 B accepted through PR #60 and protected fictional release `38691212531`; no new grants or production approval
-- F027 Guided fictional pilot review — D-041 A approved; owner walkthrough and scoped defect record, no new module or production approval
+- F027 Guided fictional pilot review — owner provisionally approved all current UI layouts; actual staff distribution form acceptance passed; no production approval, later visual refinements retained
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

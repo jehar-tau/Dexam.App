@@ -17,3 +17,5 @@ Use only fictional content and existing styles. Preview screens support visual r
 ## Sequence
 
 Start with student assignments and published feedback, then teacher review, coursework/content and admissions operations. Capture the owner's observations in F027. Engineering owns environment setup and PRs; the owner decides user-visible direction.
+
+2026-10-15 update: the owner provisionally approved **all current UI layouts** and requested continued engineering instead of further screen-by-screen approvals, reserving visual refinements until after seeing the whole application. This is not approval for new product scope, authority, providers, real data or production, nor proof of individual inspection of every screen. Functional acceptance and production gates remain distinct.
