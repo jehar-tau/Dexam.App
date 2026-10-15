@@ -1,0 +1,9 @@
+# F028 — Launch-readiness planning
+
+Status: D-042 Option A approved 2026-10-15; plan prepared, review active
+
+Deliver a concrete sequenced plan using repository evidence and current primary vendor sources. `LAUNCH_PLAN.md` covers dependencies, engineering ownership, human decisions, acceptance evidence, backup/Storage separation, local-only delivery/recovery gaps, exceptional-outcome safeguards, capacity assumptions, cost subtotals and explicit exclusions.
+
+This feature is documentation/discovery only: no new runtime, role grant, live cleanup, provider configuration, real recipient/data, paid service, production project/transfer or deployment. All current UI layouts remain provisionally approved; later visual refinements are retained. Existing deferred modules remain deferred.
+
+Acceptance: distinguish tested fictional functionality from launch blockers; verify current relevant pricing; avoid an all-in budget before backup/domain/review assumptions are known; retain unchecked production gates. Capture launch volume and accountable operator availability without requesting private contact details or credentials. Independent review checks that the plan does not silently approve production/security policy. Required PR checks and routine merge follow standing authorisation.
