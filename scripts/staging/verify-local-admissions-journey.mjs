@@ -406,9 +406,48 @@ try {
     p_request_key: randomUUID(),
   }
   await denied(await sales.rpc('distribute_assignment_version', releaseArgs))
-  const release = await must(await operator.rpc('distribute_assignment_version', releaseArgs))
+  phase = 'actual staff distribution form to the activated student'
+  const distributionContext = await browser.newContext()
+  await distributionContext.addInitScript(
+    ({ session, key }) => localStorage.setItem(key, JSON.stringify(session)),
+    {
+      session: (await operator.auth.getSession()).data.session,
+      key: 'sb-' + new URL(config.API_URL).hostname.split('.')[0] + '-auth-token',
+    },
+  )
+  const distributionPage = await distributionContext.newPage()
+  await distributionPage.goto('http://127.0.0.1:5173/staff/assignments')
+  await expect(
+    distributionPage.getByRole('heading', { name: 'Assignment distribution.' }),
+  ).toBeVisible()
+  await distributionPage.getByLabel('Programme', { exact: true }).selectOption(offering)
+  await distributionPage
+    .getByLabel('Published assignment', { exact: true })
+    .selectOption(assignmentVersion)
+  await distributionPage.getByRole('radio', { name: 'Selected students', exact: true }).check()
+  await distributionPage.getByRole('checkbox', { name: new RegExp(member) }).check()
+  await distributionPage
+    .getByLabel('Release note', { exact: true })
+    .fill(releaseArgs.p_release_note)
+  await distributionPage.getByRole('button', { name: 'Release assignment', exact: true }).click()
+  await expect(
+    distributionPage.getByText('Assignment released to 1 selected students.', { exact: true }),
+  ).toBeVisible()
+  // Read only this disposable actor/version to verify the form's persisted request and retry it.
+  const persistedRelease = await must(
+    await admin
+      .from('assignment_releases')
+      .select('id,request_key')
+      .eq('released_by_person_id', operatorPerson)
+      .eq('assignment_version_id', assignmentVersion)
+      .single(),
+  )
+  const release = persistedRelease.id
+  releaseArgs.p_request_key = persistedRelease.request_key
   if ((await must(await operator.rpc('distribute_assignment_version', releaseArgs))) !== release)
     throw new Error('Assignment retry duplicated release')
+  await distributionContext.close()
+  phase = 'student upload and independent teacher publication'
   await must(
     await student.auth.signInWithPassword({
       email: member.toLowerCase() + '@members.dexam.invalid',
