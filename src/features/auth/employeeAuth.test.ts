@@ -31,6 +31,17 @@ vi.mock('./supabaseClient', () => ({
 }))
 
 describe('employeeAuth', () => {
+  it.each([
+    ['assignment.distribute', 'current_person_can_open_assignment_distribution'],
+    ['feedback.review', 'current_person_can_open_feedback_workspace'],
+  ])('uses existing scoped entrance for %s', async (capability, rpc) => {
+    mocks.rpc.mockResolvedValue({ data: true, error: null })
+    expect(await getEmployeeAccess(capability)).toEqual({
+      activeEmployee: true,
+      hasCapability: true,
+    })
+    expect(mocks.rpc).toHaveBeenLastCalledWith(rpc)
+  })
   it('uses the scoped-content entrance check without demanding a global grant', async () => {
     mocks.rpc
       .mockResolvedValueOnce({ data: true, error: null })

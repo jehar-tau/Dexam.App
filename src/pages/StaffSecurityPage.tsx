@@ -58,6 +58,7 @@ export function StaffSecurityPage() {
       setShowKey(false)
       setComplete(true)
       await queryClient.invalidateQueries({ queryKey: ['employee-access'] })
+      await queryClient.invalidateQueries({ queryKey: ['navigation-access'] })
       await state.refetch()
     })
   }
@@ -228,6 +229,7 @@ export function StaffSecurityPage() {
                           setComplete(false)
                           await state.refetch()
                           await queryClient.invalidateQueries({ queryKey: ['employee-access'] })
+                          await queryClient.invalidateQueries({ queryKey: ['navigation-access'] })
                         })
                       }
                     >

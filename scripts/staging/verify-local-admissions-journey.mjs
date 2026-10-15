@@ -385,6 +385,10 @@ try {
     page.getByRole('heading', { name: 'Disposable admissions foundation' }),
   ).toBeVisible()
   phase = 'deliberate distribution, student upload and independent teacher publication'
+  await expect(page.getByRole('link', { name: 'Coursework', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Work archive', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'CRM', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Staff security', exact: true })).toHaveCount(0)
   await page.goto('http://127.0.0.1:5173/student/coursework')
   await expect(
     page.getByText('Disposable authored lesson instructions.', { exact: true }),
@@ -478,6 +482,58 @@ try {
   if (!(await page.locator('body').evaluate((body) => body.scrollWidth <= body.clientWidth)))
     throw new Error('Student mobile overflow')
   await page.screenshot({ path: 'test-results/f025-composed/feedback-mobile.png', fullPage: true })
+  phase = 'actual authorized staff navigation and revocation'
+  for (const [client, visible, hidden] of [
+    [sales, 'CRM', 'Distribution'],
+    [operator, 'Distribution', 'Classes'],
+    [teacher, 'Reviews', 'Content'],
+  ]) {
+    const context = await browser.newContext()
+    const session = (await client.auth.getSession()).data.session
+    await context.addInitScript(
+      ({ session, key }) => localStorage.setItem(key, JSON.stringify(session)),
+      { session, key: 'sb-' + new URL(config.API_URL).hostname.split('.')[0] + '-auth-token' },
+    )
+    const staffPage = await context.newPage()
+    await staffPage.goto('http://127.0.0.1:5173/health')
+    await expect(staffPage.getByRole('link', { name: visible, exact: true })).toBeVisible()
+    await expect(staffPage.getByRole('link', { name: hidden, exact: true })).toHaveCount(0)
+    await expect(staffPage.getByRole('link', { name: 'Staff security', exact: true })).toBeVisible()
+    await expect(
+      staffPage.getByRole('link', { name: 'Curriculum preview', exact: true }),
+    ).toHaveCount(0)
+    if (client === teacher) {
+      await staffPage.getByRole('link', { name: 'Reviews', exact: true }).click()
+      await expect(staffPage.getByRole('heading', { name: 'Feedback review.' })).toBeVisible()
+      await must(
+        await admin
+          .from('capability_grants')
+          .delete()
+          .eq('person_id', teacherPerson)
+          .eq('capability_key', 'feedback.review'),
+      )
+      await expect(staffPage.getByRole('link', { name: 'Reviews', exact: true })).toHaveCount(0, {
+        timeout: 40_000,
+      })
+      await expect(
+        staffPage.getByRole('link', { name: 'Staff security', exact: true }),
+      ).toBeVisible()
+      await expect(
+        staffPage.getByRole('heading', { name: 'You do not have access to this workspace.' }),
+      ).toBeVisible({ timeout: 40_000 })
+    } else {
+      await staffPage.goto('http://127.0.0.1:5173/staff/assignments')
+      await expect(
+        staffPage.getByRole('heading', {
+          name:
+            client === operator
+              ? 'Assignment distribution.'
+              : 'You do not have access to this workspace.',
+        }),
+      ).toBeVisible()
+    }
+    await context.close()
+  }
   console.log(
     'F025 composed actual pilot passed: scoped author/publication, retry-safe Sales intake, operator identity/activation, deliberate assignment distribution, student upload/finalize, independent teacher publication and browser coursework/feedback. Cross-role denials, identity invariance and responsive UI passed; no preview bypass.',
   )
