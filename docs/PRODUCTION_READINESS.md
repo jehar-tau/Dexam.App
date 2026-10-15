@@ -2,6 +2,8 @@
 
 Status: Not ready for production. This checklist records required work, not permission to configure a provider, spend money, send real messages, or deploy production.
 
+D-042 Option A approved launch-readiness planning on 2026-10-15. `LAUNCH_PLAN.md` sequences these gates with owners, dependencies, acceptance evidence and verified budget scenarios. It does not check off any item or approve implementation/activation. Database backups exclude Storage object bytes; recover both, and review organisation-level billing and spend-cap exclusions before approving a budget.
+
 F025/D-039 B is fictional pilot hardening, not launch acceptance. Assignment-material orphan/uncertain-attachment handling needs an approved operational owner and evidence-based controlled cleanup (DW-046). Fixed initiating-JWT compensation must never borrow a replacement account; lost metadata confirmation must never auto-delete a possibly referenced file.
 
 F023 lesson files additionally require verified Storage cleanup scheduling/ownership, storage/egress capacity review, metadata/audit retention review, and operational handling of uncertain uploads before real data. Local object deletion and the service-only worker do not prove production scheduling. Do not add a credential-bearing Cron command or treat SQL maintenance as Storage deletion.

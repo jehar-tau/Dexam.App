@@ -15,6 +15,7 @@ Use this map instead of reading the entire documentation tree.
 - `design/README.md` — Figma token/pattern export pipeline and Storybook catalog
 - `SECURITY.md` — mandatory security and privacy baseline
 - `PRODUCTION_READINESS.md` — mandatory launch gates, including replacing local email capture with verified real authentication delivery
+- `LAUNCH_PLAN.md` — D-042 A sequenced engineering/owner tasks, exit evidence, current launch cost scenarios and unresolved human/workload inputs; planning only
 - `STAFF_SECURITY.md` — fictional-stage MFA, session invalidation, independent recovery, and failure/escalation operations
 - `TESTING.md` — test layers and definition of done
 - `PILOT_READINESS.md` — fictional milestone evidence, acceptance gaps and distinct real-launch gates

@@ -3,6 +3,8 @@
 Status: Planning estimate
 Last reviewed: 2026-10-11
 
+Launch baseline rechecked 2026-10-15: use `LAUNCH_PLAN.md` for the current scoped launch scenarios and exclusions. Older optional-service estimates below were not all refreshed. A $25 backend estimate is not an all-in launch budget: file backups, domain, qualified review, taxes and usage are additional/unpriced. No paid commitment is approved.
+
 This document estimates external software and infrastructure costs. It does not include taxes, payment-processing fees, the product owner's existing domain or AI subscriptions, salaries for hired developers/designers, legal/accounting costs, content production, advertising, or hardware.
 
 Prices change. Verify current vendor pricing before every paid commitment. No agent may start a paid plan or disable a spend cap without explicit owner approval.
@@ -44,6 +46,8 @@ The upper growth estimates are deliberately broad. We cannot responsibly promise
 - Additional paid project: currently starts around USD 10/month in compute beyond the plan's included compute credit.
 - Control: local environment for daily work, one free staging project, and no paid production project until launch readiness. Keep spend cap on.
 - Staging recovery control: treat free staging as disposable. Recreate it from migrations and fictional bootstrap data rather than relying on provider backups or preserving mutable staging records.
+
+2026-10-15 correction: subscription plans apply per organisation. Free staging alongside Pro production requires a separately eligible Free organisation; two Micro projects in one Pro organisation are approximately $35/month before other charges, not $25 with a free second project. Do not create/transfer/upgrade projects without approval. The spend cap covers selected usage, not total invoice or compute/add-ons. Database backups exclude Storage object bytes. See [organisation billing](https://supabase.com/docs/guides/platform/billing-on-supabase), [cost controls](https://supabase.com/docs/guides/platform/cost-control), and [backup scope](https://supabase.com/docs/guides/platform/backups).
 
 User capacity cannot be inferred from the advertised monthly-active-user quota alone. Database queries, realtime use, file transfer, and media consumption may become limiting first.
 
