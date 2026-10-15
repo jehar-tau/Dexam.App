@@ -8,6 +8,6 @@ Deliver a concrete sequenced plan using repository evidence and current primary 
 
 This feature is documentation/discovery only: no new runtime, role grant, live cleanup, provider configuration, real recipient/data, paid service, production project/transfer or deployment. All current UI layouts remain provisionally approved; later visual refinements are retained. Existing deferred modules remain deferred.
 
-Continuation: `RESTORE_REHEARSAL_PLAN.md` specifies isolated disposable local DB/file capture, restore, newer erasure/revocation reconciliation, authorization and failure checks. D-043 presents execution options; no rehearsal has run. Fixture Auth recreation must not be reported as full production Auth recovery.
+Continuation: `RESTORE_REHEARSAL_PLAN.md` specifies isolated disposable local DB/file capture, restore, newer erasure/revocation reconciliation, authorization and failure checks. D-043 B is approved and F029 implements the rehearsal. Fixture Auth recreation must not be reported as full production Auth recovery.
 
 Acceptance: distinguish tested fictional functionality from launch blockers; verify current relevant pricing; avoid an all-in budget before backup/domain/review assumptions are known; retain unchecked production gates. Capture launch volume and accountable operator availability without requesting private contact details or credentials. Independent review checks that the plan does not silently approve production/security policy. Required PR checks and routine merge follow standing authorisation.

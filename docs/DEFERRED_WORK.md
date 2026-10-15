@@ -8,6 +8,8 @@ This is the canonical register for functionality Dexam has discussed but is not 
 
 ## Status vocabulary
 
+F029/D-043 B implements isolated fictional restore evidence. Full Auth recovery, encrypted off-site custody, durable newer deletion/revocation evidence, concurrent-write capture and production-sized timing remain under DW-027 and `PRODUCTION_READINESS.md`; local rehearsal does not complete those launch gates. Active-enquiry erasure lifecycle-date regression discovered during F029 remains a required defect fix; closed-enquiry replay does not validate it.
+
 - **Next slice** — known missing work that may be proposed after the current slice.
 - **Discovery active** — specification and Decision Gate are being prepared; implementation is not yet approved.
 - **Implementation active** — an approved slice exists locally and is awaiting review or merge; it is not complete yet.
