@@ -334,8 +334,11 @@ export function StudentCourseworkPage() {
           )}
 
           <Callout tone="neutral">
-            Assignments and submissions will be added in the next product stage. This view currently
-            covers the approved curriculum and lesson structure only.
+            Assigned tasks, private submissions and published teacher feedback are available in{' '}
+            <Link to={previewEnabled ? '/student/assignments?preview=1' : '/student/assignments'}>
+              Your assignments
+            </Link>
+            .
           </Callout>
         </article>
       </div>

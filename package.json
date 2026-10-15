@@ -19,6 +19,8 @@
     "staging:fixtures:check": "node scripts/staging/validate-synthetic-fixtures.mjs",
     "staging:fixtures:bootstrap": "node scripts/staging/bootstrap-synthetic-fixtures.mjs",
     "staging:fixtures:verify": "node scripts/staging/verify-synthetic-access.mjs",
+    "pilot:check": "node scripts/staging/verify-local-pilot.mjs --check",
+    "pilot:verify": "node scripts/staging/verify-local-pilot.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",

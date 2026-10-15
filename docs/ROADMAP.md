@@ -4,6 +4,8 @@ Each phase is refined through feature specifications and Decision Gates before i
 
 Current position: the first product milestone through essential in-app notifications, the Phase 7 CRM foundation, assignment operations, enrolment handoff, governed privacy operations, and the hosted-staging release foundation are merged through PR #25. F014 is accepted: the free staging URL, backend release path, deterministic fictional bootstrap, hosted role/revocation checks, provider-advisor gate, and 79-second clean rebuild rehearsal all passed. The next launch-critical stage returns to Phase 3 identity operations. Production personal data remains prohibited until identity/recovery/MFA, operational ownership, notice, request-route controls, backup/restore, and final privacy-review gates are approved.
 
+2026-10-15 update: D-039 B prioritizes fictional pilot readiness over adding modules. Identity hardening, bounded archive/checklist, scheduling, private lesson files and read-only curriculum impact are implemented in their approved fictional scopes. F025 account-isolation fixes merged PR #58 and protected release `38686939843`; composed role journeys and a repeatable local acceptance command now supply evidence beyond preview screens. `PILOT_READINESS.md` separates automated evidence, owner UX/navigation choices (D-040), deferred roadmap modules and mandatory real-launch gates. This is not production readiness or approval to onboard real students.
+
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.
 3. Identity: login, Student/Teacher/Sales/Admin roles, tested RLS.

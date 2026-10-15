@@ -84,6 +84,11 @@ describe('StudentCourseworkPage', () => {
     expect(screen.getByRole('heading', { name: 'Storyboarding' })).toBeVisible()
     expect(screen.getByText(/Detailed lesson notes are still being prepared/)).toBeVisible()
     expect(screen.queryByRole('button', { name: /submit assignment/i })).toBeNull()
+    expect(screen.getByRole('link', { name: 'Your assignments' })).toHaveAttribute(
+      'href',
+      '/student/assignments',
+    )
+    expect(screen.queryByText(/will be added in the next product stage/)).not.toBeInTheDocument()
   })
 
   it('shows a calm empty state before curriculum assignment', async () => {
@@ -104,6 +109,10 @@ describe('StudentCourseworkPage', () => {
       await screen.findByText('<script>window.lessonWasExecuted = true</script>'),
     ).toBeVisible()
     expect(document.querySelector('script')).toBeNull()
+    expect(screen.getByRole('link', { name: 'Your assignments' })).toHaveAttribute(
+      'href',
+      '/student/assignments',
+    )
   })
 
   it('uses fictional source-informed data only in enabled preview mode', async () => {
@@ -113,6 +122,10 @@ describe('StudentCourseworkPage', () => {
     expect(await screen.findByRole('heading', { name: 'Your coursework.' })).toBeVisible()
     expect(screen.getByRole('button', { name: /Perspective/ })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Line control' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Your assignments' })).toHaveAttribute(
+      'href',
+      '/student/assignments?preview=1',
+    )
     expect(mocks.getStudentCoursework).not.toHaveBeenCalled()
   })
 })
