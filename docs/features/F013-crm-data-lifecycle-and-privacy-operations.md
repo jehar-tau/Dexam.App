@@ -154,6 +154,8 @@ No external analytics are authorized. Aggregate operational counts may be derive
 
 ## Implementation evidence
 
+- 2026-10-15 regression: active enquiries have null retention dates, so approved erasure previously violated the minimized-state check and rolled back. Migration `20261015020000_active_crm_erasure_dates.sql` fills only missing lifecycle dates at execution, preserves existing dates, and changes no approvals, holds, access or sales stage. Ten new assertions exercise real case/proposal/independent approval, execution, date consistency, unchanged stage and idempotent tombstone creation. The regression failed before the fix and passed afterward. No real data or production operation is authorised.
+
 - Added separate MFA-gated `privacy.manage` and two-person `privacy.erase_approve` capabilities without silently granting either capability through a role.
 - Added purpose-based CRM lifecycle state and a D025-v1 12-month minimization due date for closed or converted enquiries; record views and reminders do not extend it.
 - Added verified correction and erasure cases, readable-value-free keyed correction fingerprints, server-prepared erasure impact, distinct proposer/approver enforcement, and immediate authority rechecks.

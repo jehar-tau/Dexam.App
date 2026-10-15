@@ -1,6 +1,6 @@
 begin;
 
-select plan(61);
+select plan(71);
 
 select has_type('public', 'crm_privacy_lifecycle_state', 'CRM privacy lifecycle enum exists');
 select has_type('public', 'crm_privacy_case_status', 'privacy case status enum exists');
@@ -371,6 +371,26 @@ select is(
   'minimized',
   'converted CRM record itself is minimized'
 );
+
+-- Active enquiries have no retention dates; independently approved erasure must
+-- still complete atomically without requiring a fabricated closed stage.
+select is((select privacy_state::text from public.crm_enquiries where id=(select enquiry_id from f013_ids where purpose='correction')), 'active', 'active erasure fixture starts without retention scheduling');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000001","session_id":"e0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+select lives_ok($$update f013_ids set case_id=public.create_crm_privacy_case(enquiry_id,'erasure','self','existing_contact_callback','Verified active enquiry erasure') where purpose='correction'$$, 'active enquiry erasure case created');
+select lives_ok($$select public.propose_crm_erasure((select case_id from f013_ids where purpose='correction'),'Verified request to erase active enquiry')$$, 'active enquiry erasure proposed');
+set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+select lives_ok($$select public.decide_crm_erasure((select case_id from f013_ids where purpose='correction'),true,'Independent verification complete')$$, 'different operator approves active enquiry erasure');
+set local role service_role;
+select lives_ok($$select public.execute_approved_crm_erasure((select case_id from f013_ids where purpose='correction'))$$, 'active enquiry erasure executes without missing-date violation');
+reset role;
+select is((select privacy_state::text from public.crm_enquiries where id=(select enquiry_id from f013_ids where purpose='correction')), 'minimized', 'active enquiry is minimized');
+select ok((select retention_anchor_at is not null and minimization_due_at is not null and minimized_at is not null from public.crm_enquiries where id=(select enquiry_id from f013_ids where purpose='correction')), 'minimized lifecycle has required dates');
+select is((select stage::text from public.crm_enquiries where id=(select enquiry_id from f013_ids where purpose='correction')), 'new', 'erasure does not invent a sales closeout');
+set local role service_role;
+select lives_ok($$select public.execute_approved_crm_erasure((select case_id from f013_ids where purpose='correction'))$$, 'active enquiry erasure retry is idempotent');
+reset role;
+select is((select count(*)::integer from public.crm_privacy_erasure_tombstones where case_id=(select case_id from f013_ids where purpose='correction')),1,'active erasure has one restoration tombstone');
 
 update public.capability_grants set revoked_at = now()
 where person_id = 'e1000000-0000-4000-8000-000000000001'

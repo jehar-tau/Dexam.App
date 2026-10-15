@@ -4,6 +4,8 @@ Last updated: 2026-10-15
 
 ## Current phase
 
+Active defect fix: F029 recovery testing exposed approved erasure of an active CRM enquiry failing the lifecycle-date constraint. The targeted regression reproduced the failure; a new migration fills only absent dates on actual execution. Existing approvals/holds and historical dates remain intact. Local targeted tests pass; full checks and independent security review are pending.
+
 Next planning deliverable: `RESTORE_REHEARSAL_PLAN.md` defines the isolated fictional recovery exercise and acceptance/failure evidence. D-043 awaits a choice before implementing it; no backup/restore rehearsal has executed or production gate passed.
 
 Latest update (2026-10-15): F028/D-042 A launch-readiness plan merged through PR #63 (`a0ab457`), with capacity/admin inputs recorded through PR #64. Owner confirmed up to 50 students in the first three months and Rohin as second Admin for planning. The product owner handles student support and urgent incidents, with Rohin as backup. Coverage hours/escalation arrangements remain unconfirmed; two total admins do not cover recovery requiring two non-target admins. No account, role grant, provider, paid plan, real data or production activation is approved by these inputs. F027 merged PR #62 (`604c949`); all current layouts remain provisionally approved. Use `LAUNCH_PLAN.md`; all `PRODUCTION_READINESS.md` gates remain unchecked.
