@@ -1,6 +1,6 @@
 # Fictional pilot readiness
 
-Status: Active under owner-approved D-039 Option B, 2026-10-14. Not production ready.
+Status: Automated acceptance active under owner-approved D-039 Option B; updated 2026-10-15. Not production ready. Account hardening merged PR #58 (`86b2fba`); protected fictional release `38686939843` passed.
 
 This is a bounded first milestone, not a promise that every roadmap feature is finished. Use only invented accounts/content on localhost or the approved fictional staging project. No real students, employee contacts, external delivery, paid provider or production activation. Codex leads setup/testing; the designer owner should not have to diagnose environments or create PRs.
 
@@ -28,14 +28,21 @@ All rerun disposable fixture scripts passed and removed exact test accounts/doma
 - Retired teacher workspaces cannot continue draft/save/publish/assistance requests. Microphones/tracks stop on unmount, including permission arriving late. Student multi-file loops stop before the next request after retirement.
 - Foreground staff/student membership checks repeat every 30 seconds and fail closed on error/denial. This is UI freshness, not a substitute for live backend authorization.
 
+## Composed workflow evidence
+
+`verify-local-admissions-journey.mjs` now passes a composed actual API/Edge/Chromium flow: scoped operator creates curriculum/sections/topics/lessons through RLS, deliberately publishes curriculum and an assignment, Sales creates and advances a retry-safe enquiry, an operator reviews identity and approves the same prospect, issues a one-time pack, and the student activates and signs in. A deliberate retry-safe assignment release reaches that student, who uploads/finalizes work; a separate scoped teacher publishes feedback visible in the student's browser. Cross-role publication/distribution/approval/activation/review denials and canonical identity invariance are checked. Test-only setup still creates staff identities, explicit scopes and offering/cohort; this is not a new course/staff provisioning UI. No real contact delivery or preview bypass.
+
+Exact own-request/UUID cleanup removes private submission objects, domain/history/audit and supported Auth accounts, with original USER-trigger flags restored and FK/RLS preserved. Unknown references abort cleanup. Fictional staff emails are tracked before account creation so lost responses can be reconciled without broad account matching; startup failures and browser-close failures cannot leak config or skip remaining cleanup.
+
 ## Remaining fictional-pilot acceptance work
 
-1. Compose actual CRM intake/ownership → handoff identity review → enrolment/activation acceptance across disposable role sessions. Verify denied cross-role actions and exact cleanup, not only preview clicks.
-2. Exercise deliberate content authoring/publication and assignment distribution into the same student/teacher journey without relying on harness-seeded academic rows.
-3. Add a repeatable local pilot command/runbook covering preconditions, environment safety, fixture cleanup and the evidence map; avoid resetting a shared local database or running global purge against unrelated records.
-4. Review the approved screens with the owner using fictional accounts and record defects separately from new product requests. Responsive automated checks are not a substitute for the designer's final UX review.
+The consolidated `pnpm pilot:verify` passed on 2026-10-15: 285 app tests, 1040 DB assertions, 63 Chromium smoke journeys and all nine actual local acceptance scripts, including exact cleanup and the real scheduled tick. Independent review cleared harness/runner safety; desktop/mobile composed-workflow screenshots were inspected. `pilot:check` validates local services/DB/ports/Edge first, without resetting data or replaying provider logs.
+
+Remaining: implement owner-approved D-040 B existing-authority-aware navigation, then review approved screens with the owner using fictional accounts. Automated responsive checks do not replace the designer's final UX review. Some authoring/distribution steps are SDK/API checks, not proof of every staff form click.
 
 These acceptance tasks use existing approved rules. New policy choices still require a Decision Gate. No calendar completion estimate or percentage is claimed from test counts.
+
+Visual QA identified shared staff-heavy navigation on the student screens; direct access is still denied by existing gates. D-040 presents the owner-visible options before changing navigation. The stale coursework message promising future assignments was corrected to link to the already-working assignments workspace, preserving explicit fictional preview routing.
 
 ## Required before real launch — not included by D-039 B
 
