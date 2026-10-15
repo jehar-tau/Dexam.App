@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { useLocation } from 'react-router-dom'
 
 import type { AuthContextValue } from './AuthContext'
@@ -46,8 +46,41 @@ describe('StaffAccessBoundary', () => {
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     vi.unstubAllEnvs()
   })
+
+  it.each(['revoked', 'unverifiable'])(
+    'hides an open workspace when access becomes %s',
+    async (state) => {
+      vi.useFakeTimers()
+      mocks.getEmployeeAccess.mockResolvedValue({ activeEmployee: true, hasCapability: true })
+      renderApp(
+        <StaffAccessBoundary>
+          <h1>Private open workspace</h1>
+        </StaffAccessBoundary>,
+      )
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10)
+      })
+      expect(screen.getByText('Private open workspace')).toBeVisible()
+      if (state === 'revoked')
+        mocks.getEmployeeAccess.mockResolvedValue({ activeEmployee: false, hasCapability: false })
+      else mocks.getEmployeeAccess.mockRejectedValue(new Error('Offline'))
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(30_010)
+      })
+      expect(screen.queryByText('Private open workspace')).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          name:
+            state === 'revoked'
+              ? 'You do not have access to this workspace.'
+              : 'We could not verify your access.',
+        }),
+      ).toBeVisible()
+    },
+  )
 
   it('opens the workspace only after a current capability check succeeds', async () => {
     mocks.getEmployeeAccess.mockResolvedValue({ activeEmployee: true, hasCapability: true })

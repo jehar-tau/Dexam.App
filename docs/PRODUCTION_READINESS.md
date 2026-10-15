@@ -2,6 +2,8 @@
 
 Status: Not ready for production. This checklist records required work, not permission to configure a provider, spend money, send real messages, or deploy production.
 
+F025/D-039 B is fictional pilot hardening, not launch acceptance. Assignment-material orphan/uncertain-attachment handling needs an approved operational owner and evidence-based controlled cleanup (DW-046). Fixed initiating-JWT compensation must never borrow a replacement account; lost metadata confirmation must never auto-delete a possibly referenced file.
+
 F023 lesson files additionally require verified Storage cleanup scheduling/ownership, storage/egress capacity review, metadata/audit retention review, and operational handling of uncertain uploads before real data. Local object deletion and the service-only worker do not prove production scheduling. Do not add a credential-bearing Cron command or treat SQL maintenance as Storage deletion.
 
 F022 supplies only fictional native in-app delivery. Production still requires capacity review, operational ownership, failure alert/escalation policy and separately scheduled Storage file/audio cleanup. Private worker success becomes unhealthy after three minutes without a success; Free-project pausing can stop delivery. No production job is activated by migrations.

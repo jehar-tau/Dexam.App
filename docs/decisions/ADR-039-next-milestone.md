@@ -1,6 +1,8 @@
 # D-039 — Next milestone after curriculum impact preview
 
-Status: Awaiting owner selection
+Status: Option B approved by owner, 2026-10-14 — fictional pilot readiness only
+
+Record: test and tighten existing approved workflows, fix defects within current policies, and maintain a remaining-gap/launch checklist. No new modules, actual curriculum migrations, new permissions, real data, production or spending approved.
 
 ## Question
 

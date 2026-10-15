@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { PropsWithChildren } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { AuthProvider } from '../features/auth/AuthProvider'
+import { useAuth } from '../features/auth/AuthContext'
 
-export function AppProviders({ children }: PropsWithChildren) {
+function AccountQueryProvider({ children }: PropsWithChildren) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -17,9 +18,24 @@ export function AppProviders({ children }: PropsWithChildren) {
       }),
   )
 
+  // A retired account's pending requests and private cache never reach the next account.
+  useEffect(() => () => queryClient.clear(), [queryClient])
+
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+}
+
+function AccountWorkspace({ children }: PropsWithChildren) {
+  const { session } = useAuth()
+  // Do not key by access token/expiry: routine refresh must preserve current-account drafts.
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>{children}</AuthProvider>
-    </QueryClientProvider>
+    <AccountQueryProvider key={session?.user.id ?? 'signed-out'}>{children}</AccountQueryProvider>
+  )
+}
+
+export function AppProviders({ children }: PropsWithChildren) {
+  return (
+    <AuthProvider>
+      <AccountWorkspace>{children}</AccountWorkspace>
+    </AuthProvider>
   )
 }

@@ -1,6 +1,7 @@
-import type { Session } from '@supabase/supabase-js'
+import type { Session, SupabaseClient } from '@supabase/supabase-js'
 
-import { getSupabaseClient } from './supabaseClient'
+import { createEmployeeActivationClient, getSupabaseClient } from './supabaseClient'
+import { watchAccountChanges } from './accountOperation'
 
 const genericSignInError = 'We could not sign you in. Check your details and try again.'
 
@@ -18,34 +19,48 @@ function requireClient() {
 }
 
 export async function signInEmployee(email: string, password: string): Promise<Session> {
-  const client = requireClient()
-  const { data, error } = await client.auth.signInWithPassword({ email, password })
-
-  if (error || !data.session) {
-    throw new Error(genericSignInError)
-  }
-
-  if (!data.user.email_confirmed_at) {
-    await client.auth.signOut({ scope: 'local' })
-    throw new Error(genericSignInError)
-  }
-
+  const shared = requireClient()
+  const client = createEmployeeActivationClient()
+  if (!client) throw new Error(genericSignInError)
+  const guard = watchAccountChanges(shared)
+  let committed = false
   try {
-    const access = await getEmployeeAccess()
-    if (!access.activeEmployee) {
+    const { data, error } = await client.auth.signInWithPassword({ email, password })
+
+    if (error || !data.session) {
       throw new Error(genericSignInError)
     }
-  } catch (accessError) {
-    await client.auth.signOut({ scope: 'local' })
-    if (accessError instanceof Error && accessError.message === genericSignInError) {
-      throw accessError
-    }
-    throw new Error('We could not verify employee access. Please try again.', {
-      cause: accessError,
-    })
-  }
 
-  return data.session
+    if (!data.user.email_confirmed_at) {
+      throw new Error(genericSignInError)
+    }
+
+    try {
+      const access = await getEmployeeAccess(undefined, client)
+      if (!access.activeEmployee) {
+        throw new Error(genericSignInError)
+      }
+    } catch (accessError) {
+      if (accessError instanceof Error && accessError.message === genericSignInError) {
+        throw accessError
+      }
+      throw new Error('We could not verify employee access. Please try again.', {
+        cause: accessError,
+      })
+    }
+
+    guard.assertCurrent()
+    const result = await shared.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    })
+    if (result.error || !result.data.session) throw new Error(genericSignInError)
+    committed = true
+    return result.data.session
+  } finally {
+    guard.dispose()
+    if (!committed) await client.auth.signOut({ scope: 'local' })
+  }
 }
 
 export async function signOutCurrentSession() {
@@ -54,8 +69,10 @@ export async function signOutCurrentSession() {
   if (error) throw new Error('Sign-out failed. Please try again.')
 }
 
-export async function getEmployeeAccess(capability?: string): Promise<EmployeeAccess> {
-  const client = requireClient()
+export async function getEmployeeAccess(
+  capability?: string,
+  client: SupabaseClient = requireClient(),
+): Promise<EmployeeAccess> {
   const membershipResult = await client.rpc('current_person_has_active_employee_membership')
 
   if (membershipResult.error) {

@@ -15,9 +15,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (!client) return
 
     let active = true
+    let observedAuthEvent = false
 
     void client.auth.getSession().then(({ data }) => {
-      if (!active) return
+      if (!active || observedAuthEvent) return
       setSession(data.session)
       setInitializing(false)
     })
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       data: { subscription },
     } = client.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return
+      observedAuthEvent = true
       setSession(nextSession)
       setInitializing(false)
     })
@@ -42,16 +44,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       initializing,
       session,
       signInEmployee: async (email, password) => {
-        const nextSession = await signInEmployee(email, password)
-        setSession(nextSession)
+        await signInEmployee(email, password)
       },
       signInStudent: async (memberId, password) => {
-        const nextSession = await signInStudent(memberId, password)
-        setSession(nextSession)
+        await signInStudent(memberId, password)
       },
       signOut: async () => {
         await signOutCurrentSession()
-        setSession(null)
       },
     }),
     [client, initializing, session],

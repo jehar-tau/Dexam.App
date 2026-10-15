@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import type { AuthContextValue } from './AuthContext'
@@ -47,7 +47,37 @@ describe('StudentAccessBoundary', () => {
     mocks.getStudentAccess.mockReset()
   })
 
-  afterEach(() => vi.unstubAllEnvs())
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllEnvs()
+  })
+
+  it.each(['revoked', 'unverifiable'])(
+    'hides an open workspace when membership becomes %s',
+    async (state) => {
+      vi.useFakeTimers()
+      mocks.getStudentAccess.mockResolvedValue(true)
+      renderBoundary()
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10)
+      })
+      expect(screen.getByText('Protected student workspace')).toBeVisible()
+      if (state === 'revoked') mocks.getStudentAccess.mockResolvedValue(false)
+      else mocks.getStudentAccess.mockRejectedValue(new Error('Offline'))
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(30_010)
+      })
+      expect(screen.queryByText('Protected student workspace')).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', {
+          name:
+            state === 'revoked'
+              ? 'This student workspace is not available.'
+              : 'We could not verify your access.',
+        }),
+      ).toBeVisible()
+    },
+  )
 
   it('redirects a signed-out visitor to student sign in', async () => {
     mocks.auth = { ...mocks.auth!, session: null }
