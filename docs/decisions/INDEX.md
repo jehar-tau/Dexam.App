@@ -58,4 +58,4 @@ D-040 — Pilot navigation scope — Option B approved: existing-authority-aware
 D-041 — Next milestone — Option A approved: guided fictional pilot/designer review; no production activation or new modules — `ADR-041-guided-pilot-review.md`.
 D-042 — Post-pilot milestone — Option A approved 2026-10-15: launch-readiness planning only, no spending/activation/real data — `ADR-042-post-pilot-milestone.md`.
 
-D-043 — Fictional restore rehearsal — awaiting choice; concrete isolated local specification, no production activation — `ADR-043-fictional-restore-rehearsal.md`.
+D-043 — Fictional restore rehearsal — Option B approved: isolated local implementation and execution, no production activation — `ADR-043-fictional-restore-rehearsal.md`.

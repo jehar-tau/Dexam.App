@@ -21,6 +21,7 @@
     "staging:fixtures:verify": "node scripts/staging/verify-synthetic-access.mjs",
     "pilot:check": "node scripts/staging/verify-local-pilot.mjs --check",
     "pilot:verify": "node scripts/staging/verify-local-pilot.mjs",
+    "pilot:restore": "node scripts/staging/verify-local-restore.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",

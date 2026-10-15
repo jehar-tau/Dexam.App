@@ -1,6 +1,6 @@
 # Fictional backup/restore rehearsal plan
 
-Status: specification under F028 / D-042 A; execution awaits D-043. No production recovery policy or backup provider is selected.
+Status: specified under F028 / D-042 A; isolated fictional execution approved through D-043 B. No production recovery policy or backup provider is selected.
 
 ## Outcome
 
