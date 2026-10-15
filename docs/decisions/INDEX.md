@@ -55,3 +55,4 @@ D-037 — Private lesson materials — Option B approved 2026-10-14; fictional/l
 D-038 — Existing-student curriculum upgrades — Option B approved: restricted read-only impact preview; actual migrations deferred — `ADR-038-curriculum-upgrade-scope.md`.
 D-039 — Next milestone — Option B approved: fictional pilot readiness within existing rules; no new modules or real launch — `ADR-039-next-milestone.md`.
 D-040 — Pilot navigation scope — Option B approved: existing-authority-aware links with current styles and no new grants — `ADR-040-pilot-navigation-scope.md`.
+D-041 — Next milestone — Option A approved: guided fictional pilot/designer review; no production activation or new modules — `ADR-041-guided-pilot-review.md`.
