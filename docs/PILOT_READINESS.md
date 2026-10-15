@@ -38,7 +38,7 @@ Exact own-request/UUID cleanup removes private submission objects, domain/histor
 
 The consolidated `pnpm pilot:verify` passed again for F026 on 2026-10-15: 295 app tests, 1075 DB assertions, 63 Chromium smoke journeys and all nine actual local acceptance scripts, including exact cleanup and the real scheduled tick. Independent review cleared harness/runner safety; desktop/mobile composed-workflow screenshots were inspected. `pilot:check` validates local services/DB/ports/Edge first, without resetting data or replaying provider logs.
 
-F026 owner-approved D-040 B navigation passed actual role/route/revocation browser acceptance; required PR CI and protected fictional release remain prerequisites. Next is owner review of approved screens using fictional accounts. Automated responsive checks do not replace the designer's final UX review. Some authoring/distribution steps are SDK/API checks, not proof of every staff form click.
+F026 owner-approved D-040 B navigation passed actual role/route/revocation browser acceptance and merged PR #60; required PR/main CI and protected fictional release `38691212531` passed. D-041 A is approved: F027 guided owner review is active, starting with student assignments/feedback. Automated responsive checks do not replace the designer's final UX review. Some authoring/distribution steps are SDK/API checks, not proof of every staff form click.
 
 These acceptance tasks use existing approved rules. New policy choices still require a Decision Gate. No calendar completion estimate or percentage is claimed from test counts.
 

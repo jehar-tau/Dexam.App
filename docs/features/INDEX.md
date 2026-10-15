@@ -25,6 +25,7 @@
 - F023 Private lesson files — D-037 B accepted through PR #54 and protected fictional release `38594311834`; production remains gated
 - F024 Curriculum impact preview — D-038 B accepted through PR #56 and protected fictional release `38603078466`; no student migration or default grants
 - F025 Fictional pilot readiness — D-039 B active: account isolation fixes, real workflow reruns and explicit remaining acceptance gaps; no production approval
-- F026 Authorized navigation — D-040 B approved; existing-authority-only links, scoped entrance alignment and fail-closed identity/MFA freshness; acceptance active
+- F026 Authorized navigation — D-040 B accepted through PR #60 and protected fictional release `38691212531`; no new grants or production approval
+- F027 Guided fictional pilot review — D-041 A approved; owner walkthrough and scoped defect record, no new module or production approval
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
