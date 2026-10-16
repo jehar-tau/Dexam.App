@@ -17,6 +17,7 @@ const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['reviews', 'Reviews', '/staff/reviews'],
   ['employees', 'Employees', '/staff/employees'],
   ['studentRecovery', 'Student recovery', '/staff/student-recovery'],
+  ['staffRecovery', 'Recovery investigations', '/staff/security/incidents'],
   ['closeout', 'Course closeout', '/staff/enrolment-closeout'],
   ['classes', 'Classes', '/staff/classes'],
   ['curriculumImpact', 'Curriculum preview', '/staff/curriculum-impact'],

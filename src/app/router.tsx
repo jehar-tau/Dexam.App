@@ -27,6 +27,7 @@ import { StudentStudyChecklistPage } from '../pages/StudentStudyChecklistPage'
 import { ClassSchedulingPage, StudentAgendaPage } from '../pages/ClassSchedulePages'
 import { StaffSecurityPage } from '../pages/StaffSecurityPage'
 import { StaffRecoveryPage } from '../pages/StaffRecoveryPage'
+import { RecoveryIncidentsPage } from '../pages/RecoveryIncidentsPage'
 import { StudentActivationPage } from '../pages/StudentActivationPage'
 import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
@@ -147,6 +148,18 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="security_controls.change" requireMfa>
             <StaffRecoveryPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/security/incidents',
+        element: (
+          <StaffAccessBoundary
+            capability="security_controls.change"
+            requireMfa
+            allowPreview={false}
+          >
+            <RecoveryIncidentsPage />
           </StaffAccessBoundary>
         ),
       },
