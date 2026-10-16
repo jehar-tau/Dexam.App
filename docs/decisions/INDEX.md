@@ -61,3 +61,5 @@ D-042 — Post-pilot milestone — Option A approved 2026-10-15: launch-readines
 D-043 — Fictional restore rehearsal — Option B approved: isolated local implementation and execution, no production activation — `ADR-043-fictional-restore-rehearsal.md`.
 
 D-044 — Assignment upload reconciliation — Option B approved 2026-10-16: tracked uploads, 30-day unreferenced cleanup, referenced/legacy protection; fictional/local only — `ADR-044-assignment-upload-reconciliation.md`.
+
+D-045 — Uncertain password-recovery incident review — awaiting choice on manual investigation, bounded independent incident review, or complete resolution discovery first — `ADR-045-uncertain-recovery-incident-review.md`.

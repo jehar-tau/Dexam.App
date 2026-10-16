@@ -30,5 +30,6 @@
 - F028 Launch-readiness planning — D-042 A approved; sequenced evidence/ownership/cost plan, no implementation or production activation authorised
 - F029 Isolated restore rehearsal — D-043 B approved; disposable local DB/file recovery implementation and validation active
 - F030 Assignment upload reconciliation — D-044 B approved; tracked uploads and local-only cleanup verified; production activation remains gated
+- F031 Uncertain password-recovery incident review — concrete proposal; D-045 administrative investigation choice pending
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
