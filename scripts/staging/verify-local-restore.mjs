@@ -177,12 +177,17 @@ async function access(side, revoked = false) {
   for (const entry of manifest.entries) {
     phase = `access: private bucket ${entry.bucket}`
     check((await client(side).storage.from(entry.bucket).download(entry.path)).error)
-    if (['student-submissions', 'teacher-feedback-audio'].includes(entry.bucket)) {
+    if (
+      ['student-submissions', 'teacher-feedback-audio', 'assignment-materials'].includes(
+        entry.bucket,
+      )
+    ) {
       const ownBytes = Buffer.from(
         await (await must(student.storage.from(entry.bucket).download(entry.path))).arrayBuffer(),
       )
       check(digest(ownBytes) === entry.sha256)
-      check((await other.storage.from(entry.bucket).download(entry.path)).error)
+      if (entry.bucket !== 'assignment-materials')
+        check((await other.storage.from(entry.bucket).download(entry.path)).error)
     }
   }
   phase = 'access: feedback visibility'
@@ -242,7 +247,7 @@ try {
       : bucket.id === 'student-submissions'
         ? `${instance}/fc000000-0000-4000-8000-000000000001/${fileId}.pdf`
         : bucket.id === 'assignment-materials'
-          ? `f9000000-0000-4000-8000-000000000001/${fileId}.pdf`
+          ? `f2000000-0000-4000-8000-000000000001/f9000000-0000-4000-8000-000000000001/${fileId}.pdf`
           : `${lesson}/${fileId}.pdf`
     const bytes = Buffer.from(
       audio ? 'fictional audio bytes' : '%PDF-1.4\nfictional restore material\n',
@@ -325,7 +330,6 @@ try {
   sql(
     source,
     `begin;
-    update public.crm_enquiries set stage='closed',closed_reason='Fictional restore erasure',closed_at=now() where id='${enquiry}';
     insert into public.role_assignments(person_id,role_key,grant_reason) values
     ('f1000000-0000-4000-8000-000000000001','elevated_admin','Fictional restore privacy fixture'),
     ('f1000000-0000-4000-8000-000000000005','elevated_admin','Fictional restore privacy fixture');

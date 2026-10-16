@@ -59,3 +59,5 @@ D-041 — Next milestone — Option A approved: guided fictional pilot/designer 
 D-042 — Post-pilot milestone — Option A approved 2026-10-15: launch-readiness planning only, no spending/activation/real data — `ADR-042-post-pilot-milestone.md`.
 
 D-043 — Fictional restore rehearsal — Option B approved: isolated local implementation and execution, no production activation — `ADR-043-fictional-restore-rehearsal.md`.
+
+D-044 — Assignment upload reconciliation — awaiting owner choice on tracked uploads, quarantine and cleanup authority — `ADR-044-assignment-upload-reconciliation.md`.
