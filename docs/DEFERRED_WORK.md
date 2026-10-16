@@ -8,7 +8,7 @@ This is the canonical register for functionality Dexam has discussed but is not 
 
 ## Status vocabulary
 
-F029/D-043 B implements isolated fictional restore evidence. Full Auth recovery, encrypted off-site custody, durable newer deletion/revocation evidence, concurrent-write capture and production-sized timing remain under DW-027 and `PRODUCTION_READINESS.md`; local rehearsal does not complete those launch gates. The active-enquiry erasure lifecycle-date regression was fixed through PR #68 with independent review and a failing-before/passing-after regression. DW-046's F030/D-044 B is approved for fictional/local implementation; production cleanup activation, marker retention and operational ownership remain gated.
+F029/D-043 B implements isolated fictional restore evidence. Full Auth recovery, encrypted off-site custody, durable newer deletion/revocation evidence, concurrent-write capture and production-sized timing remain under DW-027 and `PRODUCTION_READINESS.md`; local rehearsal does not complete those launch gates. The active-enquiry erasure lifecycle-date regression was fixed through PR #68 with independent review and a failing-before/passing-after regression. DW-046's F030/D-044 B is implemented through PR #70; production cleanup activation, marker retention and operational ownership remain gated. F031/D-045 B investigation is merged through PR #72, while full uncertain-reset resolution remains DW-045. F032/D-046 specifies the next email transport choice, without live sending or provider activation.
 
 - **Next slice** — known missing work that may be proposed after the current slice.
 - **Discovery active** — specification and Decision Gate are being prepared; implementation is not yet approved.
