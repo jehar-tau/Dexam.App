@@ -14,6 +14,8 @@ F022 supplies only fictional native in-app delivery. Production still requires c
 
 The owner confirmed on 2026-10-13 that D-029 Option B means local email testing now and real authentication email delivery before launch. Keep evidence beside each completed item; never infer production readiness from fictional staging acceptance.
 
+F032/D-046 B prepares a provider-neutral message and closed Resend mock adapter; 50 new tests and independent review passed. No deployed handler uses it and no live executor exists. Owner-supplied `designexam.com`, existing Zoho DNS and proposed subdomain/sender are documented in `AUTH_EMAIL_SETUP_PLAN.md`; actual account, DNS, sender, recipients, integration and sending still require approval. These mock tests do not complete any live delivery item below.
+
 ## Authentication email — required before real employee onboarding
 
 - [ ] Approve a delivery provider, volume estimate, monthly cost ceiling, sending domain/address, and operational owner.
