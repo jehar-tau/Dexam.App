@@ -228,18 +228,20 @@ select throws_ok(
   $$insert into public.assignment_materials (assignment_version_id, object_path, original_file_name, mime_type, byte_size, position, created_by_person_id) values ('d8000000-0000-4000-8000-000000000001', 'd2000000-0000-4000-8000-000000000001/d8000000-0000-4000-8000-000000000001/d9000000-0000-4000-8000-000000000001.pdf', 'room.pdf', 'application/pdf', 10485761, 1, 'd1000000-0000-4000-8000-000000000001')$$,
   '23514', null, 'material larger than 10 MB is rejected'
 );
-select lives_ok(
-  $$insert into public.assignment_materials (assignment_version_id, object_path, original_file_name, mime_type, byte_size, position, created_by_person_id) values ('d8000000-0000-4000-8000-000000000001', 'd2000000-0000-4000-8000-000000000001/d8000000-0000-4000-8000-000000000001/d9000000-0000-4000-8000-000000000001.pdf', 'room.pdf', 'application/pdf', 1024, 1, 'd1000000-0000-4000-8000-000000000001')$$,
-  'valid private assignment material metadata is accepted'
-);
+select * from public.reserve_assignment_upload('d9000000-0000-4000-8000-000000000001','d8000000-0000-4000-8000-000000000001','room.pdf','application/pdf',1024);
 select lives_ok(
   $$insert into storage.objects (bucket_id, name, owner_id, metadata) values ('assignment-materials', 'd2000000-0000-4000-8000-000000000001/d8000000-0000-4000-8000-000000000001/d9000000-0000-4000-8000-000000000001.pdf', auth.uid()::text, '{"mimetype":"application/pdf","size":1024}'::jsonb)$$,
   'editor can upload an approved private material object'
+);
+select lives_ok(
+  $$select public.attach_assignment_upload('d9000000-0000-4000-8000-000000000001')$$,
+  'valid confirmed private assignment material is attached'
 );
 select throws_ok(
   $$insert into storage.objects (bucket_id, name, owner_id, metadata) values ('assignment-materials', 'd2000000-0000-4000-8000-000000000001/d8000000-0000-4000-8000-000000000001/d9000000-0000-4000-8000-000000000002.pdf', auth.uid()::text, '{"mimetype":"text/html","size":1024}'::jsonb)$$,
   '42501', null, 'storage policy rejects an unsupported MIME type'
 );
+select public.reserve_assignment_upload(('d9000000-0000-4000-8000-00000000000'||n)::uuid,'d8000000-0000-4000-8000-000000000001','room.pdf','application/pdf',1024) from generate_series(2,5) n;
 select lives_ok(
   $$
     insert into storage.objects (bucket_id, name, owner_id, metadata) values

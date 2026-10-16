@@ -29,6 +29,6 @@
 - F027 Guided fictional pilot review — owner provisionally approved all current UI layouts; actual staff distribution form acceptance passed; no production approval, later visual refinements retained
 - F028 Launch-readiness planning — D-042 A approved; sequenced evidence/ownership/cost plan, no implementation or production activation authorised
 - F029 Isolated restore rehearsal — D-043 B approved; disposable local DB/file recovery implementation and validation active
-- F030 Assignment upload reconciliation — concrete proposal; D-044 retention/deletion-authority choice pending
+- F030 Assignment upload reconciliation — D-044 B approved; tracked uploads and local-only cleanup verified; production activation remains gated
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
