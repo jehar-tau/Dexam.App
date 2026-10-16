@@ -1,12 +1,12 @@
 # Current State
 
-Last updated: 2026-10-15
+Last updated: 2026-10-16
 
 ## Current phase
 
 F029/D-043 B merged through PR #67 (`0602cb4`): isolated DB/four-bucket recovery, newer erasure/revocation/expiry evidence and interrupted restore/FK rejection passed; 298 app tests and independent review passed. Existing developer services were preserved. Full Auth/off-site/production recovery remains gated.
 
-Active defect fix: F029 exposed approved erasure of an active CRM enquiry failing the lifecycle-date constraint. The regression reproduced the failure; a migration fills only absent dates on execution. Existing approvals/holds and historical dates remain intact. All 1,085 DB assertions and independent security review pass; PR checks pending.
+Active-enquiry erasure fix merged PR #68 (`92f6aff`); all 1,085 DB assertions, required CI and independent security review passed. Protected fictional staging release `38851209617` succeeded. The rehearsal now exercises active-enquiry replay and real student brief downloads. F030/D-044 is a concrete proposal for tracked assignment uploads, a 30-day unreferenced grace period and fenced cleanup; owner choice is pending. No production activation or real-data processing is approved.
 
 Latest update (2026-10-15): F028/D-042 A launch-readiness plan merged through PR #63 (`a0ab457`), with capacity/admin inputs recorded through PR #64. Owner confirmed up to 50 students in the first three months and Rohin as second Admin for planning. The product owner handles student support and urgent incidents, with Rohin as backup. Coverage hours/escalation arrangements remain unconfirmed; two total admins do not cover recovery requiring two non-target admins. No account, role grant, provider, paid plan, real data or production activation is approved by these inputs. F027 merged PR #62 (`604c949`); all current layouts remain provisionally approved. Use `LAUNCH_PLAN.md`; all `PRODUCTION_READINESS.md` gates remain unchecked.
 
