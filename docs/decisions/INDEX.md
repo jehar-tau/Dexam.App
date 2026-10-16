@@ -63,3 +63,5 @@ D-043 — Fictional restore rehearsal — Option B approved: isolated local impl
 D-044 — Assignment upload reconciliation — Option B approved 2026-10-16: tracked uploads, 30-day unreferenced cleanup, referenced/legacy protection; fictional/local only — `ADR-044-assignment-upload-reconciliation.md`.
 
 D-045 — Uncertain password-recovery incident review — Option B approved 2026-10-17: two non-target administrators record investigation; uncertain execution remains blocked; fictional/local only — `ADR-045-uncertain-recovery-incident-review.md`.
+
+D-046 — Authentication email transport preparation — awaiting provider/implementation choice; recommended offline mocked Resend candidate with no activation — `ADR-046-authentication-email-transport.md`.
