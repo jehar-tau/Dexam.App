@@ -64,4 +64,4 @@ D-044 — Assignment upload reconciliation — Option B approved 2026-10-16: tra
 
 D-045 — Uncertain password-recovery incident review — Option B approved 2026-10-17: two non-target administrators record investigation; uncertain execution remains blocked; fictional/local only — `ADR-045-uncertain-recovery-incident-review.md`.
 
-D-046 — Authentication email transport preparation — awaiting provider/implementation choice; recommended offline mocked Resend candidate with no activation — `ADR-046-authentication-email-transport.md`.
+D-046 — Authentication email transport preparation — Option B approved 2026-10-17: provider-neutral message and mocked Resend candidate, no account/setup/sending activation — `ADR-046-authentication-email-transport.md`.

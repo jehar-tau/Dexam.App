@@ -1,12 +1,12 @@
 # F032 — Authentication email transport preparation
 
-Status: concrete proposal under D-042 planning; D-046 provider/implementation choice pending. No provider account, DNS change, delivery, real address processing or production activation approved.
+Status: D-046 Option B approved 2026-10-17; mock-only implementation verified. No provider account, DNS change, delivery, real address processing or production activation approved.
 
 ## Existing boundary
 
 F016 generates exact-request invitation/recovery proofs and app links, clears fragments on entry, and uses isolated sessions. `_shared/local-employee-email.mjs`, worker preflights, callbacks and database email constraints deliberately allow fictional local email only. Changing Supabase SMTP alone cannot carry this complete custom application proof flow or satisfy its authorization rules. Preserve the existing implementation until a separately reviewed integration replaces it.
 
-## Recommended next slice: D-046 B
+## Approved slice: D-046 B
 
 Prepare a provider-neutral authentication-email interface and a Resend API adapter, tested entirely against a mock transport with fictional addresses. Limit purposes to existing employee invitations and unchanged-email recovery. Do not add student email, marketing, attachments, inbound mail, tracking or bulk contact import. This slice installs no live configuration, obtains no API key and changes no `.invalid` database constraint or local worker guard. The default runtime remains disabled for external sending; no new deployed worker invokes the adapter.
 
@@ -29,3 +29,17 @@ Supabase describes its default SMTP as a restricted testing service. Production 
 ## Later activation inputs and gates
 
 Before any live setup/send: owner approves the provider's processing/retention terms, an owned sending domain/address, actual callback host, explicit test recipients, verified DNS changes, volume/rate budget, operational ownership and spending ceiling. Review provider-side message retention because recovery emails contain credentials; disable link/open tracking and verify this at the domain. Store secrets through dashboards/secret management, never chat. Test authenticated delivery/bounce behavior and exact identity/callback/session safeguards before real onboarding. Separately approve database/worker changes for real email addresses and activation. Student recovery, uncertain-password resolution, backups and production go/no-go remain their own gates.
+
+Owner supplied `designexam.com` on 2026-10-17 for setup planning only. `AUTH_EMAIL_SETUP_PLAN.md` records read-only DNS observations and a proposed `auth.designexam.com` sender boundary, preserving the existing Zoho mail records. The sender, DNS changes and provider account remain unapproved.
+
+## Implementation and acceptance
+
+`_shared/authentication-email.mjs` prepares a frozen provider-neutral message from strict mock configuration and fictional addresses. It binds request/delivery identity, one-hour maximum validity, exact callback/fragment and separate message-purpose/OTP-proof type. An invitation may use invitation or recovery proof type as F016 already supports; recovery mail requires recovery proof type. Invalid input produces a generic error without echoing its values.
+
+`_shared/resend-mock-email.mjs` formats the candidate fixed HTTPS endpoint, one-recipient plain-text payload and idempotency header. The closed adapter consumes at most two scripted responses. It has no fetch/SDK/environment lookup, accepts no provider key or caller transport, and is not imported by any deployed handler. Missing scenarios have no live fallback. A live transport will require reviewed code changes and later activation authority.
+
+Both retries use one in-memory wire descriptor. Redirects are never followed, expiry stops retry, and a later rejection cannot erase an earlier uncertain outcome. A correctly shaped success is labelled accepted, not delivered. Responses/exceptions are normalized without raw provider details. The adapter is single-use and clears its retained message/wire/scenario references on completion; only bounded request/delivery IDs and payload hashes remain in its diagnostic trace. Callers must also avoid retaining/logging the prepared credential-bearing message. No outbox or database ledger is added.
+
+Acceptance: 50 new adapter tests plus all 25 existing local-capture cases passed; full verification passed 362 tests, formatting, lint, types and build. Independent security review found no remaining blockers after the invitation-reissue compatibility correction. Existing UI/DB/runtime workers are unchanged; required CI supplies regression checks. Actual SMTP/API delivery, bounce handling, provider acceptance in a real account and production safeguards are not evidenced by mock tests. The existing bundle-size warning remains.
+
+API request fields and response shape follow the [official send-email contract](https://resend.com/docs/api-reference/emails/send-email), checked 2026-10-17. Run `pnpm exec vitest run scripts/staging/authentication-email-transport.test.mjs scripts/staging/local-employee-email.test.mjs` for the bounded offline acceptance.

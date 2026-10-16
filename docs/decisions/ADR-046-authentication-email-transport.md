@@ -1,6 +1,6 @@
 # D-046 — Authentication email transport preparation
 
-Status: awaiting owner choice. Concrete implementation/test scope: F032.
+Status: Option B approved by the owner on 2026-10-17. Mock-only implementation; live activation remains unapproved. Concrete implementation/test scope: F032.
 
 Employee authentication email is required before launch. Provider choice and integration affect credential-bearing messages, cost and data processing. No vendor account or delivery is approved by planning alone.
 

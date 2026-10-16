@@ -1,0 +1,27 @@
+# Authentication email setup — designexam.com
+
+Prepared 2026-10-17. The owner confirmed ownership/use of `designexam.com` for later email planning. D-046 B approves fictional mock adapter preparation only. This document changes no DNS, account, sender, mailbox, application URL or live delivery configuration.
+
+## Observed public DNS
+
+Read-only DNS checks on 2026-10-17 returned nameservers `ns53.domaincontrol.com` and `ns54.domaincontrol.com`, with root MX records pointing to `mx.zoho.in`, `mx2.zoho.in` and `mx3.zoho.in`. A root SPF record is present. The resolver returned NXDOMAIN for `_dmarc.designexam.com`; no A/AAAA/CNAME/MX/SPF answer was observed for the proposed `auth.designexam.com`. This is a dated observation, not proof that the subdomain is unused by every service or an authorization to change it.
+
+Use the authoritative DNS account for any eventually approved records. Frontend hosting on Cloudflare does not itself determine where this domain's DNS is managed. Preserve the existing root MX/SPF records and Zoho mail service. Review any root policy separately before changing it.
+
+## Proposed sender boundary
+
+Candidate sending subdomain: `auth.designexam.com`. Candidate sender address: `accounts@auth.designexam.com`, with a Dexam Accounts display name if the later implementation supports it. These are proposals, not configured/verified senders. Confirm support replies or an approved Reply-To mailbox separately; do not assume the candidate address receives mail.
+
+Before live use, the owner must approve the exact sender, provider account/terms, delivery recipients and DNS scope. Choose a verified subdomain in the provider dashboard and copy only the exact records issued there. Do not invent DKIM selectors, SPF values, return-path MX records, verification tokens or DNS record contents from examples. Record expected owner/name/type, verify authoritative answers after propagation and preserve rollback information for only the newly approved records.
+
+Disable open/click tracking for authentication messages and verify that setting. Review provider-side credential-bearing message retention and any applicable processing terms. A domain verification success is not permission to send messages or activate production authentication. No paid upgrade, overage, DNS transfer or root mailbox migration is part of the proposal.
+
+## Engineering work still required after mock acceptance
+
+1. An approved live transport/integration design must replace the closed mock's wire executor and explicitly consume a server-side provider key. No environment switch in the current mock can send email.
+2. Preserve the exact application invitation/recovery proof, including invitation reissues that use recovery OTP type with the activation route. Keep request ownership, link expiry, cancellation/replay checks, session cutoffs and MFA unchanged.
+3. Design reviewed production email validation/database migrations and exact callback origins. The current `.invalid` constraints and local-only worker policies remain mandatory until that integration is approved. `designexam.com` as a sender does not select the production app's hostname.
+4. Approve explicit delivery-test recipients through a private allowlist/configuration, volume/rate budgets and accountable failure handling. Never collect credentials or recipient lists in public issues, logs or source control.
+5. Test accepted/rejected/uncertain transport results, delayed/bounced messages, safe retries, quota exhaustion and actual authorized delivery before onboarding. Keep uncertain password mutation resolution as its separate gate.
+
+Provider account setup, domain verification, real messages, paid services, real employee onboarding and production deployment remain unapproved. Codex owns implementation/setup work once the applicable action is authorized; the designer is only needed for ownership/login, material choices and actual launch approval.
