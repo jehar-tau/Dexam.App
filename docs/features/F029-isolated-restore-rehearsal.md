@@ -1,6 +1,6 @@
 # F029 — Isolated fictional restore rehearsal
 
-Authority: D-043 Option B, approved 2026-10-15. Local validation and independent review passed; PR checks pending. No production approval.
+Authority: D-043 Option B, approved 2026-10-15. Merged through PR #67 after local validation, independent review and required CI. No production approval.
 
 Evidence (2026-10-15): actual isolated rehearsal completed in 62 seconds with four private objects, linked submission/audio reads, feedback and lesson-scope checks, newer erasure/revocation/expiry replay, FK rejection and interrupted-transaction rollback/retry. Both disposable projects/volumes were removed; existing development services were preserved. `pnpm verify` passed 298 tests, formatting, lint, types and build. This elapsed time is a laptop exercise result, not an RTO promise. Independent reviewer confirmed the corrected FK negative case and remaining scope limitations.
 

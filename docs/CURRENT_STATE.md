@@ -4,7 +4,9 @@ Last updated: 2026-10-15
 
 ## Current phase
 
-Current implementation: D-043 B is approved; F029 adds `pnpm pilot:restore` for isolated fictional DB/file recovery and failure evidence. Validation/review are active. Existing developer services remain untouched and no production gate is passed. A closed-enquiry erasure replay is covered; active-enquiry erasure revealed a lifecycle-date regression requiring follow-up.
+F029/D-043 B merged through PR #67 (`0602cb4`): isolated DB/four-bucket recovery, newer erasure/revocation/expiry evidence and interrupted restore/FK rejection passed; 298 app tests and independent review passed. Existing developer services were preserved. Full Auth/off-site/production recovery remains gated.
+
+Active defect fix: F029 exposed approved erasure of an active CRM enquiry failing the lifecycle-date constraint. The regression reproduced the failure; a migration fills only absent dates on execution. Existing approvals/holds and historical dates remain intact. All 1,085 DB assertions and independent security review pass; PR checks pending.
 
 Latest update (2026-10-15): F028/D-042 A launch-readiness plan merged through PR #63 (`a0ab457`), with capacity/admin inputs recorded through PR #64. Owner confirmed up to 50 students in the first three months and Rohin as second Admin for planning. The product owner handles student support and urgent incidents, with Rohin as backup. Coverage hours/escalation arrangements remain unconfirmed; two total admins do not cover recovery requiring two non-target admins. No account, role grant, provider, paid plan, real data or production activation is approved by these inputs. F027 merged PR #62 (`604c949`); all current layouts remain provisionally approved. Use `LAUNCH_PLAN.md`; all `PRODUCTION_READINESS.md` gates remain unchecked.
 
