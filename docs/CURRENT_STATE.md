@@ -1,6 +1,6 @@
 # Current State
 
-Last updated: 2026-10-16
+Last updated: 2026-10-17
 
 ## Current phase
 
@@ -8,7 +8,9 @@ F029/D-043 B merged through PR #67 (`0602cb4`): isolated DB/four-bucket recovery
 
 Active-enquiry erasure fix merged PR #68 (`92f6aff`); all 1,085 DB assertions, required CI and independent security review passed. Protected fictional staging release `38851209617` succeeded. PR #69 (`2430333`) adds active-enquiry replay and real student brief downloads; its expanded isolated rehearsal passed in 63 seconds with cleanup verified.
 
-D-044 Option B approved 2026-10-16. F030 now implements tracked assignment uploads, same-request reserve/attach retries, direct Storage mutation fencing, scoped status reporting and local-only 30-day unreferenced cleanup. Referenced files, holds and unknown legacy files are protected. Actual Storage/retry/late-byte/publication-race testing passed with exact fixture cleanup; 63 browser regression journeys passed and independent security review found no remaining blockers. Final suite/PR checks are in progress. No hosted cleanup worker, production activation or real-data processing is approved.
+D-044 Option B approved 2026-10-16; F030 merged through PR #70 (`c3e3bd8`) on 2026-10-17 after all required checks and independent security review passed. Tracked assignment uploads, same-request reserve/attach retries, direct Storage mutation fencing, scoped status reporting and local-only 30-day unreferenced cleanup are implemented. Referenced files, holds and unknown legacy files are protected. Evidence: 304 application tests, 1,111 DB assertions, 63 browser regressions, real Storage/retry/late-byte/publication races and exact fixture cleanup; the isolated restore passed again in 62 seconds with this migration. The first CI database attempt failed before tests on an occupied runner port; rerun passed. Protected fictional staging release is pending. No hosted cleanup worker, production activation or real-data processing is approved.
+
+F031/D-045 is a concrete planning proposal for independently reviewed recovery incidents that never release an uncertain reset. Owner choice remains pending; no runtime incident workflow is implemented. `MAINTENANCE_OPERATIONS_PLAN.md` inventories current workers, bounded eligibility and production failure drills without activating schedules. DW-045, hosted cleanup/retention, operational contact/coverage, real email, backups and explicit launch authorization remain open.
 
 Latest update (2026-10-15): F028/D-042 A launch-readiness plan merged through PR #63 (`a0ab457`), with capacity/admin inputs recorded through PR #64. Owner confirmed up to 50 students in the first three months and Rohin as second Admin for planning. The product owner handles student support and urgent incidents, with Rohin as backup. Coverage hours/escalation arrangements remain unconfirmed; two total admins do not cover recovery requiring two non-target admins. No account, role grant, provider, paid plan, real data or production activation is approved by these inputs. F027 merged PR #62 (`604c949`); all current layouts remain provisionally approved. Use `LAUNCH_PLAN.md`; all `PRODUCTION_READINESS.md` gates remain unchecked.
 

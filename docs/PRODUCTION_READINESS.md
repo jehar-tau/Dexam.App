@@ -8,6 +8,8 @@ F025/D-039 B is fictional pilot hardening, not launch acceptance. Assignment-mat
 
 F023 lesson files additionally require verified Storage cleanup scheduling/ownership, storage/egress capacity review, metadata/audit retention review, and operational handling of uncertain uploads before real data. Local object deletion and the service-only worker do not prove production scheduling. Do not add a credential-bearing Cron command or treat SQL maintenance as Storage deletion.
 
+F030/D-044 B is verified for fictional/local uploads and cleanup through PR #70 (`c3e3bd8`): referenced, held and unknown legacy objects stay protected. Hosted cleanup, marker retention and operational activation remain unapproved. `MAINTENANCE_OPERATIONS_PLAN.md` inventories existing jobs and failure drills. F031/D-045 proposes incident review for uncertain recovery; no reset-unlock operation is approved or implemented.
+
 F022 supplies only fictional native in-app delivery. Production still requires capacity review, operational ownership, failure alert/escalation policy and separately scheduled Storage file/audio cleanup. Private worker success becomes unhealthy after three minutes without a success; Free-project pausing can stop delivery. No production job is activated by migrations.
 
 The owner confirmed on 2026-10-13 that D-029 Option B means local email testing now and real authentication email delivery before launch. Keep evidence beside each completed item; never infer production readiness from fictional staging acceptance.
