@@ -1,6 +1,6 @@
 # D-044 — Unconfirmed assignment uploads
 
-Status: awaiting owner decision
+Status: Option B approved by the owner on 2026-10-16. Fictional/local implementation and testing only; no production activation.
 
 The recoverability work is implemented and the active-CRM erasure defect is fixed. DW-046 now needs a retention and deletion-authority choice. `F030-assignment-upload-reconciliation.md` specifies the proposed implementation.
 

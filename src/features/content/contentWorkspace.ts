@@ -1,5 +1,6 @@
 import { getSupabaseClient } from '../auth/supabaseClient'
 import { captureAccountOperation } from '../auth/accountOperation'
+import { z } from 'zod'
 
 export type ContentStatus = 'draft' | 'published' | 'retired'
 
@@ -370,64 +371,56 @@ export async function uploadAssignmentMaterial(
 
   const operation = await captureAccountOperation(clientOrThrow())
   const client = operation.client
-  let objectPath: string | undefined,
-    uploadConfirmed = false,
-    metadataStarted = false
   try {
     operation.assertCurrent()
-    const extension =
-      file.type === 'application/pdf'
-        ? 'pdf'
-        : file.type === 'image/jpeg'
-          ? 'jpg'
-          : file.type === 'image/png'
-            ? 'png'
-            : 'webp'
-    objectPath = `${offeringId}/${assignmentVersionId}/${crypto.randomUUID()}.${extension}`
+    const requestId = crypto.randomUUID()
+    const reservationArgs = {
+      p_request_id: requestId,
+      p_version_id: assignmentVersionId,
+      p_file_name: file.name,
+      p_mime_type: file.type,
+      p_byte_size: file.size,
+    }
+    let reservation = await client.rpc('reserve_assignment_upload', reservationArgs)
+    operation.assertCurrent()
+    if (reservation.error) {
+      reservation = await client.rpc('reserve_assignment_upload', reservationArgs)
+    }
+    operation.assertCurrent()
+    const parsed = z
+      .array(
+        z.object({ upload_id: z.string(), object_path: z.string(), state: z.literal('reserved') }),
+      )
+      .safeParse(reservation.data)
+    const record = parsed.success ? parsed.data[0] : undefined
+    if (
+      reservation.error ||
+      !record ||
+      record.upload_id !== requestId ||
+      typeof record.object_path !== 'string' ||
+      !record.object_path.startsWith(`${offeringId}/${assignmentVersionId}/`)
+    ) {
+      throw new Error('The upload could not be reserved. Check your access and file limit.')
+    }
     const upload = await client.storage
       .from('assignment-materials')
-      .upload(objectPath, file, { contentType: file.type, upsert: false })
+      .upload(record.object_path, file, { contentType: file.type, upsert: false })
     if (upload.error) throw new Error('The file could not be uploaded. Check it and try again.')
-    uploadConfirmed = true
     operation.assertCurrent()
-
-    const personResult = await client.rpc('current_person_id')
+    // Retry the same attachment identity once: a lost response may hide a commit.
+    let attachment = await client.rpc('attach_assignment_upload', { p_upload_id: requestId })
     operation.assertCurrent()
-    if (personResult.error || typeof personResult.data !== 'string') {
-      throw new Error('The file could not be attached. Check your access and try again.')
+    if (attachment.error) {
+      attachment = await client.rpc('attach_assignment_upload', { p_upload_id: requestId })
+      operation.assertCurrent()
     }
-
-    metadataStarted = true
-    const metadata = await client.from('assignment_materials').insert({
-      assignment_version_id: assignmentVersionId,
-      object_path: objectPath,
-      original_file_name: file.name,
-      mime_type: file.type,
-      byte_size: file.size,
-      position: currentCount + 1,
-      created_by_person_id: personResult.data,
-    })
-    if (metadata.error) {
-      throw new Error('The file could not be attached. Check your access and try again.')
-    }
-  } catch (error) {
-    // Only compensate before an attachment was attempted. A lost response may hide a committed
-    // metadata row; deleting its object would destroy a referenced file. Never clean up as B.
-    if (uploadConfirmed && !metadataStarted && objectPath) {
-      const cleanup = await client.storage.from('assignment-materials').remove([objectPath])
-      if (cleanup.error)
-        throw new Error(
-          'The upload was not attached. An unconfirmed file needs authorized cleanup.',
-          { cause: error },
-        )
-    } else if (uploadConfirmed && metadataStarted) {
+    if (attachment.error) {
       throw new Error(
-        'The attachment could not be confirmed. The file needs authorized review before cleanup.',
-        { cause: error },
+        'The attachment could not be confirmed. Refresh before retrying; the tracked file is protected for authorized review.',
       )
     }
-    throw error
   } finally {
+    // Never browser-delete uncertain bytes. Only the fenced cleanup worker may do so.
     operation.dispose()
   }
 }
