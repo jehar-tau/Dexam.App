@@ -1,6 +1,6 @@
 # D-045 — Uncertain password-recovery investigation
 
-Status: awaiting owner choice. Detailed proposal: `F031-uncertain-recovery-incident-review.md`.
+Status: Option B approved by the owner on 2026-10-17. Fictional/local incident review only. Detailed proposal: `F031-uncertain-recovery-incident-review.md`.
 
 An uncertain provider update keeps a recovery executing and application access blocked. This is deliberate: an old delayed update must not overwrite a newer password. The next choice introduces administrative investigation and audit records, so it needs an owner decision; normal PR merges remain covered by standing authorization.
 

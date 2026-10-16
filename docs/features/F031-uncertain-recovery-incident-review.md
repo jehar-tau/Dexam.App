@@ -1,6 +1,6 @@
 # F031 — Uncertain password-recovery incident review
 
-Status: concrete launch-readiness specification under D-042 A. D-045 awaits an owner choice before new incident authority or implementation. No production approval.
+Status: D-045 Option B approved 2026-10-17; fictional/local implementation verified. No production approval.
 
 ## Existing behavior and unresolved evidence
 
@@ -30,3 +30,13 @@ Record only minimized application audit facts. The disposable fictional acceptan
 - UI uses existing approved components. Actual fictional SDK/browser acceptance, independent security review and exact fixture cleanup are required.
 
 This makes investigation attributable but does not resolve DW-045 or approve hosted recovery. A later controlled-resolution proposal must specify a verified way to stop outstanding provider operations, evaluate current provider/session state and record independent approval of the exact action before implementation.
+
+## Implementation evidence
+
+The private incident ledger binds source type/request, canonical person/Auth ownership and a private SHA-256 execution fingerprint. Every mutation locks source → target person → incident, then checks current authority and source state. Neither execution keys nor the fingerprint appear in the queue or audit. One immutable proposal per exact request and idempotent review avoid duplicate records/audits. A revoked, changed or stale actor/source blocks further review; re-verifying the original proposing session can refresh MFA, but no replacement session silently rewrites the proposal. Reviewed status is informational and its current-state flag checks both administrators' authority.
+
+`/staff/security/incidents` uses existing security styles/components, recent administrative authority and disabled preview bypass. The existing authorized staff-security navigation flag controls its link. Reads/writes capture the initiating account, hide unverified responses and use per-account query keys with no persistent query cache. The bounded queue returns up to 100 current eligible executing sources. If source eligibility changes, the request leaves this actionable queue; private incident evidence remains available only to the trusted operational data owner, without a new browser forensic/history API. No cancellation, reset, password input, closure or unlock control is added.
+
+`pnpm pilot:recovery-incidents` creates disposable local users through supported Auth APIs, verifies real TOTP, exercises self/target denial, queued-review revocation and real browser independent review at mobile/desktop widths, then cleans exact domain/Auth fixtures. Historical executing requests are privileged synthetic setup; the exercise does not deliberately start an ambiguous real password mutation. Both employee and student execution/session fences are checked afterward. Existing pure provider-outcome/DB tests cover uncertainty semantics separately.
+
+Verification: 312 application tests; 1,140 DB assertions across 37 files; 63 existing Chromium regressions plus the new preview-denial journey; actual SDK/MFA/browser acceptance and independent security review. Formatting, lint, types and build passed, with the existing bundle-size warning. Production incident/audit retention, provider-stop proof, a real resolution path and production activation remain gated.

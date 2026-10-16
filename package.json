@@ -23,6 +23,7 @@
     "pilot:verify": "node scripts/staging/verify-local-pilot.mjs",
     "pilot:restore": "node scripts/staging/verify-local-restore.mjs",
     "pilot:assignment-uploads": "node scripts/staging/verify-local-assignment-uploads.mjs",
+    "pilot:recovery-incidents": "node scripts/staging/verify-local-recovery-incidents.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",

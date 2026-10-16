@@ -1,0 +1,97 @@
+begin;
+select no_plan();
+insert into auth.users(id,instance_id,aud,role,email,email_confirmed_at,encrypted_password) values
+('ff000000-0000-4000-8000-000000000001','00000000-0000-0000-0000-000000000000','authenticated','authenticated','student-recovery-admin1@fixture.invalid',now(),'fictional'),
+('ff000000-0000-4000-8000-000000000002','00000000-0000-0000-0000-000000000000','authenticated','authenticated','student-recovery-admin2@fixture.invalid',now(),'fictional'),
+('ff000000-0000-4000-8000-000000000003','00000000-0000-0000-0000-000000000000','authenticated','authenticated','dxm-7k3m9q2rw5t2@members.dexam.invalid',now(),'fictional');
+insert into public.people(id,display_name,member_id) values
+('ff100000-0000-4000-8000-000000000001','Recovery Admin One',null),('ff100000-0000-4000-8000-000000000002','Recovery Admin Two',null),('ff100000-0000-4000-8000-000000000003','Recovery Student','DXM-7K3M9Q2RW5T2');
+insert into public.auth_identities(person_id,auth_user_id,kind) values
+('ff100000-0000-4000-8000-000000000001','ff000000-0000-4000-8000-000000000001','employee_email'),('ff100000-0000-4000-8000-000000000002','ff000000-0000-4000-8000-000000000002','employee_email'),('ff100000-0000-4000-8000-000000000003','ff000000-0000-4000-8000-000000000003','member_id');
+insert into public.memberships(person_id,kind,status) values('ff100000-0000-4000-8000-000000000001','employee','active'),('ff100000-0000-4000-8000-000000000002','employee','active'),('ff100000-0000-4000-8000-000000000003','student','active');
+insert into public.role_assignments(person_id,role_key,grant_reason) values('ff100000-0000-4000-8000-000000000001','elevated_admin','Fictional recovery proposer'),('ff100000-0000-4000-8000-000000000002','elevated_admin','Fictional recovery approver');
+insert into public.offerings(id,code,title,status) values('ff600000-0000-4000-8000-000000000001','RECOVERY_FIXTURE','Recovery Fixture','active');
+insert into public.enrollments(person_id,offering_id,status,source_type) values('ff100000-0000-4000-8000-000000000003','ff600000-0000-4000-8000-000000000001','completed','manual');
+insert into auth.mfa_factors(id,user_id,factor_type,status,created_at,updated_at) values('ff200000-0000-4000-8000-000000000001','ff000000-0000-4000-8000-000000000001','totp','verified',now(),now()),('ff200000-0000-4000-8000-000000000002','ff000000-0000-4000-8000-000000000002','totp','verified',now(),now());
+insert into auth.sessions(id,user_id,factor_id,aal,created_at,updated_at) values('ff300000-0000-4000-8000-000000000001','ff000000-0000-4000-8000-000000000001','ff200000-0000-4000-8000-000000000001','aal2',now(),now()),('ff300000-0000-4000-8000-000000000002','ff000000-0000-4000-8000-000000000002','ff200000-0000-4000-8000-000000000002','aal2',now(),now());
+insert into auth.mfa_amr_claims(id,session_id,authentication_method,created_at,updated_at) values('ff400000-0000-4000-8000-000000000001','ff300000-0000-4000-8000-000000000001','totp',now(),now()),('ff400000-0000-4000-8000-000000000002','ff300000-0000-4000-8000-000000000002','totp',now(),now());
+
+insert into auth.users(id,instance_id,aud,role,email,email_confirmed_at,encrypted_password) values('ff000000-0000-4000-8000-000000000004','00000000-0000-0000-0000-000000000000','authenticated','authenticated','incident-employee@fixture.invalid',now(),'fictional');
+insert into public.people(id,display_name) values('ff100000-0000-4000-8000-000000000004','Fictional Incident Employee');
+insert into public.auth_identities(person_id,auth_user_id,kind) values('ff100000-0000-4000-8000-000000000004','ff000000-0000-4000-8000-000000000004','employee_email');
+insert into public.memberships(person_id,kind,status) values('ff100000-0000-4000-8000-000000000004','employee','active');
+insert into public.employee_password_recoveries(id,person_id,auth_user_id,email,status,execution_key) values('ff500000-0000-4000-8000-000000000004','ff100000-0000-4000-8000-000000000004','ff000000-0000-4000-8000-000000000004','incident-employee@fixture.invalid','executing',gen_random_uuid());
+insert into public.student_recovery_requests(id,target_person_id,target_auth_user_id,proposer_person_id,proposer_session_id,reason_code,status,execution_key) values('ff500000-0000-4000-8000-000000000003','ff100000-0000-4000-8000-000000000003','ff000000-0000-4000-8000-000000000003','ff100000-0000-4000-8000-000000000001','ff300000-0000-4000-8000-000000000001','forgotten_password','executing',gen_random_uuid());
+insert into public.auth_session_cutoffs(auth_user_id,invalidated_before) values('ff000000-0000-4000-8000-000000000003',clock_timestamp()),('ff000000-0000-4000-8000-000000000004',clock_timestamp());
+set local role anon;
+select throws_ok('select public.list_recovery_incidents()','42501',null,'anonymous queue denied');
+reset role;
+set local role authenticated;
+set local request.jwt.claims='{"sub":"ff000000-0000-4000-8000-000000000001","session_id":"ff300000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1"}';
+select throws_ok('select public.list_recovery_incidents()','42501','incident queue denied','password only denied');
+set local request.jwt.claims='{"sub":"ff000000-0000-4000-8000-000000000001","session_id":"ff300000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+select is((select count(*)::integer from public.list_recovery_incidents()),2,'eligible admin sees both types');
+select throws_ok('select * from public.recovery_incident_reviews','42501',null,'raw ledger denied');
+select throws_ok($$select public.recovery_incident_source('student','ff500000-0000-4000-8000-000000000003')$$,'42501',null,'private fingerprint and auth identifiers denied');
+select throws_ok($$select public.open_recovery_incident('student','ff500000-0000-4000-8000-000000000003','uncertain_password_update',false)$$,'22023',null,'fence acknowledgment required');
+select set_config('test.incident',(public.open_recovery_incident('student','ff500000-0000-4000-8000-000000000003','uncertain_password_update',true))::text,true);
+select is(public.open_recovery_incident('student','ff500000-0000-4000-8000-000000000003','uncertain_password_update',true),current_setting('test.incident')::uuid,'open retry is idempotent');
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'42501',null,'proposer cannot independently review');
+select lives_ok($$select public.open_recovery_incident('employee','ff500000-0000-4000-8000-000000000004','uncertain_password_update',true)$$,'employee incident opened');
+set local request.jwt.claims='{"sub":"ff000000-0000-4000-8000-000000000002","session_id":"ff300000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal2"}';
+select throws_ok($$select public.open_recovery_incident('student','ff500000-0000-4000-8000-000000000003','uncertain_password_update',true)$$,'42501',null,'different admin cannot replace proposal');
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,false)$$,'22023',null,'independent fence acknowledgment required');
+reset role;
+update public.role_assignments set revoked_at=now() where person_id='ff100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'42501',null,'revoked proposer invalidates review');
+reset role;
+update public.role_assignments set revoked_at=null where person_id='ff100000-0000-4000-8000-000000000001';
+update public.student_recovery_requests set execution_key=gen_random_uuid() where id='ff500000-0000-4000-8000-000000000003';
+set local role authenticated;
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'42501',null,'changed execution identity invalidates proposal');
+reset role;
+-- Restore the exact fingerprint by replacing only this disposable incident snapshot.
+update public.recovery_incident_reviews set execution_fingerprint=(select fingerprint from public.recovery_incident_source('student','ff500000-0000-4000-8000-000000000003')) where id=current_setting('test.incident')::uuid;
+update auth.users set email='changed@fixture.invalid' where id='ff000000-0000-4000-8000-000000000003';
+set local role authenticated;
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'42501',null,'changed canonical ownership invalidates review');
+reset role;
+update auth.users set email='dxm-7k3m9q2rw5t2@members.dexam.invalid' where id='ff000000-0000-4000-8000-000000000003';
+set local role authenticated;
+select lives_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'different recent admin records investigation');
+select lives_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'review retry is idempotent');
+select is((select incident_status from public.list_recovery_incidents() where incident_id=current_setting('test.incident')::uuid),'reviewed','review recorded');
+select is((select review_is_current from public.list_recovery_incidents() where incident_id=current_setting('test.incident')::uuid),true,'current review reported');
+reset role;
+insert into public.capability_grants(person_id,capability_key,required_role_key,scope_type,grant_reason) values('ff100000-0000-4000-8000-000000000001','student_recovery.assist','elevated_admin','global','Fictional proposer explicit authority');
+delete from public.role_capabilities where role_key='elevated_admin' and capability_key='student_recovery.assist';
+set local role authenticated;
+set local request.jwt.claims='{"sub":"ff000000-0000-4000-8000-000000000001","session_id":"ff300000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal2"}';
+select is((select review_is_current from public.list_recovery_incidents() where incident_id=current_setting('test.incident')::uuid),false,'reviewer student capability loss invalidates current status');
+reset role;
+insert into public.role_capabilities(role_key,capability_key) values('elevated_admin','student_recovery.assist');
+select is((select status from public.student_recovery_requests where id='ff500000-0000-4000-8000-000000000003'),'executing','student execution fence preserved');
+select is((select status from public.employee_password_recoveries where id='ff500000-0000-4000-8000-000000000004'),'executing','employee execution fence preserved');
+select is((select count(*)::integer from public.auth_session_cutoffs where auth_user_id in ('ff000000-0000-4000-8000-000000000003','ff000000-0000-4000-8000-000000000004')),2,'session cutoffs preserved');
+select is((select count(*)::integer from public.security_audit_events where event_type='recovery_incident_reviewed' and subject_person_id='ff100000-0000-4000-8000-000000000003'),1,'review retry does not duplicate audit');
+select ok(not exists(select 1 from public.security_audit_events where event_type like 'recovery_incident_%' and (metadata ? 'execution_key' or metadata ? 'execution_fingerprint')),'audit contains no execution credential');
+update public.student_recovery_requests set status='completed' where id='ff500000-0000-4000-8000-000000000003';
+set local role authenticated;
+select is((select count(*)::integer from public.list_recovery_incidents() where request_id='ff500000-0000-4000-8000-000000000003'),0,'completed request no longer actionable');
+select throws_ok($$select public.review_recovery_incident(current_setting('test.incident')::uuid,true)$$,'42501',null,'completed source denies retry');
+reset role;
+update public.role_assignments set role_key='teacher' where person_id='ff100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select throws_ok('select public.list_recovery_incidents()','42501',null,'Teacher denied');
+reset role;
+update public.role_assignments set role_key='sales' where person_id='ff100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select throws_ok('select public.list_recovery_incidents()','42501',null,'Sales denied');
+reset role;
+update public.role_assignments set role_key='ordinary_admin' where person_id='ff100000-0000-4000-8000-000000000001';
+set local role authenticated;
+select throws_ok('select public.list_recovery_incidents()','42501',null,'ordinary operator denied');
+select * from finish();
+rollback;
+
