@@ -46,6 +46,10 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Feedback and AI
 
+DW-048 — Teacher draft voice-note controls: source audit during handbook review found that `TeacherFeedbackPage` renders a draft `<audio controls />` without a source and has no dedicated remove action. Published student audio is a separate path. Correct and test draft playback/removal within existing private-file/access rules; do not describe those controls as working before verification. No new transcription/AI provider is authorized by this defect record.
+
+Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignment title/group, not the full brief/rubric. The handbook must not promise guidance is rendered. A bounded review-context/read API and its teacher authority must be specified/approved before implementation; do not silently override the deferred wider teacher reader or expose content-staff files.
+
 | ID     | Status                     | Deferred functionality                                 | Resume trigger and prerequisites                                                                                                                                                                        | Authority               |
 | ------ | -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | DW-015 | Deferred, foundation ready | Production speech-to-text for teacher dictation        | Approve provider/model, processing region, training use, retention/deletion, data terms, per-minute price, rupee ceiling, rate limits, alerts, kill switch, and staff validation with approved content. | F007, D-019, D-020      |

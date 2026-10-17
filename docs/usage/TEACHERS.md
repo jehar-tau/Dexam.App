@@ -14,7 +14,7 @@ Keep your own employee account and required MFA current. If Reviews is missing/d
 
 1. Select a student/submission in **Feedback review**. Confirm the student, assignment, attempt and submitted files.
 2. Inspect visible file thumbnails. Click a file's preview control to expand it on the same page; close the expanded viewer when finished. Use the provided private file/download actions for supported work. An image preview does not replace checking every submitted file, including PDFs.
-3. Read the applicable assignment instructions/evaluation guidance available to the review. Evaluate that exact assignment—not a generic criterion inferred from its title.
+3. Obtain the approved assignment-specific instructions/evaluation guidance through your authorized academic staff/current permitted material. The review screen currently shows assignment title/group but does not fetch/display the full assignment brief or rubric. Do not infer criteria from the title or use another role's account to obtain them. A new in-app guidance reader requires its separately scoped approval under the existing teacher-workspace decision.
 4. Enter **Written feedback**. Keep it specific, constructive and understandable to the student. Do not include other students' information.
 5. Choose **Save private draft** when you are not ready to publish. Saved private feedback is not a student-visible result.
 
@@ -23,7 +23,7 @@ Keep your own employee account and required MFA current. If Reviews is missing/d
 These are two different uses of recording:
 
 - **Dictate feedback** records speech intended to become editable written feedback. Start deliberately, allow microphone access in your browser, watch the listening indicator and stop when finished. Correct the resulting text before publishing.
-- A **Voice note** is optional audio the student can play after publication. Record or select a permitted audio file, review playback and remove/replace it before publishing if necessary. The teacher must supply the required written equivalent; audio is not a way to omit accessible written feedback.
+- A **Voice note** is optional audio the student can play after publication. Record or select a permitted audio file. The current teacher composer does not yet wire a playable draft-audio source or provide a dedicated remove control; do not rely on its empty playback control to verify a recording. Prefer an independently checked file or written feedback until this usability defect is fixed, and do not publish unverified audio. The teacher must supply the required written equivalent; audio is not a way to omit accessible written feedback.
 
 Recordings are limited to five minutes and 10 MB; permitted uploads are WebM, MP3/MPEG and MP4 audio. Device/browser permissions and supported audio formats affect recording. Use typed feedback when the microphone is denied/unavailable. Stop recording before leaving or switching accounts.
 

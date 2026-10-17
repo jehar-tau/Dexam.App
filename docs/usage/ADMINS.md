@@ -21,7 +21,7 @@ Passwords and MFA seeds must never be collected from another person. Admin actio
 
 ## 3. Employee invitations and activation
 
-Open **Employees** (`/staff/employees`) only with the required Elevated Admin capability and recent MFA. Review the canonical person and possible duplicates, select the established identity deliberately, and prepare the invitation using the allowed address/context. Review the invitation queue, cancellation and reason-required reissue as applicable. The recipient chooses their own password through `/staff/activate`; invitation does not automatically grant a work role.
+Open **Employees** (`/staff/employees`) only with the required Elevated Admin capability and recent MFA. Review the canonical person and possible duplicates, select the established identity deliberately, and prepare the invitation using the allowed address/context. Review the invitation queue and cancellation controls. For reissue, reselect the same established person/email and complete the duplicate-review confirmation; the current employee invitation form has no reissue-reason field. The recipient chooses their own password through `/staff/activate`; invitation does not automatically grant a work role.
 
 Current scope is fictional/local: `.invalid` addresses and locally captured email, with one-hour invitation links. Real sender/domain verification, private recipients, live transport and delivery tests are not activated. Do not send a real employee invitation merely because the button exists. The mock Resend adapter cannot send, and changing SMTP alone does not implement Dexam's custom proof flow.
 
