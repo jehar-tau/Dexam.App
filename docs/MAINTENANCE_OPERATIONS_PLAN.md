@@ -18,7 +18,7 @@ Source of eligibility is the current migration/RPC, not this table. Actual eligi
 
 ## Proposed production operating procedure
 
-Product owner is primary incident/support contact; Rohin is backup. Before launch, record a private operational contact channel, coverage hours, handover timing and an authorized operator for maintenance failures. A nomination does not provision application or cloud access.
+Product owner is primary incident/support contact; Rohin is backup. On 2026-10-17 the owner confirmed staffed 24/7 coverage is available for launch planning. Before launch, verify the coverage arrangement and record a private operational contact channel, shift/handover and acknowledgement/escalation timing, unavailable-operator fallback and an authorized operator for maintenance failures. This input establishes no response-time SLA, external monitoring, application/cloud access or production activation.
 
 The deployment owner configures private worker authentication in the approved secret store, with exact target/environment checks and attributable changes. Keep credentials out of Cron SQL, URLs, source, logs and screenshots. Run each bounded job without overlapping destructive batches; retry only its unfinished work and record attempted/completed counts. Never widen eligibility or extend retention automatically to make a failed run look successful.
 
