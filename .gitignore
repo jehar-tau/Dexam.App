@@ -2,6 +2,7 @@
 node_modules/
 .pnpm-store/
 dist/
+dist-e2e/
 coverage/
 playwright-report/
 test-results/
