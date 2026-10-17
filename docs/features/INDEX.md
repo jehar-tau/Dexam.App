@@ -32,6 +32,6 @@
 - F030 Assignment upload reconciliation — D-044 B approved; tracked uploads and local-only cleanup verified; production activation remains gated
 - F031 Uncertain password-recovery incident review — D-045 B approved; independent local incident review implemented/verified, resolution and production remain gated
 - F032 Authentication email transport preparation — D-046 B approved; offline adapter verified, live integration/setup/sending remains gated
-- F033 Role-separated portals — D-048 B approved; distinct student/teacher/staff/admin entrances/layouts on existing identity/backend, verification active; no new grants
+- F033 Role-separated portals — D-048 B implemented; merged PR #81 after independent review and required CI; distinct entrances/layouts on existing identity/backend, no new grants
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

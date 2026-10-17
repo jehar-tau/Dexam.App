@@ -2,6 +2,15 @@
 
 Version: 2026-10-17. Audience: product owner, students, teachers, operational staff and administrators. This guide describes the implemented application, not a promise that it is ready for real students.
 
+## Printable and online editions
+
+Bookmark or share the [current online handbook](https://github.com/jehar-tau/Dexam.App/tree/main/docs/usage). It is available through the existing public repository, without a separate documentation service or app login. It contains general instructions only; never add credentials, private support contacts or student records.
+
+- [Print-ready PDF](downloads/Dexam-application-handbook.pdf)
+- [Editable Word handbook](downloads/Dexam-application-handbook.docx)
+
+The downloadable edition is dated 17 October 2026 and includes access/troubleshooting plus all four role guides. Printed/downloaded copies are snapshots; the Markdown guides remain authoritative. Changes to a guide must regenerate and visually verify these downloads before publishing a new edition. The export procedure is in [the print build guide](../../scripts/docs/README.md).
+
 ## Choose your guide
 
 - [Students](STUDENTS.md): activation, coursework, assignments, feedback, classes, checklist and archive.

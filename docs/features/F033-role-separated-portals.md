@@ -1,6 +1,6 @@
 # F033 — Role-separated portals
 
-Status: implementing owner-approved D-048 B, 2026-10-17. Risk: Yellow presentation/routing, with security review for access compatibility.
+Status: merged through PR #81 (`c7a56dc`), 2026-10-17, after all required CI and independent security review passed. Owner-approved D-048 B. Risk: Yellow presentation/routing, with security review for access compatibility.
 
 ## Scope and identity
 
