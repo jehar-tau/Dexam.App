@@ -22,6 +22,8 @@ Reporting is restricted to existing scoped content authority for its own assignm
 
 ## Acceptance evidence
 
+Follow-up 2026-10-17: ten focused mock regressions in `assignment-upload-cleanup.test.mjs` cover reservation lookup failure, holds, changed state/path, existing references, unavailable reference lookup, Storage rejection, uncertain completion, out-of-scope claims and exact successful removal/confirmation. They verify denied paths do not invoke deletion/completion and uncertain completion is not counted as success. These supplement, not replace, actual Storage/concurrency acceptance. No helper, retention, deletion authority or scheduling behaviour changes.
+
 - Before/after lost response: committed attachment survives; retry returns same result.
 - Revocation/account replacement: attachment denied; no compensation uses replacement credentials.
 - Concurrent attachment versus cleanup: exactly one allowed outcome; no published or referenced file deleted.
