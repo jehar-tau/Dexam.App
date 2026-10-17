@@ -1,6 +1,6 @@
 # D-047 — Authentication sender account/domain verification
 
-Status: awaiting owner choice. Concrete DNS/sender plan: `AUTH_EMAIL_SETUP_PLAN.md`. D-046 B explicitly excludes account setup and DNS changes.
+Status: Option B approved 2026-10-17, then external setup deferred by the owner while account sign-in/reset is blocked. Resume only after owner-controlled sign-in and terms acceptance. Concrete DNS/sender plan: `AUTH_EMAIL_SETUP_PLAN.md`. This approval extends D-046 B only within the boundaries below; it does not activate delivery.
 
 The owner supplied `designexam.com` for planning. Public DNS currently routes root mail to Zoho through DomainControl nameservers. The proposed isolated sending subdomain is `auth.designexam.com`, with candidate sender `accounts@auth.designexam.com`. No new records or account have been created.
 

@@ -1,6 +1,8 @@
 # Deferred Work Register
 
-Last updated: 2026-10-14
+Last updated: 2026-10-17
+
+Email setup handoff: D-047 B approved Free-account/subdomain verification, then the owner deferred that external setup after sign-in/reset problems. Resume after owner-controlled login and terms acceptance. No verification, DNS change, API key or live delivery was completed. Keep DW-002's real-email launch gate open; continue authorized local testing without switching providers or broadening DNS authority.
 
 This is the canonical register for functionality Dexam has discussed but is not building in the current slice. It prevents useful ideas, incomplete feature slices, and required follow-up work from being lost between tasks.
 
