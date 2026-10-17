@@ -66,6 +66,8 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Platform, design system, and operations
 
+DW-047 — Role-separated portal experience: requested 2026-10-17; D-048 awaiting owner choice. Current student routes/sign-in differ, but all audiences share AppShell and teachers/staff/admins share employee login. Proposed separate entrances/layouts retain canonical identity and existing authority. Resolve role landing, dual-role/session behaviour and existing deep-link compatibility in a feature spec before implementation. The new usage handbook describes current behaviour, not a completed split.
+
 | ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                     | Authority            |
 | ------ | -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | DW-027 | Next slice                 | Production deployment and `app.designexam.com`                 | Proceed only after staging, launch checklist, privacy/security review, backup/restore, operational ownership, and explicit production approval.      | D-002                |

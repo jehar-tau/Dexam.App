@@ -6,6 +6,7 @@ Use this map instead of reading the entire documentation tree.
 
 - `CURRENT_STATE.md` — what exists, what is next, and known blockers
 - `RELEASE_STATUS.md` — concise implemented-core, remaining launch dependencies and deliberately deferred-module map
+- `usage/README.md` — application usage handbook with separate student, teacher, staff and administrator guides; current sign-in/separation limitations
 - `PRODUCT.md` — product purpose, users, scope, and current assumptions
 - `DECISION_POLICY.md` — what agents may decide and what needs owner approval
 
