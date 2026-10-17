@@ -68,4 +68,4 @@ D-046 — Authentication email transport preparation — Option B approved 2026-
 
 D-047 — Authentication sender verification — Option B approved 2026-10-17; external setup subsequently deferred pending owner login/terms acceptance; no sending — `ADR-047-authentication-sender-verification.md`.
 
-D-048 — Role-separated portals — awaiting choice: current shared shell, four distinct experiences on the existing backend, or separate-application discovery; no new authority — `ADR-048-role-separated-portals.md`.
+D-048 — Role-separated portals — Option B approved 2026-10-17: four distinct entrances/layouts on the existing identity/backend, F033 verification active; no new authority — `ADR-048-role-separated-portals.md`.

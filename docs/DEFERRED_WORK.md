@@ -70,7 +70,7 @@ Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignm
 
 ## Platform, design system, and operations
 
-DW-047 — Role-separated portal experience: requested 2026-10-17; D-048 awaiting owner choice. Current student routes/sign-in differ, but all audiences share AppShell and teachers/staff/admins share employee login. Proposed separate entrances/layouts retain canonical identity and existing authority. Resolve role landing, dual-role/session behaviour and existing deep-link compatibility in a feature spec before implementation. The new usage handbook describes current behaviour, not a completed split.
+DW-047 — Role-separated portal experience: D-048 B approved 2026-10-17; F033 implementation/verification active. Distinct entrances/layouts reuse canonical identity and current authority; safe landings, explicit same-account switches and legacy compatibility are specified in F033. Move to completion history only after acceptance. No independently deployed applications, new roles or new session containers implied.
 
 | ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                     | Authority            |
 | ------ | -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |

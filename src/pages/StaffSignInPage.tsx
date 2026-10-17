@@ -4,19 +4,19 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
 import styles from './SignInPage.module.css'
+import { safePortalReturn, type EmployeePortal } from '../features/auth/portals'
 
-function safeReturnTo(value: string | null) {
-  if (!value || !value.startsWith('/staff/') || value.startsWith('/staff/sign-in')) {
-    return '/staff/enrolments'
-  }
-  return value
-}
-
-export function StaffSignInPage() {
+export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal }) {
   const { configured, session, signInEmployee } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const destination = safeReturnTo(searchParams.get('returnTo'))
+  const destination = safePortalReturn(searchParams.get('returnTo'), portal)
+  const title =
+    portal === 'teacher'
+      ? 'Welcome to your teaching space.'
+      : portal === 'admin'
+        ? 'Administration, protected.'
+        : 'Welcome back to Dexam.'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -42,8 +42,8 @@ export function StaffSignInPage() {
   return (
     <section className={styles.layout} aria-labelledby="staff-sign-in-title">
       <div className={styles.intro}>
-        <p className="eyebrow">Protected staff access</p>
-        <h1 id="staff-sign-in-title">Welcome back to Dexam.</h1>
+        <p className="eyebrow">Protected {portal} access</p>
+        <h1 id="staff-sign-in-title">{title}</h1>
         <p className={styles.lede}>
           Sign in with your verified employee email. Access is checked against your current role
           every time a protected workspace opens.
@@ -57,8 +57,17 @@ export function StaffSignInPage() {
 
       <Card className={styles.card}>
         <div className={styles.cardHeader}>
-          <h2>Employee sign in</h2>
-          <p>Use the email address attached to your staff invitation.</p>
+          <h2>
+            {portal === 'teacher'
+              ? 'Teacher sign in'
+              : portal === 'admin'
+                ? 'Admin sign in'
+                : 'Employee sign in'}
+          </h2>
+          <p>
+            Use your established employee email. This entrance does not grant a role.
+            {portal === 'admin' ? ' Administrative operations require MFA.' : ''}
+          </p>
         </div>
 
         {!configured ? (

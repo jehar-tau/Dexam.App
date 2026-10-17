@@ -4,9 +4,9 @@
 
 ## Access and current scope
 
-Teachers currently sign in at `/staff/sign-in` with their established employee email/password. There is no separate teacher sign-in or teacher shell yet. A teacher is an employee with specifically assigned review authority—not automatic CRM, administration, content-editing, scheduling or full curriculum-reading access.
+Teachers sign in at `/teacher/sign-in` with their established employee email/password and land at `/teacher`, with a review-focused layout. This is the same identity, not a new teacher account. Teacher access uses specifically assigned review authority—not automatic CRM, administration, content-editing, scheduling or full curriculum-reading access.
 
-Open `/staff/reviews` directly or choose **Reviews** from your permitted menu. Direct entry is useful because the generic employee sign-in currently defaults to the enrolment workspace; a teacher without enrolment authority must not be granted it just to make that default destination work. Follow a review notification or use your authorized Reviews URL instead.
+Choose **Reviews** (`/teacher/reviews`) from the teacher menu. Existing `/staff/reviews` bookmarks/notification links still work with the teacher layout and original guards. Without current review scope, the new teacher workspace is denied—not granted extra authority. Eligible portal-switch links change the workspace, not the signed-in person.
 
 Keep your own employee account and required MFA current. If Reviews is missing/denied, the operator should verify your active membership, review capability and teaching scope. A missing assignment may also mean the student has not finalized a submission. The wider teacher coursework reader/roster/attendance dashboard remains deferred under D-031 A.
 
@@ -45,9 +45,9 @@ Check the final text/audio and selected outcome before either publication action
 
 ## Notifications and account security
 
-Use `/staff/notifications` for assigned-review updates and protected deep links. Notification availability follows current assignment and account authority; old notices cannot preserve revoked access. In-app notifications are not external email or push.
+Use `/teacher/notifications` for assigned-review updates and protected deep links; existing staff notification links remain compatible. Notification availability follows current assignment and account authority; old notices cannot preserve revoked access. In-app notifications are not external email or push.
 
-Open `/staff/security` for authenticator setup/verification and session controls. **Sign out all devices** invalidates prior application sessions; after password recovery, existing MFA still matters. Lost-MFA recovery requires two eligible administrators other than the affected person. Never send an MFA seed, QR image, code or student file to a general support chat.
+Open `/teacher/security` (or compatible `/staff/security`) for authenticator setup/verification and session controls. **Sign out all devices** invalidates prior application sessions; after password recovery, existing MFA still matters. Lost-MFA recovery requires two eligible administrators other than the affected person. Never send an MFA seed, QR image, code or student file to a general support chat.
 
 ## What a Teacher role does not imply
 

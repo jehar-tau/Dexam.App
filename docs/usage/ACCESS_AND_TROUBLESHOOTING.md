@@ -4,20 +4,22 @@
 
 ## Current entrances
 
-| Purpose                                  | Path               | Credentials / requirement                                                            |
-| ---------------------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
-| Student sign-in                          | `/sign-in`         | Dexam Member ID and student's password                                               |
-| Student initial activation               | `/activate`        | Privately issued one-time activation proof/backup entry                              |
-| Student recovery                         | `/student/recover` | Assisted instructions or privately approved recovery pack; hosted execution disabled |
-| All employees, including teachers/admins | `/staff/sign-in`   | Established employee email/password; current membership and permitted scope          |
-| Employee initial activation              | `/staff/activate`  | Invitation proof; current implementation uses fictional/local capture                |
-| Employee forgotten password              | `/staff/recover`   | Established unchanged email and exact recovery proof; real delivery not activated    |
-| Own staff security                       | `/staff/security`  | Current employee; sensitive actions require the relevant MFA/current authority       |
-| Service health                           | `/health`          | Non-sensitive environment/health information; not a private data or admin bypass     |
+| Purpose                     | Path               | Credentials / requirement                                                                              |
+| --------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| Student sign-in             | `/sign-in`         | Dexam Member ID and student's password                                                                 |
+| Student initial activation  | `/activate`        | Privately issued one-time activation proof/backup entry                                                |
+| Student recovery            | `/student/recover` | Assisted instructions or privately approved recovery pack; hosted execution disabled                   |
+| Staff operations            | `/staff/sign-in`   | Established employee email/password; current membership and permitted scope                            |
+| Teacher sign-in             | `/teacher/sign-in` | Established employee identity; current review scope checked on workspace entry                         |
+| Admin sign-in               | `/admin/sign-in`   | Established employee identity; current Elevated Admin role and required MFA checked on workspace entry |
+| Employee initial activation | `/staff/activate`  | Invitation proof; current implementation uses fictional/local capture                                  |
+| Employee forgotten password | `/staff/recover`   | Established unchanged email and exact recovery proof; real delivery not activated                      |
+| Own staff security          | `/staff/security`  | Current employee; sensitive actions require the relevant MFA/current authority                         |
+| Service health              | `/health`          | Non-sensitive environment/health information; not a private data or admin bypass                       |
 
-There are no dedicated teacher/admin sign-in routes or isolated four-portal shells yet. All routes share one web app/identity backend. Student and employee sign-in methods differ, but there is no promise of independent browser session containers for every role. Where a person holds both valid memberships, authorized navigation can expose both sets. Sign out before switching people on a shared browser.
+F033/D-048 B separates the four entrances/layouts on one identity/backend. This does not create independent browser sessions for each role. Menus show only the current portal's permitted tools; eligible **Switch to … portal** links retain the same signed-in person. Sign out before changing people on a shared browser. Legacy routes remain supported; URL/portal selection grants no role or broader scope.
 
-The current employee sign-in default is `/staff/enrolments`. Not every employee has that authority. Start from your permitted workspace URL to preserve a staff return path, or use your authorized menu after sign-in. Do not solve a default-destination issue by granting extra privileges. The requested portal-separation work should address this experience without relaxing authorization.
+Default landings are `/student`, `/teacher`, `/staff` and `/admin`, rather than sending every employee to Enrolments. Safe in-portal return paths preserve intended work; cross-portal/external/unsafe returns fall back to that entrance's home. Private operations still enforce existing membership/capability/MFA/current-state checks. An employee may use the staff entrance but sees no unassigned operational powers; Teacher alone does not become an operator. Recovery remains the established shared employee flow, not four new recovery mechanisms.
 
 ## Why a link is missing or denied
 

@@ -4,9 +4,11 @@ Updated 2026-10-17. This is a concise delivery map, not launch permission or a r
 
 ## Current approved core
 
+F033/D-048 B adds distinct student/teacher/staff/admin entrances/layouts on the shared backend; its acceptance evidence is tracked in F033/current state. It does not activate providers, duplicate identities or widen any permission. Existing legacy links remain supported. Usage guidance is in `usage/README.md`.
+
 Identity/enrolment, scoped admissions CRM, versioned teaching content, assignment distribution/submission, teacher feedback, in-app alerts, classes, private checklist and bounded work archive are implemented within their approved fictional/local scopes. Some operating setup is exercised by fixture scripts rather than a complete production administration interface. Local acceptance does not imply every deferred product module exists.
 
-Recent evidence: 1,140 database assertions, 67 Chromium journeys, actual Storage/concurrency and independent recovery-incident acceptance, and a 68-second isolated application/four-object restore with exact cleanup. F030 helper failure-path coverage adds ten cases. Current build-packaging verification is tracked in the associated PR and `CURRENT_STATE.md`; none of these tests proves real delivery, full Auth recovery or production capacity.
+Recent evidence: 439 app tests, 1,140 database assertions, 75 Chromium journeys, actual Storage/concurrency, independent recovery-incident/admin/teacher alias and student account-isolation acceptance, and a 68-second isolated application/four-object restore with exact cleanup. F033 required CI/merge is tracked in its PR and `CURRENT_STATE.md`; none of these tests proves real delivery, full Auth recovery or production capacity.
 
 ## Remaining launch dependencies
 

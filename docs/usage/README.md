@@ -20,14 +20,14 @@ The development preview uses `?preview=1` only on explicitly supported pages and
 
 ## Portal separation: actual status
 
-| Audience | Current sign-in                                                                   | Current workspace                                            | Separate visual application?                                       |
-| -------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------ |
-| Student  | `/sign-in`, Member ID/password                                                    | `/student` and its learning routes                           | Own routes and authorized menu, but shared application shell/style |
-| Teacher  | `/staff/sign-in`, employee email/password                                         | `/staff/reviews`, permitted notifications and security       | No dedicated teacher login or shell yet                            |
-| Staff    | `/staff/sign-in`, employee email/password                                         | Capability-gated `/staff/...` workspaces                     | Shared employee shell                                              |
-| Admin    | `/staff/sign-in`, employee email/password plus required MFA for sensitive actions | Individually authorized employee/security/privacy operations | No dedicated admin login or shell yet                              |
+| Audience | Current sign-in                                                                                     | Current workspace                                                | Separate visual application?     |
+| -------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------- |
+| Student  | `/sign-in`, Member ID/password                                                                      | `/student` and learning routes                                   | Learning-first header/navigation |
+| Teacher  | `/teacher/sign-in`, established employee email/password                                             | `/teacher`, `/teacher/reviews`, permitted notifications/security | Compact review rail              |
+| Staff    | `/staff/sign-in`, established employee email/password                                               | `/staff`, individually permitted operations                      | Operations sidebar               |
+| Admin    | `/admin/sign-in`, established employee email/password; current Elevated Admin role and required MFA | `/admin`, individually permitted account/security operations     | Protected administration layout  |
 
-All current routes share `AppShell`. Permission-aware navigation hides unavailable destinations; server/database checks enforce access independently. Distinct teacher/staff/admin sign-in screens and four distinct portal shells are a new requested change, not an existing feature. See D-048; do not follow invented `/teacher/sign-in` or `/admin/sign-in` instructions until implemented.
+F033/D-048 B provides distinct entrances and layouts on one application/backend—not four independent identities or browser sessions. Current-portal menus stay separate; eligible **Switch to … portal** links use the same account and grant nothing. Sign out to change people. Server/database/MFA checks remain authoritative. Existing `/staff/reviews` and other legacy bookmarks/notifications remain supported with their original guards. Teacher alone does not gain staff operations. A deployed version must contain F033 before the new URLs are available.
 
 ## Common working rules
 

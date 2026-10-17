@@ -4,9 +4,9 @@
 
 ## Access and responsibilities
 
-Open `/staff/sign-in` with your established employee email/password. Staff/teachers/admins currently share this entrance and shell. Your actual membership, capabilities, offering assignments and MFA determine which workspaces you can use. Sales, CRM Coordinator, Enrolment Operator, content editor/publisher, assignment distributor, class scheduler and privacy operator are distinct responsibilities—not powers every employee automatically has.
+Open `/staff/sign-in` with your established employee email/password, then `/staff` for the operations portal. Teacher and Admin have their own entrances/layouts on the same backend. Your membership, capabilities, offering assignments and MFA determine which workspaces you can use. Sales, CRM Coordinator, Enrolment Operator, content editor/publisher, assignment distributor, class scheduler and privacy operator are distinct responsibilities—not powers every employee automatically has.
 
-Use your permitted menu or a direct workspace path. If the generic sign-in default points to Enrolments and that is not your job, use the path for your own workspace; do not request unrelated access just to avoid a redirect/denial. Ask an authorized operator to check your existing scope if expected access is missing.
+Use your permitted menu or a direct workspace path. Staff sign-in now defaults to staff home, not Enrolments, unless a safe operational return path was supplied. Eligible portal switches change presentation, not account/permissions. Do not request unrelated access to avoid a denial; ask an authorized operator to check your existing scope.
 
 ## 1. Sales: manage enquiries
 

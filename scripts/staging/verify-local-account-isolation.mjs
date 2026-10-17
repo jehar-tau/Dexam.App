@@ -58,7 +58,7 @@ try {
   }
   frontend = spawn(
     'pnpm',
-    ['exec', 'vite', '--host', '127.0.0.1', '--port', '5173', '--strictPort'],
+    ['exec', 'vite', '--host', '127.0.0.1', '--port', '5189', '--strictPort'],
     {
       env: {
         ...process.env,
@@ -75,7 +75,7 @@ try {
   for (let n = 0; n < 50; n++) {
     if (frontend.exitCode !== null) throw new Error('Own frontend failed')
     try {
-      ready = (await fetch('http://127.0.0.1:5173')).ok
+      ready = (await fetch('http://127.0.0.1:5189')).ok
     } catch {
       /* Starting. */
     }
@@ -86,7 +86,7 @@ try {
   browser = await chromium.launch()
   const context = await browser.newContext(),
     page = await context.newPage()
-  await page.goto('http://127.0.0.1:5173/student')
+  await page.goto('http://127.0.0.1:5189/student')
   async function signIn(fixture) {
     await page.getByLabel('Dexam Member ID').fill(fixture.member)
     await page.getByLabel('Password', { exact: true }).fill(fixture.password)
@@ -142,7 +142,12 @@ try {
   process.exitCode = 1
 } finally {
   releaseRead?.()
-  await browser?.close()
+  try {
+    await browser?.close()
+  } catch {
+    console.error('F025 browser cleanup failed; continuing exact fixture cleanup.')
+    process.exitCode = 1
+  }
   if (frontend?.pid) {
     try {
       process.kill(-frontend.pid, 'SIGTERM')
