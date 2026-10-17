@@ -8,6 +8,8 @@ Active product development. The repository includes secure student activation an
 
 ## Working agreement
 
+For day-to-day use, read the [application handbook](docs/usage/README.md), with separate student, teacher, staff and administrator guides. It documents current access, workflows, limits and unavailable services—not production readiness. Separate teacher/admin logins and four distinct visual portal shells are not implemented yet; the proposed change is recorded in D-048.
+
 The product owner leads product and design. The development agent owns technical guidance and execution across frontend, backend, database, testing, security, CI, and deployment, while escalating material product/business/security choices through Decision Gates.
 
 ## Baseline

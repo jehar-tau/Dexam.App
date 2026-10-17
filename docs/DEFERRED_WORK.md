@@ -46,6 +46,10 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Feedback and AI
 
+DW-048 — Teacher draft voice-note controls: source audit during handbook review found that `TeacherFeedbackPage` renders a draft `<audio controls />` without a source and has no dedicated remove action. Published student audio is a separate path. Correct and test draft playback/removal within existing private-file/access rules; do not describe those controls as working before verification. No new transcription/AI provider is authorized by this defect record.
+
+Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignment title/group, not the full brief/rubric. The handbook must not promise guidance is rendered. A bounded review-context/read API and its teacher authority must be specified/approved before implementation; do not silently override the deferred wider teacher reader or expose content-staff files.
+
 | ID     | Status                     | Deferred functionality                                 | Resume trigger and prerequisites                                                                                                                                                                        | Authority               |
 | ------ | -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
 | DW-015 | Deferred, foundation ready | Production speech-to-text for teacher dictation        | Approve provider/model, processing region, training use, retention/deletion, data terms, per-minute price, rupee ceiling, rate limits, alerts, kill switch, and staff validation with approved content. | F007, D-019, D-020      |
@@ -65,6 +69,8 @@ When work resumes, read the linked source, verify the current code and recent co
 | DW-025 | Partially implemented — fictional only | Production scheduling and monitoring of the in-app notification worker                      | F022 adds native fictional bounded delivery and private fresh health. Production capacity, operational ownership, failure alerts/escalation and separately scheduled Storage cleanup remain launch gates.                                                                           | F008, F022, D-035, D-021         |
 
 ## Platform, design system, and operations
+
+DW-047 — Role-separated portal experience: requested 2026-10-17; D-048 awaiting owner choice. Current student routes/sign-in differ, but all audiences share AppShell and teachers/staff/admins share employee login. Proposed separate entrances/layouts retain canonical identity and existing authority. Resolve role landing, dual-role/session behaviour and existing deep-link compatibility in a feature spec before implementation. The new usage handbook describes current behaviour, not a completed split.
 
 | ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                     | Authority            |
 | ------ | -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
