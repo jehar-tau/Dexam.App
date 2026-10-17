@@ -28,6 +28,8 @@ On failure, preserve references and holds, stop the affected destructive job if 
 
 ## Required rehearsal before production activation
 
+Local helper evidence (2026-10-17): ten additional F030 mock failure-path tests verify protection on holds/references/lookup failures/state/path/scope mismatches, no completion after rejected Storage removal, and no success count after uncertain completion. Actual F030 Storage/concurrency rehearsal remains separate. This does not test production scheduling, external observation or provider outage recovery.
+
 Exercise missed scheduling, a delayed worker, overlapping invocations, unavailable Storage, deletion success with lost completion response, repeated execution and recovery after interruption. Verify eligible bytes are absent through Storage and protected referenced/held files still download. Check that cleanup progress and failure counts reflect the actual outcome. Rehearse external observation while the app/backend is unavailable. Use synthetic records and exact fixture cleanup until production is explicitly approved.
 
 The current F022/F023/F029/F030 tests provide parts of this evidence; they do not establish a complete production maintenance service. Frequency, catch-up budget, private diagnostic retention, alert channel and activation remain unresolved operational choices. Keep the release checklist unchecked until those are approved and tested.
