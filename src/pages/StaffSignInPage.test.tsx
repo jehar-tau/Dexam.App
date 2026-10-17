@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import type { AuthContextValue } from '../features/auth/AuthContext'
 import { renderApp } from '../test/render'
 import { StaffSignInPage } from './StaffSignInPage'
+import { useLocation } from 'react-router-dom'
 
 const auth = vi.hoisted(() => ({
   value: undefined as AuthContextValue | undefined,
@@ -18,6 +19,9 @@ vi.mock('../features/auth/AuthContext', async (importOriginal) => {
 })
 
 describe('StaffSignInPage', () => {
+  function LocationProbe() {
+    return <p data-testid="destination">{useLocation().pathname}</p>
+  }
   beforeEach(() => {
     auth.value = {
       configured: true,
@@ -68,4 +72,22 @@ describe('StaffSignInPage', () => {
     ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeDisabled()
   })
+  it.each(['teacher', 'admin', 'staff'] as const)(
+    'uses the %s portal landing instead of a universal enrolment destination',
+    async (portal) => {
+      const user = userEvent.setup()
+      renderApp(
+        <>
+          <StaffSignInPage portal={portal} />
+          <LocationProbe />
+        </>,
+        [`/${portal}/sign-in`],
+      )
+      await user.type(screen.getByLabelText('Employee email'), 'employee@fixture.invalid')
+      await user.type(screen.getByLabelText('Password'), 'fictional password')
+      await user.click(screen.getByRole('button', { name: 'Sign in' }))
+      expect(await screen.findByTestId('destination')).toHaveTextContent(`/${portal}`)
+      expect(screen.getByTestId('destination')).not.toHaveTextContent('/enrolments')
+    },
+  )
 })

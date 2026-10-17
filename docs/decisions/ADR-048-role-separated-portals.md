@@ -1,8 +1,8 @@
 # D-048 — Role-separated portal experience
 
-Status: awaiting owner choice. Requested 2026-10-17 alongside role-based usage documentation. This records an experience/architecture choice, not permission to expand roles or activate production.
+Status: Option B approved by the owner 2026-10-17; F033 implementation/verification active. Requested alongside role-based usage documentation. This records an experience/architecture choice, not permission to expand roles or activate production. F033 specifies entrances, compatibility, same-identity switching and conservative existing-authority eligibility. It supersedes D-040's mixed dual-membership menu presentation, not its authorization rules.
 
-## Current evidence
+## Before-implementation audit
 
 `src/app/router.tsx` places every route under `AppShell`. Students use `/sign-in` and Member ID/password; teachers, staff and admins use `/staff/sign-in` and employee email/password. Authorized navigation and live backend checks separate permitted work, but distinct teacher/admin login pages and four separate visual shells do not exist. A dual-membership account can currently see both permitted sets. Employee sign-in defaults to enrolments unless a valid staff return path is supplied, which is not an appropriate universal landing for every employee.
 
@@ -18,4 +18,4 @@ Recommendation: B matches the requested user-facing separation without duplicati
 
 Four intended entrances and layouts; role-appropriate permitted landing; wrong-role/guessed-route denial; unchanged MFA/revocation/current-state checks; dual-membership/switch/sign-out behaviour; preserved safe bookmarks/notifications/activation/recovery links; no cross-user draft/cache leakage; mobile/accessibility and design-system verification. Exact routing/design and what qualifies an employee for each portal need a bounded specification, not a client-side role selector treated as security.
 
-The role-based handbook describes today's implementation and explicitly marks this gap. Documentation completion does not imply D-048 implementation is complete.
+The role-based handbook is updated alongside F033 to describe the implemented routes/layouts and retained legacy links. Local implementation is not production acceptance; verification evidence belongs in F033/current state and the PR.

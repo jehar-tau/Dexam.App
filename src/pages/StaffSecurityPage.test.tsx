@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render'
 import { StaffSecurityPage } from './StaffSecurityPage'
 import { safeSecurityReturn } from '../features/auth/securityReturn'
+import { QueryClient } from '@tanstack/react-query'
 
 const mocks = vi.hoisted(() => ({
   allOut: vi.fn(),
@@ -25,6 +26,7 @@ vi.mock('../features/auth/staffMfa', () => ({
 }))
 
 describe('staff authenticator screen', () => {
+  afterEach(() => vi.restoreAllMocks())
   beforeEach(() => {
     vi.resetAllMocks()
     mocks.state.mockResolvedValue({ currentLevel: 'aal1', factors: [] })
@@ -50,6 +52,7 @@ describe('staff authenticator screen', () => {
   })
 
   it('clears enrolment material and the entered code after verification', async () => {
+    const invalidations = vi.spyOn(QueryClient.prototype, 'invalidateQueries')
     const user = userEvent.setup()
     renderApp(<StaffSecurityPage />)
     await user.click(await screen.findByRole('button', { name: 'Start authenticator setup' }))
@@ -59,6 +62,7 @@ describe('staff authenticator screen', () => {
     expect(await screen.findByRole('button', { name: 'Continue to workspace' })).toBeVisible()
     expect(screen.queryByAltText('Authenticator setup QR code')).not.toBeInTheDocument()
     expect(mocks.verify).toHaveBeenCalledWith('fixture-factor', '123456')
+    expect(invalidations).toHaveBeenCalledWith({ queryKey: ['portal-access'] })
   })
 
   it('shows a challenge for enrolled password-only staff without creating another factor', async () => {
@@ -119,6 +123,22 @@ describe('staff authenticator screen', () => {
     await user.click(await screen.findByRole('button', { name: 'Remove Primary' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('backup authenticator')
     expect(screen.getByText('Primary')).toBeVisible()
+  })
+
+  it('refreshes portal authority immediately after a successful factor removal', async () => {
+    const user = userEvent.setup()
+    const invalidations = vi.spyOn(QueryClient.prototype, 'invalidateQueries')
+    mocks.state.mockResolvedValue({
+      currentLevel: 'aal2',
+      factors: [
+        { id: 'fixture-factor', friendly_name: 'Primary' },
+        { id: 'backup-factor', friendly_name: 'Backup' },
+      ],
+    })
+    renderApp(<StaffSecurityPage />)
+    await user.click(await screen.findByRole('button', { name: 'Remove Primary' }))
+    expect(mocks.remove).toHaveBeenCalledWith('fixture-factor')
+    expect(invalidations).toHaveBeenCalledWith({ queryKey: ['portal-access'] })
   })
 
   it('invokes all-device sign-out and displays a safe failure', async () => {

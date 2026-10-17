@@ -245,6 +245,15 @@ try {
     { session, key: 'sb-' + new URL(config.API_URL).hostname.split('.')[0] + '-auth-token' },
   )
   const page = await context.newPage()
+  // F033: actual current-role/MFA alias acceptance, without preview or new grants.
+  await page.goto('http://127.0.0.1:5191/admin')
+  await expect(page.getByRole('heading', { name: 'Your administration workspace.' })).toBeVisible()
+  await expect(
+    page.getByRole('navigation').getByRole('link', { name: 'Recovery investigations' }),
+  ).toHaveAttribute('href', '/admin/incidents')
+  await page.getByRole('link', { name: 'Recovery investigations' }).click()
+  await expect(page.getByRole('heading', { name: 'Uncertain recovery requests' })).toBeVisible()
+  // Existing bookmarks must still reach the same independently protected operation.
   await page.goto('http://127.0.0.1:5191/staff/security/incidents')
   await expect(page.getByRole('heading', { name: 'Uncertain recovery requests' })).toBeVisible()
   const entry = page
@@ -283,8 +292,29 @@ try {
     (await must(clients[1].rpc('list_recovery_incidents'))).find((r) => r.incident_id === incident)
       .incident_status === 'reviewed',
   )
+  phase = 'F033 actual dual-role and teacher-only portal isolation'
+  // Add only existing authority to this run's exact disposable actor/offering.
+  sql(
+    `insert into public.role_assignments(person_id,role_key,scope_type,scope_id,grant_reason) values('${people[1]}','teacher','offering','${id(6)}','Fictional F033 scope');insert into public.capability_grants(person_id,capability_key,required_role_key,scope_type,scope_id,grant_reason) values('${people[1]}','feedback.review','teacher','offering','${id(6)}','Fictional F033 scope');`,
+  )
+  await page.goto('http://127.0.0.1:5191/teacher')
+  await expect(page.getByRole('heading', { name: 'Your teaching workspace.' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Switch to Admin portal' })).toBeVisible()
+  await page.getByRole('link', { name: 'Reviews', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Feedback review.' })).toBeVisible()
+  // Revoke only the owned synthetic admin role; teaching scope must not become admin access.
+  sql(
+    `update public.role_assignments set revoked_at=now() where person_id='${people[1]}' and role_key='elevated_admin';`,
+  )
+  await page.goto('http://127.0.0.1:5191/admin')
+  await expect(
+    page.getByRole('heading', { name: 'This portal is not available to your account.' }),
+  ).toBeVisible()
+  await page.goto('http://127.0.0.1:5191/teacher')
+  await expect(page.getByRole('heading', { name: 'Your teaching workspace.' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Switch to Admin portal' })).toHaveCount(0)
   console.log(
-    'F031 actual SDK/MFA/browser acceptance passed: independent review, self/target denial, queued revocation, responsive queue and unchanged execution fences.',
+    'F031/F033 actual SDK/MFA/browser acceptance passed: independent review, self/target denial, queued revocation, admin/teacher aliases and dual-role separation with unchanged execution fences.',
   )
 } catch {
   console.error(`F031 acceptance failed during ${phase}; credentials/provider payloads withheld.`)

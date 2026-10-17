@@ -78,7 +78,12 @@ export function StaffAccessBoundary({
 
   if (!configured || !session) {
     const returnTo = `${location.pathname}${location.search}`
-    return <Navigate replace to={`/staff/sign-in?returnTo=${encodeURIComponent(returnTo)}`} />
+    const entrance = location.pathname.startsWith('/teacher')
+      ? 'teacher'
+      : location.pathname.startsWith('/admin')
+        ? 'admin'
+        : 'staff'
+    return <Navigate replace to={`/${entrance}/sign-in?returnTo=${encodeURIComponent(returnTo)}`} />
   }
 
   if (accessQuery.isPending) {
@@ -116,7 +121,14 @@ export function StaffAccessBoundary({
 
   if (accessQuery.data.needsMfa) {
     const returnTo = `${location.pathname}${location.search}`
-    return <Navigate replace to={`/staff/security?returnTo=${encodeURIComponent(returnTo)}`} />
+    const entrance = location.pathname.startsWith('/teacher')
+      ? 'teacher'
+      : location.pathname.startsWith('/admin')
+        ? 'admin'
+        : 'staff'
+    return (
+      <Navigate replace to={`/${entrance}/security?returnTo=${encodeURIComponent(returnTo)}`} />
+    )
   }
 
   if (!accessQuery.data.activeEmployee || !accessQuery.data.hasCapability) {

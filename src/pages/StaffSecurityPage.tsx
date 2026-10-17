@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { portalForPath, portalSignIn } from '../features/auth/portals'
 
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
@@ -20,6 +21,7 @@ export function StaffSecurityPage() {
   const { session } = useAuth()
   const [params] = useSearchParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
   const state = useQuery({
     queryKey: ['staff-security', session?.user.id],
@@ -59,6 +61,7 @@ export function StaffSecurityPage() {
       setComplete(true)
       await queryClient.invalidateQueries({ queryKey: ['employee-access'] })
       await queryClient.invalidateQueries({ queryKey: ['navigation-access'] })
+      await queryClient.invalidateQueries({ queryKey: ['portal-access'] })
       await state.refetch()
     })
   }
@@ -230,6 +233,7 @@ export function StaffSecurityPage() {
                           await state.refetch()
                           await queryClient.invalidateQueries({ queryKey: ['employee-access'] })
                           await queryClient.invalidateQueries({ queryKey: ['navigation-access'] })
+                          await queryClient.invalidateQueries({ queryKey: ['portal-access'] })
                         })
                       }
                     >
@@ -249,7 +253,9 @@ export function StaffSecurityPage() {
               onClick={() =>
                 void run(async () => {
                   await signOutAllStaffSessions()
-                  void navigate('/staff/sign-in', { replace: true })
+                  void navigate(portalSignIn[portalForPath(location.pathname) ?? 'staff'], {
+                    replace: true,
+                  })
                 })
               }
             >

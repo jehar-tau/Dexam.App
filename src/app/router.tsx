@@ -34,12 +34,145 @@ import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
+import { PortalHomePage } from '../pages/PortalHomePage'
+import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppShell />,
     children: [
+      {
+        path: 'teacher/sign-in',
+        element: <StaffSignInPage key="teacher-sign-in" portal="teacher" />,
+      },
+      { path: 'admin/sign-in', element: <StaffSignInPage key="admin-sign-in" portal="admin" /> },
+      {
+        path: 'staff',
+        element: (
+          <StaffAccessBoundary>
+            <PortalAccessBoundary portal="staff" allowPreview>
+              <PortalHomePage portal="staff" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher',
+        element: (
+          <StaffAccessBoundary>
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <PortalHomePage portal="teacher" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin',
+        element: (
+          <StaffAccessBoundary requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <PortalHomePage portal="admin" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/reviews',
+        element: (
+          <StaffAccessBoundary capability="feedback.review">
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <TeacherFeedbackPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/notifications',
+        element: (
+          <StaffAccessBoundary>
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <NotificationCentrePage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/security',
+        element: (
+          <StaffAccessBoundary skipMfa allowPreview={false}>
+            <StaffSecurityPage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/security',
+        element: (
+          <StaffAccessBoundary skipMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <StaffSecurityPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/notifications',
+        element: (
+          <StaffAccessBoundary requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <NotificationCentrePage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/employees',
+        element: (
+          <StaffAccessBoundary capability="staff_role.grant" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <EmployeeInvitationsPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/student-recovery',
+        element: (
+          <StaffAccessBoundary capability="student_recovery.assist" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <StudentRecoveryAdminPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/recovery',
+        element: (
+          <StaffAccessBoundary
+            capability="security_controls.change"
+            requireMfa
+            allowPreview={false}
+          >
+            <PortalAccessBoundary portal="admin">
+              <StaffRecoveryPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/incidents',
+        element: (
+          <StaffAccessBoundary
+            capability="security_controls.change"
+            requireMfa
+            allowPreview={false}
+          >
+            <PortalAccessBoundary portal="admin">
+              <RecoveryIncidentsPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
       {
         path: 'staff/curriculum-impact',
         element: (

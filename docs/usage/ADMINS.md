@@ -4,11 +4,11 @@
 
 ## 1. What administrator access means
 
-There is currently no separate admin login/dashboard. Sign in through `/staff/sign-in` using your own established employee identity. Sensitive destinations require the exact capability plus verified/recent MFA and other live checks. An administrator title or nomination does not automatically grant every staff, privacy, publishing or academic permission.
+Sign in through `/admin/sign-in` using your own established employee identity. The `/admin` home requires current global Elevated Admin role and the existing MFA check; it is a safe landing, not a broad data dashboard. Sensitive destinations retain exact capability, verified/recent MFA and other live checks. A different URL, administrator title or nomination does not grant every staff, privacy, publishing or academic permission.
 
 The product owner, Rohin and Siddhant Modi are planning nominees; this handbook does not provision their accounts or establish their eligibility. Never share one administrator identity. Two-person actions need distinct eligible people; lost-MFA recovery of an admin needs two other eligible actors. A three-person nomination alone does not prove everyone is provisioned, available or independently attributable.
 
-Current workspaces include `/staff/employees`, `/staff/security`, `/staff/security/recovery`, `/staff/student-recovery` and `/staff/security/incidents`, plus separately granted staff/privacy workspaces. Their absence/denial means authority or environment must be checked, not that a menu link should bypass the rule.
+Admin aliases include `/admin/employees`, `/admin/security`, `/admin/recovery`, `/admin/student-recovery` and `/admin/incidents`. Existing `/staff/...` bookmarks used in the detailed procedures below remain supported with original checks. Use **Switch to Staff portal** for separately permitted staff/privacy responsibilities. Missing/denied tools mean authority or environment must be checked, not that a menu link should bypass the rule.
 
 ## 2. Own MFA and sessions
 

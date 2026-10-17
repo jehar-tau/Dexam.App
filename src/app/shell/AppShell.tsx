@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Button } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
 import {
@@ -8,12 +8,15 @@ import {
   getUnreadNotificationCount,
   type NotificationAudience,
 } from '../../features/notifications/notifications'
-import { WorkspaceNavigation } from './WorkspaceNavigation'
+import { PortalNavigation } from './PortalNavigation'
+import { PortalFrame } from '../../components/layout/PortalFrame'
+import { portalForPath } from '../../features/auth/portals'
 import styles from './AppShell.module.css'
 
 export function AppShell() {
   const { session, signOut } = useAuth()
   const location = useLocation()
+  const portal = portalForPath(location.pathname)
   const [signingOut, setSigningOut] = useState(false),
     [signOutError, setSignOutError] = useState('')
   const notificationAudience: NotificationAudience | null = location.pathname.startsWith('/student')
@@ -21,10 +24,12 @@ export function AppShell() {
     : location.pathname.startsWith('/staff/crm') ||
         new URLSearchParams(location.search).get('audience') === 'sales'
       ? 'sales'
-      : location.pathname.startsWith('/staff')
+      : portal === 'teacher' || portal === 'admin' || portal === 'staff'
         ? 'teacher'
         : null
   const previewEnabled =
+    portal !== 'admin' &&
+    portal !== null &&
     new URLSearchParams(location.search).get('preview') === '1' &&
     (notificationAudience === 'student'
       ? import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true'
@@ -57,22 +62,17 @@ export function AppShell() {
     }
   }
   return (
-    <div className={styles.app}>
-      <a className={styles.skipLink} href="#main-content">
-        Skip to content
-      </a>
-      {import.meta.env.VITE_APP_ENV === 'staging' ? (
-        <div className={styles.stagingBanner} role="status">
-          Staging environment · Fictional data only
-        </div>
-      ) : null}
-      <header className={styles.header}>
-        <NavLink className={styles.brand} to="/" aria-label="Dexam platform home">
-          Dexam
-        </NavLink>
-        <nav aria-label="Main navigation" className={styles.navigation}>
-          <WorkspaceNavigation
-            audience={notificationAudience}
+    <PortalFrame
+      portal={portal}
+      banner={
+        import.meta.env.VITE_APP_ENV === 'staging' ? (
+          <span role="status">Staging environment · Fictional data only</span>
+        ) : undefined
+      }
+      navigation={
+        <>
+          <PortalNavigation
+            portal={portal}
             notificationSearch={notificationParams.size ? `?${notificationParams.toString()}` : ''}
             previewEnabled={previewEnabled}
             unreadCount={unread.data ?? 0}
@@ -92,11 +92,10 @@ export function AppShell() {
               {signOutError}
             </span>
           ) : null}
-        </nav>
-      </header>
-      <main className={styles.main} id="main-content">
-        <Outlet />
-      </main>
-    </div>
+        </>
+      }
+    >
+      <Outlet />
+    </PortalFrame>
   )
 }

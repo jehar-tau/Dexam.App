@@ -1,4 +1,5 @@
 import styles from './FoundationPage.module.css'
+import { PortalEntrances } from './PortalHomePage'
 
 const foundations = [
   ['Frontend', 'React, Vite and strict TypeScript'],
@@ -25,6 +26,7 @@ export function FoundationPage() {
           </div>
         ))}
       </dl>
+      <PortalEntrances />
     </section>
   )
 }

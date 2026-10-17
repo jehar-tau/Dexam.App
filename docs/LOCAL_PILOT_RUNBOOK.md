@@ -27,6 +27,8 @@ pnpm pilot:verify
 
 Each child creates exact disposable fictional fixtures and owns its cleanup. The runner prints stage names and pass/fail only, not raw provider/credential-bearing child output. Passing means every stage exited successfully, including its cleanup. It does not prove real email/AI delivery, owner UX acceptance or production readiness.
 
+The standalone account-isolation child now owns port 5189 (F033), so it can preserve an existing designer preview on 5173. The consolidated runner still requires 5173/4173 free for its other children. F031's separate incident rehearsal owns 5191 and additionally tests actual F033 admin/teacher aliases using only its exact disposable actor/offering; neither change broadens fixture cleanup or production authority.
+
 ## If a stage fails
 
 Stop the sequence. Record the safe stage name and inspect that exact script and current local state. Reproduce individually only after reviewing its secret-safe error handling. Never publish raw Supabase status, provider errors, passwords, OTPs, activation/recovery links, signed file paths or local email bodies.
