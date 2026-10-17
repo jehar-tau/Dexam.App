@@ -66,4 +66,4 @@ D-045 — Uncertain password-recovery incident review — Option B approved 2026
 
 D-046 — Authentication email transport preparation — Option B approved 2026-10-17: provider-neutral message and mocked Resend candidate, no account/setup/sending activation — `ADR-046-authentication-email-transport.md`.
 
-D-047 — Authentication sender verification — awaiting choice on deferral, free account/subdomain verification, or existing verified account reuse; no sending — `ADR-047-authentication-sender-verification.md`.
+D-047 — Authentication sender verification — Option B approved 2026-10-17; external setup subsequently deferred pending owner login/terms acceptance; no sending — `ADR-047-authentication-sender-verification.md`.

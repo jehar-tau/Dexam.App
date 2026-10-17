@@ -24,4 +24,8 @@ Disable open/click tracking for authentication messages and verify that setting.
 4. Approve explicit delivery-test recipients through a private allowlist/configuration, volume/rate budgets and accountable failure handling. Never collect credentials or recipient lists in public issues, logs or source control.
 5. Test accepted/rejected/uncertain transport results, delayed/bounced messages, safe retries, quota exhaustion and actual authorized delivery before onboarding. Keep uncertain password mutation resolution as its separate gate.
 
-Provider account setup, domain verification, real messages, paid services, real employee onboarding and production deployment remain unapproved. Codex owns implementation/setup work once the applicable action is authorized; the designer is only needed for ownership/login, material choices and actual launch approval.
+## Current handoff
+
+D-047 Option B was approved on 2026-10-17 for an owner-controlled Free account and provider-issued verification records confined to `auth.designexam.com`, preserving root DNS and Zoho. Account sign-in/password reset is blocked; the owner elected to defer this setup and continue fictional workflow testing. No domain verification, DNS changes, API keys, recipient imports or runtime activation have been completed. Resume after the owner completes account sign-in and required terms acceptance; do not treat Zoho credentials as a Resend account.
+
+Real messages, paid services, real employee onboarding and production deployment remain unapproved. Codex owns technical setup within the approved scope; the designer is only needed for ownership/login, material choices and actual launch approval. Never record passwords or credential screenshots in repository artifacts.
