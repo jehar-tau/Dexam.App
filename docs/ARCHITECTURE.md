@@ -20,6 +20,10 @@ Secrets and credentials are different in every environment.
 
 ## Repository boundaries
 
+### Browser build packaging
+
+The Vite build separates React/router, Supabase and other shared dependencies from application code using Rolldown code-splitting groups. Strict module execution ordering is enabled; routes, access boundaries and loading behaviour remain unchanged. This is reversible build packaging, not a new runtime architecture, lazy-loading UI or authorization boundary. All statically required chunks still load on first visit. The split supports dependency cache reuse; it does not by itself reduce total cold-load bytes or prove improved latency. Keep hashed asset names and verify ordinary/static-preview browser journeys before release. Reference: [Rolldown code splitting](https://rolldown.rs/reference/OutputOptions.codeSplitting).
+
 This repository contains application code and engineering/product documentation. Normalized domain knowledge and original source assets should remain separately governed so large files and academic content do not bloat application history.
 
 ## Non-negotiable implementation constraints

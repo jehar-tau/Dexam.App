@@ -10,9 +10,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:staging": "node scripts/staging/validate-environment.mjs && tsc -b && vite build",
-    "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true vite build",
+    "build": "tsc -b && vite build && node scripts/staging/check-browser-bundle.mjs",
+    "build:staging": "node scripts/staging/validate-environment.mjs && tsc -b && vite build && node scripts/staging/check-browser-bundle.mjs",
+    "build:e2e": "VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true tsc -b && VITE_ENABLE_OPERATOR_PREVIEW=true VITE_ENABLE_STUDENT_PREVIEW=true vite build --outDir dist-e2e",
     "preview": "vite preview",
     "env:check": "node scripts/doctor.mjs",
     "staging:check": "node scripts/staging/validate-environment.mjs",

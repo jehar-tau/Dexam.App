@@ -3,6 +3,25 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rolldownOptions: {
+      output: {
+        // Separate stable dependencies for cache reuse without changing route loading or guards.
+        strictExecutionOrder: true,
+        codeSplitting: {
+          groups: [
+            {
+              name: 'react-runtime',
+              test: /node_modules\/(?:react|react-dom|scheduler|react-router|react-router-dom)\//,
+              priority: 30,
+            },
+            { name: 'supabase-client', test: /node_modules\/@supabase\//, priority: 20 },
+            { name: 'shared-libraries', test: /node_modules\//, priority: 10 },
+          ],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: true,

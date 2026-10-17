@@ -20,6 +20,10 @@ Testing is part of feature implementation, not a later cleanup phase.
 
 ## Definition of done
 
+`pnpm build` and `pnpm build:staging` additionally validate generated JavaScript chunks: each must be non-empty and at most 500,000 bytes, and application/React/Supabase/shared-library groups must exist. This is an engineering regression budget, not a network or business SLA. Unit boundary tests exercise the check, while Chromium tests validate actual module initialization. The browser test command builds its own preview-enabled artifact; normal/staging builds retain their existing preview guards.
+
+Preview-enabled browser test output is isolated in ignored `dist-e2e/`, and Playwright explicitly serves that directory. Normal/staging builds continue using `dist/`. Never deploy `dist-e2e/` or reuse it for a normal release; the fictional preview flags are intentionally different. The prior shared output allowed a normal build to replace the running test artifact and cause false preview failures. Still run builds/tests sequentially when possible because TypeScript build metadata remains shared.
+
 A change is not complete until relevant documentation is updated, acceptance criteria pass, migrations work from a clean state, lint/types/tests/build succeed, and the applicable risk review is complete. Tests must demonstrate authorization boundaries, not just successful paths.
 
 ## Risk levels
