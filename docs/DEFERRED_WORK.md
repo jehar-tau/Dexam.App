@@ -70,8 +70,6 @@ Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignm
 
 ## Platform, design system, and operations
 
-DW-047 — Role-separated portal experience: D-048 B approved 2026-10-17; F033 implementation/verification active. Distinct entrances/layouts reuse canonical identity and current authority; safe landings, explicit same-account switches and legacy compatibility are specified in F033. Move to completion history only after acceptance. No independently deployed applications, new roles or new session containers implied.
-
 | ID     | Status                     | Deferred functionality                                         | Resume trigger and prerequisites                                                                                                                     | Authority            |
 | ------ | -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | DW-027 | Next slice                 | Production deployment and `app.designexam.com`                 | Proceed only after staging, launch checklist, privacy/security review, backup/restore, operational ownership, and explicit production approval.      | D-002                |
@@ -117,6 +115,8 @@ DW-047 — Role-separated portal experience: D-048 B approved 2026-10-17; F033 i
 | DW-046 | Local complete; launch gated | Assignment-material orphan and uncertain attachment reconciliation | F030/D-044 B merged PR #70 with tracked reservations, idempotent attachment, 30-day unreferenced cleanup, hold/reference/legacy protection and real Storage testing. Hosted worker/activation, durable marker retention and operational alerting remain required. No production privileged job is approved. | F009, F025, F030, D-039, D-044, PRODUCTION_READINESS |
 
 ## Completion log
+
+- 2026-10-17 — DW-047 completed through F033 / PR #81 (`c7a56dc`), with independent security review and all required CI passed: distinct student/teacher/staff/admin entrances and layouts, safe landings, same-account switches and legacy routes on the existing identity/backend. Separate deployments, new roles and independent sessions were not part of D-048 B.
 
 D-028 Option B governs accepted F015 safeguards. Broader elevated actions are still tracked as DW-005; acceptance of lost-factor reset does not silently approve them.
 
