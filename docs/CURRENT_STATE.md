@@ -4,6 +4,8 @@ Last updated: 2026-10-17
 
 ## Current phase
 
+Admissions browser-coverage follow-up (2026-10-17): added three F012 fictional preview regressions for existing claimed-student linking, mobile reason-required return, and unresolved identity refusal. No runtime, schema, permissions or product changes. Initial test incorrectly expected an alert role; the existing visible validation message was present, and the assertion was corrected to check that exact message. Focused rerun and all 67 browser journeys passed, alongside formatting, lint and types; CI acceptance follows in the PR. Email setup stays deferred.
+
 2026-10-17 post-email-deferral update: F032 merged through PR #74 (`39eda59`) after required CI and independent security review. D-047 B was approved, then the owner deferred external setup because account sign-in/reset was blocked and authorized continued fictional workflow testing. No DNS changes, verified sender, API keys or live delivery were completed. Resume only after owner login/terms acceptance; preserve root/Zoho DNS. The earlier pending-approval notes below are historical, superseded by this update.
 
 Local regression passed: 362 app tests, all 1,140 DB assertions and 64 Chromium journeys, plus formatting/lint/types/build. Actual F030 Storage retry/reference/hold/legacy/late-byte/publication-race acceptance and F031 SDK/MFA/independent-review/browser/revocation acceptance passed with exact fixture cleanup. No defect was found in these checks. The existing preview on port 5173 was preserved; the consolidated pilot requiring that free port was not rerun. Recovery rehearsal evidence is recorded in `PILOT_READINESS.md`. Real-launch gates remain unchanged.

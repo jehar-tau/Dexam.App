@@ -157,6 +157,8 @@ No external product analytics are authorized. Request, resolution, enrolment, me
 
 ## Implementation evidence
 
+- 2026-10-17 browser regression expansion: `tests/e2e/admissions-alternate-paths.spec.ts` exercises claimed-student reuse without a new activation notice, reason-required return on mobile, and refusal to approve an unresolved identity candidate. These are fictional preview form checks, not additional live-API/security proof or new identity rules.
+
 - Added a capability-gated, oldest-first handoff inbox with minimum CRM context and bounded search.
 - Added explicit new-versus-existing student resolution, bounded canonical-student lookup, and a required disposition for every weak identity match.
 - Added active offering/compatible cohort selection plus reason-required return and approval paths.
