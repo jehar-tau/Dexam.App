@@ -150,6 +150,8 @@ describe('studentAssignments', () => {
           {
             id: 'attempt-id',
             attemptNumber: 1,
+            submissionVersion: 1,
+            supersededBy: null,
             status: 'submitted',
             submittedAt: '2026-10-11T09:00:00.000Z',
             submittedLate: false,

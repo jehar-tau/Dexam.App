@@ -4,6 +4,9 @@ export type FeedbackSourceKind = 'human' | 'dictation_assisted' | 'ai_proofread'
 export type FeedbackOutcome = 'review_completed' | 'correction_requested'
 
 export type FeedbackQueueItem = {
+  attemptNumber?: number
+  submissionVersion?: number
+  previousFeedbackText?: string | null
   aiAssisted: boolean
   assignmentGroup: string
   assignmentInstanceId: string
@@ -51,6 +54,10 @@ export async function getFeedbackReviewQueue(): Promise<FeedbackQueueItem[]> {
   const result = await clientOrThrow().rpc('list_feedback_review_queue')
   if (result.error || !Array.isArray(result.data)) throw new Error(unavailableMessage)
   return (result.data as Row[]).map((row) => ({
+    attemptNumber: typeof row.attempt_number === 'number' ? row.attempt_number : 1,
+    submissionVersion: typeof row.submission_version === 'number' ? row.submission_version : 1,
+    previousFeedbackText:
+      typeof row.previous_feedback_text === 'string' ? row.previous_feedback_text : null,
     assignmentInstanceId: text(row.assignment_instance_id),
     submissionAttemptId: text(row.submission_attempt_id),
     memberId: text(row.member_id),
@@ -132,7 +139,9 @@ export async function publishFeedback(input: {
     p_correction_reason: input.correctionReason,
   })
   if (result.error)
-    throw new Error('The feedback could not be published. Review every field and try again.')
+    throw new Error(
+      'The feedback could not be published. The student may have edited the submission. Reload the review queue, review the current files and try again; your saved draft is retained.',
+    )
 }
 
 export async function uploadFeedbackAudio(input: {

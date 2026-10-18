@@ -33,5 +33,6 @@
 - F031 Uncertain password-recovery incident review — D-045 B approved; independent local incident review implemented/verified, resolution and production remain gated
 - F032 Authentication email transport preparation — D-046 B approved; offline adapter verified, live integration/setup/sending remains gated
 - F033 Role-separated portals — D-048 B implemented; merged PR #81 after independent review and required CI; distinct entrances/layouts on existing identity/backend, no new grants
+- F034 Editable submission versions and repeat attempts — D-049 B approved 2026-10-18; copy-on-write edits until published review, multiple attempts, stale-review and purge fencing; verification active
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.

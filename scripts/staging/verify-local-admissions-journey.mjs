@@ -339,7 +339,7 @@ try {
     throw new Error('Unsafe callback')
   frontend = spawn(
     'pnpm',
-    ['exec', 'vite', '--host', '127.0.0.1', '--port', '5173', '--strictPort'],
+    ['exec', 'vite', '--host', '127.0.0.1', '--port', '5192', '--strictPort'],
     {
       env: {
         ...process.env,
@@ -356,7 +356,7 @@ try {
   for (let n = 0; n < 50; n++) {
     if (frontend.exitCode !== null) throw new Error('Own frontend startup failed')
     try {
-      ready = (await fetch('http://127.0.0.1:5173')).ok
+      ready = (await fetch('http://127.0.0.1:5192')).ok
     } catch {
       /* Starting. */
     }
@@ -368,6 +368,7 @@ try {
   browser = await chromium.launch()
   const page = await browser.newPage(),
     password = randomBytes(32).toString('base64url')
+  callback.port = '5192' // Retarget only the verified loopback fixture callback to this owned test server.
   await page.goto(callback.toString())
   await page.getByText('One-time activation link loaded securely', { exact: false }).waitFor()
   if (new URL(page.url()).hash || new URL(page.url()).search)
@@ -376,7 +377,7 @@ try {
   await page.getByLabel('Confirm password').fill(password)
   await page.getByRole('button', { name: 'Activate account', exact: true }).click()
   await page.getByRole('status').filter({ hasText: 'Your Dexam account is ready.' }).waitFor()
-  await page.goto('http://127.0.0.1:5173/student')
+  await page.goto('http://127.0.0.1:5192/student')
   await page.getByLabel('Dexam Member ID').fill(member)
   await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
@@ -389,7 +390,7 @@ try {
   await expect(page.getByRole('link', { name: 'Work archive', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: 'CRM', exact: true })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Staff security', exact: true })).toHaveCount(0)
-  await page.goto('http://127.0.0.1:5173/student/coursework')
+  await page.goto('http://127.0.0.1:5192/student/coursework')
   await expect(
     page.getByText('Disposable authored lesson instructions.', { exact: true }),
   ).toBeVisible()
@@ -416,7 +417,7 @@ try {
     },
   )
   const distributionPage = await distributionContext.newPage()
-  await distributionPage.goto('http://127.0.0.1:5173/staff/assignments')
+  await distributionPage.goto('http://127.0.0.1:5192/staff/assignments')
   await expect(
     distributionPage.getByRole('heading', { name: 'Assignment distribution.' }),
   ).toBeVisible()
@@ -458,7 +459,7 @@ try {
     await student.from('student_assignment_instances').select('id').eq('enrollment_id', enrollment),
   )
   if (instances.length !== 1) throw new Error('Wrong student assignment snapshot')
-  const attempt = await must(
+  let attempt = await must(
       await student.rpc('start_assignment_attempt', { p_assignment_instance_id: instances[0].id }),
     ),
     bytes = new TextEncoder().encode('%PDF-1.4\nDisposable pilot drawing\n'),
@@ -485,14 +486,127 @@ try {
       p_voice_equivalent_confirmed: false,
     }),
   )
+  phase = 'F034 actual copied Storage references and stale review rejection'
+  const originalAttempt = attempt
+  attempt = await must(
+    await student.rpc('edit_assignment_attempt', { p_submission_attempt_id: originalAttempt }),
+  )
+  const oldFiles = await must(
+    await student
+      .from('submission_files')
+      .select('id,object_path')
+      .eq('submission_attempt_id', originalAttempt),
+  )
+  const editFiles = await must(
+    await student
+      .from('submission_files')
+      .select('id,object_path')
+      .eq('submission_attempt_id', attempt),
+  )
+  if (
+    oldFiles.length !== 1 ||
+    editFiles.length !== 1 ||
+    oldFiles[0].object_path !== editFiles[0].object_path
+  )
+    throw new Error('Copy-on-write reference mismatch')
   await must(
+    await student.functions.invoke('student-submission-file', {
+      body: { fileId: editFiles[0].id },
+      method: 'DELETE',
+    }),
+  )
+  await must(
+    await student.functions.invoke('student-submission-file', {
+      body: { fileId: editFiles[0].id },
+      method: 'DELETE',
+    }),
+  )
+  await must(await admin.storage.from('student-submissions').download(oldFiles[0].object_path))
+  const updatedForm = new FormData()
+  updatedForm.set('attemptId', attempt)
+  updatedForm.set('originalFileName', 'updated.pdf')
+  updatedForm.set('originalByteSize', String(bytes.length))
+  updatedForm.set('wasCompressed', 'false')
+  updatedForm.set('file', new File([bytes], 'updated.pdf', { type: 'application/pdf' }))
+  await must(await student.functions.invoke('student-submission-file', { body: updatedForm }))
+  await must(await student.rpc('finalize_submission_attempt', { p_submission_attempt_id: attempt }))
+  await denied(
     await teacher.rpc('publish_feedback_revision', {
       p_feedback_revision_id: revision,
       p_outcome: 'review_completed',
       p_correction_reason: null,
     }),
   )
-  await page.goto('http://127.0.0.1:5173/student/assignments')
+  const currentRevision = await must(
+    await teacher.rpc('start_feedback_draft', { p_submission_attempt_id: attempt }),
+  )
+  await must(
+    await teacher.rpc('save_feedback_draft', {
+      p_feedback_revision_id: currentRevision,
+      p_written_text: 'Your fictional perspective is clear. Keep the lines consistent.',
+      p_source_kind: 'human',
+      p_voice_equivalent_confirmed: false,
+    }),
+  )
+  await must(
+    await teacher.rpc('publish_feedback_revision', {
+      p_feedback_revision_id: currentRevision,
+      p_outcome: 'review_completed',
+      p_correction_reason: null,
+    }),
+  )
+  await denied(await student.rpc('edit_assignment_attempt', { p_submission_attempt_id: attempt }))
+  phase = 'F034 actual edit versus publication race'
+  const second = await must(
+    await student.rpc('start_assignment_attempt', { p_assignment_instance_id: instances[0].id }),
+  )
+  const secondForm = new FormData()
+  secondForm.set('attemptId', second)
+  secondForm.set('originalFileName', 'second.pdf')
+  secondForm.set('originalByteSize', String(bytes.length))
+  secondForm.set('wasCompressed', 'false')
+  secondForm.set('file', new File([bytes], 'second.pdf', { type: 'application/pdf' }))
+  await must(await student.functions.invoke('student-submission-file', { body: secondForm }))
+  await must(await student.rpc('finalize_submission_attempt', { p_submission_attempt_id: second }))
+  const secondReview = await must(
+    await teacher.rpc('start_feedback_draft', { p_submission_attempt_id: second }),
+  )
+  await must(
+    await teacher.rpc('save_feedback_draft', {
+      p_feedback_revision_id: secondReview,
+      p_written_text: 'Reviewed second attempt independently.',
+      p_source_kind: 'human',
+      p_voice_equivalent_confirmed: false,
+    }),
+  )
+  const [editedRace, publishedRace] = await Promise.all([
+    student.rpc('edit_assignment_attempt', { p_submission_attempt_id: second }),
+    teacher.rpc('publish_feedback_revision', {
+      p_feedback_revision_id: secondReview,
+      p_outcome: 'review_completed',
+      p_correction_reason: null,
+    }),
+  ])
+  if (Boolean(editedRace.error) === Boolean(publishedRace.error))
+    throw new Error('Edit/publication race must have exactly one winner')
+  if (!editedRace.error)
+    await must(
+      await student.rpc('finalize_submission_attempt', {
+        p_submission_attempt_id: editedRace.data,
+      }),
+    )
+  const third = await must(
+    await student.rpc('start_assignment_attempt', { p_assignment_instance_id: instances[0].id }),
+  )
+  const thirdRow = await must(
+    await student
+      .from('submission_attempts')
+      .select('logical_attempt_number')
+      .eq('id', third)
+      .single(),
+  )
+  if (thirdRow.logical_attempt_number !== 3) throw new Error('Third logical attempt unavailable')
+  await page.goto('http://127.0.0.1:5192/student/assignments')
   await expect(page.getByRole('heading', { name: 'Disposable pilot drawing task' })).toBeVisible()
   await expect(
     page.getByText('Your fictional perspective is clear. Keep the lines consistent.', {
@@ -534,7 +648,9 @@ try {
       { session, key: 'sb-' + new URL(config.API_URL).hostname.split('.')[0] + '-auth-token' },
     )
     const staffPage = await context.newPage()
-    await staffPage.goto('http://127.0.0.1:5173/health')
+    await staffPage.goto(
+      client === teacher ? 'http://127.0.0.1:5192/teacher' : 'http://127.0.0.1:5192/staff',
+    )
     await expect(staffPage.getByRole('link', { name: visible, exact: true })).toBeVisible()
     await expect(staffPage.getByRole('link', { name: hidden, exact: true })).toHaveCount(0)
     await expect(staffPage.getByRole('link', { name: 'Staff security', exact: true })).toBeVisible()
@@ -561,7 +677,7 @@ try {
         staffPage.getByRole('heading', { name: 'You do not have access to this workspace.' }),
       ).toBeVisible({ timeout: 40_000 })
     } else {
-      await staffPage.goto('http://127.0.0.1:5173/staff/assignments')
+      await staffPage.goto('http://127.0.0.1:5192/staff/assignments')
       await expect(
         staffPage.getByRole('heading', {
           name:
@@ -650,11 +766,13 @@ async function cleanup() {
         `select coalesce(jsonb_agg(object_path),'[]') from public.submission_files where submission_attempt_id in (${attempts});`,
       ),
     )
-    if (paths.length) await must(await admin.storage.from('student-submissions').remove(paths))
+    if (paths.length)
+      await must(await admin.storage.from('student-submissions').remove([...new Set(paths)]))
     const statements = [
       ['notifications', `crm_enquiry_id=${enq} or recipient_person_id in ${people}`],
       ['domain_events', `aggregate_id=${enq} or actor_person_id in ${people}`],
       ['feedback_revisions', `submission_attempt_id in (${attempts})`],
+      ['submission_file_removal_receipts', `assignment_instance_id in (${instances})`],
       ['submission_files', `submission_attempt_id in (${attempts})`],
       ['submission_attempts', `assignment_instance_id in (${instances})`],
       ['student_assignment_transitions', `assignment_instance_id in (${instances})`],

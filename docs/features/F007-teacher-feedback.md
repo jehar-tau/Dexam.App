@@ -1,6 +1,8 @@
 # F007 — Teacher Feedback
 
 Status: Implemented and merged through PR #12
+
+D-049 B amendment (2026-10-18, F034): review the explicit attempt/version; edited work requires a new review against the current snapshot. Preserve old drafts and block stale publication. Multiple pending attempts remain independently reviewable; an older review does not overwrite newer summary state and still emits its feedback notice.
 Risk: Red — educational evaluation, biometric-adjacent audio, and AI-assisted decisions
 Owner: Product owner with Codex engineering support
 

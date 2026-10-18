@@ -6,6 +6,7 @@ import { Badge, Button, Callout, Card, EmptyState } from '../components'
 import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
 import {
   finalizeStudentAssignmentAttempt,
+  editStudentAssignmentAttempt,
   getStudentAssignments,
   removeStudentSubmissionFile,
   startStudentAssignmentAttempt,
@@ -149,8 +150,12 @@ export function StudentAssignmentsPage() {
                   status: 'in_progress',
                   attempts: [
                     {
-                      id: 'preview-attempt-perspective',
-                      attemptNumber: 1,
+                      id: `preview-attempt-${crypto.randomUUID()}`,
+                      attemptNumber:
+                        Math.max(
+                          0,
+                          ...assignment.attempts.map((attempt) => attempt.attemptNumber),
+                        ) + 1,
                       status: 'draft',
                       submittedAt: null,
                       submittedLate: null,
@@ -169,6 +174,46 @@ export function StudentAssignmentsPage() {
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'The attempt could not be started.')
+    } finally {
+      setBusyMessage('')
+    }
+  }
+
+  async function editAttempt(attemptId: string) {
+    if (!selected || draftAttempt) return
+    setError('')
+    setBusyMessage('Opening an editable version…')
+    try {
+      if (previewEnabled) {
+        setLocalAssignments((current) =>
+          current.map((assignment) =>
+            assignment.id !== selected.id
+              ? assignment
+              : {
+                  ...assignment,
+                  status: 'in_progress',
+                  attempts: assignment.attempts.map((attempt) =>
+                    attempt.id !== attemptId || attempt.feedback
+                      ? attempt
+                      : {
+                          ...attempt,
+                          id: `preview-edit-${crypto.randomUUID()}`,
+                          submissionVersion: (attempt.submissionVersion ?? 1) + 1,
+                          status: 'draft',
+                          submittedAt: null,
+                          submittedLate: null,
+                        },
+                  ),
+                },
+          ),
+        )
+      } else {
+        await editStudentAssignmentAttempt(attemptId)
+        lifetime.assertActive()
+        await refresh()
+      }
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'The attempt could not be edited.')
     } finally {
       setBusyMessage('')
     }
@@ -325,7 +370,7 @@ export function StudentAssignmentsPage() {
     if (!selected || !draftAttempt || draftAttempt.files.length === 0 || pendingFiles.length > 0)
       return
     setError('')
-    setBusyMessage('Locking and submitting your attempt…')
+    setBusyMessage('Submitting your attempt…')
     try {
       if (previewEnabled) {
         setLocalAssignments((current) =>
@@ -479,19 +524,25 @@ export function StudentAssignmentsPage() {
             </p>
           ) : null}
 
-          {!draftAttempt && ['assigned', 'correction_requested'].includes(selected.status) ? (
+          {!draftAttempt &&
+          selected.releaseStatus === 'active' &&
+          ['assigned', 'submitted', 'correction_requested', 'review_completed'].includes(
+            selected.status,
+          ) ? (
             <Card className={styles.startCard}>
               <h3>
                 {selected.status === 'correction_requested'
                   ? 'Prepare your revision'
-                  : 'Start your submission'}
+                  : selected.attempts.length
+                    ? 'Submit another attempt'
+                    : 'Start your submission'}
               </h3>
               <p>
                 Your files remain private. Starting creates a draft that only you and an assigned
                 teacher can access.
               </p>
               <Button disabled={Boolean(busyMessage)} onClick={() => void startAttempt()}>
-                Start submission
+                {selected.attempts.length ? 'Start another attempt' : 'Start submission'}
               </Button>
             </Card>
           ) : null}
@@ -506,8 +557,9 @@ export function StudentAssignmentsPage() {
                 <Badge tone="neutral">Draft</Badge>
               </div>
               <Callout tone="neutral">
-                Images are optimized on this device before upload. Review every preview; submitted
-                files cannot be replaced unless a teacher requests a revision.
+                Images are optimized on this device before upload. You can edit submitted work until
+                teacher feedback is published. Reviewed attempts stay locked; further attempts
+                remain separate.
               </Callout>
               <label className={styles.filePicker}>
                 <span>Add PDF or images</span>
@@ -589,7 +641,7 @@ export function StudentAssignmentsPage() {
               ) : null}
 
               <div className={styles.submitArea}>
-                <p>Submitting locks this attempt permanently.</p>
+                <p>You can edit this attempt until teacher feedback is published.</p>
                 <Button
                   disabled={
                     draftAttempt.files.length === 0 ||
@@ -604,59 +656,75 @@ export function StudentAssignmentsPage() {
             </div>
           ) : null}
 
-          {!draftAttempt && selected.attempts.length > 0 ? (
+          {selected.attempts.some((attempt) => attempt.status === 'submitted') ? (
             <div className={styles.history}>
               <h3>Attempt history</h3>
-              {selected.attempts.map((attempt) => (
-                <Card key={attempt.id}>
-                  <div>
-                    <strong>Attempt {attempt.attemptNumber}</strong>
-                    <Badge tone={attempt.status === 'submitted' ? 'success' : 'neutral'}>
-                      {displayStatus(attempt.status)}
-                    </Badge>
-                  </div>
-                  <p>
-                    {attempt.files.length} {attempt.files.length === 1 ? 'file' : 'files'}
-                    {attempt.submittedAt
-                      ? ` · Submitted ${new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium' }).format(new Date(attempt.submittedAt))}`
-                      : ''}
-                  </p>
-                  {attempt.submittedLate ? <Badge tone="warning">Late</Badge> : null}
-                  {attempt.feedback ? (
-                    <section
-                      className={styles.feedback}
-                      aria-label={`Feedback for attempt ${attempt.attemptNumber}`}
-                    >
-                      <div>
-                        <h4>Teacher feedback</h4>
-                        <Badge tone="success">{displayStatus(attempt.feedback.outcome)}</Badge>
-                      </div>
-                      <p>{attempt.feedback.writtenText}</p>
-                      {attempt.feedback.correctionReason ? (
-                        <Callout tone="warning" icon="warning">
-                          <strong>What to correct:</strong> {attempt.feedback.correctionReason}
-                        </Callout>
+              {selected.attempts
+                .filter((attempt) => attempt.status === 'submitted')
+                .map((attempt) => (
+                  <Card key={attempt.id}>
+                    <div>
+                      <strong>Attempt {attempt.attemptNumber}</strong>
+                      {(attempt.submissionVersion ?? 1) > 1 ? (
+                        <span>Version {attempt.submissionVersion}</span>
                       ) : null}
-                      {attempt.feedback.voiceUrl ? (
-                        <audio
-                          aria-label={`Voice feedback for attempt ${attempt.attemptNumber}`}
-                          controls
-                          src={attempt.feedback.voiceUrl}
-                        />
-                      ) : null}
-                      <small>
-                        Published{' '}
-                        {new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium' }).format(
-                          new Date(attempt.feedback.publishedAt),
-                        )}
-                        {attempt.feedback.aiAssisted
-                          ? ' · AI-assisted writing, reviewed and published by your teacher'
-                          : ' · Written and published by your teacher'}
-                      </small>
-                    </section>
-                  ) : null}
-                </Card>
-              ))}
+                      <Badge tone={attempt.status === 'submitted' ? 'success' : 'neutral'}>
+                        {displayStatus(attempt.status)}
+                      </Badge>
+                    </div>
+                    <p>
+                      {attempt.files.length} {attempt.files.length === 1 ? 'file' : 'files'}
+                      {attempt.submittedAt
+                        ? ` · Submitted ${new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium' }).format(new Date(attempt.submittedAt))}`
+                        : ''}
+                    </p>
+                    {attempt.submittedLate ? <Badge tone="warning">Late</Badge> : null}
+                    {attempt.feedback ? (
+                      <p>Reviewed — this attempt is locked.</p>
+                    ) : !draftAttempt && selected.releaseStatus === 'active' ? (
+                      <Button
+                        disabled={Boolean(busyMessage)}
+                        onClick={() => void editAttempt(attempt.id)}
+                        variant="secondary"
+                      >
+                        Edit attempt {attempt.attemptNumber}
+                      </Button>
+                    ) : null}
+                    {attempt.feedback ? (
+                      <section
+                        className={styles.feedback}
+                        aria-label={`Feedback for attempt ${attempt.attemptNumber}`}
+                      >
+                        <div>
+                          <h4>Teacher feedback</h4>
+                          <Badge tone="success">{displayStatus(attempt.feedback.outcome)}</Badge>
+                        </div>
+                        <p>{attempt.feedback.writtenText}</p>
+                        {attempt.feedback.correctionReason ? (
+                          <Callout tone="warning" icon="warning">
+                            <strong>What to correct:</strong> {attempt.feedback.correctionReason}
+                          </Callout>
+                        ) : null}
+                        {attempt.feedback.voiceUrl ? (
+                          <audio
+                            aria-label={`Voice feedback for attempt ${attempt.attemptNumber}`}
+                            controls
+                            src={attempt.feedback.voiceUrl}
+                          />
+                        ) : null}
+                        <small>
+                          Published{' '}
+                          {new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium' }).format(
+                            new Date(attempt.feedback.publishedAt),
+                          )}
+                          {attempt.feedback.aiAssisted
+                            ? ' · AI-assisted writing, reviewed and published by your teacher'
+                            : ' · Written and published by your teacher'}
+                        </small>
+                      </section>
+                    ) : null}
+                  </Card>
+                ))}
             </div>
           ) : null}
         </article>

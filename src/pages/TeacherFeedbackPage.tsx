@@ -42,6 +42,10 @@ const previewQueue: FeedbackQueueItem[] = [
   {
     assignmentInstanceId: 'preview-instance-two',
     submissionAttemptId: 'preview-attempt-two',
+    attemptNumber: 1,
+    submissionVersion: 2,
+    previousFeedbackText:
+      'Earlier draft about the original construction study. Review the updated files before using any of this wording.',
     memberId: 'DXM-3K3M9Q2RW5TY',
     displayName: 'Kabir Mehta',
     assignmentTitle: 'Draw a one-point perspective room',
@@ -148,6 +152,7 @@ export function TeacherFeedbackPage() {
     retry: false,
   })
   const [revisionId, setRevisionId] = useState<string | null>(null)
+  const [updatedFilesReviewed, setUpdatedFilesReviewed] = useState(false)
   const [writtenText, setWrittenText] = useState('')
   const [sourceKind, setSourceKind] = useState<FeedbackSourceKind>('human')
   const [voiceAttached, setVoiceAttached] = useState(false)
@@ -184,6 +189,7 @@ export function TeacherFeedbackPage() {
     // The keyed review selection intentionally initializes one isolated private draft workspace.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setRevisionId(selected.feedbackRevisionId)
+    setUpdatedFilesReviewed(false)
     setWrittenText(selected.writtenText)
     setSourceKind(selected.sourceKind ?? 'human')
     setVoiceEquivalentConfirmed(selected.voiceEquivalentConfirmed)
@@ -208,6 +214,11 @@ export function TeacherFeedbackPage() {
   async function ensureDraft() {
     lifetime.assertActive()
     if (!selected) throw new Error('Choose a submitted assignment first.')
+    if ((selected.submissionVersion ?? 1) > 1 && !updatedFilesReviewed) {
+      throw new Error(
+        'Review the updated files and confirm this submission version before preparing feedback.',
+      )
+    }
     if (revisionId) return revisionId
     if (previewEnabled) {
       const id = `preview-feedback-${selected.submissionAttemptId}`
@@ -554,6 +565,9 @@ export function TeacherFeedbackPage() {
                 <span>{item.assignmentGroup}</span>
                 <strong>{item.displayName}</strong>
                 <small>{item.assignmentTitle}</small>
+                <small>
+                  Attempt {item.attemptNumber ?? 1} · Version {item.submissionVersion ?? 1}
+                </small>
                 <small>{submittedLabel(item.submittedAt)}</small>
               </button>
             ))}
@@ -567,6 +581,9 @@ export function TeacherFeedbackPage() {
               </div>
               <h2>{selected.displayName}</h2>
               <p>{selected.assignmentTitle}</p>
+              <p>
+                Attempt {selected.attemptNumber ?? 1} · Version {selected.submissionVersion ?? 1}
+              </p>
             </div>
 
             <section className={styles.submission} aria-labelledby="submission-heading">
@@ -609,6 +626,30 @@ export function TeacherFeedbackPage() {
               )}
             </section>
 
+            {(selected.submissionVersion ?? 1) > 1 ? (
+              <section>
+                <Callout tone="warning">
+                  This is attempt {selected.attemptNumber ?? 1}, version{' '}
+                  {selected.submissionVersion}. The student edited their work. Review these files
+                  before preparing or publishing feedback. Earlier private drafts are not published
+                  or silently transferred.
+                </Callout>
+                {selected.previousFeedbackText ? (
+                  <details>
+                    <summary>Previous version draft — reference only</summary>
+                    <p>{selected.previousFeedbackText}</p>
+                  </details>
+                ) : null}
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={updatedFilesReviewed}
+                    onChange={(event) => setUpdatedFilesReviewed(event.target.checked)}
+                  />{' '}
+                  I have reviewed the updated files for this version
+                </label>
+              </section>
+            ) : null}
             <section className={styles.composer} aria-labelledby="writing-heading">
               <div className={styles.sectionHeading}>
                 <div>

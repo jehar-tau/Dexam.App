@@ -31,6 +31,8 @@ The standalone account-isolation child now owns port 5189 (F033), so it can pres
 
 ## If a stage fails
 
+The composed admissions child owns 5192 (F034), validates the canonical fixture activation origin at loopback 5173, then retargets only that fictional callback to its owned port. It also tests copied Storage references, removal/retry preservation, edited resubmission, stale-review denial, reviewed locking, edit/publication concurrency and third attempts. Cleanup covers only its exact fixture accounts/domain/files/receipts; the designer's 5173 server is preserved.
+
 Stop the sequence. Record the safe stage name and inspect that exact script and current local state. Reproduce individually only after reviewing its secret-safe error handling. Never publish raw Supabase status, provider errors, passwords, OTPs, activation/recovery links, signed file paths or local email bodies.
 
 Confirm which UUIDs/request keys/fictional addresses belong to the failed run before cleanup. Recover an uncertain account only from exact fictional markers, then use supported Admin deletion after linked fixture rows are removed. Preserve FK/RLS; immutable-history fixture cleanup may temporarily disable only named USER triggers inside a local transaction and must restore their original flags before commit. Unknown references must abort/roll back. Do not disable FK constraints or use global deletion.

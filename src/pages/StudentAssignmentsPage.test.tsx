@@ -54,4 +54,17 @@ describe('StudentAssignmentsPage', () => {
     expect(screen.getByRole('heading', { name: 'Line confidence practice' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
   })
+
+  it('keeps reviewed attempts locked while allowing a further numbered draft', async () => {
+    const user = userEvent.setup()
+    renderApp(<StudentAssignmentsPage />, [
+      '/student/assignments?preview=1&assignment=preview-assignment-lines',
+    ])
+    expect(await screen.findByText('Reviewed — this attempt is locked.')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Edit attempt 1' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Start another attempt' }))
+    expect(screen.getByText('Attempt 2')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Teacher feedback' })).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Start another attempt' })).not.toBeInTheDocument()
+  })
 })
