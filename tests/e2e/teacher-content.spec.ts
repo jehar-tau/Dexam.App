@@ -25,6 +25,9 @@ test('teacher content supports several named lesson and assignment files', async
   const row = page.getByLabel('Attachment name for study.pdf').locator('..').locator('..')
   await row.getByRole('button', { name: 'Save attachment name' }).click()
   await expect(page.getByText('Practice instructions · study.pdf', { exact: true })).toBeVisible()
+  expect(
+    await page.evaluate("getComputedStyle(document.querySelector('[class*=materialRow]')).display"),
+  ).toBe('grid')
   await page.screenshot({ path: 'test-results/f035/teacher-content.png', fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   expect(await page.evaluate('document.documentElement.scrollWidth <= innerWidth')).toBe(true)
