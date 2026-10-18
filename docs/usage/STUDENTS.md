@@ -1,5 +1,7 @@
 # Student guide
 
+Assignments may include named reference files supplied by your teacher. Read the instructions, then use **Assignment reference files** to download each relevant reference. Names explain the file's purpose; these are separate from your own submission uploads. Downloads require current assignment access.
+
 [Handbook home](README.md) · [Access and help](ACCESS_AND_TROUBLESHOOTING.md)
 
 ## 1. Activate and sign in

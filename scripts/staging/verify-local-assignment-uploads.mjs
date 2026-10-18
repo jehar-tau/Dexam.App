@@ -177,6 +177,28 @@ try {
   const material = await must(
     editor.rpc('attach_assignment_upload', { p_upload_id: attached.upload_id }),
   )
+  phase = 'named reference and private signed download'
+  await must(
+    editor.rpc('set_content_file_label', {
+      p_kind: 'assignment',
+      p_parent_id: id(8),
+      p_file_id: material,
+      p_label: 'Perspective practice reference',
+    }),
+  )
+  const named = await must(editor.rpc('list_assignment_reference_files', { p_version_id: id(8) }))
+  ensure(
+    named.length === 1 &&
+      named[0].display_name === 'Perspective practice reference' &&
+      named[0].file_name === 'drawing.pdf',
+  )
+  const signed = await must(
+    editor.storage.from('assignment-materials').createSignedUrl(attached.object_path, 60),
+  )
+  const signedUrl = new URL(signed.signedUrl)
+  ensure(signedUrl.origin === config.API_URL)
+  const response = await fetch(signedUrl, { redirect: 'error' })
+  ensure(response.ok && (await response.arrayBuffer()).byteLength === bytes.length)
   ensure(
     (await must(editor.rpc('attach_assignment_upload', { p_upload_id: attached.upload_id }))) ===
       material,

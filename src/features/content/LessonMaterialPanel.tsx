@@ -10,6 +10,40 @@ import {
   uploadLessonFile,
 } from './lessonFiles'
 import styles from './LessonMaterialPanel.module.css'
+import { setContentFileLabel, validateMaterialFile } from './contentWorkspace'
+import { watchAccountChanges } from '../auth/accountOperation'
+import { getSupabaseClient } from '../auth/supabaseClient'
+
+function AttachmentName({
+  name,
+  save,
+  disabled,
+}: {
+  name: string
+  save: (name: string) => Promise<void>
+  disabled: boolean
+}) {
+  const [label, setLabel] = useState(name)
+  return (
+    <div>
+      <Input
+        label={`Attachment name for ${name}`}
+        value={label}
+        maxLength={180}
+        disabled={disabled}
+        onChange={(e) => setLabel(e.target.value)}
+      />
+      <Button
+        size="sm"
+        variant="secondary"
+        disabled={disabled || !label.trim() || label.trim() === name}
+        onClick={() => void save(label)}
+      >
+        Save attachment name
+      </Button>
+    </div>
+  )
+}
 
 export function LessonFiles({
   lessonId,
@@ -20,7 +54,74 @@ export function LessonFiles({
   editable?: boolean
   preview?: boolean
 }) {
-  return preview ? null : <LiveLessonFiles lessonId={lessonId} editable={editable} />
+  return preview ? (
+    <PreviewLessonFiles editable={editable} />
+  ) : (
+    <LiveLessonFiles lessonId={lessonId} editable={editable} />
+  )
+}
+
+function PreviewLessonFiles({ editable }: { editable: boolean }) {
+  const [files, setFiles] = useState<{ id: string; name: string; label: string }[]>([])
+  const [error, setError] = useState('')
+  return (
+    <section aria-label="Lesson downloads" className={styles.panel}>
+      <p>Topic/lesson attachments · PDF, JPEG, PNG or WebP · up to 5 files, 10 MB each.</p>
+      {files.map((file) => (
+        <div key={file.id} className={styles.file}>
+          <span>
+            {file.label} · {file.name}
+          </span>
+          {editable ? (
+            <>
+              <AttachmentName
+                name={file.label}
+                disabled={false}
+                save={(label) => {
+                  setFiles((items) =>
+                    items.map((item) => (item.id === file.id ? { ...item, label } : item)),
+                  )
+                  return Promise.resolve()
+                }}
+              />
+              <Button
+                variant="ghost"
+                onClick={() => setFiles((items) => items.filter((item) => item.id !== file.id))}
+              >
+                Remove {file.label}
+              </Button>
+            </>
+          ) : null}
+        </div>
+      ))}
+      {editable ? (
+        <Input
+          label="Attach lesson files"
+          type="file"
+          multiple
+          accept=".pdf,.jpg,.jpeg,.png,.webp"
+          onChange={(event) => {
+            const selected = Array.from(event.target.files ?? [])
+            event.target.value = ''
+            const issue = selected
+              .map((file, index) => validateMaterialFile(file, files.length + index))
+              .find(Boolean)
+            setError(issue ?? '')
+            if (!issue)
+              setFiles((items) => [
+                ...items,
+                ...selected.map((file) => ({
+                  id: crypto.randomUUID(),
+                  name: file.name,
+                  label: file.name,
+                })),
+              ])
+          }}
+        />
+      ) : null}
+      {error ? <p role="alert">{error}</p> : null}
+    </section>
+  )
 }
 
 function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: boolean }) {
@@ -68,7 +169,8 @@ function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: b
       {(query.data ?? []).map((file) => (
         <div key={file.id} className={styles.file}>
           <span className={styles.name}>
-            {file.file_name} · {formatFileSize(file.byte_size)}
+            {file.display_name ?? file.file_name} · {file.file_name} ·{' '}
+            {formatFileSize(file.byte_size)}
           </span>{' '}
           <Button
             size="sm"
@@ -79,6 +181,18 @@ function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: b
           >
             Download
           </Button>
+          {editable ? (
+            <AttachmentName
+              name={file.display_name ?? file.file_name}
+              disabled={busy}
+              save={(label) =>
+                action(async () => {
+                  await setContentFileLabel('lesson', lessonId, file.id, label)
+                  await query.refetch()
+                })
+              }
+            />
+          ) : null}
           {editable ? (
             <Button
               size="sm"
@@ -100,17 +214,32 @@ function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: b
       {editable ? (
         <Input
           type="file"
-          label="Attach lesson file"
+          label="Attach lesson files"
+          multiple
           hint="PDF, JPEG, PNG or WebP · up to 5 files, 10 MB each. Images are optimized; published files are pinned."
           accept="application/pdf,image/jpeg,image/png,image/webp"
           disabled={busy || query.isPending || query.isError || (query.data?.length ?? 0) >= 5}
           onChange={(event) => {
-            const file = event.target.files?.[0]
+            const files = Array.from(event.target.files ?? [])
             event.target.value = ''
-            if (file)
+            if (files.length)
               void action(async () => {
-                await uploadLessonFile(lessonId, file, query.data?.length ?? 0)
-                await query.refetch()
+                const count = query.data?.length ?? 0
+                const issue = files
+                  .map((file, index) => validateMaterialFile(file, count + index))
+                  .find(Boolean)
+                if (issue) throw new Error(issue)
+                const client = getSupabaseClient(),
+                  guard = client ? watchAccountChanges(client) : null
+                try {
+                  for (const [index, file] of files.entries()) {
+                    guard?.assertCurrent()
+                    await uploadLessonFile(lessonId, file, count + index)
+                  }
+                } finally {
+                  guard?.dispose()
+                  await query.refetch()
+                }
               })
           }}
         />

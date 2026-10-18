@@ -3,10 +3,70 @@ import userEvent from '@testing-library/user-event'
 
 import { renderApp } from '../test/render'
 import { ContentWorkspacePage } from './ContentWorkspacePage'
+vi.mock('../features/auth/AuthContext', () => ({ useAuth: () => ({ session: null }) }))
+const mocks = vi.hoisted(() => ({ workspace: vi.fn(), publish: vi.fn() }))
+vi.mock('../features/content/contentWorkspace', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../features/content/contentWorkspace')>()),
+  getContentWorkspace: mocks.workspace,
+  publishAssignmentVersion: mocks.publish,
+}))
 
 describe('ContentWorkspacePage', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     vi.stubEnv('VITE_ENABLE_OPERATOR_PREVIEW', 'true')
+  })
+  it('keeps assignment publication available after its curriculum is published', async () => {
+    mocks.workspace.mockResolvedValue([
+      {
+        id: 'offering',
+        title: 'Fictional course',
+        canEdit: false,
+        canPublish: true,
+        curricula: [
+          {
+            id: 'curriculum',
+            status: 'published',
+            title: 'Published course',
+            versionNumber: 1,
+            topics: [
+              {
+                id: 'topic',
+                title: 'Drawing',
+                code: 'DRAWING',
+                sectionTitle: 'Foundation',
+                lessons: [],
+                summary: '',
+                position: 1,
+              },
+            ],
+          },
+        ],
+        assignments: [
+          {
+            id: 'assignment',
+            offeringId: 'offering',
+            code: 'DRAW',
+            title: 'Drawing practice',
+            status: 'draft',
+            groupName: 'Drawing',
+            instructions: 'Draw the scene.',
+            evaluationRubric: 'Check structure.',
+            materials: [],
+            topicIds: ['topic'],
+            versionNumber: 1,
+          },
+        ],
+      },
+    ])
+    mocks.publish.mockResolvedValue(undefined)
+    const user = userEvent.setup()
+    renderApp(<ContentWorkspacePage />, ['/teacher/content'])
+    await user.click(await screen.findByRole('tab', { name: /Assignments/ }))
+    expect(screen.getByLabelText('Student instructions')).toBeDisabled()
+    await user.type(screen.getByLabelText('Release note'), 'Release drawing assignment')
+    await user.click(screen.getByRole('button', { name: 'Publish assignment' }))
+    expect(mocks.publish).toHaveBeenCalledWith('assignment', 'Release drawing assignment')
   })
 
   afterEach(() => {

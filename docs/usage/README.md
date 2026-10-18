@@ -14,7 +14,7 @@ The downloadable edition is dated 18 October 2026 and includes access/troublesho
 ## Choose your guide
 
 - [Students](STUDENTS.md): activation, coursework, assignments, feedback, classes, checklist and archive.
-- [Teachers](TEACHERS.md): reviewing submitted work, written/audio feedback, correction requests and assistance limits.
+- [Teachers](TEACHERS.md): scoped content authoring, named attachments, draft-topic removal, submission reviews and feedback.
 - [Staff](STAFF.md): enquiries, allocation, admissions, content, assignment releases, classes and course closeout.
 - [Administrators](ADMINS.md): invitations, MFA, recovery, privacy and launch operations.
 - [Access and troubleshooting](ACCESS_AND_TROUBLESHOOTING.md): current sign-in routes, access rules, error handling and support.
@@ -29,12 +29,12 @@ The development preview uses `?preview=1` only on explicitly supported pages and
 
 ## Portal separation: actual status
 
-| Audience | Current sign-in                                                                                     | Current workspace                                                | Separate visual application?     |
-| -------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------- |
-| Student  | `/sign-in`, Member ID/password                                                                      | `/student` and learning routes                                   | Learning-first header/navigation |
-| Teacher  | `/teacher/sign-in`, established employee email/password                                             | `/teacher`, `/teacher/reviews`, permitted notifications/security | Compact review rail              |
-| Staff    | `/staff/sign-in`, established employee email/password                                               | `/staff`, individually permitted operations                      | Operations sidebar               |
-| Admin    | `/admin/sign-in`, established employee email/password; current Elevated Admin role and required MFA | `/admin`, individually permitted account/security operations     | Protected administration layout  |
+| Audience | Current sign-in                                                                                     | Current workspace                                              | Separate visual application?     |
+| -------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------- |
+| Student  | `/sign-in`, Member ID/password                                                                      | `/student` and learning routes                                 | Learning-first header/navigation |
+| Teacher  | `/teacher/sign-in`, established employee email/password                                             | `/teacher`, authorized Reviews/Content, notifications/security | Compact teaching rail            |
+| Staff    | `/staff/sign-in`, established employee email/password                                               | `/staff`, individually permitted operations                    | Operations sidebar               |
+| Admin    | `/admin/sign-in`, established employee email/password; current Elevated Admin role and required MFA | `/admin`, individually permitted account/security operations   | Protected administration layout  |
 
 F033/D-048 B provides distinct entrances and layouts on one application/backend—not four independent identities or browser sessions. Current-portal menus stay separate; eligible **Switch to … portal** links use the same account and grant nothing. Sign out to change people. Server/database/MFA checks remain authoritative. Existing `/staff/reviews` and other legacy bookmarks/notifications remain supported with their original guards. Teacher alone does not gain staff operations. A deployed version must contain F033 before the new URLs are available.
 

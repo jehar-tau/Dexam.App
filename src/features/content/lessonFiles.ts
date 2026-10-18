@@ -2,11 +2,13 @@ import { z } from 'zod'
 import { getSupabaseClient } from '../auth/supabaseClient'
 import { prepareSubmissionFile } from '../student/prepareSubmissionFile'
 import { validateMaterialFile } from './contentWorkspace'
+import { captureAccountOperation } from '../auth/accountOperation'
 const schema = z.object({
   id: z.string().uuid(),
   file_name: z.string().min(1).max(180),
   mime_type: z.enum(['application/pdf', 'image/jpeg', 'image/png', 'image/webp']),
   byte_size: z.number().int().positive().max(10485760),
+  display_name: z.string().min(1).max(180).optional(),
 })
 export type LessonFile = z.infer<typeof schema>
 const failed = 'The lesson files could not be verified. Check your access and try again.'
@@ -16,7 +18,7 @@ function client() {
   return value
 }
 export async function listLessonFiles(lessonId: string) {
-  const result = await client().rpc('list_lesson_files', { p_lesson_id: lessonId })
+  const result = await client().rpc('list_named_lesson_files', { p_lesson_id: lessonId })
   const parsed = z.array(schema).max(5).safeParse(result.data)
   if (result.error || !parsed.success) throw new Error(failed)
   return parsed.data
@@ -24,16 +26,21 @@ export async function listLessonFiles(lessonId: string) {
 export async function uploadLessonFile(lessonId: string, file: File, count: number) {
   const error = validateMaterialFile(file, count)
   if (error) throw new Error(error)
-  const prepared = await prepareSubmissionFile(file)
+  const operation = await captureAccountOperation(client())
+  let prepared: Awaited<ReturnType<typeof prepareSubmissionFile>> | undefined
   try {
+    prepared = await prepareSubmissionFile(file)
+    operation.assertCurrent()
     const form = new FormData()
     form.set('lessonId', lessonId)
     form.set('file', prepared.file)
-    const result = await client().functions.invoke('lesson-material-file', { body: form })
+    const result = await operation.client.functions.invoke('lesson-material-file', { body: form })
+    operation.assertCurrent()
     if (result.error || !z.object({ ok: z.literal(true) }).safeParse(result.data).success)
       throw new Error('The lesson file could not be attached. Check the draft and try again.')
   } finally {
-    if (prepared.previewUrl) URL.revokeObjectURL(prepared.previewUrl)
+    if (prepared?.previewUrl) URL.revokeObjectURL(prepared.previewUrl)
+    operation.dispose()
   }
 }
 export async function removeLessonFile(lessonId: string, fileId: string) {

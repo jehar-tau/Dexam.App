@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { AssignmentReferenceFiles } from '../features/content/AssignmentReferenceFiles'
 
 import { Badge, Button, Callout, Card, EmptyState } from '../components'
 import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
@@ -501,6 +502,11 @@ export function StudentAssignmentsPage() {
             </div>
             <h2 id="assignment-title">{selected.title}</h2>
             <p>{selected.instructions}</p>
+            <AssignmentReferenceFiles
+              key={selected.assignmentVersionId}
+              versionId={selected.assignmentVersionId}
+              preview={previewEnabled}
+            />
             <dl>
               <div>
                 <dt>Group</dt>

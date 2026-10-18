@@ -33,6 +33,7 @@ export type ContentCurriculum = {
 }
 
 export type AssignmentMaterial = {
+  displayName?: string
   byteSize: number
   fileName: string
   id: string
@@ -56,6 +57,8 @@ export type ContentAssignment = {
 }
 
 export type ContentOffering = {
+  canEdit?: boolean
+  canPublish?: boolean
   assignments: ContentAssignment[]
   curricula: ContentCurriculum[]
   id: string
@@ -101,6 +104,10 @@ function status(value: unknown): ContentStatus {
 
 export async function getContentWorkspace(): Promise<ContentOffering[]> {
   const client = clientOrThrow()
+  const permissions = await client.rpc('get_content_offering_permissions')
+  if (permissions.error || !Array.isArray(permissions.data)) throw new Error(unavailableMessage)
+  const labels = await client.from('content_file_labels').select('assignment_material_id,label')
+  if (labels.error) throw new Error(unavailableMessage)
   const [offeringResult, curriculumResult, sectionResult, topicResult, lessonResult] =
     await Promise.all([
       client.from('offerings').select('id, title').order('title'),
@@ -161,83 +168,157 @@ export async function getContentWorkspace(): Promise<ContentOffering[]> {
   const links = rows(linkResult.data)
   const materials = rows(materialResult.data)
 
-  return rows(offeringResult.data).map((offering) => {
-    const offeringId = text(offering.id)
-    const curricula = rows(curriculumResult.data)
-      .filter((curriculum) => curriculum.offering_id === offeringId)
-      .map((curriculum): ContentCurriculum => {
-        const curriculumId = text(curriculum.id)
-        const curriculumSections = sections.filter(
-          (section) => section.curriculum_version_id === curriculumId,
-        )
-        return {
-          id: curriculumId,
-          offeringId,
-          status: status(curriculum.status),
-          title: text(curriculum.title),
-          versionNumber: number(curriculum.version_number),
-          topics: curriculumSections.flatMap((section) =>
-            topics
-              .filter((topic) => topic.section_id === section.id)
-              .map((topic): ContentTopic => ({
-                id: text(topic.id),
-                code: text(topic.code),
-                title: text(topic.title),
-                summary: text(topic.summary),
-                position: number(topic.position),
-                sectionTitle: text(section.title),
-                lessons: lessons
-                  .filter((lesson) => lesson.topic_id === topic.id)
-                  .map((lesson): ContentLesson => ({
-                    id: text(lesson.id),
-                    code: text(lesson.code),
-                    title: text(lesson.title),
-                    summary: text(lesson.summary),
-                    body: text(lesson.body_markdown),
-                    position: number(lesson.position),
-                  })),
-              })),
-          ),
-        }
-      })
-
-    const offeringDefinitions = definitions.filter(
-      (definition) => definition.offering_id === offeringId,
-    )
-    const assignments = offeringDefinitions.flatMap((definition) =>
-      versions
-        .filter((version) => version.assignment_definition_id === definition.id)
-        .map((version): ContentAssignment => {
-          const versionId = text(version.id)
+  return rows(offeringResult.data)
+    .filter((offering) => rows(permissions.data).some((p) => p.offering_id === offering.id))
+    .map((offering) => {
+      const offeringId = text(offering.id)
+      const curricula = rows(curriculumResult.data)
+        .filter((curriculum) => curriculum.offering_id === offeringId)
+        .map((curriculum): ContentCurriculum => {
+          const curriculumId = text(curriculum.id)
+          const curriculumSections = sections.filter(
+            (section) => section.curriculum_version_id === curriculumId,
+          )
           return {
-            id: versionId,
+            id: curriculumId,
             offeringId,
-            code: text(definition.code),
-            versionNumber: number(version.version_number),
-            status: status(version.status),
-            groupName: text(version.group_name),
-            title: text(version.title),
-            instructions: text(version.instructions),
-            evaluationRubric: text(version.evaluation_rubric),
-            topicIds: links
-              .filter((link) => link.assignment_version_id === versionId)
-              .map((link) => text(link.topic_id)),
-            materials: materials
-              .filter((material) => material.assignment_version_id === versionId)
-              .map((material): AssignmentMaterial => ({
-                id: text(material.id),
-                objectPath: text(material.object_path),
-                fileName: text(material.original_file_name),
-                mimeType: text(material.mime_type),
-                byteSize: number(material.byte_size),
-                position: number(material.position),
-              })),
+            status: status(curriculum.status),
+            title: text(curriculum.title),
+            versionNumber: number(curriculum.version_number),
+            topics: curriculumSections.flatMap((section) =>
+              topics
+                .filter((topic) => topic.section_id === section.id)
+                .map((topic): ContentTopic => ({
+                  id: text(topic.id),
+                  code: text(topic.code),
+                  title: text(topic.title),
+                  summary: text(topic.summary),
+                  position: number(topic.position),
+                  sectionTitle: text(section.title),
+                  lessons: lessons
+                    .filter((lesson) => lesson.topic_id === topic.id)
+                    .map((lesson): ContentLesson => ({
+                      id: text(lesson.id),
+                      code: text(lesson.code),
+                      title: text(lesson.title),
+                      summary: text(lesson.summary),
+                      body: text(lesson.body_markdown),
+                      position: number(lesson.position),
+                    })),
+                })),
+            ),
           }
-        }),
-    )
+        })
 
-    return { id: offeringId, title: text(offering.title), curricula, assignments }
+      const offeringDefinitions = definitions.filter(
+        (definition) => definition.offering_id === offeringId,
+      )
+      const assignments = offeringDefinitions.flatMap((definition) =>
+        versions
+          .filter((version) => version.assignment_definition_id === definition.id)
+          .map((version): ContentAssignment => {
+            const versionId = text(version.id)
+            return {
+              id: versionId,
+              offeringId,
+              code: text(definition.code),
+              versionNumber: number(version.version_number),
+              status: status(version.status),
+              groupName: text(version.group_name),
+              title: text(version.title),
+              instructions: text(version.instructions),
+              evaluationRubric: text(version.evaluation_rubric),
+              topicIds: links
+                .filter((link) => link.assignment_version_id === versionId)
+                .map((link) => text(link.topic_id)),
+              materials: materials
+                .filter((material) => material.assignment_version_id === versionId)
+                .map((material): AssignmentMaterial => ({
+                  id: text(material.id),
+                  objectPath: text(material.object_path),
+                  fileName: text(material.original_file_name),
+                  displayName: text(
+                    rows(labels.data).find((label) => label.assignment_material_id === material.id)
+                      ?.label,
+                    text(material.original_file_name),
+                  ),
+                  mimeType: text(material.mime_type),
+                  byteSize: number(material.byte_size),
+                  position: number(material.position),
+                })),
+            }
+          }),
+      )
+
+      const permission = rows(permissions.data).find((p) => p.offering_id === offeringId)
+      return {
+        id: offeringId,
+        title: text(offering.title),
+        curricula,
+        assignments,
+        canEdit: permission?.can_edit === true,
+        canPublish: permission?.can_publish === true,
+      }
+    })
+}
+
+export async function setContentFileLabel(
+  kind: 'lesson' | 'assignment',
+  parentId: string,
+  fileId: string,
+  label: string,
+) {
+  const { error } = await clientOrThrow().rpc('set_content_file_label', {
+    p_kind: kind,
+    p_parent_id: parentId,
+    p_file_id: fileId,
+    p_label: label.trim(),
   })
+  if (error)
+    throw new Error('The attachment name could not be saved. Check draft access and try again.')
+}
+export async function ensureTopicMaterialLesson(topicId: string) {
+  const { data, error } = (await clientOrThrow().rpc('ensure_topic_material_lesson', {
+    p_topic_id: topicId,
+  })) as { data: unknown; error: unknown }
+  if (error || typeof data !== 'string') throw new Error('Topic attachments could not be prepared.')
+  return data
+}
+export type TopicRemovalImpact = { lessons: number; files: number; linkedAssignments: number }
+export async function previewTopicRemoval(topicId: string): Promise<TopicRemovalImpact> {
+  const { data, error } = (await clientOrThrow().rpc('preview_draft_topic_removal', {
+    p_topic_id: topicId,
+  })) as { data: unknown; error: unknown }
+  const parsed = z
+    .object({
+      lessons: z.number().int().nonnegative(),
+      files: z.number().int().nonnegative(),
+      linkedAssignments: z.number().int().nonnegative(),
+    })
+    .safeParse(data)
+  if (error || !parsed.success) throw new Error('Topic removal could not be previewed.')
+  return parsed.data
+}
+export async function removeDraftTopic(topicId: string, impact: TopicRemovalImpact) {
+  const { error } = await clientOrThrow().rpc('remove_draft_topic', {
+    p_topic_id: topicId,
+    p_expected: impact,
+  })
+  if (error)
+    throw new Error('The topic could not be removed. Check assignment links and preview again.')
+}
+export async function unlinkDraftTopicAssignment(topicId: string, assignmentId: string) {
+  const { error } = await clientOrThrow().rpc('unlink_draft_topic_assignment', {
+    p_topic_id: topicId,
+    p_assignment_version_id: assignmentId,
+  })
+  if (error) throw new Error('The draft assignment could not be unlinked.')
+}
+export async function linkAssignmentTopic(assignmentId: string, topicId: string) {
+  const { error } = await clientOrThrow()
+    .from('assignment_topic_links')
+    .insert({ assignment_version_id: assignmentId, topic_id: topicId })
+  if (error) throw new Error('The draft assignment could not be linked.')
 }
 
 export async function cloneCurriculumVersion(sourceId: string, title: string) {

@@ -4,13 +4,25 @@
 
 ## Access and current scope
 
-Teachers sign in at `/teacher/sign-in` with their established employee email/password and land at `/teacher`, with a review-focused layout. This is the same identity, not a new teacher account. Teacher access uses specifically assigned review authority—not automatic CRM, administration, content-editing, scheduling or full curriculum-reading access.
+Teachers sign in at `/teacher/sign-in` with their established employee email/password and land at `/teacher`. This is the same identity, not a new teacher account. Review authority and content authoring/publication are separately scoped; Teacher alone grants neither content editing nor publishing, CRM, administration or scheduling.
 
-Choose **Reviews** (`/teacher/reviews`) from the teacher menu. Existing `/staff/reviews` bookmarks/notification links still work with the teacher layout and original guards. Without current review scope, the new teacher workspace is denied—not granted extra authority. Eligible portal-switch links change the workspace, not the signed-in person.
+Choose **Reviews** (`/teacher/reviews`) for assigned reviews or **Content** (`/teacher/content`) when explicitly authorized for academic authoring/publication. A scoped teacher author can enter without a review grant, but cannot use Reviews. Existing `/staff/reviews` and `/staff/content` bookmarks retain their operation checks. Eligible portal-switch links change the workspace, not the signed-in person.
 
 Keep your own employee account and required MFA current. If Reviews is missing/denied, the operator should verify your active membership, review capability and teaching scope. A missing assignment may also mean the student has not finalized a submission. The wider teacher coursework reader/roster/attendance dashboard remains deferred under D-031 A.
 
-## Review a submission
+## Prepare topics and assignments
+
+1. Open **Content** and choose your authorized **Course offering**. Editing and publishing are separate permissions; a course assignment alone does not grant either.
+2. Edit topic introductions and lesson instructions in a draft. Choose **Attach lesson files** to select several PDF/JPEG/PNG/WebP references. For topic-only references, choose **Add topic attachments** to prepare the topic's material lesson. Each lesson supports five files, 10 MB each.
+3. Give each attached file a descriptive **Attachment name**, then choose **Save attachment name**. The original filename remains visible. In the Assignments tab, use **Add private file** for multiple assignment references under the same five-file/10 MB limits and name them individually.
+4. To remove a draft topic, choose **Preview topic removal**, inspect the affected lesson/file counts and linked assignments, then confirm. Explicitly unlink draft assignments first if appropriate; this preserves those assignment drafts. Published links block removal. Published topics cannot be deleted in place: create a new curriculum draft. Shared published files and earlier student versions remain protected.
+5. A separately authorized publisher previews the content, enters a release note and chooses the relevant Publish action. Published assignments then appear in the authorized staff **Distribution** workspace. Publishing does not send assignments to students; an authorized distribution operator must release them separately.
+
+Publishing a curriculum locks its topic material, not the separate assignment drafts. You can still use the Assignments tab to publish those drafts. **Show all course assignments** also lists drafts that were unlinked from a topic; use the explicit Link action to attach them to the selected topic before publication.
+
+Named assignment references are available in the student assignment and teacher review screens through protected downloads. Content authoring does not grant access to other courses or to student-release operations.
+
+## Review submitted work
 
 1. Select a student/submission in **Feedback review**. Confirm the student, assignment, attempt number, version and submitted files. Multiple attempts may await review separately.
 2. Inspect visible file thumbnails. Click a file's preview control to expand it on the same page; close the expanded viewer when finished. Use the provided private file/download actions for supported work. An image preview does not replace checking every submitted file, including PDFs.

@@ -15,7 +15,7 @@ export const portalSignIn: Record<Portal, string> = {
   staff: '/staff/sign-in',
   admin: '/admin/sign-in',
 }
-export type PortalAccess = NavigationAccess & { administrator: boolean }
+export type PortalAccess = NavigationAccess & { administrator: boolean; teacher?: boolean }
 
 export function portalForPath(path: string): Portal | null {
   if (
@@ -45,7 +45,8 @@ export function portalForPath(path: string): Portal | null {
 export function canOpenPortal(portal: Portal, access: PortalAccess): boolean {
   if (portal === 'student') return access.student
   if (portal === 'admin') return access.employee && access.administrator
-  if (portal === 'teacher') return access.employee && access.reviews
+  if (portal === 'teacher')
+    return access.employee && (access.reviews || Boolean(access.teacher && access.content))
   return access.employee
 }
 
@@ -57,7 +58,10 @@ export async function getPortalAccess(): Promise<PortalAccess> {
   const role = await client.rpc('current_person_has_role', { p_role_key: 'elevated_admin' })
   if (role.error || typeof role.data !== 'boolean')
     throw new Error('Portal access could not be verified.')
-  return { ...access, administrator: role.data }
+  const teacher = await client.rpc('current_person_can_open_teacher_content')
+  if (teacher.error || typeof teacher.data !== 'boolean')
+    throw new Error('Portal access could not be verified.')
+  return { ...access, administrator: role.data, teacher: teacher.data }
 }
 
 export function safePortalReturn(value: string | null, portal: EmployeePortal): string {

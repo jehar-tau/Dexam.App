@@ -58,14 +58,17 @@ describe('separate portal navigation', () => {
     )
     expect(screen.queryByRole('link', { name: 'Switch to Admin portal' })).not.toBeInTheDocument()
   })
-  it('shows only review tools in the teacher portal', async () => {
+  it('shows separately authorized content alongside teacher reviews', async () => {
     mocks.access.mockResolvedValue({ ...denied, employee: true, reviews: true, content: true })
     renderApp(nav('teacher'))
     expect(await screen.findByRole('link', { name: 'Reviews' })).toHaveAttribute(
       'href',
       '/teacher/reviews',
     )
-    expect(screen.queryByRole('link', { name: 'Content' })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Content' })).toHaveAttribute(
+      'href',
+      '/teacher/content',
+    )
     expect(screen.getByRole('link', { name: 'Staff security' })).toHaveAttribute(
       'href',
       '/teacher/security',

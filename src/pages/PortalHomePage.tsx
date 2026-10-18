@@ -6,7 +6,7 @@ export function PortalHomePage({ portal }: { portal: EmployeePortal }) {
   const copy = {
     teacher: [
       'Your teaching workspace.',
-      'Focus on submitted work and clear student feedback. Your Reviews link opens only work assigned to your current teaching scope.',
+      'Review assigned student work and prepare academic content. Content appears only with explicit course-scoped editing or publishing permissions; publishing does not distribute assignments.',
     ],
     staff: [
       'Your operations workspace.',

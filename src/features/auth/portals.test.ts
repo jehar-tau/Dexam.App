@@ -45,13 +45,22 @@ describe('portal presentation access', () => {
     expect((await getPortalAccess()).administrator).toBe(false)
     expect(mocks.rpc).not.toHaveBeenCalled()
   })
-  it('checks only the current established admin role', async () => {
+  it('checks established admin and scoped teacher content authority', async () => {
     mocks.navigation.mockResolvedValue({ ...denied, employee: true })
     mocks.rpc.mockResolvedValue({ data: true, error: null })
     expect((await getPortalAccess()).administrator).toBe(true)
-    expect(mocks.rpc).toHaveBeenCalledExactlyOnceWith('current_person_has_role', {
+    expect(mocks.rpc).toHaveBeenNthCalledWith(1, 'current_person_has_role', {
       p_role_key: 'elevated_admin',
     })
+    expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'current_person_can_open_teacher_content')
+  })
+  it('permits content-only scoped teachers but not unrelated content staff', () => {
+    expect(
+      canOpenPortal('teacher', { ...denied, employee: true, content: true, teacher: true }),
+    ).toBe(true)
+    expect(
+      canOpenPortal('teacher', { ...denied, employee: true, content: true, teacher: false }),
+    ).toBe(false)
   })
   it.each([
     { data: 'true', error: null },
