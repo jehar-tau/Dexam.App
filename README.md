@@ -1,5 +1,7 @@
 # Dexam Platform
 
+<!-- . -->
+
 The authenticated learning and operations platform for Dexam (Design Exam Academy). This application is intentionally separate from the public marketing website at `../../Dexam website/Website-Dexam`.
 
 ## Status
