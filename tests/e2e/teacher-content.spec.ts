@@ -26,6 +26,8 @@ test('teacher content supports several named lesson and assignment files', async
   await row.getByRole('button', { name: 'Save attachment name' }).click()
   await expect(page.getByText('Practice instructions · study.pdf', { exact: true })).toBeVisible()
   await page.screenshot({ path: 'test-results/f035/teacher-content.png', fullPage: true })
+  await page.setViewportSize({ width: 390, height: 844 })
+  expect(await page.evaluate('document.documentElement.scrollWidth <= innerWidth')).toBe(true)
 })
 
 test('topic removal requires impact confirmation and deliberate unlinking', async ({ page }) => {

@@ -230,6 +230,11 @@
 .publishPanel,
 .newAssignment,
 .materialRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -331,6 +336,8 @@
 }
 
 .publishPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: end;
   padding: var(--space-5) var(--space-6);
   background: var(--surface-muted);
