@@ -1,6 +1,8 @@
 # F006 — Assignment Definition and Submission
 
 Status: Implemented and product-owner approved locally under D-017 and D-018 Option B
+
+D-049 B amendment (2026-10-18, F034): students may edit unreviewed submitted attempts via copy-on-write versions and create further numbered attempts without a correction request. Published feedback locks the reviewed version. One draft per assignment, existing limits, prior snapshots and stale-review rejection apply. This supersedes immediate-lock statements below, which describe the original implementation.
 Risk: Red — student work, private uploads, and academic records
 Owner: Product owner with Codex engineering support
 

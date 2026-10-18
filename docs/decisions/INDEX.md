@@ -69,3 +69,5 @@ D-046 — Authentication email transport preparation — Option B approved 2026-
 D-047 — Authentication sender verification — Option B approved 2026-10-17; external setup subsequently deferred pending owner login/terms acceptance; no sending — `ADR-047-authentication-sender-verification.md`.
 
 D-048 — Role-separated portals — Option B approved 2026-10-17: four distinct entrances/layouts on the existing identity/backend, F033 verification active; no new authority — `ADR-048-role-separated-portals.md`.
+
+D-049 — Student attempt editing and repeat submission — Option B approved 2026-10-18: edits until published feedback with snapshot/stale-publication protection and independently numbered further attempts — `ADR-049-student-attempt-editing-and-repeat-submission.md`.

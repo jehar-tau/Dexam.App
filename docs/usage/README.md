@@ -1,6 +1,6 @@
 # Dexam application handbook
 
-Version: 2026-10-17. Audience: product owner, students, teachers, operational staff and administrators. This guide describes the implemented application, not a promise that it is ready for real students.
+Version: 2026-10-18. Audience: product owner, students, teachers, operational staff and administrators. This guide describes the implemented application, not a promise that it is ready for real students.
 
 ## Printable and online editions
 
@@ -9,7 +9,7 @@ Bookmark or share the [current online handbook](https://github.com/jehar-tau/Dex
 - [Print-ready PDF](downloads/Dexam-application-handbook.pdf)
 - [Editable Word handbook](downloads/Dexam-application-handbook.docx)
 
-The downloadable edition is dated 17 October 2026 and includes access/troubleshooting plus all four role guides. Printed/downloaded copies are snapshots; the Markdown guides remain authoritative. Changes to a guide must regenerate and visually verify these downloads before publishing a new edition. The export procedure is in [the print build guide](../../scripts/docs/README.md).
+The downloadable edition is dated 18 October 2026 and includes access/troubleshooting plus all four role guides. Printed/downloaded copies are snapshots; the Markdown guides remain authoritative. Changes to a guide must regenerate and visually verify these downloads before publishing a new edition. The export procedure is in [the print build guide](../../scripts/docs/README.md).
 
 ## Choose your guide
 

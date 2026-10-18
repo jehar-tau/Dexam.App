@@ -1,8 +1,10 @@
 # Current State
 
-Last updated: 2026-10-17
+Last updated: 2026-10-18
 
 ## Current phase
+
+F034/D-049 B approved and implemented locally: copy-on-write edits until published review, permanently locked reviewed attempts, and independently numbered further attempts. Teacher queues label exact attempt/version and reject stale publication while preserving drafts. Shared Storage references survive removal, cleanup has a durable finalization fence, and archive retains the latest finalized snapshot even if an edit remains unfinished at course closeout. New SQL/browser and real SDK/Storage/edit-publication-race acceptance use exact disposable cleanup. Required CI and independent review are tracked in the feature PR. Admissions acceptance owns 5192 and preserves the designer's 5173 server. No production or real-data activation.
 
 F033 merged PR #81 (`c7a56dc`) with all required CI and independent security review passed. Role-separated portals and updated role handbooks are accepted in the fictional/local scope; no production activation. Added dated printable PDF/Word exports and a permanent online handbook entry through the existing public GitHub repository. Markdown remains authoritative; exports require regeneration and all-page render inspection when guides change. No new hosting provider, domain, account, runtime permission or spending.
 

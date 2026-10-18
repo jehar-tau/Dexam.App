@@ -17,11 +17,6 @@ type ReservedFile = {
   object_path: string
 }
 
-type SubmissionFileRow = {
-  object_path?: unknown
-  submission_attempts?: unknown
-}
-
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), { status, headers: corsHeaders })
 }
@@ -58,14 +53,6 @@ async function signatureMatches(file: File) {
     )
   }
   return false
-}
-
-function relatedAttempt(value: unknown) {
-  const related = Array.isArray(value) ? value[0] : value
-  if (!related || typeof related !== 'object') return null
-  const row = related as Record<string, unknown>
-  if (typeof row.assignment_instance_id !== 'string' || row.status !== 'draft') return null
-  return { assignmentInstanceId: row.assignment_instance_id }
 }
 
 Deno.serve(async (request) => {
@@ -107,32 +94,16 @@ Deno.serve(async (request) => {
       return json(400, { message: 'The file removal request is invalid.' })
     }
 
-    const lookup = await studentClient
-      .from('submission_files')
-      .select('object_path, submission_attempts!inner(assignment_instance_id, status)')
-      .eq('id', fileId)
-      .single()
-    const row = lookup.data as SubmissionFileRow | null
-    const attempt = relatedAttempt(row?.submission_attempts)
-    if (lookup.error || !row || typeof row.object_path !== 'string' || !attempt) {
-      return json(403, { message: 'This file cannot be removed.' })
-    }
-
-    const ownsInstance = await studentClient.rpc('current_person_can_access_assignment_instance', {
-      p_assignment_instance_id: attempt.assignmentInstanceId,
-    })
-    if (ownsInstance.error || ownsInstance.data !== true) {
-      return json(403, { message: 'This file cannot be removed.' })
-    }
-
-    const storageRemoval = await admin.storage.from('student-submissions').remove([row.object_path])
+    const detached = await studentClient.rpc('remove_draft_submission_file', { p_file_id: fileId })
+    const removal = detached.data?.[0] as
+      { object_path: string; delete_object: boolean } | undefined
+    if (detached.error || !removal) return json(403, { message: 'This file cannot be removed.' })
+    if (!removal.delete_object) return json(200, { removed: true })
+    const storageRemoval = await admin.storage
+      .from('student-submissions')
+      .remove([removal.object_path])
     if (storageRemoval.error) {
       console.error('student submission object removal failed', storageRemoval.error.message)
-      return json(503, { message: 'The file could not be removed. Please try again.' })
-    }
-    const metadataRemoval = await admin.from('submission_files').delete().eq('id', fileId)
-    if (metadataRemoval.error) {
-      console.error('student submission metadata removal failed', metadataRemoval.error.code)
       return json(503, { message: 'The file could not be removed. Please try again.' })
     }
     return json(200, { removed: true })

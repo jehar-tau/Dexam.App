@@ -92,7 +92,7 @@ doc.core_properties.subject = "Application usage for students teachers staff and
 
 doc.add_paragraph("Dexam application handbook", "Title")
 doc.add_paragraph("Students teachers staff and administrators", "Subtitle")
-doc.add_paragraph("Edition 17 October 2026")
+doc.add_paragraph("Edition 18 October 2026")
 doc.add_paragraph("Use this handbook to sign in, find your permitted workspace and complete the application's existing workflows. Read the access guide first, then the section for your responsibilities. The guides distinguish available functionality from services that remain disabled or require launch approval.")
 doc.add_paragraph("This edition describes the fictional pilot. It does not authorize real student onboarding or production operations. Portal selection does not grant permissions.")
 p = doc.add_paragraph()

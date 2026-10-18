@@ -28,10 +28,12 @@ The course is tied to its assigned published version. A staff member publishing 
 4. Select **Add PDF or images**. Accepted types are PDF, JPEG, PNG and WebP; the displayed limits are 10 files, 10 MB each and 50 MB total per attempt.
 5. Review the prepared files. Eligible images are optimized/privacy-cleaned on your device. Inspect detail carefully for drawing work; choose **Keep higher quality** when needed. PDFs are not promised equivalent image compression. You can remove prepared files before uploading.
 6. Choose **Upload reviewed files**. Wait until files appear under **Uploaded privately**. In the draft you can remove uploaded files and correct the set.
-7. Once every intended file is uploaded and no prepared files remain, choose **Submit assignment**. Submission permanently locks that attempt. Uploading alone is not submission.
+7. Once every intended file is uploaded and no prepared files remain, choose **Submit assignment**. Uploading alone is not submission. The attempt becomes available for teacher review; it remains editable until feedback is published.
 8. Confirm the status/attempt history changed. If the response is uncertain, refresh and check history before trying again; do not repeatedly start duplicate work.
 
-Submitted files cannot be replaced in that attempt. If a teacher requests correction, follow the request and start a new revision attempt through the existing assignment; do not create a new account or treat the old submission as editable.
+Before published feedback, choose **Edit attempt 1** (or the relevant number) to reopen that attempt as a draft. Existing files are carried forward; add/remove files and deliberately submit again. The displayed attempt number stays the same and its version increases. The prior submitted snapshot and any private teacher draft are preserved internally. While editing, the new version is not available for review; stale feedback cannot be published against the old version.
+
+Once feedback is published, that reviewed attempt stays locked, including a correction-request outcome. Use **Start another attempt** to create Attempt 2, Attempt 3 and so on. You do not need a correction request, but current course access and an active assignment release are required. Only one draft per assignment is allowed; finish it before editing another attempt. Existing file limits remain, and repeated attempts do not promise unlimited storage.
 
 ## 5. Read feedback
 
@@ -66,6 +68,6 @@ Download any work you need to keep before access expires. The app may display ex
 | Upload rejected                    | Check format, file/total limits and whether the attempt is still a draft. Review image preparation rather than uploading unsupported types. |
 | Uploaded but teacher cannot review | Ensure you selected **Submit assignment**, not only upload.                                                                                 |
 | Access denied or course closed     | Contact staff about current access. A browser refresh or old URL cannot override it.                                                        |
-| Wrong file submitted               | Tell the assigned teacher; submitted attempts are immutable, and a revision requires the appropriate correction workflow.                   |
+| Wrong file submitted               | Use Edit attempt before published feedback. If reviewed, keep it locked and start another attempt while access remains active.              |
 
 Never send your password, backup code, private activation/recovery link or other students' files to support.

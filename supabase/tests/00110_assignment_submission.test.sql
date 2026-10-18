@@ -334,9 +334,10 @@ select throws_ok(
   'student cannot directly mutate a finalized attempt'
 );
 select throws_ok(
-  $$select public.start_assignment_attempt((select id from public.student_assignment_instances limit 1))$$,
-  '23514', 'a new attempt is not currently authorized',
-  'student cannot self-authorize a revision'
+  $$insert into public.submission_attempts(assignment_instance_id,attempt_number,created_by_person_id)
+    select id,2,public.current_person_id() from public.student_assignment_instances limit 1$$,
+  '42501', null,
+  'student cannot bypass the trusted repeat-attempt operation'
 );
 
 set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1","session_id":"e0000000-0000-4000-8000-000000000005"}';
@@ -370,7 +371,7 @@ set local request.jwt.claims = '{"sub":"e0000000-0000-4000-8000-000000000002","r
 
 select lives_ok(
   $$select public.start_assignment_attempt((select id from public.student_assignment_instances limit 1))$$,
-  'student can start a revision only after teacher authorization'
+  'student can also start a revision after a teacher correction request'
 );
 select is((select count(*)::integer from public.submission_attempts), 2, 'revision preserves the original attempt');
 

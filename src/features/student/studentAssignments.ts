@@ -14,6 +14,8 @@ export type SubmissionFile = {
 
 export type SubmissionAttempt = {
   attemptNumber: number
+  submissionVersion?: number
+  supersededBy?: string | null
   feedback: StudentFeedback | null
   files: SubmissionFile[]
   id: string
@@ -138,7 +140,13 @@ function parseAttempt(value: unknown): ParsedSubmissionAttempt | null {
   const feedback = parseFeedback(row.feedback_revisions)
   return {
     id: row.id,
-    attemptNumber: row.attempt_number,
+    attemptNumber:
+      typeof row.logical_attempt_number === 'number'
+        ? row.logical_attempt_number
+        : row.attempt_number,
+    submissionVersion: typeof row.submission_version === 'number' ? row.submission_version : 1,
+    supersededBy:
+      typeof row.superseded_by_attempt_id === 'string' ? row.superseded_by_attempt_id : null,
     status: row.status,
     submittedAt,
     submittedLate,
@@ -184,9 +192,9 @@ function parseAssignment(value: unknown): ParsedAssignment | null {
     groupName: version.group_name,
     title: version.title,
     instructions: version.instructions,
-    attempts: (attempts as ParsedSubmissionAttempt[]).sort(
-      (a, b) => b.attemptNumber - a.attemptNumber,
-    ),
+    attempts: (attempts as ParsedSubmissionAttempt[])
+      .filter((attempt) => !attempt.supersededBy)
+      .sort((a, b) => b.attemptNumber - a.attemptNumber),
   }
 }
 
@@ -210,7 +218,7 @@ export async function getStudentAssignments(): Promise<StudentAssignment[]> {
         )
       ),
       submission_attempts(
-        id, attempt_number, status, submitted_at, submitted_late,
+        id, attempt_number, logical_attempt_number, submission_version, superseded_by_attempt_id, status, submitted_at, submitted_late,
         submission_files(
           id, original_file_name, mime_type, byte_size, original_byte_size,
           was_compressed, position, status
@@ -254,6 +262,18 @@ export async function startStudentAssignmentAttempt(instanceId: string) {
   })
   if (result.error || typeof result.data !== 'string') {
     throw new Error('A submission attempt could not be started. Please try again.')
+  }
+  return result.data
+}
+
+export async function editStudentAssignmentAttempt(attemptId: string) {
+  const result = await clientOrThrow().rpc('edit_assignment_attempt', {
+    p_submission_attempt_id: attemptId,
+  })
+  if (result.error || typeof result.data !== 'string') {
+    throw new Error(
+      'This attempt could not be edited. Refresh: it may have been reviewed, or another draft is open.',
+    )
   }
   return result.data
 }
