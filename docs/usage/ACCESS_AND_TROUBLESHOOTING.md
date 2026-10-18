@@ -4,18 +4,18 @@
 
 ## Current entrances
 
-| Purpose                     | Path               | Credentials / requirement                                                                              |
-| --------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
-| Student sign-in             | `/sign-in`         | Dexam Member ID and student's password                                                                 |
-| Student initial activation  | `/activate`        | Privately issued one-time activation proof/backup entry                                                |
-| Student recovery            | `/student/recover` | Assisted instructions or privately approved recovery pack; hosted execution disabled                   |
-| Staff operations            | `/staff/sign-in`   | Established employee email/password; current membership and permitted scope                            |
-| Teacher sign-in             | `/teacher/sign-in` | Established employee identity; current review scope checked on workspace entry                         |
-| Admin sign-in               | `/admin/sign-in`   | Established employee identity; current Elevated Admin role and required MFA checked on workspace entry |
-| Employee initial activation | `/staff/activate`  | Invitation proof; current implementation uses fictional/local capture                                  |
-| Employee forgotten password | `/staff/recover`   | Established unchanged email and exact recovery proof; real delivery not activated                      |
-| Own staff security          | `/staff/security`  | Current employee; sensitive actions require the relevant MFA/current authority                         |
-| Service health              | `/health`          | Non-sensitive environment/health information; not a private data or admin bypass                       |
+| Purpose                     | Path               | Credentials / requirement                                                                                      |
+| --------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Student sign-in             | `/sign-in`         | Dexam Member ID and student's password                                                                         |
+| Student initial activation  | `/activate`        | Privately issued one-time activation proof/backup entry                                                        |
+| Student recovery            | `/student/recover` | Assisted instructions or privately approved recovery pack; hosted execution disabled                           |
+| Staff operations            | `/staff/sign-in`   | Established employee email/password; current membership and permitted scope                                    |
+| Teacher sign-in             | `/teacher/sign-in` | Established employee identity; review scope or explicit same-course Teacher/content authority checked on entry |
+| Admin sign-in               | `/admin/sign-in`   | Established employee identity; current Elevated Admin role and required MFA checked on workspace entry         |
+| Employee initial activation | `/staff/activate`  | Invitation proof; current implementation uses fictional/local capture                                          |
+| Employee forgotten password | `/staff/recover`   | Established unchanged email and exact recovery proof; real delivery not activated                              |
+| Own staff security          | `/staff/security`  | Current employee; sensitive actions require the relevant MFA/current authority                                 |
+| Service health              | `/health`          | Non-sensitive environment/health information; not a private data or admin bypass                               |
 
 F033/D-048 B separates the four entrances/layouts on one identity/backend. This does not create independent browser sessions for each role. Menus show only the current portal's permitted tools; eligible **Switch to … portal** links retain the same signed-in person. Sign out before changing people on a shared browser. Legacy routes remain supported; URL/portal selection grants no role or broader scope.
 

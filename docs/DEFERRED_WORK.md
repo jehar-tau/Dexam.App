@@ -46,6 +46,8 @@ When work resumes, read the linked source, verify the current code and recent co
 
 ## Feedback and AI
 
+D-050 B / F035 resumes only explicit content-authoring/publication access in the Teacher portal, named materials and safe draft-topic removal. DW-010's wider curriculum reader, roster, attendance and full in-review rubric remain deferred; no global Teacher authoring authority or student-distribution authority is implied.
+
 DW-048 — Teacher draft voice-note controls: source audit during handbook review found that `TeacherFeedbackPage` renders a draft `<audio controls />` without a source and has no dedicated remove action. Published student audio is a separate path. Correct and test draft playback/removal within existing private-file/access rules; do not describe those controls as working before verification. No new transcription/AI provider is authorized by this defect record.
 
 Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignment title/group, not the full brief/rubric. The handbook must not promise guidance is rendered. A bounded review-context/read API and its teacher authority must be specified/approved before implementation; do not silently override the deferred wider teacher reader or expose content-staff files.

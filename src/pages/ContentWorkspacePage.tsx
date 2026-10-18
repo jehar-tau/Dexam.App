@@ -20,7 +20,17 @@ import {
   saveTopicDraft,
   uploadAssignmentMaterial,
   validateMaterialFile,
+  setContentFileLabel,
+  ensureTopicMaterialLesson,
+  previewTopicRemoval,
+  removeDraftTopic,
+  type TopicRemovalImpact,
+  unlinkDraftTopicAssignment,
+  linkAssignmentTopic,
 } from '../features/content/contentWorkspace'
+import { useAuth } from '../features/auth/AuthContext'
+import { watchAccountChanges } from '../features/auth/accountOperation'
+import { getSupabaseClient } from '../features/auth/supabaseClient'
 import styles from './ContentWorkspacePage.module.css'
 import { LessonFiles } from '../features/content/LessonMaterialPanel'
 
@@ -119,7 +129,21 @@ function formatBytes(bytes: number) {
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
-function TopicEditor({ preview, topic }: { preview: boolean; topic: ContentTopic }) {
+function TopicEditor({
+  preview,
+  topic,
+  onRemoved,
+  linkedAssignments,
+}: {
+  preview: boolean
+  topic: ContentTopic
+  onRemoved: () => void
+  linkedAssignments: ContentAssignment[]
+}) {
+  const queryClient = useQueryClient()
+  const [impact, setImpact] = useState<TopicRemovalImpact | null>(null)
+  const [unlinked, setUnlinked] = useState<string[]>([])
+  const [materialLesson, setMaterialLesson] = useState<string | null>(null)
   const [title, setTitle] = useState(topic.title)
   const [summary, setSummary] = useState(topic.summary)
   const [notice, setNotice] = useState('')
@@ -196,6 +220,141 @@ function TopicEditor({ preview, topic }: { preview: boolean; topic: ContentTopic
           description="This topic can still have assignments. Lesson creation and ordering comes in the next content-authoring increment."
         />
       )}
+      {!topic.lessons.some((lesson) => lesson.code === 'TOPIC_MATERIALS') ? (
+        <Card>
+          <h3>Topic attachments</h3>
+          <p>
+            Add named reference files under this topic. Files use the existing lesson-material
+            limits.
+          </p>
+          {materialLesson ? (
+            <LessonFiles lessonId={materialLesson} editable preview={preview} />
+          ) : (
+            <Button
+              onClick={() =>
+                void (async () => {
+                  setError('')
+                  try {
+                    const id = preview
+                      ? 'preview-topic-materials'
+                      : await ensureTopicMaterialLesson(topic.id)
+                    setMaterialLesson(id)
+                    if (!preview)
+                      await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
+                  } catch {
+                    setError('Topic attachments could not be prepared.')
+                  }
+                })()
+              }
+            >
+              Add topic attachments
+            </Button>
+          )}
+        </Card>
+      ) : null}
+      <Card>
+        <h3>Remove draft topic</h3>
+        <p>
+          Published versions and student history are not changed. Linked assignments must be
+          unlinked before removal.
+        </p>
+        {!impact ? (
+          <Button
+            variant="secondary"
+            onClick={() =>
+              void (async () => {
+                setError('')
+                try {
+                  setImpact(
+                    preview
+                      ? {
+                          lessons: topic.lessons.length,
+                          files: 0,
+                          linkedAssignments: linkedAssignments.filter(
+                            (a) => !unlinked.includes(a.id),
+                          ).length,
+                        }
+                      : await previewTopicRemoval(topic.id),
+                  )
+                } catch {
+                  setError('Topic removal could not be previewed.')
+                }
+              })()
+            }
+          >
+            Preview topic removal
+          </Button>
+        ) : (
+          <>
+            <p role="status">
+              This removes {impact.lessons} lesson(s) and detaches {impact.files} file reference(s)
+              from this draft. {impact.linkedAssignments} linked assignment(s).
+            </p>
+            {impact.linkedAssignments > 0 ? (
+              <p>Removal blocked: unlink assignments first.</p>
+            ) : null}
+            {linkedAssignments
+              .filter((a) => a.status === 'draft' && !unlinked.includes(a.id))
+              .map((a) => (
+                <Button
+                  key={a.id}
+                  disabled={saving}
+                  variant="secondary"
+                  onClick={() =>
+                    void (async () => {
+                      setSaving(true)
+                      setError('')
+                      try {
+                        if (!preview) await unlinkDraftTopicAssignment(topic.id, a.id)
+                        setUnlinked((ids) => [...ids, a.id])
+                        setImpact(
+                          preview
+                            ? { ...impact, linkedAssignments: impact.linkedAssignments - 1 }
+                            : await previewTopicRemoval(topic.id),
+                        )
+                        await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
+                      } catch {
+                        setError('The assignment could not be unlinked.')
+                      } finally {
+                        setSaving(false)
+                      }
+                    })()
+                  }
+                >
+                  Unlink draft assignment: {a.title}
+                </Button>
+              ))}
+            <p>
+              Unlinking keeps the assignment draft; it does not delete it. Published assignment
+              links cannot be changed.
+            </p>
+            <Button
+              disabled={saving || impact.linkedAssignments > 0}
+              onClick={() =>
+                void (async () => {
+                  setSaving(true)
+                  setError('')
+                  try {
+                    if (!preview) await removeDraftTopic(topic.id, impact)
+                    onRemoved()
+                    await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
+                  } catch {
+                    setError('Topic removal failed. Check links and preview again.')
+                    setImpact(null)
+                  } finally {
+                    setSaving(false)
+                  }
+                })()
+              }
+            >
+              Confirm remove topic
+            </Button>
+            <Button variant="ghost" onClick={() => setImpact(null)}>
+              Cancel removal
+            </Button>
+          </>
+        )}
+      </Card>
     </div>
   )
 }
@@ -269,9 +428,13 @@ function LessonEditor({ lesson, preview }: { lesson: ContentLesson; preview: boo
 function AssignmentEditor({
   assignment,
   preview,
+  canPublish = true,
+  canEdit = true,
 }: {
   assignment: ContentAssignment
   preview: boolean
+  canPublish?: boolean
+  canEdit?: boolean
 }) {
   const queryClient = useQueryClient()
   const [groupName, setGroupName] = useState(assignment.groupName)
@@ -282,6 +445,8 @@ function AssignmentEditor({
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
   const [working, setWorking] = useState(false)
+  const [materials, setMaterials] = useState(assignment.materials)
+  const [labels, setLabels] = useState<Record<string, string>>({})
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -342,32 +507,55 @@ function AssignmentEditor({
     }
   }
 
-  async function attach(file: File | undefined) {
-    if (!file) return
-    const validationError = validateMaterialFile(file, assignment.materials.length)
+  async function attach(files: File[]) {
+    if (!files.length) return
+    const currentCount = preview ? materials.length : assignment.materials.length
+    const validationError = files
+      .map((file, index) => validateMaterialFile(file, currentCount + index))
+      .find(Boolean)
     if (validationError) {
       setError(validationError)
       return
     }
     setWorking(true)
     setError('')
+    const client = getSupabaseClient(),
+      guard = !preview && client ? watchAccountChanges(client) : null
     try {
-      if (!preview) {
-        await uploadAssignmentMaterial(
-          assignment.offeringId,
-          assignment.id,
-          file,
-          assignment.materials.length,
-        )
+      for (const [index, file] of files.entries()) {
+        guard?.assertCurrent()
+        if (!preview) {
+          await uploadAssignmentMaterial(
+            assignment.offeringId,
+            assignment.id,
+            file,
+            currentCount + index,
+          )
+        } else {
+          setMaterials((items) => [
+            ...items,
+            {
+              id: crypto.randomUUID(),
+              fileName: file.name,
+              displayName: file.name,
+              byteSize: file.size,
+              mimeType: file.type,
+              objectPath: '',
+              position: items.length + 1,
+            },
+          ])
+        }
       }
-      setNotice(`${file.name} attached to this draft.`)
+      setNotice(`${files.length} file(s) attached to this draft.`)
       await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
     } catch (uploadError) {
       setError(
         uploadError instanceof Error ? uploadError.message : 'The file could not be attached.',
       )
     } finally {
+      guard?.dispose()
       setWorking(false)
+      if (!preview) await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
     }
   }
 
@@ -399,99 +587,152 @@ function AssignmentEditor({
   return (
     <Card className={styles.assignmentCard}>
       <form className={styles.form} onSubmit={(event) => void save(event)}>
-        <div className={styles.formHeading}>
-          <div>
-            <p className="eyebrow">Assignment · {assignment.code}</p>
-            <h3>Edit assignment version {assignment.versionNumber}</h3>
-          </div>
-          <Badge tone="accent">Draft</Badge>
-        </div>
-        <Input
-          label="Assignment group"
-          onChange={(event) => setGroupName(event.target.value)}
-          required
-          value={groupName}
-        />
-        <Input
-          label="Assignment title"
-          onChange={(event) => setTitle(event.target.value)}
-          required
-          value={title}
-        />
-        <label className={styles.field}>
-          <span>Student instructions</span>
-          <textarea
-            onChange={(event) => setInstructions(event.target.value)}
-            required
-            rows={5}
-            value={instructions}
-          />
-        </label>
-        <label className={styles.field}>
-          <span>Evaluation guide for teachers and future AI drafts</span>
-          <textarea
-            onChange={(event) => setRubric(event.target.value)}
-            required
-            rows={5}
-            value={rubric}
-          />
-          <small>
-            This rubric stays versioned with the assignment. AI feedback is not generated in this
-            stage.
-          </small>
-        </label>
-        <div className={styles.materials}>
-          <div>
-            <strong>Private assignment files</strong>
-            <p>PDF, JPEG, PNG, or WebP · maximum 5 files · 10 MB each</p>
-          </div>
-          {assignment.materials.map((material) => (
-            <div className={styles.materialRow} key={material.id}>
-              <span>{material.fileName}</span>
-              <small>{formatBytes(material.byteSize)}</small>
+        <fieldset disabled={!canEdit} style={{ border: 0, padding: 0, minWidth: 0 }}>
+          <div className={styles.formHeading}>
+            <div>
+              <p className="eyebrow">Assignment · {assignment.code}</p>
+              <h3>Edit assignment version {assignment.versionNumber}</h3>
             </div>
-          ))}
-          <label className={styles.fileButton}>
-            <span>Add private file</span>
-            <input
-              accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
-              disabled={working || assignment.materials.length >= 5}
-              onChange={(event) => void attach(event.target.files?.[0])}
-              type="file"
+            <Badge tone="accent">Draft</Badge>
+          </div>
+          <Input
+            label="Assignment group"
+            onChange={(event) => setGroupName(event.target.value)}
+            required
+            value={groupName}
+          />
+          <Input
+            label="Assignment title"
+            onChange={(event) => setTitle(event.target.value)}
+            required
+            value={title}
+          />
+          <label className={styles.field}>
+            <span>Student instructions</span>
+            <textarea
+              onChange={(event) => setInstructions(event.target.value)}
+              required
+              rows={5}
+              value={instructions}
             />
           </label>
-        </div>
-        {notice ? (
-          <p className={styles.success} role="status">
-            {notice}
-          </p>
-        ) : null}
-        {error ? (
-          <p className={styles.error} role="alert">
-            {error}
-          </p>
-        ) : null}
-        <div className={styles.formActions}>
-          <Button disabled={working} type="submit" variant="secondary">
-            Save assignment draft
+          <label className={styles.field}>
+            <span>Evaluation guide for teachers and future AI drafts</span>
+            <textarea
+              onChange={(event) => setRubric(event.target.value)}
+              required
+              rows={5}
+              value={rubric}
+            />
+            <small>
+              This rubric stays versioned with the assignment. AI feedback is not generated in this
+              stage.
+            </small>
+          </label>
+          <div className={styles.materials}>
+            <div>
+              <strong>Private assignment files</strong>
+              <p>PDF, JPEG, PNG, or WebP · maximum 5 files · 10 MB each</p>
+            </div>
+            {(preview ? materials : assignment.materials).map((material) => (
+              <div className={styles.materialRow} key={material.id}>
+                <span>
+                  {material.displayName ?? material.fileName} · {material.fileName}
+                </span>
+                <small>{formatBytes(material.byteSize)}</small>
+                <Input
+                  label={`Attachment name for ${material.fileName}`}
+                  value={labels[material.id] ?? material.displayName ?? material.fileName}
+                  maxLength={180}
+                  onChange={(event) =>
+                    setLabels((values) => ({ ...values, [material.id]: event.target.value }))
+                  }
+                />
+                <Button
+                  variant="secondary"
+                  disabled={working || !(labels[material.id] ?? '').trim()}
+                  onClick={() =>
+                    void (async () => {
+                      setWorking(true)
+                      setError('')
+                      try {
+                        const label = (labels[material.id] ?? '').trim()
+                        if (!preview)
+                          await setContentFileLabel('assignment', assignment.id, material.id, label)
+                        else
+                          setMaterials((items) =>
+                            items.map((item) =>
+                              item.id === material.id ? { ...item, displayName: label } : item,
+                            ),
+                          )
+                        setNotice('Attachment name saved.')
+                        await queryClient.invalidateQueries({ queryKey: ['content-workspace'] })
+                      } catch {
+                        setError('The attachment name could not be saved.')
+                      } finally {
+                        setWorking(false)
+                      }
+                    })()
+                  }
+                >
+                  Save attachment name
+                </Button>
+              </div>
+            ))}
+            <label className={styles.fileButton}>
+              <span>Add private file</span>
+              <input
+                accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
+                disabled={working || (preview ? materials : assignment.materials).length >= 5}
+                multiple
+                onChange={(event) => {
+                  const files = Array.from(event.target.files ?? [])
+                  event.target.value = ''
+                  void attach(files)
+                }}
+                type="file"
+              />
+            </label>
+          </div>
+          {notice ? (
+            <p className={styles.success} role="status">
+              {notice}
+            </p>
+          ) : null}
+          {error ? (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          ) : null}
+          <div className={styles.formActions}>
+            <Button disabled={working || !canEdit} type="submit" variant="secondary">
+              Save assignment draft
+            </Button>
+          </div>
+        </fieldset>
+      </form>
+      {canPublish ? (
+        <div className={styles.publishPanel}>
+          <div>
+            <strong>Ready to publish?</strong>
+            <p>Publishing locks this version. Later changes start another draft.</p>
+          </div>
+          <Input
+            label="Release note"
+            onChange={(event) => setReleaseNote(event.target.value)}
+            placeholder="What changed in this version?"
+            value={releaseNote}
+          />
+          <Button
+            disabled={working || releaseNote.trim().length < 3}
+            onClick={() => void publish()}
+          >
+            Publish assignment
           </Button>
         </div>
-      </form>
-      <div className={styles.publishPanel}>
-        <div>
-          <strong>Ready to publish?</strong>
-          <p>Publishing locks this version. Later changes start another draft.</p>
-        </div>
-        <Input
-          label="Release note"
-          onChange={(event) => setReleaseNote(event.target.value)}
-          placeholder="What changed in this version?"
-          value={releaseNote}
-        />
-        <Button disabled={working || releaseNote.trim().length < 3} onClick={() => void publish()}>
-          Publish assignment
-        </Button>
-      </div>
+      ) : (
+        <p>A separate publishing permission is required to release this assignment.</p>
+      )}
     </Card>
   )
 }
@@ -680,6 +921,7 @@ function CurriculumRelease({
 }
 
 export function ContentWorkspacePage() {
+  const { session } = useAuth()
   const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
   const preview =
@@ -687,11 +929,16 @@ export function ContentWorkspacePage() {
   const [selectedTopicId, setSelectedTopicId] = useState('preview-topic-perspective')
   const [tab, setTab] = useState<EditorTab>('material')
   const [copyError, setCopyError] = useState('')
+  const [selectedOfferingId, setSelectedOfferingId] = useState('')
+  const [removedTopics, setRemovedTopics] = useState<string[]>([])
+  const [allAssignments, setAllAssignments] = useState(false)
 
   const workspaceQuery = useQuery({
-    queryKey: ['content-workspace', preview],
+    queryKey: ['content-workspace', preview, session?.user.id],
     queryFn: () => (preview ? Promise.resolve([previewOffering]) : getContentWorkspace()),
     retry: false,
+    gcTime: 0,
+    staleTime: 0,
   })
 
   if (workspaceQuery.isPending) {
@@ -717,7 +964,8 @@ export function ContentWorkspacePage() {
     )
   }
 
-  const offering = workspaceQuery.data[0]
+  const offering =
+    workspaceQuery.data.find((item) => item.id === selectedOfferingId) ?? workspaceQuery.data[0]
   if (!offering) {
     return (
       <EmptyState
@@ -738,11 +986,13 @@ export function ContentWorkspacePage() {
     )
   }
 
-  const topic =
-    curriculum.topics.find((item) => item.id === selectedTopicId) ?? curriculum.topics[0]
-  const assignments = topic
-    ? offering.assignments.filter((assignment) => assignment.topicIds.includes(topic.id))
-    : []
+  const visibleTopics = curriculum.topics.filter((item) => !removedTopics.includes(item.id))
+  const topic = visibleTopics.find((item) => item.id === selectedTopicId) ?? visibleTopics[0]
+  const assignments = allAssignments
+    ? offering.assignments
+    : topic
+      ? offering.assignments.filter((assignment) => assignment.topicIds.includes(topic.id))
+      : []
   const curriculumId = curriculum.id
   const curriculumTitle = curriculum.title
 
@@ -779,6 +1029,20 @@ export function ContentWorkspacePage() {
           </div>
         </div>
       </header>
+      <label>
+        Course offering
+        <select
+          aria-label="Content offering"
+          value={offering.id}
+          onChange={(event) => setSelectedOfferingId(event.target.value)}
+        >
+          {workspaceQuery.data.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.title}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {curriculum.status !== 'draft' ? (
         <Callout tone="neutral" icon="note">
@@ -798,7 +1062,7 @@ export function ContentWorkspacePage() {
               <p className="eyebrow">Curriculum</p>
               <h2>Topics</h2>
             </div>
-            {curriculum.topics.map((item) => (
+            {visibleTopics.map((item) => (
               <button
                 className={item.id === topic.id ? styles.selectedTopic : styles.topicButton}
                 key={item.id}
@@ -841,21 +1105,67 @@ export function ContentWorkspacePage() {
               </div>
             </div>
 
-            {curriculum.status !== 'draft' ? (
+            {curriculum.status !== 'draft' && tab === 'material' ? (
               <Callout tone="neutral" icon="note">
                 Published curriculum material is read-only. Create an editable copy to make changes.
               </Callout>
             ) : tab === 'material' ? (
-              <TopicEditor key={topic.id} preview={preview} topic={topic} />
+              <fieldset
+                disabled={!preview && !offering.canEdit}
+                style={{ border: 0, padding: 0, minWidth: 0 }}
+              >
+                <TopicEditor
+                  key={topic.id}
+                  preview={preview}
+                  topic={topic}
+                  linkedAssignments={offering.assignments.filter((a) =>
+                    a.topicIds.includes(topic.id),
+                  )}
+                  onRemoved={() => setRemovedTopics((items) => [...items, topic.id])}
+                />
+              </fieldset>
             ) : (
               <div className={styles.editorStack}>
-                <NewAssignmentForm offering={offering} preview={preview} topic={topic} />
+                <Button variant="secondary" onClick={() => setAllAssignments((value) => !value)}>
+                  {allAssignments ? 'Show this topic’s assignments' : 'Show all course assignments'}
+                </Button>
+                {preview || offering.canEdit ? (
+                  <NewAssignmentForm offering={offering} preview={preview} topic={topic} />
+                ) : null}
+                {allAssignments && (preview || offering.canEdit)
+                  ? offering.assignments
+                      .filter((a) => a.status === 'draft' && !a.topicIds.includes(topic.id))
+                      .map((a) => (
+                        <Button
+                          key={a.id}
+                          variant="secondary"
+                          onClick={() =>
+                            void (async () => {
+                              setCopyError('')
+                              try {
+                                if (!preview) await linkAssignmentTopic(a.id, topic.id)
+                                await queryClient.invalidateQueries({
+                                  queryKey: ['content-workspace'],
+                                })
+                              } catch {
+                                setCopyError('The assignment could not be linked to this topic.')
+                              }
+                            })()
+                          }
+                        >
+                          Link draft {a.title} to {topic.title}
+                        </Button>
+                      ))
+                  : null}
+                {copyError ? <p role="alert">{copyError}</p> : null}
                 {assignments.length ? (
                   assignments.map((assignment) => (
                     <AssignmentEditor
                       assignment={assignment}
                       key={assignment.id}
                       preview={preview}
+                      canPublish={preview || offering.canPublish}
+                      canEdit={preview || offering.canEdit}
                     />
                   ))
                 ) : (
@@ -868,7 +1178,7 @@ export function ContentWorkspacePage() {
             )}
           </main>
 
-          {curriculum.status === 'draft' ? (
+          {curriculum.status === 'draft' && (preview || offering.canPublish) ? (
             <CurriculumRelease curriculum={curriculum} preview={preview} />
           ) : null}
         </div>

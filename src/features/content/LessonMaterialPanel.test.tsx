@@ -34,7 +34,7 @@ describe('lesson material panel', () => {
     renderApp(<LessonFiles lessonId="fictional-lesson" editable />)
     await userEvent.click(await screen.findByRole('button', { name: 'Remove notes.pdf' }))
     expect(mocks.remove).toHaveBeenCalledWith('fictional-lesson', 'fictional')
-    expect(await screen.findByLabelText('Attach lesson file')).toBeEnabled()
+    expect(await screen.findByLabelText('Attach lesson files')).toBeEnabled()
   })
   it('does not contact live files in preview', () => {
     renderApp(<LessonFiles lessonId="fictional-lesson" editable preview />)

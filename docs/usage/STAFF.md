@@ -1,5 +1,7 @@
 # Staff guide
 
+Content tools are also available inside the Teacher portal for explicitly authorized course editors/publishers. Both entrances use the same drafts, named file references and publication rules. The [Teacher guide](TEACHERS.md) explains multiple attachments, descriptive names and confirmed draft-topic removal. Publication makes an assignment eligible for the authorized Distribution list; it does not release it to students automatically.
+
 [Handbook home](README.md) · [Access and help](ACCESS_AND_TROUBLESHOOTING.md)
 
 ## Access and responsibilities

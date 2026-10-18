@@ -2,6 +2,7 @@ import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderApp } from '../test/render'
 import { TeacherFeedbackPage } from './TeacherFeedbackPage'
+vi.mock('../features/auth/AuthContext', () => ({ useAuth: () => ({ session: null }) }))
 const mocks = vi.hoisted(() => ({
   start: vi.fn(),
   save: vi.fn(),

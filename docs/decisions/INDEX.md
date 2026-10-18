@@ -71,3 +71,5 @@ D-047 — Authentication sender verification — Option B approved 2026-10-17; e
 D-048 — Role-separated portals — Option B approved 2026-10-17: four distinct entrances/layouts on the existing identity/backend, F033 verification active; no new authority — `ADR-048-role-separated-portals.md`.
 
 D-049 — Student attempt editing and repeat submission — Option B approved 2026-10-18: edits until published feedback with snapshot/stale-publication protection and independently numbered further attempts — `ADR-049-student-attempt-editing-and-repeat-submission.md`.
+
+D-050 — Teacher content authoring, named attachments and draft topic removal — Option B approved 2026-10-18; explicit course-scoped editing/publication, named multi-file attachments and confirmed draft-only topic removal — `ADR-050-teacher-content-authoring.md`.

@@ -104,7 +104,8 @@ export function PortalNavigation({
       {active && portal === 'teacher' ? (
         <>
           {link('Teacher home', '/teacher', demoSearch)}
-          {link('Reviews', '/teacher/reviews', demoSearch)}
+          {demo || current?.reviews ? link('Reviews', '/teacher/reviews', demoSearch) : null}
+          {allowed('content') ? link('Content', '/teacher/content', demoSearch) : null}
         </>
       ) : null}
       {active && portal === 'staff' ? (

@@ -345,6 +345,16 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'teacher/content',
+        element: (
+          <StaffAccessBoundary capability="content.manage_drafts">
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <ContentWorkspacePage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
         path: 'staff/content',
         element: (
           <StaffAccessBoundary capability="content.manage_drafts">

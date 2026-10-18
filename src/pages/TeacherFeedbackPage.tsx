@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { AssignmentReferenceFiles } from '../features/content/AssignmentReferenceFiles'
 
 import { Badge, Button, Callout, EmptyState } from '../components'
 import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
@@ -581,6 +582,11 @@ export function TeacherFeedbackPage() {
               </div>
               <h2>{selected.displayName}</h2>
               <p>{selected.assignmentTitle}</p>
+              <AssignmentReferenceFiles
+                key={selected.assignmentInstanceId}
+                instanceId={selected.assignmentInstanceId}
+                preview={previewEnabled}
+              />
               <p>
                 Attempt {selected.attemptNumber ?? 1} · Version {selected.submissionVersion ?? 1}
               </p>
