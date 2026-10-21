@@ -1,6 +1,6 @@
 # F036 — Isolated authentication email connection probe
 
-Status: preparation authorized 2026-10-21. Offline implementation verified; independent review found no concrete blockers. Required PR CI remains the merge gate. Not deployed or activated; no real key consumed and no email sent.
+Status: offline executor merged PR #86 (`59bc53e`) after all required CI and independent review. D-051 A approved 2026-10-21 for the isolated local interactive runner and one actual non-credential test. Runner verification/review is active; no real key consumed and no email sent yet.
 
 ## Scope and authority
 
@@ -19,6 +19,14 @@ The executor uses the fixed HTTPS Resend send endpoint, rejects redirects, omits
 All new tests inject fake fetch implementations and fictional addresses/keys, never actual network transport. Cover disabled defaults, injection/expanded configuration, accessor refusal, configuration mutation, fixed request, identity validation, concurrent calls, rejection/uncertainty, malformed/oversized replies, secret-safe exceptions and timeout/abort. All 33 new cases and 75 F032/local-capture regressions passed (108 focused cases). Full verification passed 479 application tests, formatting, lint, typecheck, synthetic-fixture validation, production build and bundle budget. Independent read-only security review found no concrete blockers; its clarification on per-instance deduplication and future runner freshness/authority is incorporated above. No schema, worker or UI change; actual network/browser delivery is deliberately not claimed. Required CI precedes merge.
 
 ## Next activation boundary
+
+### D-051 A local runner
+
+`node scripts/staging/run-email-connection-probe.mjs --check` performs offline inspection only. Authorized live use is `node scripts/staging/run-email-connection-probe.mjs --send` in a real interactive terminal. It prompts for the privately approved inbox, displays that destination and requires the exact `SEND ONCE` confirmation, then asks for a key through a hidden prompt. It takes no address/key command-line argument or environment variable, writes no file and has no automatic retry. Never capture key entry. Secret strings are released on completion on a best-effort basis, not guaranteed memory zeroization. The probe identity is printed for private operator investigation. On uncertainty, stop and inspect provider activity instead of rerunning with a new identity.
+
+The terminal destination must be the single inbox approved in D-051; this interactive operator confirmation is not a reusable permission token for other recipients. The helper itself is not a durable approval ledger and cannot enforce a cross-process one-send lifetime limit. No automation or hosted invocation is authorized.
+
+Runner acceptance: four orchestration tests plus all 33 executor cases passed offline. Full verification passed 483 application tests, formatting, lint, types, fixture validation and production build/bundle budget. Independent review found no blockers and confirmed with a pseudo-TTY that a deliberately invalid sentinel key was not echoed and Ctrl-C/EOF exited safely without sending. No actual network/key was used in that review. The initial lint run flagged deliberate credential-reference release as an unused assignment; a narrow documented suppression preserves that release. Actual owner secret entry and inbox receipt are still pending.
 
 Before a real probe, review the actual scoped key without disclosing it, configure the secure execution path/secret custody, confirm the exact recipient and one-message permission, verify tracking disabled and required TLS, and review provider-side retention/processing terms. The isolated helper does not enforce a human approval token or approval expiry; any future live runner must enforce explicit authority/freshness and stable delivery identity before invoking it. No API key is currently installed in Supabase, Cloudflare, GitHub or the repository. Do not add one to fictional staging merely because that is the existing deployment.
 
