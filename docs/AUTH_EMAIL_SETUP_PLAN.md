@@ -8,7 +8,7 @@ The owner resumed setup and handled account sign-in. Resend now reports `auth.de
 
 The owner created an API key and confirmed saving it privately. Subsequent read-only provider metadata confirms Sending access restricted to `auth.designexam.com`, with zero uses/no activity. The secret was not revealed, copied to chat or installed in any runtime. Configuration offers tracking setup but tracking has not been independently proven disabled for credential-bearing delivery. TLS currently shows Opportunistic; secure credential delivery policy still needs review before activation.
 
-F036 prepares an unconnected fixed non-credential probe with offline tests only. There has been no real email send, recipient import, actual administrator provisioning, runtime activation, paid upgrade or production deployment. Keep real private recipient/account lists out of repository artifacts. The historical handoff below is superseded only for account/domain verification and owner key custody, not live-delivery authority.
+F036/D-051 A's isolated local one-message non-credential test is complete: the owner reported provider acceptance and confirmed inbox receipt on 2026-10-21. This is owner-reported evidence, not an inbox/header audit. No credential-bearing message, recipient import, actual administrator provisioning, hosted runtime activation, paid upgrade or production deployment occurred. No repeat test is authorized by default. Keep real private recipient/account lists out of repository artifacts. The historical handoff below is superseded for account/domain verification, owner key custody and the specific one-message test, not broader live-delivery authority.
 
 ## Observed public DNS
 

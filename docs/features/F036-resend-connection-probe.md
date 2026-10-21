@@ -1,6 +1,6 @@
 # F036 — Isolated authentication email connection probe
 
-Status: offline executor merged PR #86 (`59bc53e`) after all required CI and independent review. D-051 A approved 2026-10-21 for the isolated local interactive runner and one actual non-credential test. Runner verification/review is active; no real key consumed and no email sent yet.
+Status: executor merged PR #86 (`59bc53e`) and interactive runner merged PR #87 (`da6413a`) after required CI and independent review. Under D-051 A, the owner ran the one-message local test, reported `Accepted`, and confirmed inbox receipt on 2026-10-21. This is owner-confirmed mailbox evidence, not an independently inspected inbox/header audit. No additional test is authorized or necessary by default. No authentication email/account activation or hosted secret installation occurred.
 
 ## Scope and authority
 
@@ -26,7 +26,7 @@ All new tests inject fake fetch implementations and fictional addresses/keys, ne
 
 The terminal destination must be the single inbox approved in D-051; this interactive operator confirmation is not a reusable permission token for other recipients. The helper itself is not a durable approval ledger and cannot enforce a cross-process one-send lifetime limit. No automation or hosted invocation is authorized.
 
-Runner acceptance: four orchestration tests plus all 33 executor cases passed offline. Full verification passed 483 application tests, formatting, lint, types, fixture validation and production build/bundle budget. Independent review found no blockers and confirmed with a pseudo-TTY that a deliberately invalid sentinel key was not echoed and Ctrl-C/EOF exited safely without sending. No actual network/key was used in that review. The initial lint run flagged deliberate credential-reference release as an unused assignment; a narrow documented suppression preserves that release. Actual owner secret entry and inbox receipt are still pending.
+Runner acceptance: four orchestration tests plus all 33 executor cases passed offline. Full verification passed 483 application tests, formatting, lint, types, fixture validation and production build/bundle budget. Independent review found no blockers and confirmed with a pseudo-TTY that a deliberately invalid sentinel key was not echoed and Ctrl-C/EOF exited safely without sending. No actual network/key was used in that review. The initial lint run flagged deliberate credential-reference release as an unused assignment; a narrow documented suppression preserves that release. The owner subsequently executed the authorized real test and confirmed provider acceptance and inbox receipt. The agent did not observe secret entry or collect a credential screenshot.
 
 Before a real probe, review the actual scoped key without disclosing it, configure the secure execution path/secret custody, confirm the exact recipient and one-message permission, verify tracking disabled and required TLS, and review provider-side retention/processing terms. The isolated helper does not enforce a human approval token or approval expiry; any future live runner must enforce explicit authority/freshness and stable delivery identity before invoking it. No API key is currently installed in Supabase, Cloudflare, GitHub or the repository. Do not add one to fictional staging merely because that is the existing deployment.
 
