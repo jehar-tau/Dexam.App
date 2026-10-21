@@ -1,6 +1,14 @@
 # Authentication email setup — designexam.com
 
-Prepared 2026-10-17. The owner confirmed ownership/use of `designexam.com` for later email planning. D-046 B approves fictional mock adapter preparation only. This document changes no DNS, account, sender, mailbox, application URL or live delivery configuration.
+Prepared 2026-10-17; setup evidence updated 2026-10-21. D-046 B approved mock preparation and D-047 B subsequently approved Free-account/subdomain verification. This document itself activates no runtime or delivery.
+
+## Latest verified setup evidence — 2026-10-21
+
+The owner resumed setup and handled account sign-in. Resend now reports `auth.designexam.com` verified in Tokyo (`ap-northeast-1`). Provider-issued TXT `resend._domainkey.auth` and CNAMEs `rsend.auth` → `rsend-apne1.forge.rmta.net`, `send.auth` → `send.forge.rmta.net` were prepared, saved by the owner and checked against GoDaddy's records. Existing website A/www, nameservers, three Zoho root MX and root SPF records remained unchanged. The optional root DMARC suggestion was intentionally not added; receiving remains off. No website/root mail migration occurred.
+
+The owner created an API key and confirmed saving it privately. Subsequent read-only provider metadata confirms Sending access restricted to `auth.designexam.com`, with zero uses/no activity. The secret was not revealed, copied to chat or installed in any runtime. Configuration offers tracking setup but tracking has not been independently proven disabled for credential-bearing delivery. TLS currently shows Opportunistic; secure credential delivery policy still needs review before activation.
+
+F036 prepares an unconnected fixed non-credential probe with offline tests only. There has been no real email send, recipient import, actual administrator provisioning, runtime activation, paid upgrade or production deployment. Keep real private recipient/account lists out of repository artifacts. The historical handoff below is superseded only for account/domain verification and owner key custody, not live-delivery authority.
 
 ## Observed public DNS
 
@@ -24,7 +32,7 @@ Disable open/click tracking for authentication messages and verify that setting.
 4. Approve explicit delivery-test recipients through a private allowlist/configuration, volume/rate budgets and accountable failure handling. Never collect credentials or recipient lists in public issues, logs or source control.
 5. Test accepted/rejected/uncertain transport results, delayed/bounced messages, safe retries, quota exhaustion and actual authorized delivery before onboarding. Keep uncertain password mutation resolution as its separate gate.
 
-## Current handoff
+## Historical handoff — 2026-10-17
 
 D-047 Option B was approved on 2026-10-17 for an owner-controlled Free account and provider-issued verification records confined to `auth.designexam.com`, preserving root DNS and Zoho. Account sign-in/password reset is blocked; the owner elected to defer this setup and continue fictional workflow testing. No domain verification, DNS changes, API keys, recipient imports or runtime activation have been completed. Resume after the owner completes account sign-in and required terms acceptance; do not treat Zoho credentials as a Resend account.
 
