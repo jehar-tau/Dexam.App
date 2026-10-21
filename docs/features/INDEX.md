@@ -38,3 +38,5 @@
 - F035 Teacher content tools — D-050 B approved; explicit scoped editing/publication, named multi-file references and safe draft-topic removal; verification active
 
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
+
+- F036 Isolated Resend connection probe — preparation authorized 2026-10-21; fixed non-credential single-use executor, offline tests only, no handler integration or activation
