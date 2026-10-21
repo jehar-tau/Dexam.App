@@ -4,7 +4,7 @@ Status: preparation authorized 2026-10-21. Offline implementation verified; inde
 
 ## Scope and authority
 
-Following D-047 B sender verification, the owner created a provider key and confirmed private custody. The owner then authorized engineering preparation of the connection, explicitly leaving real key use, live sending and production disabled. This slice implements only a fixed non-credential connection probe. It does not replace F032, relax fictional email constraints, create administrators or integrate invitations/recovery with Resend. The key's actual permission/domain restriction has not been independently inspected; never assume it from creation alone.
+Following D-047 B sender verification, the owner created a provider key and confirmed private custody. The owner then authorized engineering preparation of the connection, explicitly leaving real key use, live sending and production disabled. This slice implements only a fixed non-credential connection probe. It does not replace F032, relax fictional email constraints, create administrators or integrate invitations/recovery with Resend. Subsequent read-only metadata inspection confirms Sending access restricted to `auth.designexam.com`, with zero uses; the secret was not revealed.
 
 ## Implementation
 

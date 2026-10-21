@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-17
 
-Email setup update 2026-10-21: owner resumed D-047 B; Resend confirms `auth.designexam.com` verified and the owner saved the three scoped provider DNS records, preserving root/Zoho service. Owner reports private key custody; key scope needs verification and no runtime secret has been installed. F036 prepares only an unconnected non-credential probe. DW-002 remains open for actual authentication transport, callback/environment choice, real-address policies, private recipient/test authorization, provider retention/tracking/TLS review and production activation. No live email or account provisioning completed.
+Email setup update 2026-10-21: owner resumed D-047 B; Resend confirms `auth.designexam.com` verified and the owner saved the three scoped provider DNS records, preserving root/Zoho service. Owner reports private key custody; provider metadata confirms Sending access restricted to the subdomain and zero uses. No runtime secret has been installed. F036 prepares only an unconnected non-credential probe. DW-002 remains open for actual authentication transport, callback/environment choice, real-address policies, private recipient/test authorization, provider retention/tracking/TLS review and production activation. No live email or account provisioning completed.
 
 This is the canonical register for functionality Dexam has discussed but is not building in the current slice. It prevents useful ideas, incomplete feature slices, and required follow-up work from being lost between tasks.
 
