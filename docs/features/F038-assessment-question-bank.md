@@ -24,7 +24,7 @@ The bank must meet four conditions:
 2. An administrator runs `pnpm assessment:import --file <export> --media <dir> --dry-run` locally or against staging, then reads the report: new, unchanged, new versions, quarantined (with reasons) and missing media.
 3. The administrator re-runs without `--dry-run`.
    - Media is uploaded to the private `assessment-media` bucket, checked by SHA-256.
-   - Questions are upserted by `external_key` and content hash.
+   - Questions are matched by `external_key` and content hash. Uniqueness is `(external_key, version)`; at most one non-retired version per `external_key`.
    - An import run is recorded.
 4. Staff can browse ready and quarantined questions with provenance (read-only in F038; editing stays in the workstation).
 
@@ -33,7 +33,7 @@ The bank must meet four conditions:
 - **Tables**, all prefixed `assessment_`:
   - `topics`: a topic and subtopic tree with a stable slug.
   - `questions`: `external_key`, `version`, `content_hash`, `question_type` (`nat`, `msq`, `mcq`, `descriptive`), `prompt`, `topic_id`, `subtopic_id`, `difficulty` (`easy`, `medium`, `hard`, `unassessed`), `estimated_seconds`, `visual_dependency`, `response_mode` (`auto`, `upload`), `publication_state` (`quarantined`, `ready`, `retired`), `quarantine_reasons`, `licence`, `source_kind` (`official`, `owner_authorized`, `original`), timestamps.
-  - `question_options`: option key `A`–`D` (or `1`–`4` mapped to `A`–`D`), body, optional asset, position.
+  - `question_options`: option key `A`–`F` (numeric keys `1`–`6` map to `A`–`F` in order), body, optional asset, position.
   - `question_assets`: role (`figure`, `option`, `source_page`), private storage path, SHA-256, width, height, MIME type, order.
   - `question_keys`, **server-only**: normalised answer (see business rules), `answer_status`, `explanation` (stored only when verified), `explanation_status`.
   - `question_provenance`, **staff-only**: source exam, year, paper ID, question number, page, source PDF SHA-256, extraction method, OCR flag, answer-key source, verification state and verifier, and a correction history.
@@ -69,7 +69,7 @@ Students and anonymous users get no grants on any `assessment_*` table. The impo
 - **Ready versus quarantined.** A question is `ready` only when all of the following hold; otherwise it is `quarantined` with every failing reason listed:
   - It has a prompt, or an approved figure plus a prompt.
   - MCQ and MSQ questions have options (2–6).
-  - Objective types have a parsable key whose status is `official-key`, `matched-source` or `independently-solved-verified`.
+  - Objective types have a parsable key whose status is `official-key`, `matched-source` or `matched-source-positional`, or `independently-solved` with a recorded blind second-pass verification. The export carries `answer.verification` (`second-pass-reproduced`), and without it an independently solved key is quarantined.
   - Every referenced media file exists and matches its SHA-256.
   - The candidate-facing text contains no source labels (exam name with year, page headers, roll or booklet codes).
   - `licence` is set.
@@ -78,7 +78,7 @@ Students and anonymous users get no grants on any `assessment_*` table. The impo
   - MSQ `A,C` → `{kind: multi, correct: [A,C]}`.
   - MSQ `B OR B, C` → `{kind: multi, alternatives: [[B],[B,C]]}`.
   - NAT `7 OR 9` → `{kind: numeric, accepted: [{exact:7},{exact:9}]}`.
-  - NAT `94.2 (92.9 - 94.6)` → `{kind: numeric, accepted: [{range:[92.9,94.6]}]}`.
+  - NAT `94.2 (92.9 - 94.6)` and the unspaced `2.25 (2.24-2.26)` → `{kind: numeric, accepted: [{range:[92.9,94.6]}]}` (whitespace and dash style, `-` or `–`, are ignored).
   - `DROPPED` → `{kind: dropped}`.
   - `FULL MARKS` → `{kind: full_marks}`.
   - Anything else → quarantine with reason `unparsed-key`.
