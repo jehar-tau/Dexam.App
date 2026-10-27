@@ -75,3 +75,7 @@ D-049 — Student attempt editing and repeat submission — Option B approved 20
 D-050 — Teacher content authoring, named attachments and draft topic removal — Option B approved 2026-10-18; explicit course-scoped editing/publication, named multi-file attachments and confirmed draft-only topic removal — `ADR-050-teacher-content-authoring.md`.
 
 D-051 — First actual email connection test — Option A approved 2026-10-21: isolated local interactive one-message non-credential test to a privately designated owner inbox, hidden key entry, no production/authentication activation — `ADR-051-local-email-connection-test.md`.
+
+D-052 — Administrator setup target — Option A approved 2026-10-21: separate administrator-only Free-eligible pilot, isolated from fictional staging; no students/public launch or paid upgrade — `ADR-052-administrator-pilot-target.md`.
+
+D-053 — Assessment source and first slice — Option B approved 2026-10-27: independent Dexam assessment foundation and provenance-controlled official-paper import; no third-party processed database or production activation — `ADR-053-assessment-source-and-first-slice.md`.

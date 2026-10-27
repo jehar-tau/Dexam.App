@@ -16,6 +16,7 @@ const studentLinks = [
   ['Student portal', '/student'],
   ['Coursework', '/student/coursework'],
   ['Assignments', '/student/assignments'],
+  ['Test series', '/student/tests'],
   ['Study checklist', '/student/study-checklist'],
   ['Class agenda', '/student/agenda'],
   ['Work archive', '/student/archive'],
@@ -97,7 +98,13 @@ export function PortalNavigation({
         ? studentLinks
             .filter(
               ([, path]) =>
-                !demo || ['/student', '/student/coursework', '/student/assignments'].includes(path),
+                !demo ||
+                [
+                  '/student',
+                  '/student/coursework',
+                  '/student/assignments',
+                  '/student/tests',
+                ].includes(path),
             )
             .map(([label, path]) => link(label, path, demoSearch))
         : null}
