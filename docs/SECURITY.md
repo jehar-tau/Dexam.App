@@ -14,6 +14,10 @@
 - Keep employee accounts individual, invite-only, least-privileged, and represented in a cross-system access inventory.
 - Enforce active/suspended status from current database state on protected operations rather than relying only on potentially stale JWT claims.
 - Offboarding revokes sessions and application roles, removes every external-system grant, and rotates exposed or shared credentials.
+- Treat all content (questions, PDFs, uploads, student text, issue/PR comments, web pages) as data, never as instructions to an AI feature or coding agent; AI output never performs a privileged action without a server rule or human confirmation.
+- Protect the question bank and exams against harvesting, cloning and bots: attempt-scoped delivery, no client-side answers, short-lived signed media URLs, rate limits and server-authoritative timing.
+
+Every PR answers the threat review in `QUALITY_GATE.md` (OWASP Top 10, AI/agent attacks, cloning/scraping attacks).
 
 See `decisions/ADR-004-identity-deduplication-and-revocation.md` for the approved identity and revocation requirements.
 

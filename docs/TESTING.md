@@ -2,6 +2,8 @@
 
 Testing is part of feature implementation, not a later cleanup phase.
 
+The per-PR checklist, including end-to-end, accessibility, contract, dependency and secret checks and the Claude review before push, is mandatory and lives in `QUALITY_GATE.md`.
+
 ## Layers
 
 - Static: formatting, linting, strict TypeScript, dependency and secret checks.

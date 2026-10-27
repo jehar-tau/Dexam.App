@@ -79,3 +79,5 @@ D-051 — First actual email connection test — Option A approved 2026-10-21: i
 D-052 — Administrator setup target — Option A approved 2026-10-21: separate administrator-only Free-eligible pilot, isolated from fictional staging; no students/public launch or paid upgrade — `ADR-052-administrator-pilot-target.md`.
 
 D-053 — Assessment source and first slice — Option B approved 2026-10-27: independent Dexam assessment foundation and provenance-controlled official-paper import; no third-party processed database or production activation — `ADR-053-assessment-source-and-first-slice.md`.
+
+D-056 — Pre-push quality gate — standing owner rule 2026-10-28: every change passes every applicable test layer, a threat review (web, AI/agent, cloning/scraping) and a Claude code/security review before push, with evidence in the PR — `../QUALITY_GATE.md`.
