@@ -6,6 +6,8 @@ Current position: the first product milestone through essential in-app notificat
 
 2026-10-15 update: D-039 B prioritizes fictional pilot readiness over adding modules. Identity hardening, bounded archive/checklist, scheduling, private lesson files and read-only curriculum impact are implemented in their approved fictional scopes. F025 account-isolation fixes merged PR #58 and protected release `38686939843`; composed role journeys and a repeatable local acceptance command now supply evidence beyond preview screens. `PILOT_READINESS.md` separates automated evidence, owner UX/navigation choices (D-040), deferred roadmap modules and mandatory real-launch gates. This is not production readiness or approval to onboard real students.
 
+2026-10-28 update: D-054 A brings phase 9 (assessments) ahead of phase 8 (commerce) for the test series. R1 self-paced test series (F038–F048) comes first, then R2 commerce (F049, resolving DW-033), then R3 the all-India live mock (F050). See `assessment/TEST_SERIES_PROGRAMME.md`.
+
 1. Development OS: repository, docs, decisions, templates, prerequisites.
 2. Foundation: typed web app, design system, routing, local Supabase, CI, staging.
 3. Identity: login, Student/Teacher/Sales/Admin roles, tested RLS.

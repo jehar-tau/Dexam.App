@@ -40,3 +40,6 @@
 IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specifications.
 
 - F036 Isolated Resend connection probe — preparation authorized 2026-10-21; fixed non-credential single-use executor, offline tests only, no handler integration or activation
+
+- F037 Assessment and test-series foundation — D-053 B; fictional runner preview at `/student/tests?preview=1`; PR #89
+- F038 Assessment question bank — D-054 A programme; spec drafted 2026-10-28, D-055 bank-management permissions pending; no migration yet

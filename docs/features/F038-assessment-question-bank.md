@@ -1,0 +1,183 @@
+# F038 — Assessment question bank
+
+Status: Decision required (bank-management permissions). Specification drafted 2026-10-28 under D-053 B and D-054 A. No migration, import, real content or production activation yet.
+
+## Purpose and problem
+
+Every later test-series slice (generation, exam interface, scoring, practice, results) needs one durable, versioned question bank in Postgres. Today the questions live outside this repository, in the content workstation's SQLite file.
+
+The bank must meet four conditions:
+
+- **No answer leaks:** students never receive answer keys before their result is released, so keys sit in a server-only table.
+- **Provenance:** every question keeps its source paper, page, extraction method, answer-key source, licence and review state.
+- **Safe imports:** imports are repeatable and idempotent, and they quarantine anything uncertain instead of publishing it.
+- **Stable versions:** question versions never change underneath a submitted attempt.
+
+## Users
+
+- **Administrators and content staff:** import exports and inspect the bank, quarantine queue and provenance.
+- **Students:** no direct access in F038. Questions reach students only through attempt-scoped operations added in F042/F047.
+
+## User flow
+
+1. The content workstation produces `dexam-bank-export.json` (schema v1, below) and a media folder.
+2. An administrator runs `pnpm assessment:import --file <export> --media <dir> --dry-run` locally or against staging, then reads the report: new, unchanged, new versions, quarantined (with reasons) and missing media.
+3. The administrator re-runs without `--dry-run`.
+   - Media is uploaded to the private `assessment-media` bucket, checked by SHA-256.
+   - Questions are upserted by `external_key` and content hash.
+   - An import run is recorded.
+4. Staff can browse ready and quarantined questions with provenance (read-only in F038; editing stays in the workstation).
+
+## In scope
+
+- **Tables**, all prefixed `assessment_`:
+  - `topics`: a topic and subtopic tree with a stable slug.
+  - `questions`: `external_key`, `version`, `content_hash`, `question_type` (`nat`, `msq`, `mcq`, `descriptive`), `prompt`, `topic_id`, `subtopic_id`, `difficulty` (`easy`, `medium`, `hard`, `unassessed`), `estimated_seconds`, `visual_dependency`, `response_mode` (`auto`, `upload`), `publication_state` (`quarantined`, `ready`, `retired`), `quarantine_reasons`, `licence`, `source_kind` (`official`, `owner_authorized`, `original`), timestamps.
+  - `question_options`: option key `A`–`D` (or `1`–`4` mapped to `A`–`D`), body, optional asset, position.
+  - `question_assets`: role (`figure`, `option`, `source_page`), private storage path, SHA-256, width, height, MIME type, order.
+  - `question_keys`, **server-only**: normalised answer (see business rules), `answer_status`, `explanation` (stored only when verified), `explanation_status`.
+  - `question_provenance`, **staff-only**: source exam, year, paper ID, question number, page, source PDF SHA-256, extraction method, OCR flag, answer-key source, verification state and verifier, and a correction history.
+  - `import_runs`: export digest, counts, report, actor, start and finish times.
+- **Storage:** a private bucket `assessment-media` limited to PNG, JPEG and WebP, ≤ 5 MB each. No SVG until a sanitising pipeline is approved.
+- **Import tooling:** an import command with schema validation (Zod), a dry-run mode, idempotency and quarantine.
+- **Answer parsing:** a normaliser for official key strings, with golden tests.
+- **Tests:** pgTAP tests for row-level security and grants.
+
+## Out of scope
+
+- Serving questions to students: F042 and F047.
+- Generation and blueprints: F040.
+- Scoring: F044.
+- Editing questions in the platform: the workstation stays the editor in R1.
+- SVG assets.
+- Production import.
+
+## Permissions
+
+Proposed, pending decision:
+
+| Capability               | Allows                                                             | MFA | Granted to |
+| ------------------------ | ------------------------------------------------------------------ | --- | ---------- |
+| `assessment.bank.read`   | Read questions, options, assets, quarantine reasons and provenance | No  | Admin role |
+| `assessment.bank.import` | Run imports and read answer keys                                   | Yes | Admin role |
+
+Students and anonymous users get no grants on any `assessment_*` table. The import command uses the service role only from a local or staging operator environment, never from the browser.
+
+## Business rules
+
+- **Identity and versioning:** `external_key` is the workstation's question ID, such as `ceed-2024-q12`. If the same key arrives with the same `content_hash`, nothing changes. A changed hash creates `version + 1` and moves the previous version to `retired`. Retired versions stay readable for attempts that reference them.
+- **Ready versus quarantined.** A question is `ready` only when all of the following hold; otherwise it is `quarantined` with every failing reason listed:
+  - It has a prompt, or an approved figure plus a prompt.
+  - MCQ and MSQ questions have options (2–6).
+  - Objective types have a parsable key whose status is `official-key`, `matched-source` or `independently-solved-verified`.
+  - Every referenced media file exists and matches its SHA-256.
+  - The candidate-facing text contains no source labels (exam name with year, page headers, roll or booklet codes).
+  - `licence` is set.
+- **Answer normalisation:**
+  - MCQ `B` → `{kind: choice, correct: [B]}`.
+  - MSQ `A,C` → `{kind: multi, correct: [A,C]}`.
+  - MSQ `B OR B, C` → `{kind: multi, alternatives: [[B],[B,C]]}`.
+  - NAT `7 OR 9` → `{kind: numeric, accepted: [{exact:7},{exact:9}]}`.
+  - NAT `94.2 (92.9 - 94.6)` → `{kind: numeric, accepted: [{range:[92.9,94.6]}]}`.
+  - `DROPPED` → `{kind: dropped}`.
+  - `FULL MARKS` → `{kind: full_marks}`.
+  - Anything else → quarantine with reason `unparsed-key`.
+- **Licence is carried per question** so paid products can exclude non-original content (D-054 decision 2).
+- **Descriptive questions** import with response mode `upload`. A rubric is optional until F048.
+
+## Export contract (schema v1)
+
+```json
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-28T00:00:00Z",
+  "questions": [
+    {
+      "externalKey": "ceed-2024-q12",
+      "type": "MSQ",
+      "prompt": "Which option(s) is/are NOT a part of the image on the left?",
+      "options": [{ "key": "A", "text": "…", "asset": null }],
+      "assets": [
+        { "role": "figure", "path": "ceed-2024/questions/ceed-2024-q12.png", "sha256": "…" }
+      ],
+      "answer": { "raw": "B OR B, C", "status": "official-key" },
+      "explanation": null,
+      "topic": "spatial-reasoning",
+      "subtopic": null,
+      "difficulty": "unassessed",
+      "estimatedSeconds": null,
+      "visualDependency": true,
+      "licence": "official-unlicensed",
+      "sourceKind": "official",
+      "provenance": {
+        "exam": "ceed",
+        "year": 2024,
+        "paperId": "ceed-2024",
+        "questionNo": "12",
+        "page": 9,
+        "sourceSha256": "…",
+        "extraction": "pdf-text",
+        "answerKeySource": "CEED_2024_Answer_Key.pdf",
+        "verification": "review"
+      }
+    }
+  ]
+}
+```
+
+The workstation owns producing this file. The platform validates it and rejects unknown `schemaVersion` values.
+
+## Interface states
+
+F038 adds no student interface. The import report shows the counts and per-question reasons as a CLI table and as JSON. A staff read-only bank view is optional in F038; if it is built, it needs loading, empty, error and permission-denied states, plus a Storybook story.
+
+## Data and privacy
+
+- No personal data.
+- Content is copyrighted official material, so the bucket is private and is never served through public URLs; signed URLs come later, scoped to an attempt.
+- **Fixtures are fictional.** Real bank content and media are never committed to this repository.
+
+## Analytics events
+
+None.
+
+## Security considerations
+
+- Row-level security is on for every table, and `question_keys` has no `authenticated` grant at all.
+- Provenance never reaches candidates.
+- Import validation rejects path traversal in asset paths, oversized files and MIME mismatches.
+- The service-role key stays in the operator's environment only.
+
+## Relevant sources and ADRs
+
+- D-053 / `ADR-053-assessment-source-and-first-slice.md`
+- D-054 / `ADR-054-test-series-programme.md`
+- `docs/assessment/TEST_SERIES_PROGRAMME.md`
+- `docs/assessment/OFFICIAL_SOURCE_MANIFEST.md`
+- Content workstation: `docs/PDF_QUESTION_REGENERATION.md` and `docs/OFFICIAL_BANK.md`
+
+## Acceptance criteria
+
+1. Migrations create the tables, bucket, capabilities and policies. pgTAP proves:
+   - student and anonymous users cannot select or modify any `assessment_*` row or storage object;
+   - `assessment.bank.read` cannot read `question_keys`;
+   - `assessment.bank.import` requires MFA.
+2. The answer normaliser passes golden tests for every key format above, using fictional question IDs.
+3. A dry run on the fictional fixture export reports exact counts and quarantine reasons and writes nothing.
+4. A real run is idempotent: a second identical run changes nothing. A changed fixture creates version 2 and retires version 1.
+5. A fixture with a missing or SHA-mismatched asset is quarantined, not published.
+6. `pnpm verify` and `pnpm db:test` pass.
+
+## Verification plan
+
+- Vitest: the normaliser and the export validator.
+- pgTAP: grants and row-level security.
+- Local Supabase integration test: import the fixture into an empty database and run it again.
+- An independent security review of the grants before merge.
+
+## Open decisions
+
+- **D-055: bank-management permissions.**
+  - **Recommendation A:** both capabilities go to the Admin role only, with MFA for import and key access.
+  - B: also grant read access to a new Content Reviewer role.
+  - C: grant both to Teachers.
