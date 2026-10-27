@@ -11,6 +11,19 @@ This file maps the UCEED, CEED, NID and NIFT test series from the question bank 
 
 Content moves one way only: the workstation exports a versioned bank file and media, and F038 imports it. The platform never reads the workstation database.
 
+## Redesign build order (D-057)
+
+After the owner's Roughworks review, R1 is delivered in eight visible steps. Each ends with a page the owner can try:
+
+1. `/tests` shell and Papers page (F051)
+2. Exam window (F042)
+3. Bank in the local database (F038)
+4. Scoring and results (F044)
+5. Analytics, progress chart and practice (F046, F047)
+6. Google sign-in, onboarding and free papers (F039, F041)
+7. Part B uploads and sketches (F043, F048)
+8. Mocks, commerce and the live event (R2, R3)
+
 ## Release 1 — self-paced test series
 
 | ID   | Slice                          | Summary                                                                                                                                                                                                                                                                                |

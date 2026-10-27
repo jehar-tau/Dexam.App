@@ -1,6 +1,6 @@
 # F038 — Assessment question bank
 
-Status: Decision required (bank-management permissions). Specification drafted 2026-10-28 under D-053 B and D-054 A. No migration, import, real content or production activation yet.
+Status: Approved for implementation; D-055 Option A approved 2026-10-28 (Admin only, MFA for import and answer keys). Specification drafted 2026-10-28 under D-053 B and D-054 A. No migration, import, real content or production activation yet.
 
 ## Purpose and problem
 

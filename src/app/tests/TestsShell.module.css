@@ -1,0 +1,308 @@
+.frame {
+  --tests-sidebar-width: 264px;
+  min-height: 100vh;
+  background: var(--bg-page-warm);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+}
+
+.skip {
+  position: absolute;
+  left: var(--space-4);
+  top: -100px;
+  z-index: 50;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
+}
+
+.skip:focus {
+  top: var(--space-4);
+}
+
+/* ---------- Brand ---------- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
+  font-weight: var(--fw-bold);
+}
+
+.brandSub {
+  color: var(--text-muted);
+  font-weight: var(--fw-medium);
+}
+
+/* ---------- Top bar (phones and small tablets only) ---------- */
+
+.topBar {
+  display: none;
+}
+
+.menuButton {
+  min-height: var(--hit-target-min);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: var(--tests-sidebar-width);
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  border-right: 1px solid var(--border-default);
+  background: var(--surface-card);
+  overflow-y: auto;
+}
+
+.sidebarBrand {
+  padding: 0 var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2) var(--space-5);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-primary-active);
+  font-weight: var(--fw-semibold);
+}
+
+.profileText {
+  display: grid;
+  min-width: 0;
+}
+
+.profileName {
+  overflow: hidden;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileSub {
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+.nav {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--hit-target-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.navItem:hover {
+  background: var(--surface-hover);
+  color: var(--text-body);
+}
+
+.navItem:focus-visible,
+.menuButton:focus-visible,
+.themeButton:focus-visible,
+.footerButton:focus-visible,
+.footerLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.navItemActive,
+.navItemActive:hover {
+  background: var(--accent-extra-soft);
+  color: var(--accent-primary-active);
+  font-weight: var(--fw-semibold);
+}
+
+.sidebarFooter {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  margin-top: auto;
+  border-top: 1px solid var(--border-default);
+}
+
+.footerLink {
+  padding: 0 var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  color: var(--text-link);
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+.footerButton {
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--fs-body-sm);
+  cursor: pointer;
+}
+
+.footerButton:hover {
+  color: var(--text-body);
+}
+
+.footerNote {
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+}
+
+.themeButton {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.themeButton:hover {
+  color: var(--accent-primary);
+}
+
+.error {
+  margin: 0;
+  color: var(--color-danger, #b42318);
+  font-size: var(--fs-caption);
+}
+
+.scrim {
+  display: none;
+}
+
+/* ---------- Main ---------- */
+
+.main {
+  min-height: 100vh;
+  padding: var(--space-8) var(--space-8) var(--space-16);
+  margin-left: var(--tests-sidebar-width);
+  outline: none;
+}
+
+/* ---------- Small screens: top bar + off-canvas sidebar ---------- */
+
+@media (max-width: 899px) {
+  .topBar {
+    position: sticky;
+    top: 0;
+    /* Above the scrim and sidebar so "Close" stays reachable while the menu is open. */
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-default);
+    background: var(--surface-card);
+  }
+
+  /* Closed: off-screen and hidden from keyboard/assistive tech (visibility), which is
+     delayed until the slide-out finishes. */
+  .sidebar {
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform var(--duration-standard) var(--ease-standard),
+      visibility 0s linear var(--duration-standard);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebarOpen {
+    visibility: visible;
+    transform: none;
+    transition: transform var(--duration-standard) var(--ease-standard);
+  }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    display: block;
+    border: 0;
+    background: rgb(0 0 0 / 35%);
+    cursor: pointer;
+  }
+
+  .main {
+    padding: var(--space-6) var(--space-4) var(--space-12);
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .navItem {
+    transition: none;
+  }
+}

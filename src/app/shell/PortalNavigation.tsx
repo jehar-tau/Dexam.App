@@ -16,7 +16,7 @@ const studentLinks = [
   ['Student portal', '/student'],
   ['Coursework', '/student/coursework'],
   ['Assignments', '/student/assignments'],
-  ['Test series', '/student/tests'],
+  ['Test series', '/tests/papers'],
   ['Study checklist', '/student/study-checklist'],
   ['Class agenda', '/student/agenda'],
   ['Work archive', '/student/archive'],
@@ -103,7 +103,7 @@ export function PortalNavigation({
                   '/student',
                   '/student/coursework',
                   '/student/assignments',
-                  '/student/tests',
+                  '/tests/papers',
                 ].includes(path),
             )
             .map(([label, path]) => link(label, path, demoSearch))
