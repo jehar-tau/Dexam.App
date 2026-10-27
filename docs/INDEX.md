@@ -22,6 +22,7 @@ Use this map instead of reading the entire documentation tree.
 - `MAINTENANCE_OPERATIONS_PLAN.md` — current worker/cleanup inventory, failure handling and remaining production operating choices; no scheduler activation
 - `AUTH_EMAIL_SETUP_PLAN.md` — owner-confirmed designexam.com, public DNS observations and proposed authentication-sender setup; no live changes
 - `STAFF_SECURITY.md` — fictional-stage MFA, session invalidation, independent recovery, and failure/escalation operations
+- `QUALITY_GATE.md` — mandatory per-PR gate: test layers, threat review (web, AI/agent, cloning) and Claude review before push
 - `TESTING.md` — test layers and definition of done
 - `PILOT_READINESS.md` — fictional milestone evidence, acceptance gaps and distinct real-launch gates
 - `LOCAL_PILOT_RUNBOOK.md` — repeatable local pilot commands, safety preconditions and exact-fixture failure handling
