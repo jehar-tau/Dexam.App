@@ -33,6 +33,7 @@ import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
+import { StudentTestSeriesPage } from '../pages/StudentTestSeriesPage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
@@ -254,6 +255,14 @@ export const router = createBrowserRouter([
         element: (
           <StudentAccessBoundary>
             <StudentAssignmentsPage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'student/tests',
+        element: (
+          <StudentAccessBoundary>
+            <StudentTestSeriesPage />
           </StudentAccessBoundary>
         ),
       },
