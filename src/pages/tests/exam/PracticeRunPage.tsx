@@ -6,8 +6,13 @@ import { getSupabaseClient } from '../../../features/auth/supabaseClient'
 import { getBankAttempt } from '../../../features/testSeries/bankPaper'
 import { ExamWindow, StatusPage } from './ExamWindowPage'
 
-/** F047: runs a server practice set in the exam window, resuming it by attempt id. */
-export function PracticeRunPage() {
+/**
+ * Runs a server attempt by id in the exam window: F047 practice sets (no exam-centre login) and
+ * F040 mocks (the full exam-centre flow), resuming either where it was left.
+ */
+export function PracticeRunPage({ variant = 'practice' }: { variant?: 'practice' | 'mock' }) {
+  const home = variant === 'mock' ? '/tests/mocks' : '/tests/practice'
+  const noun = variant === 'mock' ? 'mock' : 'practice set'
   const { attemptId = '' } = useParams()
   const { session } = useAuth()
   const client = getSupabaseClient()
@@ -25,20 +30,24 @@ export function PracticeRunPage() {
   if (query.isError || !client) {
     return (
       <StatusPage
-        label="Practice"
-        title="This practice set could not be opened"
-        backTo="/tests/practice"
+        label={variant === 'mock' ? 'Mock' : 'Practice'}
+        title={`This ${noun} could not be opened`}
+        backTo={home}
       >
         <p>
           {query.error?.message ?? 'The question bank is not connected.'} It may have been replaced
-          by a newer set on the same topic, or already submitted.
+          or already submitted.
         </p>
       </StatusPage>
     )
   }
   if (!query.data) {
     return (
-      <StatusPage label="Practice" title="Loading your practice set…" backTo="/tests/practice" />
+      <StatusPage
+        label={variant === 'mock' ? 'Mock' : 'Practice'}
+        title={`Loading your ${noun}…`}
+        backTo={home}
+      />
     )
   }
   const opened = query.data
@@ -46,10 +55,10 @@ export function PracticeRunPage() {
     <ExamWindow
       key={opened.attemptId}
       owner={owner}
-      storeKey={`practice-${opened.attemptId}`}
+      storeKey={`${variant}-${opened.attemptId}`}
       label={opened.paper.title}
-      exitTo="/tests/practice"
-      backTo="/tests/practice"
+      exitTo={home}
+      backTo={home}
       paper={opened.paper}
       search=""
       server={{ client, opened }}

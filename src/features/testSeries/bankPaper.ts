@@ -35,7 +35,7 @@ const questionSchema = z.object({
 
 const attemptPayload = z.object({
   attemptId: z.string().uuid(),
-  kind: z.enum(['paper', 'practice']).default('paper'),
+  kind: z.enum(['paper', 'practice', 'mock']).default('paper'),
   title: z.string().nullable().optional(),
   timed: z.boolean().default(true),
   paperId: z.string(),
@@ -128,6 +128,22 @@ export function buildBankPaper(
     }
   }
   const total = Math.max(payload.objectiveCount, shown)
+  if (payload.kind === 'mock') {
+    return {
+      title: payload.title ?? title,
+      durationMinutes: payload.durationMinutes,
+      sections,
+      source: 'bank',
+      notes: [
+        'A full mock built for you from the common question bank to the 2026 pattern, with questions you have not seen before.',
+        ...(shown < total
+          ? [
+              `The bank had ${shown} of the ${total} questions this pattern needs that you have not seen yet, so the time is scaled to ${payload.durationMinutes} minutes.`,
+            ]
+          : []),
+      ],
+    }
+  }
   const official = officialMinutes[payload.exam]
   const notes: string[] = []
   if (official) {
@@ -257,7 +273,7 @@ const keySchema = z.union([
 
 const resultPayload = z.object({
   attemptId: z.string().uuid(),
-  kind: z.enum(['paper', 'practice']).default('paper'),
+  kind: z.enum(['paper', 'practice', 'mock']).default('paper'),
   title: z.string().nullable().optional(),
   paperId: z.string(),
   startedAt: z.string().nullable(),
@@ -467,7 +483,7 @@ const progressPayload = z.object({
   attempts: z.array(
     z.object({
       attemptId: z.string().uuid(),
-      kind: z.enum(['paper', 'practice']),
+      kind: z.enum(['paper', 'practice', 'mock']),
       title: z.string().nullable(),
       paperId: z.string(),
       exam: z.string(),
@@ -496,4 +512,47 @@ export async function fetchProgress(client: SupabaseClient): Promise<Progress> {
   const parsed = progressPayload.safeParse(result.data as unknown)
   if (!parsed.success) throw new BankPaperError('Your progress could not be read.')
   return parsed.data
+}
+
+export class MockLockedError extends BankPaperError {}
+
+/** Builds (or resumes) the student's mock for a blueprint; null when nothing unseen is left. */
+export async function startMock(client: SupabaseClient, key: string): Promise<string | null> {
+  const result = await client.rpc('start_assessment_mock', { p_key: key })
+  if (result.error) {
+    if (result.error.code === 'P0002') return null
+    if (result.error.code === 'DX001') {
+      throw new MockLockedError(
+        'You have used your free mock for this exam. More mocks unlock with a plan.',
+      )
+    }
+    throw new BankPaperError('The mock could not be built. Please try again.')
+  }
+  const parsed = z.object({ attemptId: z.string().uuid() }).safeParse(result.data as unknown)
+  if (!parsed.success) throw new BankPaperError('The mock could not be read.')
+  return parsed.data.attemptId
+}
+
+const mockSchema = z.array(
+  z.object({
+    key: z.string(),
+    exam: z.string(),
+    level: z.enum(['bdes', 'mdes']),
+    title: z.string(),
+    minutes: z.number().int(),
+    sections: z.array(z.object({ type: z.enum(['nat', 'msq', 'mcq']), count: z.number().int() })),
+    available: z.number().int(),
+    total: z.number().int(),
+    taken: z.number().int(),
+    openAttemptId: z.string().uuid().nullable(),
+    canStart: z.boolean(),
+  }),
+)
+
+export type MockBlueprint = z.infer<typeof mockSchema>[number]
+
+export async function fetchMocks(client: SupabaseClient): Promise<MockBlueprint[]> {
+  const result = await client.rpc('list_assessment_mocks')
+  if (result.error) throw new BankPaperError('Mocks could not be loaded.')
+  return mockSchema.parse(result.data as unknown)
 }

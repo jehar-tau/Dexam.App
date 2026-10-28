@@ -121,6 +121,7 @@ const percentOf = (attempt: ProgressAttempt) =>
 
 function attemptName(attempt: ProgressAttempt) {
   if (attempt.kind === 'practice') return attempt.title ?? 'Practice set'
+  if (attempt.kind === 'mock') return attempt.title ?? 'Mock'
   const paper = papers.find((item) => bankPaperId(item) === attempt.paperId)
   return paper ? paperLabel(paper) : attempt.paperId.toUpperCase()
 }
@@ -152,7 +153,8 @@ export function TestsAnalyticsPage() {
     )
   }
 
-  const paperAttempts = progress.attempts.filter((attempt) => attempt.kind === 'paper')
+  // Full papers and mocks are both timed full-length sittings.
+  const paperAttempts = progress.attempts.filter((attempt) => attempt.kind !== 'practice')
   const practiceAttempts = progress.attempts.filter((attempt) => attempt.kind === 'practice')
   const totals = progress.topics.reduce(
     (sum, topic) => ({ total: sum.total + topic.total, scored: sum.scored + topic.scored }),

@@ -24,7 +24,7 @@ const partBSchema = z.object({
   attemptId: z.string().uuid(),
   paperId: z.string(),
   exam: z.string(),
-  kind: z.enum(['paper', 'practice']),
+  kind: z.enum(['paper', 'practice', 'mock']),
   partAStatus: z.enum(['open', 'in_progress', 'submitted']),
   status: z.enum(['none', 'drawing', 'uploading', 'submitted', 'evaluated']),
   available: z.number().int(),

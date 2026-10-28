@@ -22,7 +22,7 @@ After the owner's Roughworks review, R1 is delivered in eight visible steps. Eac
 5. Analytics, progress chart and practice (F046, F047; see `docs/features/F046-F047-progress-and-practice.md`)
 6. Google sign-in, onboarding and free papers (F039, F041; Google provider pending D-058)
 7. Part B uploads and sketches (F043, F048; see `docs/features/F043-F048-part-b-uploads-and-evaluation.md`)
-8. Mocks, commerce and the live event (R2, R3)
+8. Mocks (F040, see `docs/features/F040-mock-generator.md`), commerce and the live event (R2, R3)
 
 ## Release 1 — self-paced test series
 
