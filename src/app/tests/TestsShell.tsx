@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { useAuth } from '../../features/auth/AuthContext'
+import { memberIdFromEmail } from '../../features/testSeries/candidate'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestsTheme } from '../../features/testSeries/useTestsTheme'
 import styles from './TestsShell.module.css'
@@ -93,12 +94,6 @@ const navItems: NavItem[] = [
     ),
   },
 ]
-
-function memberIdFromEmail(email: string | undefined): string | null {
-  if (!email) return null
-  const [local, domain] = email.split('@')
-  return domain === 'members.dexam.invalid' && local ? local.toUpperCase() : null
-}
 
 export function TestsShell() {
   const location = useLocation()

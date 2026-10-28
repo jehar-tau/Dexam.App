@@ -1,7 +1,7 @@
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 
 import { previewSearch } from '../../features/testSeries/previewSearch'
-import { Button, EmptyState } from '../../components'
+import { EmptyState } from '../../components'
 import {
   exams,
   findPaper,
@@ -91,10 +91,12 @@ export function TestsPaperPage() {
           </div>
         </dl>
         <div className={styles.actions}>
-          <Button disabled>Start timed paper</Button>
+          <Link className={styles.start} to={`/tests/exam/${paper.id}${search}`}>
+            Start timed paper
+          </Link>
           <p className={styles.note}>
-            The full exam window (exam-centre login, instructions, timed exam screen) is the next
-            build step.
+            Opens the exam window. Until the question bank is connected, it uses a fictional
+            practice paper.
           </p>
         </div>
       </section>

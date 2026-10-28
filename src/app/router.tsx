@@ -43,6 +43,7 @@ import {
   TestsComingSoonPage,
   TestsPaperPage,
 } from '../pages/tests/TestsSectionPages'
+import { ExamWindowPage } from '../pages/tests/exam/ExamWindowPage'
 
 export const router = createBrowserRouter([
   {
@@ -400,6 +401,15 @@ export const router = createBrowserRouter([
       { path: 'health', element: <HealthPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
+  },
+  {
+    // F042: the exam window is full screen, outside the test-series shell.
+    path: '/tests/exam/:paperId',
+    element: (
+      <StudentAccessBoundary>
+        <ExamWindowPage />
+      </StudentAccessBoundary>
+    ),
   },
   {
     // D-057: the test series has its own shell, separate from the coaching portal.
