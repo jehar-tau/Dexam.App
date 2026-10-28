@@ -16,7 +16,7 @@ Content moves one way only: the workstation exports a versioned bank file and me
 After the owner's Roughworks review, R1 is delivered in eight visible steps. Each ends with a page the owner can try:
 
 1. `/tests` shell and Papers page (F051)
-2. Exam window (F042)
+2. Exam window (F042 phase 1; the server timer and autosave follow F038)
 3. Bank in the local database (F038)
 4. Scoring and results (F044)
 5. Analytics, progress chart and practice (F046, F047)

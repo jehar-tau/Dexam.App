@@ -107,7 +107,10 @@ describe('Test-series shell and Papers page', () => {
     renderTests('/tests/papers?preview=1')
     await user.click(screen.getByRole('link', { name: '2025, best 128 of 200, 2 attempts' }))
     expect(screen.getByRole('heading', { name: 'UCEED 2025' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Start timed paper' })).toBeDisabled()
+    expect(screen.getByRole('link', { name: 'Start timed paper' })).toHaveAttribute(
+      'href',
+      '/tests/exam/uceed-2025?preview=1',
+    )
 
     renderTests('/tests/papers/not-a-paper?preview=1')
     expect(screen.getByRole('heading', { name: 'Paper not found' })).toBeVisible()
