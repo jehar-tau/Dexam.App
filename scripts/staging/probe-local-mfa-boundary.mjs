@@ -27,9 +27,13 @@ try {
   phase = 'signup-denial'
   const signup = await client.auth.signUp({ email, password })
   if (signup.data?.user) userId = signup.data.user.id
-  if (!signup.error || signup.error.code !== 'signup_disabled')
-    throw new Error('Public signup was not denied.')
-  console.log('Public signup remains disabled.')
+  // D-058: public sign-up is either switched off or refused by the Google-only hook (403).
+  const refused =
+    signup.error &&
+    (signup.error.code === 'signup_disabled' ||
+      (signup.error.status === 403 && /only be created with Google/.test(signup.error.message)))
+  if (!refused) throw new Error('Public email signup was not denied.')
+  console.log('Public email signup remains denied.')
   phase = 'creation'
   const created = await admin.auth.admin.createUser({ email, password, email_confirm: true })
   if (created.error || !created.data.user) throw new Error('Local fixture creation failed.')

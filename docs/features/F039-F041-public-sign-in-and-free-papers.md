@@ -2,7 +2,7 @@
 
 Status: Implemented locally 2026-10-28 under D-054 A and D-057; in review.
 
-- **Google sign-in is not switched on yet:** that waits for Decision Gate D-058 below and the owner's Google OAuth client.
+- **Google sign-in is not switched on yet:** D-058 is decided (Option A, Google-only sign-up hook), but it still waits for the owner's Google OAuth client.
 - **Everything after sign-in is built and was tried locally:** account setup, onboarding, access rules, free papers and locks. The local test used a fictional candidate with a simulated Google identity.
 
 ## Purpose
@@ -61,29 +61,27 @@ B.Des slots are UCEED, NID B.Des and NIFT B.Des; M.Des slots are CEED, NID M.Des
 
 ## Decision Gates (owner)
 
-**D-058 — opening sign-up to Google only.**
+**D-058 — opening sign-up to Google only: decided, Option A** (`ADR-058-google-only-public-sign-up.md`).
 
-Supabase blocks every new account while `auth.enable_signup = false`. The email provider must stay on, because staff and students sign in with it, so switching sign-up on would also let anyone create an email/password account.
-
-1. **Option A (recommended):** switch sign-up on, and add a Supabase "before user created" auth hook that rejects every new user whose provider is not Google.
-   - **Proof first:** on staging, confirm that staff invites and student activation, which create users with the service role, still work.
-   - **Reason:** this is the only option that admits Google candidates while closing email sign-up at the source.
-   - **Reversibility:** turning sign-up off again restores today's behaviour.
-2. **Option B:** switch sign-up on with no hook.
-   - **Effect:** stray email sign-ups would still get no test-series access (`provision_google_candidate()` refuses them), but they would create auth users.
-   - **Use:** acceptable only for local testing.
-3. **Option C:** keep sign-up off, and invite candidates by hand. This does not scale to public sales.
+- **What is on:** public sign-up, with the `public.hook_before_user_created` hook (migration `20261028050000`). The hook admits Google sign-ups, plus the email account behind a staff invitation that is being delivered, and rejects everything else.
+- **Proven on a throwaway local stack:**
+  - public email sign-up rejected (403);
+  - public phone sign-up rejected;
+  - student activation (`createUser`) unaffected;
+  - staff invite allowed only with a delivering invitation.
+- **Local config:** `config.toml` now switches sign-up and the hook on.
+- **Staging:** proven after the migration deploys (see ADR-058 for the steps).
 
 **F039 gate — linking a Google account to an existing coaching Member ID.**
 
 - **Interim default:** never linked automatically. A coaching student who signs in with Google becomes a separate candidate.
 - **Alternatives:** an explicit, verified linking flow later; or block Google sign-in for emails that belong to a coaching student.
 
-**To switch Google on locally after D-058:**
+**To switch Google on locally once the OAuth client arrives:**
 
 1. Create a Google OAuth client with the authorised redirect URI `http://127.0.0.1:54321/auth/v1/callback`.
 2. Set `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET`.
-3. Set `[auth.external.google] enabled = true` and apply the chosen sign-up setting.
+3. Set `[auth.external.google] enabled = true` (sign-up and the hook are already on).
 4. Add `http://127.0.0.1:5180/tests/welcome` to `additional_redirect_urls`.
 5. Restart the local stack.
 
