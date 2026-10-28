@@ -140,3 +140,27 @@ test('the student portal and the test series share one left sidebar', async ({ p
   await expect(page).toHaveURL(/\/student\/coursework\?preview=1$/)
   await expect(page.getByRole('heading', { name: 'Your coursework.' })).toBeVisible()
 })
+
+test('drawing papers list NID DAT 3-hour drawing mocks and Part B papers in preview', async ({
+  page,
+}) => {
+  await page.goto('/tests/drawing?preview=1')
+  const nav = page.getByRole('navigation', { name: 'Student portal sections' })
+  await expect(nav.getByRole('link', { name: 'Drawing' })).toHaveAttribute('aria-current', 'page')
+  const mock = page.getByRole('region', { name: 'NID DAT B.Des drawing mock 1' })
+  await expect(mock).toContainText('6 tasks · 180 minutes · 100 marks')
+  await expect(page.getByRole('region', { name: 'UCEED 2025 · Part B' })).toContainText(
+    '60 minutes',
+  )
+  await page.getByRole('button', { name: 'M.Des' }).click()
+  await expect(page.getByRole('region', { name: 'CEED 2026 · Part B' })).toContainText(
+    '120 minutes',
+  )
+})
+
+test('the owner question review is never part of a build', async ({ page }) => {
+  await page.goto('/review/questions')
+  await expect(page.getByRole('heading', { name: 'Question review' })).toHaveCount(0)
+  const response = await page.request.get('/__review/bank.json')
+  expect(response.headers()['content-type'] ?? '').not.toContain('application/json')
+})

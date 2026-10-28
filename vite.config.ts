@@ -1,8 +1,11 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
+import { bankReviewPlugin } from './scripts/dev/bankReviewPlugin.ts'
+
 export default defineConfig({
-  plugins: [react()],
+  // D-060: the owner's local question review reads the workstation export (dev server only).
+  plugins: [react(), bankReviewPlugin(process.env.DEXAM_REVIEW_DATA)],
   build: {
     rolldownOptions: {
       output: {
@@ -43,6 +46,7 @@ export default defineConfig({
       'src/**/*.test.{ts,tsx}',
       'scripts/staging/**/*.test.mjs',
       'scripts/assessment/**/*.test.ts',
+      'scripts/dev/**/*.test.ts',
     ],
     setupFiles: './src/test/setup.ts',
     coverage: {

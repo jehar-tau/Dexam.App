@@ -53,6 +53,7 @@ import { TestsLivePage } from '../pages/tests/TestsLivePage'
 import { TestsOverviewPage } from '../pages/tests/TestsOverviewPage'
 import { LiveEventsStaffPage } from '../pages/LiveEventsStaffPage'
 import { TestsPlansPage } from '../pages/tests/TestsPlansPage'
+import { TestsDrawingPage } from '../pages/tests/TestsDrawingPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
 import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
 import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
@@ -423,6 +424,18 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // D-060: the owner's question review runs on the local dev server only (it reads the content
+  // workstation's export through the dev-server plugin) and is never part of a build.
+  ...(import.meta.env.DEV
+    ? [
+        {
+          path: '/review/questions',
+          lazy: async () => ({
+            Component: (await import('../pages/review/QuestionReviewPage')).QuestionReviewPage,
+          }),
+        },
+      ]
+    : []),
   {
     // F040: mocks run in the full exam-centre window.
     path: '/tests/mock/run/:attemptId',
@@ -486,6 +499,8 @@ export const router = createBrowserRouter([
       { path: 'results/:attemptId', element: <TestsResultPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
       { path: 'mocks', element: <TestsMocksPage /> },
+      // D-060: timed drawing papers (Part B on its own, NID DAT drawing mocks, NIFT CAT).
+      { path: 'drawing', element: <TestsDrawingPage /> },
       { path: 'live/:key', element: <TestsLivePage /> },
       { path: 'plans', element: <TestsPlansPage /> },
       // Analytics merged into the Overview; Bookmarks and Sketches retired (D-059).

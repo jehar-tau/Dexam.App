@@ -59,6 +59,9 @@ export function contentHash(question: ExportQuestion): string {
   const content: Partial<ExportQuestion> = { ...question }
   delete content.provenance
   delete content.externalKey
+  // D-060 fields join the hash only when set, so earlier text questions keep their versions.
+  if (content.display === 'text') delete content.display
+  if (content.taskMarks == null) delete content.taskMarks
   return createHash('sha256').update(JSON.stringify(content)).digest('hex')
 }
 
@@ -115,7 +118,8 @@ export function planQuestion(
       new Set(keys).size !== keys.length ||
       options.some(
         (option) =>
-          (!option.text && option.assetIndex === null) ||
+          // A printed block carries its options; the buttons then only need their letters.
+          (!option.text && option.assetIndex === null && question.display !== 'block') ||
           (option.assetIndex !== null && question.assets[option.assetIndex] === undefined),
       )
     )
@@ -128,6 +132,9 @@ export function planQuestion(
     answer = result.answer
     result.reasons.forEach((reason) => reasons.add(reason))
   }
+
+  if (question.display === 'block' && !question.assets.some((asset) => asset.role === 'figure'))
+    reasons.add('block-missing')
 
   for (const asset of question.assets) {
     const check = media.get(asset.path)

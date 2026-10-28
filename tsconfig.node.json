@@ -19,6 +19,7 @@
     "eslint.config.js",
     "tests/e2e",
     "scripts/assessment",
+    "scripts/dev",
     ".storybook/main.ts",
     ".storybook/preview.tsx"
   ]

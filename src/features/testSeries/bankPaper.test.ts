@@ -69,6 +69,21 @@ const urls = new Map([
   ['cd/opt.png', 'https://local/sign/cd'],
 ])
 
+describe('printed blocks (D-060)', () => {
+  it('shows the first figure as the printed question and keeps the rest as figures', () => {
+    const blockPayload: BankAttemptPayload = {
+      ...payload,
+      questions: [{ ...payload.questions[1]!, display: 'block' }],
+    }
+    const question = buildBankPaper('UCEED 2025', blockPayload, urls).sections[0]!.questions[0]!
+    expect(question.block).toEqual({ src: 'https://local/sign/ab', width: 300, height: 200 })
+    expect(question.images).toEqual([])
+    const textQuestion = buildBankPaper('UCEED 2025', payload, urls).sections[1]!.questions[0]!
+    expect(textQuestion.block).toBeUndefined()
+    expect(textQuestion.images).toHaveLength(1)
+  })
+})
+
 describe('buildBankPaper', () => {
   it('groups questions into sections in paper order with the server marking and time', () => {
     const paper = buildBankPaper('UCEED 2025', payload, urls)

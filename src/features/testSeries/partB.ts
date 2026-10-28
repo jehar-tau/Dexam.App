@@ -24,10 +24,12 @@ const partBSchema = z.object({
   attemptId: z.string().uuid(),
   paperId: z.string(),
   exam: z.string(),
-  kind: z.enum(['paper', 'practice', 'mock', 'live']),
+  kind: z.enum(['paper', 'practice', 'mock', 'live', 'drawing']),
   partAStatus: z.enum(['open', 'in_progress', 'submitted']),
   status: z.enum(['none', 'drawing', 'uploading', 'submitted', 'evaluated']),
   available: z.number().int(),
+  /** Drawing time for this sitting, when the server knows it before Part B begins. */
+  minutes: z.number().int().nullable().optional(),
   startedAt: z.string().nullable(),
   drawingDeadline: z.string().nullable(),
   uploadDeadline: z.string().nullable(),
@@ -40,6 +42,7 @@ const partBSchema = z.object({
       id: z.string().uuid(),
       number: z.string().nullable(),
       prompt: z.string(),
+      display: z.enum(['text', 'block']).optional(),
       figures: z.array(
         z.object({ path: z.string(), width: z.number().nullable(), height: z.number().nullable() }),
       ),

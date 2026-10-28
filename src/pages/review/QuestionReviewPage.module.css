@@ -1,0 +1,296 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 64rem;
+  min-height: 100vh;
+  padding: var(--space-6) var(--space-4) var(--space-16);
+  margin: 0 auto;
+  background: var(--bg-page-warm);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3) var(--space-6);
+  align-items: end;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-h2);
+}
+
+.note {
+  margin: var(--space-1) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.counts {
+  display: flex;
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.counts div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.counts dt {
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+}
+
+.counts dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+}
+
+.progress {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 8px;
+  accent-color: var(--accent-primary);
+}
+
+.filters {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+}
+
+.filters label {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+}
+
+.filters select,
+.filters input {
+  min-height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+  font-size: var(--fs-body-sm);
+}
+
+.search {
+  flex: 1 1 12rem;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-6);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-left: 4px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+}
+
+.cardOk {
+  border-left-color: var(--color-success);
+}
+
+.cardFix {
+  border-left-color: var(--color-warning);
+}
+
+.source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.chip,
+.chipWarn {
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--surface-hover);
+  font-size: var(--fs-caption);
+}
+
+.chipWarn {
+  background: var(--color-warning-soft);
+}
+
+/* A slice of the exam window: question bar, body and answer controls. */
+.examPane {
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+}
+
+.drawingNote {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  font-size: var(--fs-body-sm);
+}
+
+.holds {
+  color: var(--text-secondary);
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-link);
+  font: inherit;
+  cursor: pointer;
+}
+
+.pages {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
+
+.pages img {
+  width: min(100%, 520px);
+  height: auto;
+  border: 1px solid var(--border-default);
+  background: #fff;
+}
+
+.verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.okButton,
+.fixButton {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.okButton[aria-pressed='true'] {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.fixButton[aria-pressed='true'] {
+  border-color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+
+.okButton:focus-visible,
+.fixButton:focus-visible,
+.linkButton:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.saved {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
+
+.fixForm {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+}
+
+.fixForm fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-1) var(--space-4);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-size: var(--fs-body-sm);
+}
+
+.fixForm legend {
+  margin-bottom: var(--space-2);
+  font-weight: var(--fw-semibold);
+}
+
+.noteField {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-body-sm);
+}
+
+.noteField textarea {
+  padding: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+}
+
+.fixForm .fixButton {
+  justify-self: start;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .header {
+    grid-template-columns: 1fr;
+  }
+}

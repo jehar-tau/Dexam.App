@@ -150,6 +150,17 @@ const testItems: NavItem[] = [
       </svg>
     ),
   },
+  {
+    label: 'Drawing',
+    path: '/tests/drawing',
+    preview: true,
+    icon: (
+      <svg {...iconProps}>
+        <path d="M4 20l4-1 11-11-3-3L5 16z" />
+        <path d="M14 6l3 3" />
+      </svg>
+    ),
+  },
 ]
 
 const bellIcon = (

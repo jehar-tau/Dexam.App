@@ -114,6 +114,28 @@ describe('planImport', () => {
     expect(byKey(plan, 'fiction-2026-q5').state).toBe('ready')
   })
 
+  it('serves an approved printed block with letter-only options (D-060)', () => {
+    const bank = fixture()
+    const textHash = contentHash(bank.questions[0])
+    bank.questions[0].display = 'block'
+    bank.questions[0].options = ['A', 'B', 'C', 'D'].map((key) => ({ key, text: '', asset: null }))
+    const plan = planImport(bank, new Map(), allMedia)
+    expect(byKey(plan, 'fiction-2026-q1')).toMatchObject({ state: 'ready', reasons: [] })
+    // Switching to the printed block is a content change: a new version.
+    expect(contentHash(bank.questions[0])).not.toBe(textHash)
+
+    bank.questions[0].assets = []
+    expect(byKey(planImport(bank, new Map(), allMedia), 'fiction-2026-q1').reasons).toContain(
+      'block-missing',
+    )
+  })
+
+  it('keeps text questions on their existing versions (no D-060 fields in the hash)', () => {
+    const question = fixture().questions[1]
+    const withDefaults = { ...question, display: 'text' as const, taskMarks: null }
+    expect(contentHash(withDefaults)).toBe(contentHash(question))
+  })
+
   it('refuses an export that lists a question twice', () => {
     const bank = fixture()
     bank.questions.push(bank.questions[0])

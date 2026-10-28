@@ -20,6 +20,8 @@ export type ExamQuestion = {
   number?: string
   figure?: ExamFigureId
   images?: ExamImage[]
+  /** D-060: the question exactly as printed; its options are printed inside it. */
+  block?: ExamImage
   options?: ExamOption[]
 }
 

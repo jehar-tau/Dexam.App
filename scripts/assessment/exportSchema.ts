@@ -52,6 +52,10 @@ export const exportQuestion = z.object({
   difficulty: z.enum(['easy', 'medium', 'hard', 'unassessed']).default('unassessed'),
   estimatedSeconds: z.number().int().min(1).max(3600).nullable().optional(),
   visualDependency: z.boolean().default(false),
+  // D-060: 'block' shows the exact printed crop (the first figure) instead of the text.
+  display: z.enum(['text', 'block']).default('text'),
+  // Marks for a drawing task when the paper sets them (NID DAT tasks differ).
+  taskMarks: z.number().min(0.5).max(200).nullable().optional(),
   licence: z.string().min(1).max(80),
   sourceKind: z.enum(['official', 'owner_authorized', 'original']),
   // Workstation-side reasons the question cannot be served yet (for example a crop awaiting review).

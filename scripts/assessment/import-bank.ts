@@ -271,16 +271,41 @@ async function writeQuestion(item: PlannedQuestion) {
   if (error) throw new Error(error.message)
 }
 
+// D-060: display mode and task marks live beside the imported version.
+async function writePresentation(item: PlannedQuestion) {
+  const { display, taskMarks } = item.question
+  const update = await supabase
+    .from('assessment_questions')
+    .update({ display_mode: display, task_marks: taskMarks ?? null })
+    .eq('external_key', item.question.externalKey)
+    .eq('version', item.version)
+  if (update.error) throw new Error(`presentation: ${update.error.message}`)
+}
+
 const writes = plan.items.filter((item) => item.action !== 'unchanged')
 let done = 0
 await pool(writes, 8, async (item) => {
   try {
     await writeQuestion(item)
+    await writePresentation(item)
   } catch (error) {
     failures.push({ externalKey: item.question.externalKey, message: String(error) })
   }
   done += 1
   if (done % 250 === 0) console.log(`… ${done}/${writes.length}`)
+})
+
+// Unchanged questions may still need their presentation set (first run after D-060).
+const presentation = plan.items.filter(
+  (item) =>
+    item.action === 'unchanged' && (item.question.display === 'block' || item.question.taskMarks),
+)
+await pool(presentation, 8, async (item) => {
+  try {
+    await writePresentation(item)
+  } catch (error) {
+    failures.push({ externalKey: item.question.externalKey, message: String(error) })
+  }
 })
 
 await supabase
