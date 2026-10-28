@@ -9,6 +9,7 @@ import {
   signPartBMedia,
   type PartB,
 } from '../../features/testSeries/partB'
+import { PrintedBlock } from './exam/PrintedBlock'
 import styles from './PartBResultCard.module.css'
 
 /**
@@ -79,9 +80,26 @@ function SheetList({ partB, urls }: { partB: PartB; urls: Map<string, string> })
     <ol className={styles.tasks}>
       {partB.tasks.map((task, index) => (
         <li key={task.id} className={styles.task}>
-          <p className={styles.prompt}>
-            <strong>Task {index + 1}.</strong> {task.prompt}
-          </p>
+          {task.display === 'block' && task.figures[0] && urls.get(task.figures[0].path) ? (
+            <>
+              <p className={styles.prompt}>
+                <strong>Task {index + 1}</strong>
+              </p>
+              <PrintedBlock
+                image={{
+                  src: urls.get(task.figures[0].path)!,
+                  width: task.figures[0].width,
+                  height: task.figures[0].height,
+                }}
+                prompt={task.prompt}
+                label={`Task ${index + 1}`}
+              />
+            </>
+          ) : (
+            <p className={styles.prompt}>
+              <strong>Task {index + 1}.</strong> {task.prompt}
+            </p>
+          )}
           <div className={styles.sheets}>
             {task.uploads.length === 0 ? (
               <span className={styles.note}>No sheet uploaded.</span>

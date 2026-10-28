@@ -28,6 +28,7 @@ import {
   type ResultQuestion,
 } from '../../features/testSeries/scoring'
 import { ExamFigure } from './exam/ExamFigure'
+import { PrintedBlock } from './exam/PrintedBlock'
 import { PartBResultCard } from './PartBResultCard'
 import styles from './TestsResultPage.module.css'
 
@@ -378,7 +379,11 @@ function ReviewItem({ question, index }: { question: ResultQuestion; index: numb
           </span>
         </span>
       </div>
-      <p className={styles.prompt}>{question.prompt}</p>
+      {question.block ? (
+        <PrintedBlock image={question.block} prompt={question.prompt} label={`Question ${index}`} />
+      ) : (
+        <p className={styles.prompt}>{question.prompt}</p>
+      )}
       {question.figure ? <ExamFigure id={question.figure} /> : null}
       {question.figures.map((figure, figureIndex) => (
         <img
@@ -413,7 +418,7 @@ function ReviewItem({ question, index }: { question: ResultQuestion; index: numb
               >
                 <span className={styles.optionKey}>{option.key}</span>
                 <span className={styles.optionText}>
-                  {option.text}
+                  {question.block ? null : option.text}
                   {option.image ? <img src={option.image} alt={`Option ${option.key}`} /> : null}
                 </span>
                 <span className={styles.optionTags}>

@@ -78,6 +78,8 @@ export type ResultQuestion = {
   number: string | null
   type: ExamQuestionKind
   prompt: string
+  /** D-060: the question exactly as printed. */
+  block?: ExamImage
   figures: ExamImage[]
   /** Fictional preview figure. */
   figure?: ExamFigureId

@@ -156,6 +156,45 @@ describe('Part B page', () => {
     )
   })
 
+  it('runs a standalone drawing paper on its own clock and shows printed tasks', async () => {
+    const user = userEvent.setup()
+    const soon = new Date(Date.now() + 180 * 60_000).toISOString()
+    let state = partB({
+      kind: 'drawing',
+      paperId: 'nid-bdes-dat-mock-01',
+      exam: 'nid',
+      available: 6,
+      minutes: 180,
+    })
+    mocks.client = client({
+      get_part_b: () => state,
+      begin_part_b: () =>
+        (state = {
+          ...state,
+          status: 'drawing',
+          drawingDeadline: soon,
+          tasks: [
+            task({
+              display: 'block',
+              figures: [{ path: 'ab/printed.png', width: 600, height: 300 }],
+            }),
+          ],
+        }),
+    })
+    renderApp(routes, [`/tests/part-b/${attemptId}`])
+    expect(await screen.findByRole('heading', { name: 'Drawing paper' })).toBeVisible()
+    expect(screen.getByText(/6 drawing tasks and 180 minutes of drawing time/)).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Back to drawing papers' })).toHaveAttribute(
+      'href',
+      '/tests/drawing',
+    )
+    await user.click(screen.getByRole('button', { name: 'Begin drawing' }))
+    expect(await screen.findByRole('img', { name: 'Task 1, as printed' })).toHaveAttribute(
+      'src',
+      'https://local/ab/printed.png',
+    )
+  })
+
   it('refuses unsupported files before uploading', async () => {
     const user = userEvent.setup({ applyAccept: false })
     const soon = new Date(Date.now() + 60 * 60_000).toISOString()

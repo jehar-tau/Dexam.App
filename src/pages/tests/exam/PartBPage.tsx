@@ -19,6 +19,7 @@ import {
   type PartBTask,
 } from '../../../features/testSeries/partB'
 import { PreStartFrame } from './ExamPreStart'
+import { PrintedBlock } from './PrintedBlock'
 import styles from './ExamWindow.module.css'
 
 /** F043: Part B after Part A — drawing on paper, then a short window to upload the sheets. */
@@ -62,7 +63,7 @@ export function PartBPage() {
     onSuccess: refresh,
   })
 
-  const label = 'Part B'
+  const label = query.data?.partB.kind === 'drawing' ? 'Drawing paper' : 'Part B'
   if (query.isError || !client) {
     return (
       <PreStartFrame paperLabel={label}>
@@ -88,22 +89,26 @@ export function PartBPage() {
   const { partB, urls } = query.data
   const drawingEnds = partB.drawingDeadline ? Date.parse(partB.drawingDeadline) : null
   const uploadEnds = partB.uploadDeadline ? Date.parse(partB.uploadDeadline) : null
-  const resultPath = `/tests/results/${attemptId}`
+  // A standalone drawing paper has no Part A result; it returns to the drawing papers.
+  const drawingPaper = partB.kind === 'drawing'
+  const resultPath = drawingPaper ? '/tests/drawing' : `/tests/results/${attemptId}`
+  const backLabel = drawingPaper ? 'Back to drawing papers' : 'Back to result'
 
   if (partB.status === 'none') {
     return (
       <PreStartFrame paperLabel={label}>
         <section className={styles.instructions} aria-labelledby="part-b-title">
           <h1 id="part-b-title" className={styles.instructionsTitle}>
-            Part B: drawing
+            {drawingPaper ? 'Drawing paper' : 'Part B: drawing'}
           </h1>
           <div className={styles.instructionsBody}>
             {partB.available ? (
               <>
                 <p>
                   This paper has {partB.available} drawing{' '}
-                  {partB.available === 1 ? 'task' : 'tasks'}. Draw your answers on paper. The clock
-                  starts when you begin.
+                  {partB.available === 1 ? 'task' : 'tasks'}
+                  {partB.minutes ? ` and ${partB.minutes} minutes of drawing time` : ''}. Draw your
+                  answers on paper. The clock starts when you begin.
                 </p>
                 <ol>
                   <li>Keep A4 sheets, pencils and colours ready before you begin.</li>
@@ -118,7 +123,11 @@ export function PartBPage() {
                 </ol>
               </>
             ) : (
-              <p>This paper has no Part B tasks ready yet. Your Part A result is complete.</p>
+              <p>
+                {drawingPaper
+                  ? 'This paper has no drawing tasks ready yet.'
+                  : 'This paper has no Part B tasks ready yet. Your Part A result is complete.'}
+              </p>
             )}
             {begin.isError ? (
               <p className={styles.error} role="alert">
@@ -128,7 +137,7 @@ export function PartBPage() {
           </div>
           <div className={styles.instructionsFooter}>
             <Link className={styles.secondaryAction} to={resultPath}>
-              Back to result
+              {backLabel}
             </Link>
             {partB.available ? (
               <button
@@ -137,7 +146,7 @@ export function PartBPage() {
                 disabled={begin.isPending || partB.partAStatus !== 'submitted'}
                 onClick={() => begin.mutate()}
               >
-                {begin.isPending ? 'Starting…' : 'Begin Part B'}
+                {begin.isPending ? 'Starting…' : drawingPaper ? 'Begin drawing' : 'Begin Part B'}
               </button>
             ) : null}
           </div>
@@ -172,7 +181,9 @@ export function PartBPage() {
             <p>
               {partB.status === 'evaluated'
                 ? `Your Part B has been evaluated: ${partB.score ?? 0} out of ${partB.maxScore ?? 0}.`
-                : 'Your Part B has been submitted. A Dexam evaluator will mark it; the marks and feedback appear on your result.'}
+                : drawingPaper
+                  ? 'Your drawing paper has been submitted. A Dexam evaluator will mark it; the marks and feedback appear under Drawing papers.'
+                  : 'Your Part B has been submitted. A Dexam evaluator will mark it; the marks and feedback appear on your result.'}
             </p>
           )}
           {partB.status === 'drawing' ? (
@@ -205,7 +216,7 @@ export function PartBPage() {
         <div className={styles.instructionsFooter}>
           {open ? (
             <Link className={styles.secondaryAction} to={resultPath}>
-              Back to result
+              {backLabel}
             </Link>
           ) : null}
           {partB.status === 'drawing' && remaining > 0 ? (
@@ -228,7 +239,7 @@ export function PartBPage() {
             </button>
           ) : (
             <Link className={styles.primaryAction} to={resultPath}>
-              Back to result
+              {backLabel}
             </Link>
           )}
         </div>
@@ -272,8 +283,20 @@ function PartBTaskCard({
       <h2 className={styles.partBTaskTitle}>
         Task {index + 1} · {task.maxMarks} marks
       </h2>
-      <p className={styles.prompt}>{task.prompt}</p>
-      {task.figures.map((figure) =>
+      {task.display === 'block' && task.figures[0] && urls.get(task.figures[0].path) ? (
+        <PrintedBlock
+          image={{
+            src: urls.get(task.figures[0].path)!,
+            width: task.figures[0].width,
+            height: task.figures[0].height,
+          }}
+          prompt={task.prompt}
+          label={`Task ${index + 1}`}
+        />
+      ) : (
+        <p className={styles.prompt}>{task.prompt}</p>
+      )}
+      {(task.display === 'block' ? task.figures.slice(1) : task.figures).map((figure) =>
         urls.get(figure.path) ? (
           <img
             key={figure.path}

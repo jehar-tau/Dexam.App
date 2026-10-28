@@ -1,0 +1,25 @@
+.block {
+  max-width: 100%;
+  margin: 0 0 var(--space-5);
+}
+
+/* The crop is the printed page: keep it on white in both themes, never scale it up. */
+.image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  padding: var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

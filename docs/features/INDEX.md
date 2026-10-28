@@ -53,3 +53,4 @@ IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specificatio
 - F044 Scoring and results — D-057 redesign step 4; server attempts pin questions, server clock and scoring, results page with section/topic breakdown and answer review
 - F038 Assessment question bank — D-054 A, D-055 A; redesign step 3: migration, importer and workstation exporter; real bank loaded locally only
 - F051 Test-series shell and Papers page — D-057 redesign step 1; `/tests` shell, Papers dashboard with fictional preview data
+- F052 Printed question blocks, owner question review and timed drawing papers — D-060; exact crops for every question, local `/review/questions`, `/tests/drawing` with Part B and NID DAT 3-hour drawing mocks — `F052-printed-blocks-review-drawing-papers.md`

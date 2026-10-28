@@ -25,6 +25,7 @@ const questionSchema = z.object({
   number: z.string().nullable(),
   type: z.enum(['nat', 'msq', 'mcq']),
   prompt: z.string(),
+  display: z.enum(['text', 'block']).optional(),
   figures: z.array(
     z.object({ path: z.string(), width: z.number().nullable(), height: z.number().nullable() }),
   ),
@@ -89,15 +90,18 @@ export function buildBankPaper(
       }
       sections.push(section)
     }
+    const images = item.figures.flatMap((figure) => {
+      const src = urls.get(figure.path)
+      return src ? [{ src, width: figure.width, height: figure.height }] : []
+    })
+    const block = item.display === 'block' ? images[0] : undefined
     const question: ExamQuestion = {
       id: item.id,
       kind: item.type,
       number: item.number ?? undefined,
       prompt: item.prompt,
-      images: item.figures.flatMap((figure) => {
-        const src = urls.get(figure.path)
-        return src ? [{ src, width: figure.width, height: figure.height }] : []
-      }),
+      block,
+      images: block ? images.slice(1) : images,
       options:
         item.type === 'nat'
           ? undefined
@@ -327,28 +331,33 @@ export async function fetchAttemptResult(
   if (!parsed.success) throw new BankPaperError('This result could not be read.')
   const data = parsed.data
   const urls = await signPaths(client, mediaPaths(data.questions))
-  const questions: ResultQuestion[] = data.questions.map((question) => ({
-    id: question.id,
-    number: question.number,
-    type: question.type,
-    prompt: question.prompt,
-    figures: question.figures.flatMap((figure) => {
+  const questions: ResultQuestion[] = data.questions.map((question) => {
+    const images = question.figures.flatMap((figure) => {
       const src = urls.get(figure.path)
       return src ? [{ src, width: figure.width, height: figure.height }] : []
-    }),
-    options: question.options.map((option) => ({
-      key: option.key,
-      text: option.text,
-      image: option.imagePath ? urls.get(option.imagePath) : undefined,
-    })),
-    response: question.response,
-    outcome: question.outcome,
-    marks: question.marks,
-    key: question.key,
-    explanation: question.explanation,
-    topic: question.topic,
-    topicName: question.topicName,
-  }))
+    })
+    const block = question.display === 'block' ? images[0] : undefined
+    return {
+      id: question.id,
+      number: question.number,
+      type: question.type,
+      prompt: question.prompt,
+      block,
+      figures: block ? images.slice(1) : images,
+      options: question.options.map((option) => ({
+        key: option.key,
+        text: option.text,
+        image: option.imagePath ? urls.get(option.imagePath) : undefined,
+      })),
+      response: question.response,
+      outcome: question.outcome,
+      marks: question.marks,
+      key: question.key,
+      explanation: question.explanation,
+      topic: question.topic,
+      topicName: question.topicName,
+    }
+  })
   return {
     attemptId: data.attemptId,
     paperId: data.paperId,

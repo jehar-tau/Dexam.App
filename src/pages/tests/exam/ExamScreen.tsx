@@ -22,6 +22,7 @@ import {
   type ExamQuestion,
 } from '../../../features/testSeries/examPaper'
 import { ExamFigure } from './ExamFigure'
+import { PrintedBlock } from './PrintedBlock'
 import type { Candidate } from './ExamPreStart'
 import { StatusLegend } from './ExamStatus'
 import { statusClassName } from './statusClassName'
@@ -164,7 +165,15 @@ export function ExamScreen({
             </span>
           </div>
           <div className={styles.questionScroll}>
-            <p className={styles.prompt}>{question.prompt}</p>
+            {question.block ? (
+              <PrintedBlock
+                image={question.block}
+                prompt={question.prompt}
+                label={`Question ${number}`}
+              />
+            ) : (
+              <p className={styles.prompt}>{question.prompt}</p>
+            )}
             {question.figure ? <ExamFigure id={question.figure} /> : null}
             {question.images?.map((image, index) => (
               <img
@@ -290,7 +299,7 @@ const asText = (response: ExamResponse | undefined) =>
 const asList = (response: ExamResponse | undefined) =>
   Array.isArray(response) ? response : typeof response === 'string' && response ? [response] : []
 
-function ResponseInput({
+export function ResponseInput({
   question,
   response,
   onUpdate,
@@ -335,7 +344,8 @@ function ResponseInput({
             />
             <span className={styles.optionLetter}>{option.id}</span>
             <span className={styles.optionBody}>
-              {option.text}
+              {/* A printed block already shows the option; the button carries only its letter. */}
+              {question.block ? null : option.text}
               {option.image ? (
                 <img
                   className={styles.optionImage}
