@@ -954,3 +954,77 @@
     width: 100%;
   }
 }
+
+/* ---------- Part B (F043) ---------- */
+
+.partBTasks {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.partBTask {
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.partBTaskTitle {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-body);
+}
+
+.partBUploads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  list-style: none;
+}
+
+.partBUploads img {
+  width: 96px;
+  height: 96px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+.partBPdf {
+  display: inline-grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+  font-size: var(--fs-caption);
+}
+
+.partBUpload {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--hit-target-min);
+  padding: 0 var(--space-4);
+  border: 1px dashed var(--accent-primary);
+  border-radius: var(--radius-md);
+  color: var(--accent-primary-active);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.partBUpload input {
+  max-width: 220px;
+  font: inherit;
+  font-size: var(--fs-caption);
+}
+
+.partBUpload:focus-within {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}

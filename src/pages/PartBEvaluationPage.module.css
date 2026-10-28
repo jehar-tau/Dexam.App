@@ -1,0 +1,151 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--container-default);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+.note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.error {
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.block h2 {
+  font-size: var(--fs-h3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+  text-align: left;
+}
+
+.tasks {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.task {
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+}
+
+.task h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-body);
+}
+
+.prompt {
+  white-space: pre-line;
+}
+
+.sheets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.sheets img {
+  max-width: 320px;
+  max-height: 320px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.form label {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+}
+
+.form input,
+.form textarea {
+  min-height: 40px;
+  padding: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+}
+
+.form input {
+  width: 7rem;
+}
+
+.feedback {
+  flex: 1 1 18rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.primary,
+.secondary {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.primary {
+  border: 0;
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
+}
+
+.secondary {
+  border: 1px solid var(--border-strong);
+  background: var(--surface-card);
+  color: var(--text-body);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
