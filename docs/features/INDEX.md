@@ -47,7 +47,7 @@ IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specificatio
 - F050 All-India live mock — D-057 redesign step 8c; scheduled events, one pinned paper, waiting room, shared clock, live Part B and the Dexam cohort rank
 - F045 Part A shortlisting likelihood — interim formula v1 against the published UCEED/CEED cut-offs; result page, Analytics and the test-series Overview
 - F040 Mock generator — D-057 redesign step 8a; 2026 blueprints (UCEED, CEED, NIFT GAT), per-student no-repeat mocks from the common bank
-- F043/F048 Part B drawing, uploads and evaluation — D-057 redesign step 7; timed drawing, 10-minute upload window, anonymous evaluation and release, Sketches
+- F043/F048 Part B drawing, uploads and evaluation — D-057 redesign step 7; timed drawing, 10-minute upload window, anonymous evaluation and release, feedback on the result page (Sketches removed by D-059)
 - F039/F041 Public sign-in, onboarding and free papers — D-057 redesign step 6; candidate accounts, B.Des/M.Des onboarding, one free paper per exam; Google provider waits on D-058
 - F046/F047 Progress analytics and topic practice — D-057 redesign step 5; Analytics page with progress chart, topic strengths and history; server-built practice sets, unseen questions first
 - F044 Scoring and results — D-057 redesign step 4; server attempts pin questions, server clock and scoring, results page with section/topic breakdown and answer review

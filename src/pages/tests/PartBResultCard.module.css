@@ -1,15 +1,3 @@
-.page {
-  display: grid;
-  gap: var(--space-5);
-  max-width: var(--container-default);
-  margin: 0 auto;
-}
-
-.title {
-  margin: 0;
-  font-size: var(--fs-h2);
-}
-
 .note {
   margin: var(--space-1) 0 0;
   color: var(--text-secondary);
@@ -53,7 +41,7 @@
   display: grid;
   gap: var(--space-4);
   padding: 0;
-  margin: var(--space-4) 0;
+  margin: var(--space-4) 0 0;
   list-style: none;
 }
 

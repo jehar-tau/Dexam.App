@@ -36,20 +36,18 @@ import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
-import { TestsShell } from './tests/TestsShell'
+import { StudentShell } from './student/StudentShell'
 import { TestsPapersPage } from '../pages/tests/TestsPapersPage'
 import {
   LegacyStudentTestsRedirect,
-  TestsComingSoonPage,
+  RetiredTestsSection,
   TestsPaperPage,
 } from '../pages/tests/TestsSectionPages'
 import { ExamWindowPage } from '../pages/tests/exam/ExamWindowPage'
 import { TestsResultPage } from '../pages/tests/TestsResultPage'
-import { TestsAnalyticsPage } from '../pages/tests/TestsAnalyticsPage'
 import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
 import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
-import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
 import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
 import { TestsLivePage } from '../pages/tests/TestsLivePage'
 import { TestsOverviewPage } from '../pages/tests/TestsOverviewPage'
@@ -234,35 +232,11 @@ export const router = createBrowserRouter([
       { path: 'sign-in', element: <StudentSignInPage /> },
       { path: 'student/recover', element: <StudentPasswordRecoveryPage /> },
       {
-        path: 'student/agenda',
-        element: (
-          <StudentAccessBoundary allowPreview={false}>
-            <StudentAgendaPage />
-          </StudentAccessBoundary>
-        ),
-      },
-      {
         path: 'staff/classes',
         element: (
           <StaffAccessBoundary allowPreview={false}>
             <ClassSchedulingPage />
           </StaffAccessBoundary>
-        ),
-      },
-      {
-        path: 'student/study-checklist',
-        element: (
-          <StudentAccessBoundary allowPreview={false}>
-            <StudentStudyChecklistPage />
-          </StudentAccessBoundary>
-        ),
-      },
-      {
-        path: 'student/archive',
-        element: (
-          <StudentAccessBoundary allowPreview={false}>
-            <StudentWorkArchivePage />
-          </StudentAccessBoundary>
         ),
       },
       {
@@ -282,40 +256,8 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'student',
-        element: (
-          <StudentAccessBoundary>
-            <StudentWorkspacePage />
-          </StudentAccessBoundary>
-        ),
-      },
-      {
-        path: 'student/coursework',
-        element: (
-          <StudentAccessBoundary>
-            <StudentCourseworkPage />
-          </StudentAccessBoundary>
-        ),
-      },
-      {
-        path: 'student/assignments',
-        element: (
-          <StudentAccessBoundary>
-            <StudentAssignmentsPage />
-          </StudentAccessBoundary>
-        ),
-      },
-      {
         path: 'student/tests',
         element: <LegacyStudentTestsRedirect />,
-      },
-      {
-        path: 'student/notifications',
-        element: (
-          <StudentAccessBoundary>
-            <NotificationCentrePage />
-          </StudentAccessBoundary>
-        ),
       },
       { path: 'staff/sign-in', element: <StaffSignInPage /> },
       { path: 'staff/activate', element: <EmployeeActivationPage /> },
@@ -443,6 +385,45 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    // D-059: the student portal is one left-sidebar shell for coaching tools and the test series.
+    path: '/student',
+    element: (
+      <StudentAccessBoundary>
+        <StudentShell />
+      </StudentAccessBoundary>
+    ),
+    children: [
+      { index: true, element: <StudentWorkspacePage /> },
+      { path: 'coursework', element: <StudentCourseworkPage /> },
+      { path: 'assignments', element: <StudentAssignmentsPage /> },
+      { path: 'notifications', element: <NotificationCentrePage /> },
+      {
+        path: 'study-checklist',
+        element: (
+          <StudentAccessBoundary allowPreview={false}>
+            <StudentStudyChecklistPage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'agenda',
+        element: (
+          <StudentAccessBoundary allowPreview={false}>
+            <StudentAgendaPage />
+          </StudentAccessBoundary>
+        ),
+      },
+      {
+        path: 'archive',
+        element: (
+          <StudentAccessBoundary allowPreview={false}>
+            <StudentWorkArchivePage />
+          </StudentAccessBoundary>
+        ),
+      },
+    ],
+  },
+  {
     // F040: mocks run in the full exam-centre window.
     path: '/tests/mock/run/:attemptId',
     element: (
@@ -491,11 +472,11 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    // D-057: the test series has its own shell, separate from the coaching portal.
+    // D-057/D-059: the test series shares the student portal's sidebar shell.
     path: '/tests',
     element: (
       <TestsAccessBoundary>
-        <TestsShell />
+        <StudentShell />
       </TestsAccessBoundary>
     ),
     children: [
@@ -503,21 +484,14 @@ export const router = createBrowserRouter([
       { path: 'papers', element: <TestsPapersPage /> },
       { path: 'papers/:paperId', element: <TestsPaperPage /> },
       { path: 'results/:attemptId', element: <TestsResultPage /> },
-      { path: 'analytics', element: <TestsAnalyticsPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
       { path: 'mocks', element: <TestsMocksPage /> },
       { path: 'live/:key', element: <TestsLivePage /> },
       { path: 'plans', element: <TestsPlansPage /> },
-      {
-        path: 'bookmarks',
-        element: (
-          <TestsComingSoonPage
-            title="Bookmarks"
-            description="Questions you save while reviewing papers."
-          />
-        ),
-      },
-      { path: 'sketches', element: <TestsSketchesPage /> },
+      // Analytics merged into the Overview; Bookmarks and Sketches retired (D-059).
+      { path: 'analytics', element: <RetiredTestsSection /> },
+      { path: 'bookmarks', element: <RetiredTestsSection /> },
+      { path: 'sketches', element: <RetiredTestsSection /> },
     ],
   },
 ])

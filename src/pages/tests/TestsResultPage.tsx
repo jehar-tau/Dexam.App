@@ -28,7 +28,7 @@ import {
   type ResultQuestion,
 } from '../../features/testSeries/scoring'
 import { ExamFigure } from './exam/ExamFigure'
-import { PartBResultCard } from './TestsSketchesPage'
+import { PartBResultCard } from './PartBResultCard'
 import styles from './TestsResultPage.module.css'
 
 const PREVIEW_PREFIX = 'preview-'

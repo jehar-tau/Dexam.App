@@ -6,7 +6,7 @@ import { partBFileProblem } from '../../features/testSeries/partB'
 import { renderApp } from '../../test/render'
 import { PartBEvaluationPage, PartBQueuePage } from '../PartBEvaluationPage'
 import { PartBPage } from './exam/PartBPage'
-import { TestsSketchesPage } from './TestsSketchesPage'
+import { PartBResultCard } from './PartBResultCard'
 
 const mocks = vi.hoisted(() => ({
   session: null as null | { user: { id: string; email: string } },
@@ -82,7 +82,7 @@ function client(handlers: Record<string, (args: Record<string, unknown>) => unkn
 const routes = (
   <Routes>
     <Route path="/tests/part-b/:attemptId" element={<PartBPage />} />
-    <Route path="/tests/sketches" element={<TestsSketchesPage />} />
+    <Route path="/tests/results/:attemptId" element={<PartBResultCard attemptId={attemptId} />} />
     <Route path="/staff/part-b" element={<PartBQueuePage />} />
     <Route path="/staff/part-b/:attemptId" element={<PartBEvaluationPage />} />
   </Routes>
@@ -150,7 +150,10 @@ describe('Part B page', () => {
 
     await user.click(screen.getByRole('button', { name: 'Submit Part B' }))
     expect(await screen.findByText(/A Dexam evaluator will mark it/)).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Go to Sketches' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Back to result' })).toHaveAttribute(
+      'href',
+      `/tests/results/${attemptId}`,
+    )
   })
 
   it('refuses unsupported files before uploading', async () => {
@@ -170,14 +173,14 @@ describe('Part B page', () => {
   })
 })
 
-describe('Sketches and evaluation', () => {
+describe('Part B results and evaluation', () => {
   beforeEach(() => {
     mocks.session = { user: { id: 'staff-1', email: 'x@dexam.invalid' } }
   })
 
-  it('shows released marks and feedback in Sketches', async () => {
+  it('shows released marks, feedback and sheets on the result page', async () => {
     mocks.client = client({
-      list_my_part_b: () => [
+      get_part_b: () =>
         partB({
           status: 'evaluated',
           score: 72,
@@ -191,10 +194,9 @@ describe('Sketches and evaluation', () => {
             }),
           ],
         }),
-      ],
     })
-    renderApp(routes, ['/tests/sketches'])
-    const card = await screen.findByRole('region', { name: 'CEED 2024 Part B' })
+    renderApp(routes, [`/tests/results/${attemptId}`])
+    const card = await screen.findByRole('region', { name: 'Part B: drawing' })
     expect(within(card).getAllByText('72 / 100')).toHaveLength(2)
     expect(within(card).getByText(/Strong perspective/)).toBeVisible()
     expect(within(card).getByRole('img', { name: 'Sheet 1 for task 1' })).toBeVisible()

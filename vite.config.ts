@@ -20,7 +20,7 @@ export default defineConfig({
             // The test-series product (pages, exam window, bank client) is its own cacheable chunk.
             {
               name: 'test-series',
-              test: /src\/(?:pages\/tests|features\/testSeries|app\/tests)\//,
+              test: /src\/(?:pages\/tests|features\/testSeries|app\/student)\//,
               priority: 5,
             },
           ],

@@ -1,9 +1,15 @@
 import { expect, test } from '@playwright/test'
 
-test('test-series Papers page has its own shell and opens a paper', async ({ page }) => {
+test('test-series Papers page sits in the student portal sidebar and opens a paper', async ({
+  page,
+}) => {
   await page.goto('/tests/papers?preview=1')
-  const nav = page.getByRole('navigation', { name: 'Test series sections' })
+  const nav = page.getByRole('navigation', { name: 'Student portal sections' })
   await expect(nav.getByRole('link', { name: 'Papers' })).toHaveAttribute('aria-current', 'page')
+  await expect(nav.getByRole('link', { name: 'Coursework' })).toBeVisible()
+  for (const retired of ['Analytics', 'Bookmarks', 'Sketches']) {
+    await expect(nav.getByRole('link', { name: retired })).toHaveCount(0)
+  }
   await expect(page.getByRole('heading', { name: 'Your paper dashboard' })).toBeVisible()
   await expect(page.getByRole('region', { name: 'UCEED' })).toBeVisible()
 
@@ -18,7 +24,7 @@ test('test-series Papers page has its own shell and opens a paper', async ({ pag
 
 test('dark theme re-themes the whole page and persists', async ({ page }) => {
   await page.goto('/tests/papers?preview=1')
-  const shell = page.getByTestId('tests-shell')
+  const shell = page.getByTestId('student-shell')
   const lightBackground = await shell.evaluate((element) => {
     const view = (
       element as unknown as {
@@ -43,7 +49,7 @@ test('phone layout uses a menu and never scrolls sideways', async ({ page }) => 
   const menu = page.getByRole('button', { name: 'Menu' })
   await expect(menu).toBeVisible()
   await menu.click()
-  await expect(page.getByRole('link', { name: 'Analytics' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Overview' })).toBeVisible()
   // Tap outside the open menu, as a person would.
   await page.getByRole('button', { name: 'Close menu' }).click({ position: { x: 340, y: 600 } })
   await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false')
@@ -78,10 +84,12 @@ test('the test-series sign-in offers Google and the Member ID route', async ({ p
   )
 })
 
-test('the Sketches page explains Part B in preview', async ({ page }) => {
-  await page.goto('/tests/sketches?preview=1')
-  await expect(page.getByRole('heading', { name: 'Sketches' })).toBeVisible()
-  await expect(page.getByText('Your Part B drawings appear here')).toBeVisible()
+test('retired Analytics, Bookmarks and Sketches links land on the Overview', async ({ page }) => {
+  for (const retired of ['analytics', 'bookmarks', 'sketches']) {
+    await page.goto(`/tests/${retired}?preview=1`)
+    await expect(page).toHaveURL(/\/tests\?preview=1$/)
+    await expect(page.getByRole('heading', { name: 'Up next' })).toBeVisible()
+  }
 })
 
 test('the Mocks page lists 2026 mocks in preview', async ({ page }) => {
@@ -119,4 +127,16 @@ test('the live-event organiser page needs a staff sign-in', async ({ page }) => 
 test('the Plans page asks a signed-out visitor to sign in', async ({ page }) => {
   await page.goto('/tests/plans')
   await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fplans$/)
+})
+
+test('the student portal and the test series share one left sidebar', async ({ page }) => {
+  await page.goto('/student?preview=1')
+  const nav = page.getByRole('navigation', { name: 'Student portal sections' })
+  await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
+  await nav.getByRole('link', { name: 'Papers' }).click()
+  await expect(page).toHaveURL(/\/tests\/papers\?preview=1$/)
+  await expect(page.getByRole('heading', { name: 'Your paper dashboard' })).toBeVisible()
+  await nav.getByRole('link', { name: 'Coursework' }).click()
+  await expect(page).toHaveURL(/\/student\/coursework\?preview=1$/)
+  await expect(page.getByRole('heading', { name: 'Your coursework.' })).toBeVisible()
 })

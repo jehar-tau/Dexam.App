@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { renderApp } from '../../test/render'
 import { PracticeRunPage } from './exam/PracticeRunPage'
-import { TestsAnalyticsPage } from './TestsAnalyticsPage'
+import { TestsOverviewPage } from './TestsOverviewPage'
 import { TestsPracticePage } from './TestsPracticePage'
 
 const mocks = vi.hoisted(() => ({
@@ -22,7 +22,7 @@ vi.mock('../../features/auth/supabaseClient', () => ({
 
 const routes = (
   <Routes>
-    <Route path="/tests/analytics" element={<TestsAnalyticsPage />} />
+    <Route path="/tests" element={<TestsOverviewPage />} />
     <Route path="/tests/practice" element={<TestsPracticePage />} />
     <Route path="/tests/practice/run/:attemptId" element={<PracticeRunPage />} />
   </Routes>
@@ -35,7 +35,7 @@ const rpcClient = (responses: Record<string, { data: unknown; error: unknown }>)
   return { rpc, storage: { from: () => ({ createSignedUrls: vi.fn() }) } }
 }
 
-describe('Analytics', () => {
+describe('Overview progress (merged Analytics)', () => {
   afterEach(() => vi.unstubAllEnvs())
   beforeEach(() => {
     vi.stubEnv('VITE_ENABLE_STUDENT_PREVIEW', 'true')
@@ -44,9 +44,9 @@ describe('Analytics', () => {
   })
 
   it('shows preview stats, a labelled progress chart, topics and history', () => {
-    renderApp(routes, ['/tests/analytics?preview=1'])
-    expect(screen.getByRole('heading', { name: 'Analytics' })).toBeVisible()
-    expect(screen.getByText('Papers taken').nextSibling).toHaveTextContent('6')
+    renderApp(routes, ['/tests?preview=1'])
+    expect(screen.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    expect(screen.getByText('Papers and mocks').nextSibling).toHaveTextContent('6')
     const chart = screen.getByRole('img', { name: /Score percentage over time/ })
     expect(
       within(screen.getByRole('list', { name: 'Exams' })).getAllByRole('listitem'),
@@ -67,15 +67,6 @@ describe('Analytics', () => {
     expect(screen.getAllByRole('row')).toHaveLength(8)
     expect(screen.getByRole('columnheader', { name: 'Band' })).toBeVisible()
     expect(screen.getAllByRole('cell', { name: /^(High|Medium|Low)$/ }).length).toBeGreaterThan(0)
-  })
-
-  it('shows an empty state for a student with no results', async () => {
-    mocks.session = { user: { id: 'student-1', email: 'x@members.dexam.invalid' } }
-    mocks.client = rpcClient({
-      get_assessment_progress: { data: { attempts: [], topics: [] }, error: null },
-    })
-    renderApp(routes, ['/tests/analytics'])
-    expect(await screen.findByText('No results yet')).toBeVisible()
   })
 })
 

@@ -140,10 +140,6 @@ export async function signPartBMedia(client: SupabaseClient, partB: PartB) {
   return urls
 }
 
-export async function listMyPartB(client: SupabaseClient): Promise<PartB[]> {
-  return z.array(partBSchema).parse(await call(client, 'list_my_part_b', {}))
-}
-
 const queueSchema = z.array(
   z.object({
     attemptId: z.string().uuid(),

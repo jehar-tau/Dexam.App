@@ -6,16 +6,18 @@ Status: Implemented locally 2026-10-28 under D-054 A and D-057; in review.
 
 Students need to see whether they are improving and to work on their weak topics between full papers. Step 5 adds the Analytics page (F046) and topic practice (F047), both built on the server attempts and scoring from F044.
 
-## Analytics (`/tests/analytics`)
+## Progress on the Overview (`/tests`; was `/tests/analytics`)
 
-- **Stats:** papers taken, average and best paper score (%), practice sets, and the share of questions marked right.
+D-059 merged Analytics into the Overview page; `/tests/analytics` now redirects there.
+
+- **Stats:** papers and mocks taken, latest and best score (%), shortlisting band, the share of questions marked right, and the day streak.
 - **Progress chart:**
   - **What it plots:** paper score % over time (submission date on X, score / maximum on Y), one line per exam.
   - **Colours:** UCEED, CEED, NID and NIFT keep fixed colours, from the reference categorical palette validated with the dataviz checker for both themes. Every line is labelled at its end with its latest score; a legend appears when there are two or more exams.
   - **Marks and hover:** 2px lines, ringed markers and a hairline grid. A crosshair and tooltip respond to the pointer, and to the arrow keys when the chart is focused.
-  - **Text alternative:** the History table is the chart's table view.
+  - **Text alternative:** the Results table is the chart's table view.
 - **Topic strengths:** accuracy per topic across every paper and practice set, weakest first, each with a "Practise" link.
-- **History:** every submitted paper and practice set, with score, percentage and a link to its result.
+- **Results:** every submitted paper and practice set, with score, percentage and a link to its result.
 - **Preview** (`?preview=1`): fictional progress.
 
 Server: `get_assessment_progress()` returns the caller's own submitted attempts and topic totals (dropped questions excluded).
@@ -24,7 +26,7 @@ Server: `get_assessment_progress()` returns the caller's own submitted attempts 
 
 1. Choose an exam (or all exams), a topic, a size (10, 25 or 50) and timed (90 seconds a question) or untimed.
    - Topics show how many reviewed questions exist and how many are new to the student.
-   - `?topic=<slug>` preselects a topic; result pages and Analytics link here.
+   - `?topic=<slug>` preselects a topic; result pages and the Overview link here.
 2. `start_assessment_practice()` pins up to that many ready questions on the topic.
    - **Order:** questions the student has never seen in any attempt come first, then a random order.
    - **Replacing:** starting again on the same topic and exam replaces an unfinished set.

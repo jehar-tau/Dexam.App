@@ -22,7 +22,7 @@ UCEED, CEED, NID and NIFT all have a drawing part. Candidates draw on paper, the
    - **Queue:** shows a candidate reference (`CAND-…`) only, never a name.
    - **Marking:** the evaluator opens a sitting, sees each task's prompt and uploaded sheets, and saves marks (0 to the task maximum) with feedback.
    - **Release:** once every task is marked, **Release** sets the Part B score.
-6. **Sketches** (`/tests/sketches`) lists the student's sittings: sheets, status, and, after release, marks and feedback. The result page shows the same status.
+6. **Result page:** the paper's result shows the Part B status, the uploaded sheets and, after release, marks and feedback per task. (The separate Sketches page was removed under D-059; `/tests/sketches` redirects to the Overview.)
 
 ## Marks
 
@@ -63,9 +63,9 @@ UCEED, CEED, NID and NIFT all have a drawing part. Candidates draw on paper, the
   - other students locked out;
   - an anonymous queue, the marks ceiling, mark-all-before-release, and release;
   - the student sees the score and feedback.
-- Vitest (`PartB.test.tsx`): file rules; begin, draw, upload and submit; refusing an unsupported file; Sketches; evaluator marking and release.
+- Vitest (`PartB.test.tsx`): file rules; begin, draw, upload and submit; refusing an unsupported file; sheets and feedback on the result page; evaluator marking and release.
 - **Live local check, as the fictional student on CEED 2024:**
   - Part A submitted, then the result offered Part B with 5 tasks;
   - the drawing clock showed 2:00:00, and finishing drawing opened the 10-minute window;
   - a PNG sheet uploaded through the storage policy and showed as a thumbnail;
-  - after submitting, Sketches showed the sitting "Awaiting evaluation" with the sheet.
+  - after submitting, the sitting showed "Awaiting evaluation" with the sheet.
