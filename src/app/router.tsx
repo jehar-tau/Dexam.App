@@ -52,6 +52,7 @@ import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePa
 import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
 import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
 import { TestsLivePage } from '../pages/tests/TestsLivePage'
+import { TestsOverviewPage } from '../pages/tests/TestsOverviewPage'
 import { LiveEventsStaffPage } from '../pages/LiveEventsStaffPage'
 import { TestsPlansPage } from '../pages/tests/TestsPlansPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
@@ -498,15 +499,7 @@ export const router = createBrowserRouter([
       </TestsAccessBoundary>
     ),
     children: [
-      {
-        index: true,
-        element: (
-          <TestsComingSoonPage
-            title="Overview"
-            description="Your next paper, recent scores and streaks will appear here."
-          />
-        ),
-      },
+      { index: true, element: <TestsOverviewPage /> },
       { path: 'papers', element: <TestsPapersPage /> },
       { path: 'papers/:paperId', element: <TestsPaperPage /> },
       { path: 'results/:attemptId', element: <TestsResultPage /> },

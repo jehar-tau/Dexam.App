@@ -494,3 +494,33 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.likelihoodRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.band {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-bold);
+}
+
+.bandHigh {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.bandMedium {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.bandLow {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}

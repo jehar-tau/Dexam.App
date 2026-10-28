@@ -65,6 +65,8 @@ describe('Analytics', () => {
       '/tests/practice?topic=analytical-reasoning&preview=1',
     )
     expect(screen.getAllByRole('row')).toHaveLength(8)
+    expect(screen.getByRole('columnheader', { name: 'Band' })).toBeVisible()
+    expect(screen.getAllByRole('cell', { name: /^(High|Medium|Low)$/ }).length).toBeGreaterThan(0)
   })
 
   it('shows an empty state for a student with no results', async () => {
