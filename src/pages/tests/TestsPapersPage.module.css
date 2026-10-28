@@ -284,6 +284,16 @@
   color: var(--accent-primary-active);
 }
 
+.tileLocked {
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+}
+
+.badgeLocked {
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+}
+
 .tileDetail {
   color: var(--text-secondary);
   font-size: var(--fs-caption);

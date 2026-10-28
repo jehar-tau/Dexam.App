@@ -8,6 +8,7 @@ import { getSupabaseClient } from '../../../features/auth/supabaseClient'
 import {
   beginBankAttempt,
   openBankAttempt,
+  PaperLockedError,
   submitBankAttempt,
   type OpenedAttempt,
 } from '../../../features/testSeries/bankPaper'
@@ -32,6 +33,7 @@ import {
 } from '../../../features/testSeries/paperCatalog'
 import { previewResultId } from '../../../features/testSeries/practiceResult'
 import { previewSearch } from '../../../features/testSeries/previewSearch'
+import { useTestAccess } from '../../../features/testSeries/testAccess'
 import {
   ExamGeneralInstructions,
   ExamLogin,
@@ -159,9 +161,15 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
   const label = paperLabel(catalogPaper)
   const bankId = bankPaperId(catalogPaper)
   const client = getSupabaseClient()
+  const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: ['bank-attempt', owner, bankId],
-    queryFn: () => openBankAttempt(client!, label, bankId!),
+    queryFn: async () => {
+      const opened = await openBankAttempt(client!, label, bankId!)
+      // Opening may have claimed a candidate's free paper.
+      void queryClient.invalidateQueries({ queryKey: ['test-access'] })
+      return opened
+    },
     enabled: Boolean(client && bankId),
     // An attempt's questions are pinned by the server; they stay fixed for the whole sitting.
     staleTime: Infinity,
@@ -182,8 +190,20 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
   }
   if (query.isError || !client) {
     return (
-      <StatusPage label={label} title="This paper could not be opened" backTo="/tests/papers">
-        <p>{query.error?.message ?? 'The question bank is not connected.'} Please try again.</p>
+      <StatusPage
+        label={label}
+        title={
+          query.error instanceof PaperLockedError
+            ? 'This paper is not included'
+            : 'This paper could not be opened'
+        }
+        backTo="/tests/papers"
+      >
+        <p>
+          {query.error instanceof PaperLockedError
+            ? query.error.message
+            : `${query.error?.message ?? 'The question bank is not connected.'} Please try again.`}
+        </p>
       </StatusPage>
     )
   }
@@ -228,6 +248,7 @@ export function ExamWindow({
   server?: ServerAttempt
 }) {
   const { session } = useAuth()
+  const access = useTestAccess(!search)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const paperId = storeKey
@@ -290,10 +311,15 @@ export function ExamWindow({
 
   const papersPath = backTo
   const memberId = memberIdFromEmail(session?.user.email)
-  const name = search ? 'Fictional Student' : (memberId ?? 'Dexam student')
+  // Public candidates have no Member ID: show their name and a short reference instead.
+  const name = search
+    ? 'Fictional Student'
+    : (memberId ?? access.data?.displayName ?? 'Dexam candidate')
   const candidate: Candidate = {
     name,
-    rollNumber: search ? 'DXM-PREVIEW0001' : (memberId ?? '—'),
+    rollNumber: search
+      ? 'DXM-PREVIEW0001'
+      : (memberId ?? `CAND-${(session?.user.id ?? '').slice(0, 8).toUpperCase()}`),
     initials: name
       .split(/[\s-]+/)
       .map((part) => part[0])

@@ -81,7 +81,7 @@ describe('Test-series shell and Papers page', () => {
 
   it('shows empty stats and no fictional scores outside preview', () => {
     renderTests('/tests/papers')
-    expect(screen.getByText('—')).toBeVisible()
+    expect(screen.getAllByText('—')).toHaveLength(2)
     expect(screen.queryByText('128')).toBeNull()
   })
 

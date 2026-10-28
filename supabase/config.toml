@@ -316,6 +316,20 @@ max_frequency = "5s"
 # enroll_enabled = true
 # verify_enabled = true
 
+# F039 Google sign-in for test-series candidates. Off until Decision Gate D-058 is answered and
+# the owner supplies a Google OAuth client (Authorised redirect URI:
+# http://127.0.0.1:54321/auth/v1/callback for this local stack). Enabling it also needs
+# public sign-up opened for Google only; see docs/features/F039-F041-public-sign-in-and-free-papers.md.
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+url = ""
+# Required for local sign-in with Google.
+skip_nonce_check = true
+email_optional = false
+
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `x`, `slack`, `spotify`, `workos`, `zoom`.

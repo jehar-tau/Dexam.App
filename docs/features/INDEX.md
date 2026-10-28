@@ -43,6 +43,7 @@ IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specificatio
 
 - F037 Assessment and test-series foundation — D-053 B; fictional runner preview at `/student/tests?preview=1`; merged PR #89
 - F042 Exam interface — D-057 redesign step 2; phase 1 exam window (merged #94); phase 2a serves reviewed bank papers to signed-in students; server timer and autosave in phase 2b
+- F039/F041 Public sign-in, onboarding and free papers — D-057 redesign step 6; candidate accounts, B.Des/M.Des onboarding, one free paper per exam; Google provider waits on D-058
 - F046/F047 Progress analytics and topic practice — D-057 redesign step 5; Analytics page with progress chart, topic strengths and history; server-built practice sets, unseen questions first
 - F044 Scoring and results — D-057 redesign step 4; server attempts pin questions, server clock and scoring, results page with section/topic breakdown and answer review
 - F038 Assessment question bank — D-054 A, D-055 A; redesign step 3: migration, importer and workstation exporter; real bank loaded locally only

@@ -6,10 +6,11 @@ import { useAuth } from '../features/auth/AuthContext'
 import styles from './SignInPage.module.css'
 
 function safeReturnTo(value: string | null) {
-  if (
-    !value ||
-    (value !== '/student' && !value.startsWith('/student?') && !value.startsWith('/student/'))
-  ) {
+  // Students may also return to the test series (D-057).
+  const allowed = ['/student', '/tests'].some(
+    (root) => value === root || value?.startsWith(`${root}?`) || value?.startsWith(`${root}/`),
+  )
+  if (!value || !allowed || value.startsWith('//')) {
     return '/student'
   }
   return value

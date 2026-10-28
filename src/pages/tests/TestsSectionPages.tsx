@@ -4,6 +4,7 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
 import { fetchMyAttempts, fetchPaperReadiness } from '../../features/testSeries/bankPaper'
+import { paperAccess, useTestAccess } from '../../features/testSeries/testAccess'
 
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { EmptyState } from '../../components'
@@ -90,7 +91,17 @@ export function TestsPaperPage() {
           </div>
           <div>
             <dt>Access</dt>
-            <dd>{isFree ? 'Free paper' : 'Included in your plan'}</dd>
+            <dd>
+              {search ? (
+                isFree ? (
+                  'Free paper'
+                ) : (
+                  'Included in your plan'
+                )
+              ) : (
+                <AccessFact paper={paper} />
+              )}
+            </dd>
           </div>
           <div>
             <dt>Your best</dt>
@@ -186,7 +197,25 @@ function PaperAttempts({ paper }: { paper: CatalogPaper }) {
 }
 
 /** For signed-in students: how much of the paper has been reviewed, and the way in. */
+function AccessFact({ paper }: { paper: CatalogPaper }) {
+  const access = useTestAccess()
+  if (access.data?.kind === 'student') return <>Included with your coaching</>
+  const state = paperAccess(paper, access.data)
+  return (
+    <>
+      {state === 'free-claimed'
+        ? 'Your free paper'
+        : state === 'free-choice'
+          ? 'Free (your first paper of this exam)'
+          : state === 'locked'
+            ? 'Locked'
+            : 'Included'}
+    </>
+  )
+}
+
 function BankPaperActions({ paper }: { paper: CatalogPaper }) {
+  const access = useTestAccess()
   const { session } = useAuth()
   const client = getSupabaseClient()
   const readiness = useQuery({
@@ -204,6 +233,20 @@ function BankPaperActions({ paper }: { paper: CatalogPaper }) {
   if (readiness.isError) {
     return <p className={styles.note}>Paper availability could not be loaded. Please try again.</p>
   }
+  const testAccess = access.data
+  const state = paperAccess(paper, testAccess)
+  if (state === 'locked') {
+    return (
+      <div className={styles.actions}>
+        <p className={styles.note}>
+          {testAccess?.freeSlots.some((slot) => slot.slot === paper.exam)
+            ? 'You have used your free paper for this exam. More papers unlock with a plan, coming soon.'
+            : 'This paper belongs to the other programme. Change your programme on the welcome page, or unlock it with a plan when plans arrive.'}
+        </p>
+        <PaperAttempts paper={paper} />
+      </div>
+    )
+  }
   if (!counts?.ready) {
     return (
       <div className={styles.actions}>
@@ -219,6 +262,17 @@ function BankPaperActions({ paper }: { paper: CatalogPaper }) {
       <Link className={styles.start} to={`/tests/exam/${paper.id}`}>
         Start timed paper
       </Link>
+      {state === 'free-choice' ? (
+        <p className={styles.note}>
+          Starting this paper uses your free{' '}
+          {paper.exam.startsWith('nid')
+            ? 'NID DAT'
+            : paper.exam.startsWith('nift')
+              ? 'NIFT'
+              : paper.exam.toUpperCase()}{' '}
+          paper.
+        </p>
+      ) : null}
       <p className={styles.note}>
         {counts.ready === counts.objective
           ? `All ${counts.objective} questions are ready.`

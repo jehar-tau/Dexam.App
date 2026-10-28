@@ -65,5 +65,15 @@ test('the old test-series demo URL redirects to Papers', async ({ page }) => {
 
 test('the test series requires sign-in outside preview', async ({ page }) => {
   await page.goto('/tests/papers')
-  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Ftests%2Fpapers$/)
+  await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fpapers$/)
+})
+
+test('the test-series sign-in offers Google and the Member ID route', async ({ page }) => {
+  await page.goto('/tests/practice')
+  await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fpractice$/)
+  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Sign in with your Member ID' })).toHaveAttribute(
+    'href',
+    '/sign-in?returnTo=%2Ftests%2Fpractice',
+  )
 })
