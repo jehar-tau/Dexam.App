@@ -5,6 +5,12 @@ import { StudentWorkspacePage } from './StudentWorkspacePage'
 
 const mocks = vi.hoisted(() => ({ getStudentWorkspace: vi.fn() }))
 
+// Home also shows the test-series analytics (signed-out here, so they stay empty).
+vi.mock('../features/auth/AuthContext', () => ({
+  useAuth: () => ({ session: null, signOut: vi.fn() }),
+}))
+vi.mock('../features/auth/supabaseClient', () => ({ getSupabaseClient: () => null }))
+
 vi.mock('../features/student/getStudentWorkspace', () => ({
   getStudentWorkspace: mocks.getStudentWorkspace,
 }))

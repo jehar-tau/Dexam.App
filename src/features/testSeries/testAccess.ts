@@ -95,7 +95,7 @@ export async function signInWithGoogle(client: SupabaseClient, returnTo: string)
 export function safeTestsReturnTo(value: string | null) {
   return value && (value === '/tests' || /^\/tests[/?]/.test(value)) && !value.startsWith('//')
     ? value
-    : '/tests/papers'
+    : '/tests'
 }
 
 export type PaperAccess = 'open' | 'free-choice' | 'free-claimed' | 'locked'

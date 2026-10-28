@@ -35,7 +35,7 @@ export function PartBResultCard({ attemptId }: { attemptId: string }) {
   const partB = query.data?.partB
   if (
     !partB ||
-    (partB.kind !== 'paper' && partB.kind !== 'live') ||
+    (partB.kind !== 'paper' && partB.kind !== 'live' && partB.kind !== 'mock') ||
     (partB.status === 'none' && partB.available === 0)
   )
     return null

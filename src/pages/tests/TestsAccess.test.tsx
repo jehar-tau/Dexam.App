@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 
@@ -10,7 +10,7 @@ import {
   type TestAccess,
 } from '../../features/testSeries/testAccess'
 import { renderApp } from '../../test/render'
-import { TestsPapersPage } from './TestsPapersPage'
+import { TestsMockTestPage } from './TestsMockTestPage'
 import { TestsSignInPage, TestsWelcomePage } from './TestsWelcomePages'
 
 const mocks = vi.hoisted(() => ({
@@ -55,10 +55,10 @@ const routes = (
     <Route path="/tests/sign-in" element={<TestsSignInPage />} />
     <Route path="/tests/welcome" element={<TestsWelcomePage />} />
     <Route
-      path="/tests/papers"
+      path="/tests/mock-test"
       element={
         <TestsAccessBoundary>
-          <TestsPapersPage />
+          <TestsMockTestPage />
         </TestsAccessBoundary>
       }
     />
@@ -68,9 +68,9 @@ const routes = (
 describe('access rules', () => {
   it('limits return destinations to the test series', () => {
     expect(safeTestsReturnTo('/tests/exam/uceed-2025')).toBe('/tests/exam/uceed-2025')
-    expect(safeTestsReturnTo('https://evil.test')).toBe('/tests/papers')
-    expect(safeTestsReturnTo('//evil.test/tests')).toBe('/tests/papers')
-    expect(safeTestsReturnTo('/student')).toBe('/tests/papers')
+    expect(safeTestsReturnTo('https://evil.test')).toBe('/tests')
+    expect(safeTestsReturnTo('//evil.test/tests')).toBe('/tests')
+    expect(safeTestsReturnTo('/student')).toBe('/tests')
   })
 
   it('works out free, claimed and locked papers for a candidate', () => {
@@ -95,18 +95,20 @@ describe('test-series sign-in and onboarding', () => {
     const user = userEvent.setup()
     const mock = client(() => ({ data: null, error: null }))
     mocks.client = mock
-    renderApp(routes, ['/tests/papers'])
+    renderApp(routes, ['/tests/mock-test'])
     expect(
       screen.getByRole('heading', { name: 'Practise on real design-entrance papers' }),
     ).toBeVisible()
     expect(screen.getByRole('link', { name: 'Sign in with your Member ID' })).toHaveAttribute(
       'href',
-      '/sign-in?returnTo=%2Ftests%2Fpapers',
+      '/sign-in?returnTo=%2Ftests%2Fmock-test',
     )
     await user.click(screen.getByRole('button', { name: 'Continue with Google' }))
     expect(mock.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/tests/welcome?returnTo=%2Ftests%2Fpapers` },
+      options: {
+        redirectTo: `${window.location.origin}/tests/welcome?returnTo=%2Ftests%2Fmock-test`,
+      },
     })
   })
 
@@ -136,28 +138,24 @@ describe('test-series sign-in and onboarding', () => {
       return { data: [], error: null }
     })
     mocks.client = mock
-    renderApp(routes, ['/tests/papers'])
+    renderApp(routes, ['/tests/mock-test'])
 
     expect(
       await screen.findByRole('heading', { name: 'What are you preparing for?' }),
     ).toBeVisible()
     expect(screen.getByText('Welcome, Asha Rao')).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Go to my papers' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Go to my mock tests' })).toBeDisabled()
     await user.click(screen.getByRole('radio', { name: /B\.Des/ }))
     await user.click(screen.getByRole('checkbox', { name: /NIFT/ }))
-    await user.click(screen.getByRole('button', { name: 'Go to my papers' }))
+    await user.click(screen.getByRole('button', { name: 'Go to my mock tests' }))
     expect(mock.rpc).toHaveBeenCalledWith('save_candidate_profile', {
       p_level: 'bdes',
       p_exams: ['uceed', 'nid-bdes'],
       p_exam_year: 2027,
     })
 
-    expect(await screen.findByRole('region', { name: 'UCEED' })).toBeVisible()
-    const uceed = within(screen.getByRole('region', { name: 'UCEED' }))
-    expect(uceed.getByRole('link', { name: /^2024, your free paper/ })).toBeVisible()
-    expect(uceed.getByRole('link', { name: /^2025, locked/ })).toBeVisible()
-    const nid = within(screen.getByRole('region', { name: 'NID DAT' }))
-    expect(nid.getAllByText('Free').length).toBeGreaterThan(1)
+    expect(await screen.findByRole('heading', { name: 'Mock test' })).toBeVisible()
+    expect(screen.getByRole('region', { name: 'UCEED' })).toBeVisible()
   })
 
   it('refuses a login that did not come from Google', async () => {
@@ -189,8 +187,10 @@ describe('test-series sign-in and onboarding', () => {
           }
         : { data: { attempts: [], topics: [] }, error: null },
     )
-    renderApp(routes, ['/tests/papers'])
-    expect(await screen.findByText(/coaching enrolment includes every paper/)).toBeVisible()
-    expect(screen.queryByText('Locked')).toBeNull()
+    renderApp(routes, ['/tests/mock-test'])
+    expect(await screen.findByRole('heading', { name: 'Mock test' })).toBeVisible()
+    for (const exam of ['UCEED', 'CEED', 'NID DAT', 'NIFT']) {
+      expect(screen.getByRole('region', { name: exam })).toBeVisible()
+    }
   })
 })

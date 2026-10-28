@@ -77,10 +77,8 @@ describe('Student portal sidebar', () => {
       ['Study checklist', '/student/study-checklist'],
       ['Class agenda', '/student/agenda'],
       ['Work archive', '/student/archive'],
-      ['Overview', '/tests'],
       ['Practice', '/tests/practice'],
-      ['Papers', '/tests/papers'],
-      ['Mocks', '/tests/mocks'],
+      ['Mock test', '/tests/mock-test'],
     ] as const) {
       expect(within(nav).getByRole('link', { name: label })).toHaveAttribute('href', href)
     }
@@ -102,10 +100,7 @@ describe('Student portal sidebar', () => {
     renderApp(routes, ['/tests'])
     expect(await screen.findByText('M.Des candidate')).toBeVisible()
     const nav = screen.getByRole('navigation', { name: 'Student portal sections' })
-    expect(within(nav).getByRole('link', { name: 'Overview' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
+    expect(within(nav).getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
     expect(within(nav).queryByRole('link', { name: 'Coursework' })).toBeNull()
     expect(within(nav).queryByRole('link', { name: /Notifications/ })).toBeNull()
     for (const brand of screen.getAllByRole('link', { name: 'Dexam Test series' })) {

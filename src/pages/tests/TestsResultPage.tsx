@@ -77,7 +77,7 @@ export function TestsResultPage() {
   })
 
   const result = isPreview ? previewResult : query.data
-  const papersPath = `/tests/papers${search}`
+  const papersPath = `/tests/mock-test${search}`
 
   if (!result) {
     const loading = !isPreview && query.isPending && Boolean(client && session)
@@ -94,7 +94,7 @@ export function TestsResultPage() {
               }
               action={
                 <Link className={styles.link} to={papersPath}>
-                  Back to papers
+                  Back to Mock test
                 </Link>
               }
             />
@@ -137,8 +137,8 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
           ← Back to practice
         </Link>
       ) : (
-        <Link className={styles.back} to={`/tests/papers${search}`}>
-          ← Back to papers
+        <Link className={styles.back} to={`/tests/mock-test${search}`}>
+          ← Back to Mock test
         </Link>
       )}
 
@@ -342,8 +342,8 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
             Take it again
           </Link>
         ) : null}
-        <Link className={styles.link} to={`/tests/papers${search}`}>
-          Back to papers
+        <Link className={styles.link} to={`/tests/mock-test${search}`}>
+          Back to Mock test
         </Link>
       </div>
     </div>

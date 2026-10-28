@@ -5,6 +5,16 @@
   margin: 0 auto;
 }
 
+.embedded {
+  max-width: none;
+  margin: var(--space-8) 0;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--fs-h2);
+}
+
 .title {
   margin: 0;
   font-size: var(--fs-h2);

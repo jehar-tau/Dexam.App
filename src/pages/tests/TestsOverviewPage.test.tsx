@@ -108,7 +108,7 @@ describe('Overview', () => {
     )
   })
 
-  it('points a new student to the papers', async () => {
+  it('points a new student to a mock test', async () => {
     mocks.session = { user: { id: 'student-2', email: 'y@members.dexam.invalid' } }
     mocks.client = client({
       get_assessment_progress: { attempts: [], topics: [] },
@@ -116,9 +116,9 @@ describe('Overview', () => {
     })
     renderApp(routes, ['/tests'])
     expect(await screen.findByText('No results yet')).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Go to Papers' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Start a mock test' })).toHaveAttribute(
       'href',
-      '/tests/papers',
+      '/tests/mock-test',
     )
   })
 })

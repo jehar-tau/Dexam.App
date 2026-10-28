@@ -45,7 +45,7 @@ describe('Overview progress (merged Analytics)', () => {
 
   it('shows preview stats, a labelled progress chart, topics and history', () => {
     renderApp(routes, ['/tests?preview=1'])
-    expect(screen.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Home' })).toBeVisible()
     expect(screen.getByText('Papers and mocks').nextSibling).toHaveTextContent('6')
     const chart = screen.getByRole('img', { name: /Score percentage over time/ })
     expect(

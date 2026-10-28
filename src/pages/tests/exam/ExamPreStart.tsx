@@ -88,14 +88,14 @@ export function ExamLogin({
               </div>
             </dl>
             <p className={styles.loginHint}>
-              Check your details before you sign in. If anything is wrong, go back to Papers.
+              Check your details before you sign in. If anything is wrong, go back to Mock test.
             </p>
             <div className={styles.loginActions}>
               <button type="button" className={styles.primaryAction} onClick={onSignIn}>
                 Sign in
               </button>
               <Link className={styles.quietLink} to={exitTo}>
-                Back to papers
+                Back to Mock test
               </Link>
             </div>
           </div>

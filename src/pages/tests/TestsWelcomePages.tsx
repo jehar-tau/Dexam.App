@@ -260,7 +260,7 @@ export function TestsWelcomePage() {
             </p>
           ) : null}
           <button type="submit" className={styles.primary} disabled={!level || save.isPending}>
-            {save.isPending ? 'Saving…' : 'Go to my papers'}
+            {save.isPending ? 'Saving…' : 'Go to my mock tests'}
           </button>
         </form>
       </section>

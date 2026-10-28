@@ -7,6 +7,7 @@ import {
   type StudentEnrollment,
   type StudentWorkspace,
 } from '../features/student/getStudentWorkspace'
+import { TestsOverviewPage } from './tests/TestsOverviewPage'
 import styles from './StudentWorkspacePage.module.css'
 
 const previewWorkspace: StudentWorkspace = {
@@ -149,6 +150,9 @@ export function StudentWorkspacePage() {
           <small>Keep this ID for every stage of your journey.</small>
         </div>
       </header>
+
+      {/* The test-series analytics live on Home (owner, 2026-10-29). */}
+      <TestsOverviewPage embedded />
 
       <div className={styles.content}>
         <div className={styles.primary}>
