@@ -49,6 +49,9 @@ import { TestsAnalyticsPage } from '../pages/tests/TestsAnalyticsPage'
 import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
 import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
+import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
+import { PartBPage } from '../pages/tests/exam/PartBPage'
+import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
 import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
 
 export const router = createBrowserRouter([
@@ -68,6 +71,23 @@ export const router = createBrowserRouter([
             <PortalAccessBoundary portal="staff" allowPreview>
               <PortalHomePage portal="staff" />
             </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        // F048: anonymous Part B evaluation.
+        path: 'staff/part-b',
+        element: (
+          <StaffAccessBoundary capability="assessment.part_b.evaluate" allowPreview={false}>
+            <PartBQueuePage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/part-b/:attemptId',
+        element: (
+          <StaffAccessBoundary capability="assessment.part_b.evaluate" allowPreview={false}>
+            <PartBEvaluationPage />
           </StaffAccessBoundary>
         ),
       },
@@ -408,6 +428,15 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
+  {
+    // F043: Part B (drawing and uploads) runs full screen after Part A.
+    path: '/tests/part-b/:attemptId',
+    element: (
+      <TestsAccessBoundary>
+        <PartBPage />
+      </TestsAccessBoundary>
+    ),
+  },
   // F039: test-series sign-in (Google for candidates, Member ID for coaching students) and setup.
   { path: '/tests/sign-in', element: <TestsSignInPage /> },
   { path: '/tests/welcome', element: <TestsWelcomePage /> },
@@ -470,15 +499,7 @@ export const router = createBrowserRouter([
           />
         ),
       },
-      {
-        path: 'sketches',
-        element: (
-          <TestsComingSoonPage
-            title="Sketches"
-            description="Your Part B drawing uploads and their feedback."
-          />
-        ),
-      },
+      { path: 'sketches', element: <TestsSketchesPage /> },
     ],
   },
 ])

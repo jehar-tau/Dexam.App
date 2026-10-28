@@ -77,3 +77,9 @@ test('the test-series sign-in offers Google and the Member ID route', async ({ p
     '/sign-in?returnTo=%2Ftests%2Fpractice',
   )
 })
+
+test('the Sketches page explains Part B in preview', async ({ page }) => {
+  await page.goto('/tests/sketches?preview=1')
+  await expect(page.getByRole('heading', { name: 'Sketches' })).toBeVisible()
+  await expect(page.getByText('Your Part B drawings appear here')).toBeVisible()
+})

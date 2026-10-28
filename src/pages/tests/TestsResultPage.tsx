@@ -19,6 +19,7 @@ import {
   type ResultQuestion,
 } from '../../features/testSeries/scoring'
 import { ExamFigure } from './exam/ExamFigure'
+import { PartBResultCard } from './TestsSketchesPage'
 import styles from './TestsResultPage.module.css'
 
 const PREVIEW_PREFIX = 'preview-'
@@ -186,6 +187,10 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
           </div>
         </dl>
       </section>
+
+      {!result.preview && result.kind !== 'practice' ? (
+        <PartBResultCard attemptId={result.attemptId} />
+      ) : null}
 
       <div className={styles.columns}>
         <section className={styles.panel} aria-labelledby="sections-title">
