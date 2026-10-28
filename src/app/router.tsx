@@ -44,6 +44,7 @@ import {
   TestsPaperPage,
 } from '../pages/tests/TestsSectionPages'
 import { ExamWindowPage } from '../pages/tests/exam/ExamWindowPage'
+import { TestsResultPage } from '../pages/tests/TestsResultPage'
 
 export const router = createBrowserRouter([
   {
@@ -431,6 +432,7 @@ export const router = createBrowserRouter([
       },
       { path: 'papers', element: <TestsPapersPage /> },
       { path: 'papers/:paperId', element: <TestsPaperPage /> },
+      { path: 'results/:attemptId', element: <TestsResultPage /> },
       {
         path: 'analytics',
         element: (

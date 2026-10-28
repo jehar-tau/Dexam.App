@@ -1,6 +1,6 @@
 # F042 — Exam interface (redesign step 2)
 
-Status: Phase 1 (client exam window on a fictional paper) merged 2026-10-28 (#94). Phase 2a (real bank papers for signed-in students) implemented locally 2026-10-28 with F038; in review. Phase 2b (server-authoritative timer, autosave and submit lock) follows with scoring (F044).
+Status: Phase 1 (client exam window on a fictional paper) merged 2026-10-28 (#94). Phase 2a (real bank papers for signed-in students) implemented locally 2026-10-28 with F038; in review. Phase 2b, part one (with F044, step 4): server attempts pin the questions, the server sets the deadline at "I am ready to begin", and submission is scored and locked on the server, with a retry if it fails. Server autosave during the exam is still to come.
 
 ## Phase 2a: bank papers
 

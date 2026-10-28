@@ -24,6 +24,7 @@ function renderExam(path = '/tests/exam/uceed-2025?preview=1') {
     <Routes>
       <Route path="/tests/exam/:paperId" element={<ExamWindowPage />} />
       <Route path="/tests/papers" element={<h1>Papers</h1>} />
+      <Route path="/tests/results/:attemptId" element={<h1>Result page</h1>} />
     </Routes>,
     [path],
   )
@@ -198,12 +199,20 @@ describe('Exam window', () => {
 })
 
 describe('Exam window with the question bank', () => {
-  const bankPayload = {
+  const attemptId = '00000000-0000-4000-8000-0000000000a1'
+  const questionId = '00000000-0000-4000-8000-000000000001'
+  const opened = {
+    attemptId,
     paperId: 'uceed-2025',
+    exam: 'uceed',
+    status: 'open',
+    deadline: null,
+    durationMinutes: 40,
     objectiveCount: 3,
+    marking: { mcq: { correct: 3, wrong: -0.71 } },
     questions: [
       {
-        id: '00000000-0000-4000-8000-000000000001',
+        id: questionId,
         number: '4',
         type: 'mcq',
         prompt: 'Which bank shape has four equal sides?',
@@ -216,9 +225,12 @@ describe('Exam window with the question bank', () => {
     ],
   }
 
-  function bankClient(rpcResult: { data: unknown; error: unknown }) {
+  function bankClient(responses: Record<string, { data: unknown; error: unknown }>) {
+    const rpc = vi.fn((name: string) =>
+      Promise.resolve(responses[name] ?? { data: null, error: { code: 'XX000' } }),
+    )
     return {
-      rpc: vi.fn(() => Promise.resolve(rpcResult)),
+      rpc,
       storage: {
         from: () => ({
           createSignedUrls: () =>
@@ -240,9 +252,15 @@ describe('Exam window with the question bank', () => {
     }
   })
 
-  it('opens the reviewed bank paper for a signed-in student', async () => {
+  it('opens, begins on the server, and submits for scoring', async () => {
     const user = userEvent.setup()
-    mocks.client = bankClient({ data: bankPayload, error: null })
+    const deadline = new Date(Date.now() + 40 * 60_000).toISOString()
+    const client = bankClient({
+      open_assessment_attempt: { data: opened, error: null },
+      begin_assessment_attempt: { data: { deadline }, error: null },
+      submit_assessment_attempt: { data: { score: 3, maxScore: 3 }, error: null },
+    })
+    mocks.client = client
     renderExam('/tests/exam/uceed-2025')
 
     expect(await screen.findByRole('heading', { name: 'Candidate login' })).toBeVisible()
@@ -251,22 +269,64 @@ describe('Exam window with the question bank', () => {
     expect(screen.queryByText(/fictional/i)).not.toBeInTheDocument()
 
     await startExam(user)
-    expect(screen.getByRole('timer', { name: 'Time left' })).toHaveTextContent('00:40:00')
-    expect(screen.getByText('Which bank shape has four equal sides?')).toBeVisible()
+    expect(client.rpc).toHaveBeenCalledWith('begin_assessment_attempt', { p_attempt_id: attemptId })
+    expect(screen.getByRole('timer', { name: 'Time left' })).toHaveTextContent(/00:(40:00|39:5\d)/)
     expect(screen.getByRole('img', { name: 'Figure 1 for question 1' })).toHaveAttribute(
       'src',
       'http://127.0.0.1/signed/ab',
     )
     await user.click(screen.getByRole('radio', { name: /Square/ }))
     await user.click(screen.getByRole('button', { name: 'Save & Next' }))
-    expect(palette().getByRole('button', { name: 'Question 1, answered' })).toBeVisible()
-    expect(localStorage.getItem(attemptStorageKey('student-1', 'uceed-2025'))).toContain(
-      '00000000-0000-4000-8000-000000000001',
-    )
+    expect(localStorage.getItem(attemptStorageKey('student-1', 'uceed-2025'))).toContain(attemptId)
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }))
+    await user.click(screen.getByRole('button', { name: 'Yes, submit' }))
+    expect(await screen.findByRole('heading', { name: 'Result page' })).toBeVisible()
+    expect(client.rpc).toHaveBeenCalledWith('submit_assessment_attempt', {
+      p_attempt_id: attemptId,
+      p_responses: { [questionId]: 'B' },
+      p_reason: 'candidate',
+    })
+    expect(localStorage.getItem(attemptStorageKey('student-1', 'uceed-2025'))).toBeNull()
+  })
+
+  it('resumes a started attempt with the server deadline', async () => {
+    const deadline = new Date(Date.now() + 10 * 60_000).toISOString()
+    mocks.client = bankClient({
+      open_assessment_attempt: {
+        data: { ...opened, status: 'in_progress', deadline },
+        error: null,
+      },
+    })
+    renderExam('/tests/exam/uceed-2025')
+    expect(await screen.findByRole('heading', { name: 'Question 1' })).toBeVisible()
+    expect(screen.getByRole('timer', { name: 'Time left' })).toHaveTextContent(/00:(10:00|09:5\d)/)
+  })
+
+  it('keeps answers and offers a retry when submission fails', async () => {
+    const user = userEvent.setup()
+    const deadline = new Date(Date.now() + 10 * 60_000).toISOString()
+    const client = bankClient({
+      open_assessment_attempt: {
+        data: { ...opened, status: 'in_progress', deadline },
+        error: null,
+      },
+      submit_assessment_attempt: { data: null, error: { code: '08006' } },
+    })
+    mocks.client = client
+    renderExam('/tests/exam/uceed-2025')
+    await user.click(await screen.findByRole('button', { name: 'Submit' }))
+    await user.click(screen.getByRole('button', { name: 'Yes, submit' }))
+    expect(await screen.findByRole('heading', { name: /has not reached Dexam yet/ })).toBeVisible()
+    client.rpc.mockImplementation(() => Promise.resolve({ data: {}, error: null }))
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(await screen.findByRole('heading', { name: 'Result page' })).toBeVisible()
   })
 
   it('says when a paper has no reviewed questions yet', async () => {
-    mocks.client = bankClient({ data: { ...bankPayload, questions: [] }, error: null })
+    mocks.client = bankClient({
+      open_assessment_attempt: { data: null, error: { code: 'P0002' } },
+    })
     renderExam('/tests/exam/uceed-2025')
     expect(
       await screen.findByRole('heading', { name: 'This paper is still being reviewed' }),
@@ -279,7 +339,9 @@ describe('Exam window with the question bank', () => {
   })
 
   it('explains when the paper cannot be opened', async () => {
-    mocks.client = bankClient({ data: null, error: { code: '42501' } })
+    mocks.client = bankClient({
+      open_assessment_attempt: { data: null, error: { code: '42501' } },
+    })
     renderExam('/tests/exam/uceed-2025')
     expect(
       await screen.findByRole('heading', { name: 'This paper could not be opened' }),

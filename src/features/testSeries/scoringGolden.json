@@ -1,0 +1,224 @@
+{
+  "_note": "F044 golden scoring cases. supabase/tests/00400_assessment_attempts_scoring.test.sql checks the same cases against assessment_score_response(); keep both in step.",
+  "marking": {
+    "uceed": {
+      "nat": { "correct": 4, "wrong": 0 },
+      "msq": { "correct": 4, "wrong": -1, "partial": true },
+      "mcq": { "correct": 3, "wrong": -0.71 }
+    },
+    "practice": {
+      "nat": { "correct": 1, "wrong": 0, "practice": true },
+      "msq": { "correct": 1, "wrong": 0, "practice": true },
+      "mcq": { "correct": 1, "wrong": 0, "practice": true }
+    }
+  },
+  "cases": [
+    {
+      "name": "mcq correct",
+      "marking": "uceed",
+      "type": "mcq",
+      "key": { "kind": "choice", "correct": ["B"] },
+      "response": "B",
+      "outcome": "correct",
+      "marks": 3
+    },
+    {
+      "name": "mcq wrong",
+      "marking": "uceed",
+      "type": "mcq",
+      "key": { "kind": "choice", "correct": ["B"] },
+      "response": "C",
+      "outcome": "wrong",
+      "marks": -0.71
+    },
+    {
+      "name": "mcq either accepted",
+      "marking": "uceed",
+      "type": "mcq",
+      "key": { "kind": "choice", "correct": ["A", "B"] },
+      "response": "A",
+      "outcome": "correct",
+      "marks": 3
+    },
+    {
+      "name": "mcq unanswered",
+      "marking": "uceed",
+      "type": "mcq",
+      "key": { "kind": "choice", "correct": ["B"] },
+      "response": null,
+      "outcome": "unanswered",
+      "marks": 0
+    },
+    {
+      "name": "msq exact",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A", "C", "D"] },
+      "response": ["D", "A", "C"],
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "msq all four, three chosen",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A", "B", "C", "D"] },
+      "response": ["A", "B", "C"],
+      "outcome": "partial",
+      "marks": 3
+    },
+    {
+      "name": "msq three correct, two chosen",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A", "C", "D"] },
+      "response": ["A", "D"],
+      "outcome": "partial",
+      "marks": 2
+    },
+    {
+      "name": "msq two correct, one chosen",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["B", "C"] },
+      "response": ["C"],
+      "outcome": "partial",
+      "marks": 1
+    },
+    {
+      "name": "msq any wrong option",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A", "C"] },
+      "response": ["A", "B"],
+      "outcome": "wrong",
+      "marks": -1
+    },
+    {
+      "name": "msq empty",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A"] },
+      "response": [],
+      "outcome": "unanswered",
+      "marks": 0
+    },
+    {
+      "name": "msq alternatives exact",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "alternatives": [["B"], ["B", "C"]] },
+      "response": ["B", "C"],
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "msq alternatives single",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "multi", "alternatives": [["B"], ["B", "C"]] },
+      "response": ["B"],
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "msq practice subset is wrong",
+      "marking": "practice",
+      "type": "msq",
+      "key": { "kind": "multi", "correct": ["A", "C"] },
+      "response": ["A"],
+      "outcome": "wrong",
+      "marks": 0
+    },
+    {
+      "name": "nat exact",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": 12 }] },
+      "response": "12",
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "nat exact with zeros",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": 2 }] },
+      "response": "2.00",
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "nat alternative",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": 7 }, { "exact": 9 }] },
+      "response": "9",
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "nat in range",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "range": [92.9, 94.6] }] },
+      "response": "94.6",
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "nat out of range",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "range": [92.9, 94.6] }] },
+      "response": "94.61",
+      "outcome": "wrong",
+      "marks": 0
+    },
+    {
+      "name": "nat negative",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": -3.5 }] },
+      "response": "-3.5",
+      "outcome": "correct",
+      "marks": 4
+    },
+    {
+      "name": "nat not a number",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": 1 }] },
+      "response": "-",
+      "outcome": "wrong",
+      "marks": 0
+    },
+    {
+      "name": "nat blank",
+      "marking": "uceed",
+      "type": "nat",
+      "key": { "kind": "numeric", "accepted": [{ "exact": 1 }] },
+      "response": "  ",
+      "outcome": "unanswered",
+      "marks": 0
+    },
+    {
+      "name": "dropped",
+      "marking": "uceed",
+      "type": "mcq",
+      "key": { "kind": "dropped" },
+      "response": "A",
+      "outcome": "dropped",
+      "marks": 0
+    },
+    {
+      "name": "full marks",
+      "marking": "uceed",
+      "type": "msq",
+      "key": { "kind": "full_marks" },
+      "response": null,
+      "outcome": "full_marks",
+      "marks": 4
+    }
+  ]
+}
