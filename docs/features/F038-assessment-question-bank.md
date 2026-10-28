@@ -1,6 +1,13 @@
 # F038 — Assessment question bank
 
-Status: Approved for implementation; D-055 Option A approved 2026-10-28 (Admin only, MFA for import and answer keys). Specification drafted 2026-10-28 under D-053 B and D-054 A. No migration, import, real content or production activation yet.
+Status: Implemented locally 2026-10-28 (redesign step 3, D-057) under D-053 B, D-054 A and D-055 A (Admin only, MFA for import and answer keys); in review. The real workstation bank (4,183 questions, 695 ready) is loaded into the local database only. No staging or production import, and no real content in this repository.
+
+## Implementation (step 3)
+
+- **Migration** `20261028010000_assessment_question_bank.sql`: the seven `assessment_*` tables, the private `assessment-media` bucket, both capabilities on `elevated_admin` (import requires MFA), staff-read policies, and no browser grant on `assessment_question_keys`.
+- **Candidate view** (part of F042): `get_assessment_student_paper(paper_id)` returns a paper's ready objective questions in paper order (prompt, options, figure paths) for an active student, and `list_assessment_student_papers()` returns ready and objective counts per paper. Neither returns keys, key status, quarantine reasons, licences, external keys or provenance. A storage policy lets an active student read only figure and option images of ready questions; the browser opens them with short-lived signed links.
+- **Importer**: `pnpm assessment:import` (`scripts/assessment/`): Zod export validation, the answer normaliser, a pure import planner and the CLI. Media is checked (inside the media root, no symlinks, at most 5 MB, SHA-256 match, PNG/JPEG/WebP by magic bytes) and stored content-addressed (`<sha[0:2]>/<sha>.<ext>`). Each question is written atomically by the service-role-only `assessment_import_question()`. Limited to a local stack until staging import is approved.
+- **Workstation exporter**: `tools/export_platform_bank.py` in the content workstation writes the v1 export, carrying its own blockers as `holds`.
 
 ## Purpose and problem
 
@@ -127,6 +134,16 @@ Students and anonymous users get no grants on any `assessment_*` table. The impo
 
 The workstation owns producing this file. The platform validates it and rejects unknown `schemaVersion` values.
 
+Optional fields added in step 3, all backwards compatible with v1:
+
+- `assets[].width`, `assets[].height`, and `assets[].review` (`approved`, `pending` or `rejected`): the workstation crop review. A figure or option image must be `approved` to be served (`figure-not-approved` otherwise).
+- `holds`: the workstation's own reasons a question cannot be served yet (for example `visual-crop-awaiting-review`, `structured-options-missing`). Every hold becomes a quarantine reason.
+- `answer.verification`: `second-pass-reproduced` is required before an `independently-solved` key counts.
+
+Further quarantine reasons the importer adds: `prompt-missing`, `options-missing`, `options-invalid`, `answer-key-missing`, `answer-key-unverified`, `unparsed-key`, `key-option-mismatch`, `media-missing`, `media-mismatch`, `media-too-large`, `media-type`, `figure-not-approved` and `source-label`.
+
+MCQ keys with alternatives (`A or B`) normalise to `{kind: choice, correct: [A, B]}`: any listed option is accepted. Keys that say marks are awarded to all (`DROPPED (+3 marks awarded to all)`) normalise to `full_marks`. NAT ranges also accept `~` and `to` as separators.
+
 ## Interface states
 
 F038 adds no student interface. The import report shows the counts and per-question reasons as a CLI table and as JSON. A staff read-only bank view is optional in F038; if it is built, it needs loading, empty, error and permission-denied states, plus a Storybook story.
@@ -177,7 +194,5 @@ None.
 
 ## Open decisions
 
-- **D-055: bank-management permissions.**
-  - **Recommendation A:** both capabilities go to the Admin role only, with MFA for import and key access.
-  - B: also grant read access to a new Content Reviewer role.
-  - C: grant both to Teachers.
+- D-055 is decided (A). No open decisions for this slice.
+- **Owner question:** which NIFT 2012 and 2013 written booklets are the B.Des and M.Des papers. Until answered, the catalogue papers `nift-bdes-2012`, `nift-bdes-2013` and `nift-mdes-2013` are not linked to bank papers.

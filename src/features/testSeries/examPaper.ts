@@ -1,20 +1,25 @@
 /**
- * F042 exam-window paper shape, plus the fictional practice paper used until the
- * question bank (F038) serves real papers. The fixture carries no answer keys:
- * keys stay server-side once scoring (F044) exists.
+ * F042 exam-window paper shape, plus the fictional practice paper shown in preview. Real papers
+ * come from the question bank (F038, `bankPaper.ts`). Neither carries answer keys: keys stay
+ * server-side for scoring (F044).
  */
 
 export type ExamQuestionKind = 'nat' | 'msq' | 'mcq'
 
 export type ExamFigureId = 'cube-net' | 'tile-grid' | 'shape-sequence'
 
-export type ExamOption = { id: string; text: string }
+export type ExamOption = { id: string; text: string; image?: string }
+
+export type ExamImage = { src: string; width?: number | null; height?: number | null }
 
 export type ExamQuestion = {
   id: string
   kind: ExamQuestionKind
   prompt: string
+  /** Bank question number as printed on the source paper, when known. */
+  number?: string
   figure?: ExamFigureId
+  images?: ExamImage[]
   options?: ExamOption[]
 }
 
@@ -22,7 +27,8 @@ export type ExamSection = {
   id: string
   name: string
   kindLabel: string
-  marking: { correct: number; wrong: number; note?: string }
+  /** Absent when the exam's marking scheme is not officially published. */
+  marking?: { correct: number; wrong: number; note?: string }
   questions: ExamQuestion[]
 }
 
@@ -30,6 +36,10 @@ export type ExamPaper = {
   title: string
   durationMinutes: number
   sections: ExamSection[]
+  /** 'practice' is the fictional preview paper; 'bank' comes from reviewed bank questions. */
+  source: 'practice' | 'bank'
+  /** Notes shown on the instruction pages, such as how the time was set. */
+  notes?: string[]
 }
 
 const options = (...texts: string[]): ExamOption[] =>
@@ -38,6 +48,7 @@ const options = (...texts: string[]): ExamOption[] =>
 export const practicePaper: ExamPaper = {
   title: 'Dexam practice paper',
   durationMinutes: 20,
+  source: 'practice',
   sections: [
     {
       id: 'nat',

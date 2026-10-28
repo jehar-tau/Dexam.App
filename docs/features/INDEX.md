@@ -42,6 +42,6 @@ IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specificatio
 - F036 Isolated Resend connection probe — preparation authorized 2026-10-21; fixed non-credential single-use executor, offline tests only, no handler integration or activation
 
 - F037 Assessment and test-series foundation — D-053 B; fictional runner preview at `/student/tests?preview=1`; merged PR #89
-- F042 Exam interface — D-057 redesign step 2; phase 1 full-screen exam window at `/tests/exam/:paperId` on a fictional practice paper; server timer and autosave in phase 2
-- F038 Assessment question bank — D-054 A programme; spec drafted 2026-10-28, D-055 A approved (Admin only, MFA for import/keys); no migration yet
+- F042 Exam interface — D-057 redesign step 2; phase 1 exam window (merged #94); phase 2a serves reviewed bank papers to signed-in students; server timer and autosave in phase 2b
+- F038 Assessment question bank — D-054 A, D-055 A; redesign step 3: migration, importer and workstation exporter; real bank loaded locally only
 - F051 Test-series shell and Papers page — D-057 redesign step 1; `/tests` shell, Papers dashboard with fictional preview data

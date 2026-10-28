@@ -6,8 +6,17 @@ import { attemptStorageKey } from '../../../features/testSeries/examAttempt'
 import { renderApp } from '../../../test/render'
 import { ExamWindowPage } from './ExamWindowPage'
 
+const mocks = vi.hoisted(() => ({
+  session: null as null | { user: { id: string; email: string } },
+  client: null as null | object,
+}))
+
 vi.mock('../../../features/auth/AuthContext', () => ({
-  useAuth: () => ({ session: null, signOut: vi.fn() }),
+  useAuth: () => ({ session: mocks.session, signOut: vi.fn() }),
+}))
+
+vi.mock('../../../features/auth/supabaseClient', () => ({
+  getSupabaseClient: () => mocks.client,
 }))
 
 function renderExam(path = '/tests/exam/uceed-2025?preview=1') {
@@ -38,6 +47,8 @@ describe('Exam window', () => {
   beforeEach(() => {
     vi.stubEnv('VITE_ENABLE_STUDENT_PREVIEW', 'true')
     localStorage.clear()
+    mocks.session = null
+    mocks.client = null
   })
 
   it('walks from login through instructions and the declaration into the exam', async () => {
@@ -183,5 +194,96 @@ describe('Exam window', () => {
     renderExam('/tests/exam/not-a-paper?preview=1')
     expect(screen.getByRole('heading', { name: 'Paper not found' })).toBeVisible()
     expect(localStorage.getItem(attemptStorageKey('preview', 'not-a-paper'))).toBeNull()
+  })
+})
+
+describe('Exam window with the question bank', () => {
+  const bankPayload = {
+    paperId: 'uceed-2025',
+    objectiveCount: 3,
+    questions: [
+      {
+        id: '00000000-0000-4000-8000-000000000001',
+        number: '4',
+        type: 'mcq',
+        prompt: 'Which bank shape has four equal sides?',
+        figures: [{ path: 'ab/figure.png', width: 320, height: 200 }],
+        options: [
+          { key: 'A', text: 'Triangle', imagePath: null },
+          { key: 'B', text: 'Square', imagePath: null },
+        ],
+      },
+    ],
+  }
+
+  function bankClient(rpcResult: { data: unknown; error: unknown }) {
+    return {
+      rpc: vi.fn(() => Promise.resolve(rpcResult)),
+      storage: {
+        from: () => ({
+          createSignedUrls: () =>
+            Promise.resolve({
+              data: [
+                { path: 'ab/figure.png', signedUrl: 'http://127.0.0.1/signed/ab', error: null },
+              ],
+              error: null,
+            }),
+        }),
+      },
+    }
+  }
+
+  beforeEach(() => {
+    localStorage.clear()
+    mocks.session = {
+      user: { id: 'student-1', email: 'dxm-teststudent2@members.dexam.invalid' },
+    }
+  })
+
+  it('opens the reviewed bank paper for a signed-in student', async () => {
+    const user = userEvent.setup()
+    mocks.client = bankClient({ data: bankPayload, error: null })
+    renderExam('/tests/exam/uceed-2025')
+
+    expect(await screen.findByRole('heading', { name: 'Candidate login' })).toBeVisible()
+    expect(screen.getAllByText('DXM-TESTSTUDENT2').length).toBeGreaterThan(0)
+    expect(screen.getByText(/1 of the 3 objective questions/)).toBeVisible()
+    expect(screen.queryByText(/fictional/i)).not.toBeInTheDocument()
+
+    await startExam(user)
+    expect(screen.getByRole('timer', { name: 'Time left' })).toHaveTextContent('00:40:00')
+    expect(screen.getByText('Which bank shape has four equal sides?')).toBeVisible()
+    expect(screen.getByRole('img', { name: 'Figure 1 for question 1' })).toHaveAttribute(
+      'src',
+      'http://127.0.0.1/signed/ab',
+    )
+    await user.click(screen.getByRole('radio', { name: /Square/ }))
+    await user.click(screen.getByRole('button', { name: 'Save & Next' }))
+    expect(palette().getByRole('button', { name: 'Question 1, answered' })).toBeVisible()
+    expect(localStorage.getItem(attemptStorageKey('student-1', 'uceed-2025'))).toContain(
+      '00000000-0000-4000-8000-000000000001',
+    )
+  })
+
+  it('says when a paper has no reviewed questions yet', async () => {
+    mocks.client = bankClient({ data: { ...bankPayload, questions: [] }, error: null })
+    renderExam('/tests/exam/uceed-2025')
+    expect(
+      await screen.findByRole('heading', { name: 'This paper is still being reviewed' }),
+    ).toBeVisible()
+
+    renderExam('/tests/exam/nift-bdes-2013')
+    expect(
+      screen.getAllByRole('heading', { name: 'This paper is still being reviewed' }).length,
+    ).toBe(2)
+  })
+
+  it('explains when the paper cannot be opened', async () => {
+    mocks.client = bankClient({ data: null, error: { code: '42501' } })
+    renderExam('/tests/exam/uceed-2025')
+    expect(
+      await screen.findByRole('heading', { name: 'This paper could not be opened' }),
+    ).toBeVisible()
+    expect(screen.getByText(/could not be loaded for your account/)).toBeVisible()
   })
 })

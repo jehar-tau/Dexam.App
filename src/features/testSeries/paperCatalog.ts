@@ -120,6 +120,25 @@ export function findPaper(id: string): CatalogPaper | undefined {
   return papers.find((paper) => paper.id === id)
 }
 
+// Catalogue ids that differ from the workstation bank's paper ids. The NIFT 2012 and 2013 written
+// booklets are numbered, not named by programme, so they stay unlinked until the owner confirms
+// which booklet is the B.Des or M.Des paper.
+const bankPaperIds: Record<string, string | null> = {
+  'nift-bdes-sample': 'nift-bdes-written-sample',
+  'nift-mdes-sample': 'nift-mdes-written-sample',
+  'nift-bdes-2014': 'nift-2014-bdes-written',
+  'nift-mdes-2014': 'nift-2014-mdes-written',
+  'nift-mdes-2012': 'nift-2012-mdes-written',
+  'nift-bdes-2012': null,
+  'nift-bdes-2013': null,
+  'nift-mdes-2013': null,
+}
+
+/** The question-bank paper behind a catalogue paper, or null when none is linked yet. */
+export function bankPaperId(paper: CatalogPaper): string | null {
+  return paper.id in bankPaperIds ? (bankPaperIds[paper.id] ?? null) : paper.id
+}
+
 export function formatMinutes(total: number): string {
   const hours = Math.floor(total / 60)
   const minutes = total % 60

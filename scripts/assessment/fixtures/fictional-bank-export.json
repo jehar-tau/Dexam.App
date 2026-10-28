@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-28T00:00:00Z",
+  "questions": [
+    {
+      "externalKey": "fiction-2026-q1",
+      "type": "MCQ",
+      "prompt": "Which shape in the figure has four equal sides?",
+      "options": [
+        { "key": "A", "text": "Triangle" },
+        { "key": "B", "text": "Square" },
+        { "key": "C", "text": "Pentagon" },
+        { "key": "D", "text": "Circle" }
+      ],
+      "assets": [
+        {
+          "role": "figure",
+          "path": "fiction-2026/q1.png",
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "width": 200,
+          "height": 120,
+          "review": "approved"
+        }
+      ],
+      "answer": { "raw": "B", "status": "official-key" },
+      "topic": "spatial-reasoning",
+      "visualDependency": true,
+      "licence": "original",
+      "sourceKind": "original",
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "1"
+      }
+    },
+    {
+      "externalKey": "fiction-2026-q2",
+      "type": "NAT",
+      "prompt": "How many corners does a cube have?",
+      "answer": { "raw": "8", "status": "official-key" },
+      "licence": "original",
+      "sourceKind": "original",
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "2"
+      }
+    },
+    {
+      "externalKey": "fiction-2026-q3",
+      "type": "MSQ",
+      "prompt": "Which of these are primary colours of light?",
+      "options": [
+        { "key": "1", "text": "Red" },
+        { "key": "2", "text": "Yellow" },
+        { "key": "3", "text": "Green" },
+        { "key": "4", "text": "Blue" }
+      ],
+      "answer": { "raw": "ACD", "status": "official-key" },
+      "licence": "original",
+      "sourceKind": "original",
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "3"
+      }
+    },
+    {
+      "externalKey": "fiction-2026-q4",
+      "type": "MCQ",
+      "prompt": "Pick the odd one out in the figure.",
+      "options": [
+        { "key": "A", "text": "One" },
+        { "key": "B", "text": "Two" }
+      ],
+      "assets": [
+        {
+          "role": "figure",
+          "path": "fiction-2026/q4.png",
+          "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "review": "pending"
+        }
+      ],
+      "answer": { "raw": "Q66", "status": "official-key" },
+      "licence": "original",
+      "sourceKind": "original",
+      "holds": ["visual-crop-awaiting-review"],
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "4"
+      }
+    },
+    {
+      "externalKey": "fiction-2026-q5",
+      "type": "MCQ",
+      "prompt": "Which year did the fictional UCEED paper first include this?",
+      "options": [
+        { "key": "A", "text": "2020" },
+        { "key": "B", "text": "2021" }
+      ],
+      "answer": { "raw": "A", "status": "independently-solved" },
+      "licence": "original",
+      "sourceKind": "original",
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "5"
+      }
+    },
+    {
+      "externalKey": "fiction-2026-qb1",
+      "type": "DESCRIPTIVE",
+      "prompt": "Draw a chair for a small balcony.",
+      "answer": null,
+      "licence": "original",
+      "sourceKind": "original",
+      "provenance": {
+        "exam": "fiction",
+        "year": 2026,
+        "paperId": "fiction-2026",
+        "questionNo": "B1"
+      }
+    }
+  ]
+}

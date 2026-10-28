@@ -40,6 +40,7 @@
     "supabase:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
+    "assessment:import": "node scripts/assessment/import-bank.ts",
     "design:tokens": "node scripts/design/build-tokens.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
