@@ -48,4 +48,19 @@ describe('bank review dev server', () => {
       false,
     )
   })
+
+  it('accepts a typed answer key and refuses anything else', () => {
+    expect(parseVerdict({ id: 'ceed-2019-q4', verdict: 'ok', answer: ' a , c ' })).toMatchObject({
+      verdict: { answer: 'A,C' },
+    })
+    expect(parseVerdict({ id: 'ceed-2019-q4', verdict: 'ok', answer: '6 to 6.5' })).toMatchObject({
+      verdict: { answer: '6 to 6.5' },
+    })
+    expect(parseVerdict({ id: 'ceed-2019-q4', verdict: 'ok', answer: 'drop table' })).toMatch(
+      /Answer keys are/,
+    )
+    expect(parseVerdict({ id: 'ceed-2019-q4', verdict: 'ok', answer: '' })).not.toHaveProperty(
+      'verdict.answer',
+    )
+  })
 })

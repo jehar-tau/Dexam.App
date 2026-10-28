@@ -169,6 +169,30 @@
   font-size: var(--fs-body-sm);
 }
 
+.keyField {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.keyField input {
+  width: 8rem;
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font: inherit;
+  font-family: var(--font-mono);
+}
+
+.keyNote {
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+}
+
 .holds {
   color: var(--text-secondary);
 }

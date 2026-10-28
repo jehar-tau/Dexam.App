@@ -44,7 +44,22 @@ type ReviewData = {
   questions: ReviewQuestion[]
 }
 
-type Verdict = { verdict: 'ok' | 'fix'; reasons: string[]; note: string; reviewedAt: string }
+type Verdict = {
+  verdict: 'ok' | 'fix'
+  reasons: string[]
+  note: string
+  /** D-063: an answer key typed in the review. */
+  answer?: string
+  reviewedAt: string
+}
+
+const answerLabels: Record<string, string> = {
+  'official-key': 'official key',
+  'matched-source': 'official key from a matching paper',
+  'matched-source-positional': 'official key',
+  'independently-solved': 'solved by Dexam: marking it right confirms it',
+  'owner-provided': 'your key',
+}
 
 const reasonLabels: Record<string, string> = {
   'crop-cut-off': 'Crop cuts off part of the question',
@@ -349,6 +364,9 @@ function goLive(question: ReviewQuestion): string {
     ? question.holds.filter((hold) => !CROP_HOLDS.has(hold))
     : question.holds
   const needsKey = question.type !== 'DESCRIPTIVE' && !question.answer
+  // A key Dexam solved itself is confirmed by marking the question right.
+  if (!remaining.length && question.answerStatus === 'independently-solved')
+    return 'Goes to students once marked right (that confirms the solved key).'
   if (!remaining.length && !needsKey)
     return question.block
       ? 'Goes to students, exactly as shown, once marked right.'
@@ -388,6 +406,7 @@ function ReviewCard({
   const [note, setNote] = useState(verdict?.note ?? '')
   const [source, setSource] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [answer, setAnswer] = useState(verdict?.answer ?? question.answer ?? '')
   const [failed, setFailed] = useState(false)
   const examQuestion = toExamQuestion(question)
   const drawing = question.type === 'DESCRIPTIVE'
@@ -396,8 +415,11 @@ function ReviewCard({
   async function submit(value: Omit<Verdict, 'reviewedAt'>) {
     setSaving(true)
     setFailed(false)
+    // A typed or corrected key travels with the verdict.
+    const typed = answer.trim()
+    const changed = typed && typed !== (question.answer ?? '')
     try {
-      await onSave(value)
+      await onSave(changed || verdict?.answer ? { ...value, answer: typed } : value)
       setFixing(false)
     } catch {
       setFailed(true)
@@ -480,10 +502,22 @@ function ReviewCard({
 
       <div className={styles.facts}>
         {drawing ? null : (
-          <span>
-            Answer key: <strong>{question.answer ?? 'none yet'}</strong>
-            {question.answer ? ` (${question.answerStatus})` : ''}
-          </span>
+          <label className={styles.keyField}>
+            Answer key
+            <input
+              value={answer}
+              placeholder="e.g. B, A,C or 12"
+              maxLength={40}
+              onChange={(event) => setAnswer(event.target.value)}
+            />
+            <span className={styles.keyNote}>
+              {verdict?.answer
+                ? 'your key (saved)'
+                : question.answer
+                  ? (answerLabels[question.answerStatus] ?? question.answerStatus)
+                  : 'none yet: type it, then mark the question'}
+            </span>
+          </label>
         )}
         <span className={styles.holds}>{goLive(question)}</span>
         {question.sourcePages.length ? (
@@ -522,6 +556,7 @@ function ReviewCard({
         {verdict ? (
           <span className={styles.saved}>
             {verdict.verdict === 'ok' ? 'Marked right' : 'Marked to fix'}
+            {verdict.answer ? ` · key ${verdict.answer}` : ''}
             {verdict.note ? ` · “${verdict.note}”` : ''}
           </span>
         ) : null}
