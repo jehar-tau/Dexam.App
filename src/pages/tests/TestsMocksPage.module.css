@@ -145,3 +145,35 @@
   outline: none;
   box-shadow: var(--shadow-focus-ring);
 }
+
+.live {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+}
+
+.liveRow {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+  color: inherit;
+  text-decoration: none;
+}
+
+.liveRow:hover {
+  background: var(--accent-extra-soft);
+}
+
+.liveRow:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.liveTitle {
+  font-weight: var(--fw-semibold);
+}

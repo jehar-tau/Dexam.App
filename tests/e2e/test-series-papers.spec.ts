@@ -91,6 +91,21 @@ test('the Mocks page lists 2026 mocks in preview', async ({ page }) => {
   await expect(page.getByRole('region', { name: 'CEED 2026 mock' })).toBeVisible()
 })
 
+test('a live mock opens its waiting room in preview', async ({ page }) => {
+  await page.goto('/tests/mocks?preview=1')
+  await page.getByRole('link', { name: /Sample all-India UCEED live mock/ }).click()
+  await expect(page).toHaveURL(/\/tests\/live\/sample\?preview=1$/)
+  await expect(page.getByText('Waiting room')).toBeVisible()
+  await expect(page.getByRole('timer', { name: 'Part A starts in' })).toBeVisible()
+  await expect(page.getByText('SAMPLE-00042')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'How the live mock works' })).toBeVisible()
+})
+
+test('the live-event organiser page needs a staff sign-in', async ({ page }) => {
+  await page.goto('/staff/live-events')
+  await expect(page.getByRole('heading', { name: 'All-India live mocks' })).toHaveCount(0)
+})
+
 test('the Plans page asks a signed-out visitor to sign in', async ({ page }) => {
   await page.goto('/tests/plans')
   await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fplans$/)

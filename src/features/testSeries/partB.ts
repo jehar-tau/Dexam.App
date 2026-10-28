@@ -24,7 +24,7 @@ const partBSchema = z.object({
   attemptId: z.string().uuid(),
   paperId: z.string(),
   exam: z.string(),
-  kind: z.enum(['paper', 'practice', 'mock']),
+  kind: z.enum(['paper', 'practice', 'mock', 'live']),
   partAStatus: z.enum(['open', 'in_progress', 'submitted']),
   status: z.enum(['none', 'drawing', 'uploading', 'submitted', 'evaluated']),
   available: z.number().int(),
@@ -64,6 +64,9 @@ async function call(client: SupabaseClient, name: string, args: Record<string, u
     if (result.error.code === 'P0002')
       throw new PartBError('This paper has no Part B tasks ready yet.')
     if (result.error.code === 'DX002') throw new PartBError('The upload window has closed.')
+    if (result.error.code === 'DX006')
+      throw new PartBError('Part B of the live mock opens when the break ends.')
+    if (result.error.code === 'DX007') throw new PartBError('Part B of the live mock has ended.')
     throw new PartBError('Part B could not be updated. Please try again.')
   }
   return result.data as unknown

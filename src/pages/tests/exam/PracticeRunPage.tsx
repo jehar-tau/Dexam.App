@@ -6,14 +6,25 @@ import { getSupabaseClient } from '../../../features/auth/supabaseClient'
 import { getBankAttempt } from '../../../features/testSeries/bankPaper'
 import { ExamWindow, StatusPage } from './ExamWindowPage'
 
+const labels = { practice: 'Practice', mock: 'Mock', live: 'Live mock' }
+
 /**
- * Runs a server attempt by id in the exam window: F047 practice sets (no exam-centre login) and
- * F040 mocks (the full exam-centre flow), resuming either where it was left.
+ * Runs a server attempt by id in the exam window: F047 practice sets (no exam-centre login),
+ * F040 mocks and F050 live mocks (the full exam-centre flow), resuming where it was left.
  */
-export function PracticeRunPage({ variant = 'practice' }: { variant?: 'practice' | 'mock' }) {
-  const home = variant === 'mock' ? '/tests/mocks' : '/tests/practice'
-  const noun = variant === 'mock' ? 'mock' : 'practice set'
-  const { attemptId = '' } = useParams()
+export function PracticeRunPage({
+  variant = 'practice',
+}: {
+  variant?: 'practice' | 'mock' | 'live'
+}) {
+  const { attemptId = '', key = '' } = useParams()
+  const home =
+    variant === 'live'
+      ? `/tests/live/${encodeURIComponent(key)}`
+      : variant === 'mock'
+        ? '/tests/mocks'
+        : '/tests/practice'
+  const noun = variant === 'practice' ? 'practice set' : labels[variant].toLowerCase()
   const { session } = useAuth()
   const client = getSupabaseClient()
   const owner = session?.user.id ?? 'signed-out'
@@ -29,11 +40,7 @@ export function PracticeRunPage({ variant = 'practice' }: { variant?: 'practice'
 
   if (query.isError || !client) {
     return (
-      <StatusPage
-        label={variant === 'mock' ? 'Mock' : 'Practice'}
-        title={`This ${noun} could not be opened`}
-        backTo={home}
-      >
+      <StatusPage label={labels[variant]} title={`This ${noun} could not be opened`} backTo={home}>
         <p>
           {query.error?.message ?? 'The question bank is not connected.'} It may have been replaced
           or already submitted.
@@ -42,13 +49,7 @@ export function PracticeRunPage({ variant = 'practice' }: { variant?: 'practice'
     )
   }
   if (!query.data) {
-    return (
-      <StatusPage
-        label={variant === 'mock' ? 'Mock' : 'Practice'}
-        title={`Loading your ${noun}…`}
-        backTo={home}
-      />
-    )
+    return <StatusPage label={labels[variant]} title={`Loading your ${noun}…`} backTo={home} />
   }
   const opened = query.data
   return (
@@ -62,6 +63,7 @@ export function PracticeRunPage({ variant = 'practice' }: { variant?: 'practice'
       paper={opened.paper}
       search=""
       server={{ client, opened }}
+      submittedTo={variant === 'live' ? home : undefined}
     />
   )
 }

@@ -318,6 +318,13 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
           <Link className={styles.primary} to="/tests/mocks">
             Take another mock
           </Link>
+        ) : result.kind === 'live' ? (
+          <Link
+            className={styles.primary}
+            to={`/tests/live/${encodeURIComponent(result.paperId.replace(/^live-/, ''))}`}
+          >
+            Back to the live mock
+          </Link>
         ) : catalog ? (
           <Link className={styles.primary} to={`/tests/exam/${catalog.id}${search}`}>
             Take it again

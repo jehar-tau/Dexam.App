@@ -48,6 +48,8 @@ Public paid sales are blocked until the D-054 content-rights condition is met. P
 
 ## Release 3 — all-India live mock (F050)
 
+Status: implemented locally on `feature/f050-live-mock`; see `../features/F050-all-india-live-mock.md`. The seat cap is set per event until the owner decides it.
+
 An event moves through these states:
 
 1. Draft

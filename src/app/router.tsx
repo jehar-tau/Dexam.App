@@ -51,6 +51,8 @@ import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
 import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
 import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
+import { TestsLivePage } from '../pages/tests/TestsLivePage'
+import { LiveEventsStaffPage } from '../pages/LiveEventsStaffPage'
 import { TestsPlansPage } from '../pages/tests/TestsPlansPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
 import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
@@ -82,6 +84,15 @@ export const router = createBrowserRouter([
         element: (
           <StaffAccessBoundary capability="assessment.part_b.evaluate" allowPreview={false}>
             <PartBQueuePage />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        // F050: organisers schedule all-India live mocks.
+        path: 'staff/live-events',
+        element: (
+          <StaffAccessBoundary capability="assessment.live.manage" allowPreview={false}>
+            <LiveEventsStaffPage />
           </StaffAccessBoundary>
         ),
       },
@@ -440,6 +451,15 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    // F050: a live mock's Part A runs in the same exam-centre window on the event clock.
+    path: '/tests/live/:key/run/:attemptId',
+    element: (
+      <TestsAccessBoundary>
+        <PracticeRunPage variant="live" />
+      </TestsAccessBoundary>
+    ),
+  },
+  {
     // F043: Part B (drawing and uploads) runs full screen after Part A.
     path: '/tests/part-b/:attemptId',
     element: (
@@ -493,6 +513,7 @@ export const router = createBrowserRouter([
       { path: 'analytics', element: <TestsAnalyticsPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
       { path: 'mocks', element: <TestsMocksPage /> },
+      { path: 'live/:key', element: <TestsLivePage /> },
       { path: 'plans', element: <TestsPlansPage /> },
       {
         path: 'bookmarks',

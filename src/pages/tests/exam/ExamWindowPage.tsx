@@ -234,6 +234,7 @@ export function ExamWindow({
   paper,
   search,
   server,
+  submittedTo,
 }: {
   owner: string
   /** Local storage key part: the catalogue paper id, or the practice set's server paper id. */
@@ -246,6 +247,8 @@ export function ExamWindow({
   paper: ExamPaper
   search: string
   server?: ServerAttempt
+  /** Where a submitted server attempt goes; the result page by default. */
+  submittedTo?: string
 }) {
   const { session } = useAuth()
   const access = useTestAccess(!search)
@@ -277,7 +280,7 @@ export function ExamWindow({
     onSuccess: () => {
       forgetAttempt(owner, paperId)
       void queryClient.invalidateQueries({ queryKey: ['bank-attempts'] })
-      void navigate(`/tests/results/${server!.opened.attemptId}`, { replace: true })
+      void navigate(submittedTo ?? `/tests/results/${server!.opened.attemptId}`, { replace: true })
     },
   })
   const needsSubmit = Boolean(server) && attempt.stage === 'submitted' && submit.isIdle

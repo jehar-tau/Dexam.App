@@ -17,6 +17,12 @@ export default defineConfig({
             },
             { name: 'supabase-client', test: /node_modules\/@supabase\//, priority: 20 },
             { name: 'shared-libraries', test: /node_modules\//, priority: 10 },
+            // The test-series product (pages, exam window, bank client) is its own cacheable chunk.
+            {
+              name: 'test-series',
+              test: /src\/(?:pages\/tests|features\/testSeries|app\/tests)\//,
+              priority: 5,
+            },
           ],
         },
       },
