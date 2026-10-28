@@ -240,9 +240,12 @@ function BankPaperActions({ paper }: { paper: CatalogPaper }) {
       <div className={styles.actions}>
         <p className={styles.note}>
           {testAccess?.freeSlots.some((slot) => slot.slot === paper.exam)
-            ? 'You have used your free paper for this exam. More papers unlock with a plan, coming soon.'
+            ? 'You have used your free paper for this exam. More papers unlock with a plan.'
             : 'This paper belongs to the other programme. Change your programme on the welcome page, or unlock it with a plan when plans arrive.'}
         </p>
+        <Link className={styles.link} to="/tests/plans">
+          See plans
+        </Link>
         <PaperAttempts paper={paper} />
       </div>
     )
