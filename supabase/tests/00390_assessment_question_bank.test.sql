@@ -150,7 +150,7 @@ select is(
   'the ready question is served'
 );
 select ok(
-  position('correct' in public.get_assessment_student_paper('fiction-2026')::text) = 0
+  position('"kind"' in public.get_assessment_student_paper('fiction-2026')::text) = 0
   and position('official-key' in public.get_assessment_student_paper('fiction-2026')::text) = 0
   and position('fiction-2026-q1' in public.get_assessment_student_paper('fiction-2026')::text) = 0,
   'the candidate view carries no keys, key status or external keys'

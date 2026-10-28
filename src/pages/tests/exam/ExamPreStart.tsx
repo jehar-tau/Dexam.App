@@ -189,11 +189,15 @@ const signed = (value: number) => (value > 0 ? `+${value}` : value < 0 ? `−${-
 export function ExamPaperInstructions({
   paperLabel,
   paper,
+  busy = false,
+  error,
   onPrevious,
   onBegin,
 }: {
   paperLabel: string
   paper: ExamPaper
+  busy?: boolean
+  error?: string
   onPrevious: () => void
   onBegin: () => void
 }) {
@@ -253,6 +257,11 @@ export function ExamPaperInstructions({
             ))}
           <PaperNotice paper={paper} />
         </div>
+        {error ? (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        ) : null}
         <div className={styles.declaration}>
           <label className={styles.declarationLabel}>
             <input
@@ -273,10 +282,10 @@ export function ExamPaperInstructions({
           <button
             type="button"
             className={styles.primaryAction}
-            disabled={!declared}
+            disabled={!declared || busy}
             onClick={onBegin}
           >
-            I am ready to begin
+            {busy ? 'Starting…' : 'I am ready to begin'}
           </button>
         </div>
       </section>

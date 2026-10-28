@@ -1,10 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useAuth } from '../../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../../features/auth/supabaseClient'
-import { fetchBankPaper } from '../../../features/testSeries/bankPaper'
+import {
+  beginBankAttempt,
+  openBankAttempt,
+  submitBankAttempt,
+  type OpenedAttempt,
+} from '../../../features/testSeries/bankPaper'
 import { memberIdFromEmail } from '../../../features/testSeries/candidate'
 import {
   beginExam,
@@ -24,6 +30,7 @@ import {
   paperLabel,
   type CatalogPaper,
 } from '../../../features/testSeries/paperCatalog'
+import { previewResultId } from '../../../features/testSeries/practiceResult'
 import { previewSearch } from '../../../features/testSeries/previewSearch'
 import {
   ExamGeneralInstructions,
@@ -36,9 +43,32 @@ import {
 import { ExamScreen, SummaryTable } from './ExamScreen'
 import styles from './ExamWindow.module.css'
 
-function initialAttempt(owner: string, paperId: string, paper: ExamPaper): ExamAttempt {
+type ServerAttempt = { client: SupabaseClient; opened: OpenedAttempt }
+
+/**
+ * The local attempt to show. For a bank paper the server attempt wins: a stored attempt is only
+ * resumed when it belongs to the same server attempt, and a started server attempt always uses
+ * the server deadline (for example when it was begun on another device).
+ */
+function initialAttempt(
+  owner: string,
+  paperId: string,
+  paper: ExamPaper,
+  server?: ServerAttempt,
+): ExamAttempt {
+  const now = Date.now()
   const stored = loadAttempt(owner, paperId, paper)
-  return stored ? expireIfDue(stored, Date.now()) : createAttempt(paper)
+  if (!server) return stored ? expireIfDue(stored, now) : createAttempt(paper)
+
+  const { attemptId, status, deadline } = server.opened
+  let attempt = stored?.serverId === attemptId ? stored : createAttempt(paper, attemptId)
+  if (status === 'in_progress' && deadline !== null) {
+    attempt =
+      attempt.stage === 'exam' || attempt.stage === 'submitted'
+        ? { ...attempt, deadline }
+        : beginExam(attempt, paper, now, deadline)
+  }
+  return expireIfDue(attempt, now)
 }
 
 /** The exam window always uses the official-looking light theme. */
@@ -89,7 +119,8 @@ export function ExamWindowPage() {
   const search = previewSearch(useLocation().search)
   const { session } = useAuth()
   const catalogPaper = findPaper(paperId)
-  const owner = session?.user.id ?? (search ? 'preview' : 'signed-out')
+  // Fictional preview attempts never mix with a signed-in account's real ones.
+  const owner = search ? 'preview' : (session?.user.id ?? 'signed-out')
   const papersPath = `/tests/papers${search}`
 
   if (!catalogPaper) {
@@ -122,17 +153,17 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
   const bankId = bankPaperId(catalogPaper)
   const client = getSupabaseClient()
   const query = useQuery({
-    queryKey: ['bank-paper', owner, bankId],
-    queryFn: () => fetchBankPaper(client!, label, catalogPaper.exam, bankId!),
+    queryKey: ['bank-attempt', owner, bankId],
+    queryFn: () => openBankAttempt(client!, label, bankId!),
     enabled: Boolean(client && bankId),
-    // A paper stays fixed for the whole sitting.
+    // An attempt's questions are pinned by the server; they stay fixed for the whole sitting.
     staleTime: Infinity,
-    gcTime: 4 * 60 * 60 * 1000,
+    gcTime: 0,
     refetchOnWindowFocus: false,
     retry: false,
   })
 
-  if (!bankId || query.data?.sections.length === 0) {
+  if (!bankId || query.data === null) {
     return (
       <StatusPage label={label} title="This paper is still being reviewed" backTo="/tests/papers">
         <p>
@@ -152,7 +183,16 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
   if (!query.data) {
     return <StatusPage label={label} title="Loading the paper…" backTo="/tests/papers" />
   }
-  return <ExamWindow owner={owner} catalogPaper={catalogPaper} paper={query.data} search="" />
+  return (
+    <ExamWindow
+      key={query.data.attemptId}
+      owner={owner}
+      catalogPaper={catalogPaper}
+      paper={query.data.paper}
+      search=""
+      server={{ client, opened: query.data }}
+    />
+  )
 }
 
 function ExamWindow({
@@ -160,17 +200,50 @@ function ExamWindow({
   catalogPaper,
   paper,
   search,
+  server,
 }: {
   owner: string
   catalogPaper: CatalogPaper
   paper: ExamPaper
   search: string
+  server?: ServerAttempt
 }) {
   const { session } = useAuth()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const paperId = catalogPaper.id
 
-  const [attempt, setAttempt] = useState(() => initialAttempt(owner, paperId, paper))
+  const [attempt, setAttempt] = useState(() => initialAttempt(owner, paperId, paper, server))
   const [now, setNow] = useState(() => Date.now())
+
+  const begin = useMutation({
+    mutationFn: () => beginBankAttempt(server!.client, server!.opened.attemptId),
+    onSuccess: (deadline) => {
+      const current = Date.now()
+      setNow(current)
+      setAttempt((value) => beginExam(value, paper, current, deadline))
+    },
+  })
+
+  // A submitted bank paper is scored by the server, then the result opens.
+  const submit = useMutation({
+    mutationFn: (value: ExamAttempt) =>
+      submitBankAttempt(
+        server!.client,
+        server!.opened.attemptId,
+        value.saved,
+        value.submitReason ?? 'candidate',
+      ),
+    onSuccess: () => {
+      forgetAttempt(owner, paperId)
+      void queryClient.invalidateQueries({ queryKey: ['bank-attempts'] })
+      void navigate(`/tests/results/${server!.opened.attemptId}`, { replace: true })
+    },
+  })
+  const needsSubmit = Boolean(server) && attempt.stage === 'submitted' && submit.isIdle
+  useEffect(() => {
+    if (needsSubmit) submit.mutate(attempt)
+  }, [attempt, needsSubmit, submit])
 
   useLightTheme()
 
@@ -236,7 +309,13 @@ function ExamWindow({
           paperLabel={label}
           paper={paper}
           onPrevious={() => setAttempt(setStage(attempt, 'instructions'))}
+          busy={begin.isPending}
+          error={begin.isError ? begin.error.message : undefined}
           onBegin={() => {
+            if (server) {
+              begin.mutate()
+              return
+            }
             const current = Date.now()
             setNow(current)
             setAttempt(beginExam(attempt, paper, current))
@@ -257,6 +336,34 @@ function ExamWindow({
         />
       )
     case 'submitted':
+      if (server) {
+        return submit.isError ? (
+          <PreStartFrame paperLabel={label}>
+            <section className={styles.instructions} aria-labelledby="exam-done-title">
+              <h1 id="exam-done-title" className={styles.instructionsTitle}>
+                Your answers are saved on this device, but the paper has not reached Dexam yet
+              </h1>
+              <div className={styles.instructionsBody}>
+                <p>{submit.error.message} Keep this page open and try again.</p>
+              </div>
+              <div className={styles.instructionsFooter}>
+                <span />
+                <button
+                  type="button"
+                  className={styles.primaryAction}
+                  onClick={() => submit.mutate(attempt)}
+                >
+                  Try again
+                </button>
+              </div>
+            </section>
+          </PreStartFrame>
+        ) : (
+          <StatusPage label={label} title="Submitting your paper…" backTo="/tests/papers">
+            <p>Your answers are being scored. Your result opens in a moment.</p>
+          </StatusPage>
+        )
+      }
       return (
         <PreStartFrame paperLabel={label}>
           <section className={styles.instructions} aria-labelledby="exam-done-title">
@@ -268,7 +375,11 @@ function ExamWindow({
             <div className={styles.instructionsBody}>
               <p>Here is a summary of your responses for {label}.</p>
               <SummaryTable paper={paper} attempt={attempt} />
-              <p>Scores, answers and review arrive with the results step.</p>
+              <p>
+                <Link to={`/tests/results/${previewResultId(paperId)}${search}`}>
+                  See your score and review your answers
+                </Link>
+              </p>
               <PaperNotice paper={paper} />
             </div>
             <div className={styles.instructionsFooter}>

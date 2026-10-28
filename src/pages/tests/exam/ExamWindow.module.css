@@ -375,6 +375,14 @@
   font-size: var(--fs-caption);
 }
 
+.error {
+  padding: var(--space-3) var(--space-6);
+  margin: 0;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
+
 .missing {
   padding: var(--space-8);
 }

@@ -37,11 +37,13 @@ const attemptSchema = z.object({
   review: z.array(z.string()),
   submittedAt: z.number().nullable(),
   submitReason: z.enum(['candidate', 'time']).nullable(),
+  // The server attempt behind a bank paper; absent for the fictional preview paper.
+  serverId: z.string().uuid().nullable().optional(),
 })
 
 export type ExamAttempt = z.infer<typeof attemptSchema>
 
-export function createAttempt(paper: ExamPaper): ExamAttempt {
+export function createAttempt(paper: ExamPaper, serverId: string | null = null): ExamAttempt {
   const first = paperQuestions(paper)[0]
   if (!first) throw new Error('An exam paper needs at least one question.')
   return {
@@ -54,6 +56,7 @@ export function createAttempt(paper: ExamPaper): ExamAttempt {
     review: [],
     submittedAt: null,
     submitReason: null,
+    serverId,
   }
 }
 
@@ -68,12 +71,18 @@ export function setStage(attempt: ExamAttempt, stage: ExamStage): ExamAttempt {
   return { ...attempt, stage }
 }
 
-export function beginExam(attempt: ExamAttempt, paper: ExamPaper, now: number): ExamAttempt {
+/** `serverDeadline` comes from the server for bank papers; preview papers time themselves. */
+export function beginExam(
+  attempt: ExamAttempt,
+  paper: ExamPaper,
+  now: number,
+  serverDeadline?: number,
+): ExamAttempt {
   if (attempt.stage === 'exam' || attempt.stage === 'submitted') return attempt
   return {
     ...attempt,
     stage: 'exam',
-    deadline: now + paper.durationMinutes * 60_000,
+    deadline: serverDeadline ?? now + paper.durationMinutes * 60_000,
     visited: addOnce(attempt.visited, attempt.activeId),
   }
 }

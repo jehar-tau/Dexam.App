@@ -3,7 +3,7 @@ import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
-import { fetchPaperReadiness } from '../../features/testSeries/bankPaper'
+import { fetchMyAttempts, fetchPaperReadiness } from '../../features/testSeries/bankPaper'
 
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { EmptyState } from '../../components'
@@ -94,7 +94,17 @@ export function TestsPaperPage() {
           </div>
           <div>
             <dt>Your best</dt>
-            <dd>{progress ? `${progress.bestScore}/${paper.maxMarks}` : 'Not attempted'}</dd>
+            <dd>
+              {search ? (
+                progress ? (
+                  `${progress.bestScore}/${paper.maxMarks}`
+                ) : (
+                  'Not attempted'
+                )
+              ) : (
+                <BankBest paper={paper} />
+              )}
+            </dd>
           </div>
         </dl>
         {search ? (
@@ -108,6 +118,69 @@ export function TestsPaperPage() {
           <BankPaperActions paper={paper} />
         )}
       </section>
+    </div>
+  )
+}
+
+const formatMarks = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(2))
+
+function useMyAttempts() {
+  const { session } = useAuth()
+  const client = getSupabaseClient()
+  return useQuery({
+    queryKey: ['bank-attempts', session?.user.id],
+    queryFn: () => fetchMyAttempts(client!),
+    enabled: Boolean(client && session),
+    staleTime: 30_000,
+  })
+}
+
+function submittedFor(paper: CatalogPaper, attempts: Awaited<ReturnType<typeof fetchMyAttempts>>) {
+  const bankId = bankPaperId(paper)
+  return attempts.filter((attempt) => attempt.paperId === bankId && attempt.status === 'submitted')
+}
+
+function BankBest({ paper }: { paper: CatalogPaper }) {
+  const attempts = useMyAttempts()
+  const submitted = submittedFor(paper, attempts.data ?? [])
+  const best = submitted.reduce<(typeof submitted)[number] | null>(
+    (top, attempt) => (!top || (attempt.score ?? 0) > (top.score ?? 0) ? attempt : top),
+    null,
+  )
+  return best ? (
+    <>{`${formatMarks(best.score ?? 0)}/${formatMarks(best.maxScore ?? 0)}`}</>
+  ) : (
+    <>Not attempted</>
+  )
+}
+
+function PaperAttempts({ paper }: { paper: CatalogPaper }) {
+  const attempts = useMyAttempts()
+  const submitted = submittedFor(paper, attempts.data ?? [])
+  if (!submitted.length) return null
+  return (
+    <div className={styles.attempts}>
+      <h2 className={styles.attemptsTitle}>Your attempts</h2>
+      <ul className={styles.attemptList}>
+        {submitted.map((attempt) => (
+          <li key={attempt.attemptId}>
+            <span>
+              {attempt.submittedAt
+                ? new Date(attempt.submittedAt).toLocaleString('en-IN', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })
+                : 'Submitted'}
+            </span>
+            <span className={styles.attemptScore}>
+              {formatMarks(attempt.score ?? 0)} / {formatMarks(attempt.maxScore ?? 0)}
+            </span>
+            <Link className={styles.link} to={`/tests/results/${attempt.attemptId}`}>
+              View result
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -151,6 +224,7 @@ function BankPaperActions({ paper }: { paper: CatalogPaper }) {
           ? `All ${counts.objective} questions are ready.`
           : `${counts.ready} of ${counts.objective} questions have been reviewed and are ready; the rest appear once they are checked.`}
       </p>
+      <PaperAttempts paper={paper} />
     </div>
   )
 }

@@ -68,3 +68,29 @@ test('the exam window requires sign-in outside preview', async ({ page }) => {
   await page.goto('/tests/exam/uceed-2025')
   await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Ftests%2Fexam%2Fuceed-2025$/)
 })
+
+test('after submitting, the preview result shows the score and a review of answers', async ({
+  page,
+}) => {
+  await enterExam(page)
+  const keypad = page.getByRole('group', { name: 'Number keypad' })
+  await keypad.getByRole('button', { name: '1' }).click()
+  await keypad.getByRole('button', { name: '2' }).click()
+  await page.getByRole('button', { name: 'Save & Next' }).click()
+  await page.getByRole('button', { name: 'Submit' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Yes, submit' }).click()
+  await page.getByRole('link', { name: 'See your score and review your answers' }).click()
+
+  await expect(page).toHaveURL(/\/tests\/results\/preview-uceed-2025\?preview=1$/)
+  await expect(page.getByLabel('Score 4 out of 50')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Areas to improve' })).toBeVisible()
+  await page.getByRole('button', { name: 'Correct (1)' }).click()
+  await expect(page.getByRole('list', { name: 'Questions' }).getByRole('listitem')).toHaveCount(1)
+
+  await page.setViewportSize({ width: 375, height: 812 })
+  const width = await page.locator('body').evaluate((body) => {
+    const element = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: element.clientWidth, scroll: element.scrollWidth }
+  })
+  expect(width.scroll).toBeLessThanOrEqual(width.client)
+})
