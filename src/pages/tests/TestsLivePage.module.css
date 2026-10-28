@@ -1,0 +1,202 @@
+.page {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--container-default);
+  margin: 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-1);
+  color: var(--accent-primary);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-h2);
+}
+
+.meta {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+}
+
+.note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--fs-body-sm);
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(120% 140% at 100% 100%, var(--accent-soft) 0%, transparent 55%),
+    var(--surface-card);
+}
+
+.phase {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+}
+
+.roll {
+  font-family: var(--font-mono);
+  color: var(--text-body);
+}
+
+.countdown {
+  display: grid;
+  justify-items: end;
+  margin: 0;
+}
+
+.countdownLabel {
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+}
+
+.clock {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-card);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--fs-h3);
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: var(--hit-target-min);
+  padding: 0 var(--space-5);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
+  font: inherit;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary:disabled {
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.primary:focus-visible,
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.link {
+  justify-self: start;
+  color: var(--accent-primary);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.schedule {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.schedule div {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
+  gap: var(--space-3);
+  font-size: var(--fs-body-sm);
+}
+
+.schedule dt {
+  color: var(--text-secondary);
+}
+
+.schedule dd {
+  margin: 0;
+}
+
+.rules {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: var(--space-5);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.standing {
+  margin: 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-body-sm);
+}
+
+.caption {
+  padding-bottom: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+  text-align: left;
+}
+
+.table td {
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 560px) {
+  .schedule div {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .countdown {
+    justify-items: start;
+  }
+}

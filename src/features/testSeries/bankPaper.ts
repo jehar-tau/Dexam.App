@@ -35,7 +35,7 @@ const questionSchema = z.object({
 
 const attemptPayload = z.object({
   attemptId: z.string().uuid(),
-  kind: z.enum(['paper', 'practice', 'mock']).default('paper'),
+  kind: z.enum(['paper', 'practice', 'mock', 'live']).default('paper'),
   title: z.string().nullable().optional(),
   timed: z.boolean().default(true),
   paperId: z.string(),
@@ -128,6 +128,18 @@ export function buildBankPaper(
     }
   }
   const total = Math.max(payload.objectiveCount, shown)
+  if (payload.kind === 'live') {
+    return {
+      title: payload.title ?? title,
+      durationMinutes: payload.durationMinutes,
+      sections,
+      source: 'bank',
+      notes: [
+        'The all-India live mock: every participant has this same paper and the same clock.',
+        'Part A ends at the same time for everyone and submits itself when the time is up. Ranks and answers open when Part A ends.',
+      ],
+    }
+  }
   if (payload.kind === 'mock') {
     return {
       title: payload.title ?? title,
@@ -273,7 +285,7 @@ const keySchema = z.union([
 
 const resultPayload = z.object({
   attemptId: z.string().uuid(),
-  kind: z.enum(['paper', 'practice', 'mock']).default('paper'),
+  kind: z.enum(['paper', 'practice', 'mock', 'live']).default('paper'),
   title: z.string().nullable().optional(),
   paperId: z.string(),
   startedAt: z.string().nullable(),
@@ -303,7 +315,13 @@ export async function fetchAttemptResult(
   titleFor: (bankPaperId: string) => string,
 ): Promise<AttemptResult> {
   const result = await client.rpc('get_assessment_attempt_result', { p_attempt_id: attemptId })
-  if (result.error) throw new BankPaperError('This result is not available to your account.')
+  if (result.error) {
+    throw new BankPaperError(
+      result.error.code === 'DX006'
+        ? 'Your answers are in. Live mock answers and ranks open when Part A ends for everyone.'
+        : 'This result is not available to your account.',
+    )
+  }
   const parsed = resultPayload.safeParse(result.data as unknown)
   if (!parsed.success) throw new BankPaperError('This result could not be read.')
   const data = parsed.data
@@ -483,7 +501,7 @@ const progressPayload = z.object({
   attempts: z.array(
     z.object({
       attemptId: z.string().uuid(),
-      kind: z.enum(['paper', 'practice', 'mock']),
+      kind: z.enum(['paper', 'practice', 'mock', 'live']),
       title: z.string().nullable(),
       paperId: z.string(),
       exam: z.string(),

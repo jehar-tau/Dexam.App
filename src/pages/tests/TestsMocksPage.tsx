@@ -5,6 +5,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
 import { fetchMocks, startMock, type MockBlueprint } from '../../features/testSeries/bankPaper'
+import {
+  fetchLiveEvents,
+  formatWhen,
+  type LiveEvent,
+  type LivePhase,
+} from '../../features/testSeries/liveEvents'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestAccess } from '../../features/testSeries/testAccess'
 import styles from './TestsMocksPage.module.css'
@@ -73,6 +79,17 @@ const previewMocks: MockBlueprint[] = [
   },
 ]
 
+const liveStatus: Record<LivePhase, string> = {
+  registration: 'Registration open',
+  waiting: 'Starting soon',
+  'part-a': 'Part A live now',
+  break: 'Break',
+  'part-b': 'Part B live now',
+  upload: 'Uploads open',
+  finished: 'Finished',
+  cancelled: 'Cancelled',
+}
+
 const sectionText = (mock: MockBlueprint) =>
   mock.sections.map((section) => `${section.count} ${section.type.toUpperCase()}`).join(' · ')
 
@@ -98,7 +115,14 @@ export function TestsMocksPage() {
     },
   })
 
+  const live = useQuery({
+    queryKey: ['live-events', session?.user.id],
+    queryFn: () => fetchLiveEvents(client!),
+    enabled: !preview && Boolean(client && session),
+  })
+
   const list = (preview ? previewMocks : (query.data ?? [])).filter((mock) => mock.level === level)
+  const liveEvents = (live.data ?? []).filter((event) => event.level === level)
   const candidate = access.data?.kind === 'candidate'
 
   return (
@@ -207,10 +231,49 @@ export function TestsMocksPage() {
           You have seen every reviewed question for this pattern.
         </p>
       ) : null}
-      <p className={styles.note}>
-        NID DAT mocks arrive once the 2026 NID format is confirmed. The all-India live mock is
-        listed under its own event when registration opens.
-      </p>
+      <section className={styles.live} aria-labelledby="live-title">
+        <h2 id="live-title" className={styles.cardTitle}>
+          All-India live mocks
+        </h2>
+        <p className={styles.note}>
+          Scheduled mocks where everyone sits the same paper at the same time, with a Dexam cohort
+          rank after Part A.
+        </p>
+        {preview ? (
+          <LiveRow
+            event={null}
+            title="Sample all-India UCEED live mock"
+            to={`/tests/live/sample${search}`}
+          />
+        ) : liveEvents.length ? (
+          liveEvents.map((event) => (
+            <LiveRow
+              key={event.key}
+              event={event}
+              title={event.title}
+              to={`/tests/live/${encodeURIComponent(event.key)}`}
+            />
+          ))
+        ) : (
+          <p className={styles.note}>
+            {live.isError ? live.error.message : 'No live mock is scheduled yet.'}
+          </p>
+        )}
+      </section>
+      <p className={styles.note}>NID DAT mocks arrive once the 2026 NID format is confirmed.</p>
     </div>
+  )
+}
+
+function LiveRow({ event, title, to }: { event: LiveEvent | null; title: string; to: string }) {
+  return (
+    <Link className={styles.liveRow} to={to}>
+      <span className={styles.liveTitle}>{title}</span>
+      <span className={styles.meta}>
+        {event
+          ? `${formatWhen(event.schedule.partAStartsAt)} · ${liveStatus[event.schedule.phase]}${event.me ? ` · Roll ${event.me.rollNo}` : ''}`
+          : 'Sample · Starting soon · Roll SAMPLE-00042'}
+      </span>
+    </Link>
   )
 }

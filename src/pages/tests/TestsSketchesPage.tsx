@@ -172,7 +172,11 @@ export function PartBResultCard({ attemptId }: { attemptId: string }) {
     retry: false,
   })
   const partB = query.data
-  if (!partB || partB.kind !== 'paper' || (partB.status === 'none' && partB.available === 0))
+  if (
+    !partB ||
+    (partB.kind !== 'paper' && partB.kind !== 'live') ||
+    (partB.status === 'none' && partB.available === 0)
+  )
     return null
   return (
     <section className={styles.panel} aria-labelledby="part-b-card">

@@ -121,7 +121,7 @@ const percentOf = (attempt: ProgressAttempt) =>
 
 function attemptName(attempt: ProgressAttempt) {
   if (attempt.kind === 'practice') return attempt.title ?? 'Practice set'
-  if (attempt.kind === 'mock') return attempt.title ?? 'Mock'
+  if (attempt.kind === 'mock' || attempt.kind === 'live') return attempt.title ?? 'Mock'
   const paper = papers.find((item) => bankPaperId(item) === attempt.paperId)
   return paper ? paperLabel(paper) : attempt.paperId.toUpperCase()
 }
