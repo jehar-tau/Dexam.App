@@ -1,13 +1,20 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
+
+import { useAuth } from '../../features/auth/AuthContext'
+import { getSupabaseClient } from '../../features/auth/supabaseClient'
+import { fetchPaperReadiness } from '../../features/testSeries/bankPaper'
 
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { EmptyState } from '../../components'
 import {
+  bankPaperId,
   exams,
   findPaper,
   freePaperId,
   paperLabel,
   previewProgress,
+  type CatalogPaper,
 } from '../../features/testSeries/paperCatalog'
 import styles from './TestsSectionPages.module.css'
 
@@ -90,16 +97,60 @@ export function TestsPaperPage() {
             <dd>{progress ? `${progress.bestScore}/${paper.maxMarks}` : 'Not attempted'}</dd>
           </div>
         </dl>
-        <div className={styles.actions}>
-          <Link className={styles.start} to={`/tests/exam/${paper.id}${search}`}>
-            Start timed paper
-          </Link>
-          <p className={styles.note}>
-            Opens the exam window. Until the question bank is connected, it uses a fictional
-            practice paper.
-          </p>
-        </div>
+        {search ? (
+          <div className={styles.actions}>
+            <Link className={styles.start} to={`/tests/exam/${paper.id}${search}`}>
+              Start timed paper
+            </Link>
+            <p className={styles.note}>Preview opens a fictional practice paper.</p>
+          </div>
+        ) : (
+          <BankPaperActions paper={paper} />
+        )}
       </section>
+    </div>
+  )
+}
+
+/** For signed-in students: how much of the paper has been reviewed, and the way in. */
+function BankPaperActions({ paper }: { paper: CatalogPaper }) {
+  const { session } = useAuth()
+  const client = getSupabaseClient()
+  const readiness = useQuery({
+    queryKey: ['bank-paper-readiness', session?.user.id],
+    queryFn: () => fetchPaperReadiness(client!),
+    enabled: Boolean(client && session),
+    staleTime: 60_000,
+  })
+  const bankId = bankPaperId(paper)
+  const counts = bankId ? readiness.data?.get(bankId) : undefined
+
+  if (readiness.isPending && bankId && client) {
+    return <p className={styles.note}>Checking which questions are ready…</p>
+  }
+  if (readiness.isError) {
+    return <p className={styles.note}>Paper availability could not be loaded. Please try again.</p>
+  }
+  if (!counts?.ready) {
+    return (
+      <div className={styles.actions}>
+        <p className={styles.note}>
+          This paper is still being reviewed. Its questions appear once their figures, options and
+          answer keys have been checked.
+        </p>
+      </div>
+    )
+  }
+  return (
+    <div className={styles.actions}>
+      <Link className={styles.start} to={`/tests/exam/${paper.id}`}>
+        Start timed paper
+      </Link>
+      <p className={styles.note}>
+        {counts.ready === counts.objective
+          ? `All ${counts.objective} questions are ready.`
+          : `${counts.ready} of ${counts.objective} questions have been reviewed and are ready; the rest appear once they are checked.`}
+      </p>
     </div>
   )
 }

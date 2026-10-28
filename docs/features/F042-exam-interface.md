@@ -1,6 +1,15 @@
 # F042 — Exam interface (redesign step 2)
 
-Status: Phase 1 (client exam window on a fictional paper) implemented locally 2026-10-28 under D-057; in review. Phase 2 (server-authoritative timer, autosave and submit lock) follows the question bank (F038) and scoring (F044).
+Status: Phase 1 (client exam window on a fictional paper) merged 2026-10-28 (#94). Phase 2a (real bank papers for signed-in students) implemented locally 2026-10-28 with F038; in review. Phase 2b (server-authoritative timer, autosave and submit lock) follows with scoring (F044).
+
+## Phase 2a: bank papers
+
+- Preview (`?preview=1`) keeps the fictional practice paper. A signed-in student opening `/tests/exam/:paperId` gets the bank paper behind that catalogue paper (`bankPaperId()`): only reviewed (ready) objective questions, in paper order, grouped into NAT, MSQ and MCQ sections by first appearance.
+- **Marking and time:** UCEED and CEED use the verified 2026 Part A pattern (UCEED 120 minutes; NAT +4/0, MSQ +4/−1 with part marks, MCQ +3/−0.71. CEED 60 minutes; MCQ +3/−0.5). When only some questions are ready, the official time is scaled to the questions shown, at least 5 minutes. NID and NIFT publish no per-question scheme, so marking shows "—" and timing is one minute per question.
+- The login and instruction pages say how many of the paper's objective questions are shown and how the time was set.
+- Figures are shown byte-for-byte from signed links, scaled down to fit but never cropped or redrawn.
+- **States:** loading; "This paper is still being reviewed" when nothing is ready or the paper is not linked to the bank; "This paper could not be opened" when the server refuses.
+- The paper page shows signed-in students "N of M questions have been reviewed and are ready" and hides Start when none are.
 
 ## Purpose and problem
 

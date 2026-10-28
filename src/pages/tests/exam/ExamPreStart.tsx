@@ -26,22 +26,34 @@ export function PreStartFrame({ paperLabel, children }: FrameProps) {
   )
 }
 
-export function PracticeNotice() {
+export function PaperNotice({ paper }: { paper: ExamPaper }) {
+  if (paper.source === 'practice') {
+    return (
+      <p className={styles.notice}>
+        Practice content: the questions in this window are fictional. Signed-in students see the
+        real paper from the question bank.
+      </p>
+    )
+  }
+  if (!paper.notes?.length) return null
   return (
-    <p className={styles.notice}>
-      Practice content: the questions in this window are fictional. Real papers load here once the
-      question bank is connected.
-    </p>
+    <div className={styles.notice}>
+      {paper.notes.map((note) => (
+        <p key={note}>{note}</p>
+      ))}
+    </div>
   )
 }
 
 export function ExamLogin({
   paperLabel,
+  paper,
   candidate,
   exitTo,
   onSignIn,
 }: {
   paperLabel: string
+  paper: ExamPaper
   candidate: Candidate
   exitTo: string
   onSignIn: () => void
@@ -88,7 +100,7 @@ export function ExamLogin({
             </div>
           </div>
         </div>
-        <PracticeNotice />
+        <PaperNotice paper={paper} />
       </section>
     </PreStartFrame>
   )
@@ -219,22 +231,27 @@ export function ExamPaperInstructions({
                       <span className={styles.tableSub}>{section.kindLabel}</span>
                     </th>
                     <td>{section.questions.length}</td>
-                    <td>{signed(section.marking.correct)}</td>
-                    <td>{signed(section.marking.wrong)}</td>
-                    <td>0</td>
+                    <td>{section.marking ? signed(section.marking.correct) : '—'}</td>
+                    <td>{section.marking ? signed(section.marking.wrong) : '—'}</td>
+                    <td>{section.marking ? '0' : '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {paper.sections.some((section) => !section.marking) ? (
+            <p className={styles.tableNote}>
+              —: this exam does not publish its marking scheme; responses are not marked yet.
+            </p>
+          ) : null}
           {paper.sections
-            .filter((section) => section.marking.note)
+            .filter((section) => section.marking?.note)
             .map((section) => (
               <p key={section.id} className={styles.tableNote}>
-                {section.name}: {section.marking.note}
+                {section.name}: {section.marking?.note}
               </p>
             ))}
-          <PracticeNotice />
+          <PaperNotice paper={paper} />
         </div>
         <div className={styles.declaration}>
           <label className={styles.declarationLabel}>

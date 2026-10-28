@@ -142,17 +142,33 @@ export function ExamScreen({
               Question {number}
             </h1>
             <span className={styles.questionMeta}>
-              {section.kindLabel} · Marks{' '}
-              <span className={styles.markGood}>+{section.marking.correct}</span>
-              {' | '}
-              <span className={styles.markBad}>
-                {section.marking.wrong < 0 ? `−${-section.marking.wrong}` : '0'}
-              </span>
+              {section.kindLabel}
+              {section.marking ? (
+                <>
+                  {' · Marks '}
+                  <span className={styles.markGood}>+{section.marking.correct}</span>
+                  {' | '}
+                  <span className={styles.markBad}>
+                    {section.marking.wrong < 0 ? `−${-section.marking.wrong}` : '0'}
+                  </span>
+                </>
+              ) : null}
             </span>
           </div>
           <div className={styles.questionScroll}>
             <p className={styles.prompt}>{question.prompt}</p>
             {question.figure ? <ExamFigure id={question.figure} /> : null}
+            {question.images?.map((image, index) => (
+              <img
+                key={image.src}
+                className={styles.figureImage}
+                src={image.src}
+                width={image.width ?? undefined}
+                height={image.height ?? undefined}
+                alt={`Figure ${index + 1} for question ${number}`}
+                draggable={false}
+              />
+            ))}
             <ResponseInput
               key={question.id}
               question={question}
@@ -310,7 +326,16 @@ function ResponseInput({
               }
             />
             <span className={styles.optionLetter}>{option.id}</span>
-            <span>{option.text}</span>
+            <span className={styles.optionBody}>
+              {option.text}
+              {option.image ? (
+                <img
+                  className={styles.optionImage}
+                  src={option.image}
+                  alt={`Option ${option.id}`}
+                />
+              ) : null}
+            </span>
           </label>
         )
       })}
