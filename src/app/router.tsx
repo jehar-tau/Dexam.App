@@ -51,6 +51,7 @@ import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
 import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
 import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
+import { TestsPlansPage } from '../pages/tests/TestsPlansPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
 import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
 import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
@@ -492,6 +493,7 @@ export const router = createBrowserRouter([
       { path: 'analytics', element: <TestsAnalyticsPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
       { path: 'mocks', element: <TestsMocksPage /> },
+      { path: 'plans', element: <TestsPlansPage /> },
       {
         path: 'bookmarks',
         element: (

@@ -180,7 +180,10 @@ export function TestsMocksPage() {
                 </button>
               )}
               {!mock.canStart && !mock.openAttemptId ? (
-                <p className={styles.note}>You have used your free mock for this exam.</p>
+                <p className={styles.note}>
+                  You have used your free mock for this exam.{' '}
+                  <Link to="/tests/plans">See plans</Link>
+                </p>
               ) : null}
               {mock.available === 0 ? (
                 <p className={styles.note}>

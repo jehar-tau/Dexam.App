@@ -90,3 +90,8 @@ test('the Mocks page lists 2026 mocks in preview', async ({ page }) => {
   await page.getByRole('button', { name: 'M.Des' }).click()
   await expect(page.getByRole('region', { name: 'CEED 2026 mock' })).toBeVisible()
 })
+
+test('the Plans page asks a signed-out visitor to sign in', async ({ page }) => {
+  await page.goto('/tests/plans')
+  await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fplans$/)
+})
