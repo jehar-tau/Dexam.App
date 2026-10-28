@@ -81,3 +81,43 @@ export function drawingGroup(paper: Pick<DrawingPaper, 'paperId' | 'exam'>): Dra
   if (paper.exam === 'nid') return 'nid-past'
   return 'part-b'
 }
+
+/**
+ * D-061: NID DAT drawing mocks mixed for the student from the common drawing pool: six tasks of
+ * different types for 100 marks in 3 hours, tasks they have never had first.
+ */
+const drawingMockSchema = z.object({
+  key: z.string(),
+  level: z.enum(['bdes', 'mdes']),
+  title: z.string(),
+  minutes: z.number().int(),
+  tasks: z.number().int(),
+  totalMarks: numberish,
+  pool: z.number().int(),
+  unseen: z.number().int(),
+  taken: z.number().int(),
+  openAttemptId: z.string().uuid().nullable(),
+  canStart: z.boolean(),
+})
+
+export type DrawingMock = z.infer<typeof drawingMockSchema>
+
+export async function fetchDrawingMocks(client: SupabaseClient): Promise<DrawingMock[]> {
+  const result = await client.rpc('list_drawing_mocks')
+  if (result.error) throw new DrawingPaperError('Drawing mocks could not be loaded.')
+  return z.array(drawingMockSchema).parse(result.data as unknown)
+}
+
+export async function startDrawingMock(client: SupabaseClient, key: string): Promise<string> {
+  const result = await client.rpc('start_drawing_mock', { p_key: key })
+  if (result.error) {
+    throw new DrawingPaperError(
+      result.error.code === 'DX001'
+        ? 'You have used your free drawing mock. More unlock with a plan.'
+        : result.error.code === 'P0002'
+          ? 'Not enough drawing tasks are ready for this mock yet.'
+          : 'The drawing mock could not be built. Try again.',
+    )
+  }
+  return z.object({ attemptId: z.string().uuid() }).parse(result.data as unknown).attemptId
+}

@@ -16,6 +16,7 @@ import {
 import { partBStatusLabel } from '../../features/testSeries/partB'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestAccess } from '../../features/testSeries/testAccess'
+import { DrawingMockCards } from './DrawingMocks'
 import styles from './TestsMocksPage.module.css'
 
 // Fictional preview list; real availability is computed per student by the server.
@@ -65,8 +66,8 @@ const previewPapers: DrawingPaper[] = [
 const groups: { key: DrawingGroup; title: string; note: string }[] = [
   {
     key: 'nid-mock',
-    title: 'NID DAT drawing mocks',
-    note: 'The 2026 Prelims pattern: one 3-hour, 100-mark paper of six drawing tasks with sub-parts, and no objective section.',
+    title: 'Dexam original NID DAT papers',
+    note: 'Fixed papers on the 2026 Prelims pattern: six drawing tasks with sub-parts, 3 hours, 100 marks.',
   },
   {
     key: 'part-b',
@@ -144,6 +145,19 @@ export function TestsDrawingPage() {
           {start.error.message}
         </p>
       ) : null}
+
+      <section aria-labelledby="drawing-mock">
+        <h2 id="drawing-mock" className={styles.cardTitle}>
+          NID DAT mock, built for you
+        </h2>
+        <p className={styles.note}>
+          The 2026 Prelims pattern: one 3-hour, 100-mark paper of six drawing tasks, mixed fresh
+          from the whole drawing bank every time.
+        </p>
+        <div className={styles.grid}>
+          <DrawingMockCards level={level} preview={preview} />
+        </div>
+      </section>
 
       {groups.map((group) => {
         const papers = list.filter((paper) => drawingGroup(paper) === group.key)

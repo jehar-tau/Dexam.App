@@ -13,6 +13,12 @@ Status: Implemented 2026-10-29 under D-060 (`../decisions/ADR-060-printed-blocks
   - Part B tasks and the Part B result card;
   - drawing papers.
 
+## Number-free blocks and mixed NID mocks (D-061)
+
+- **Numbers:** blocks carry no question numbers. The cropper paints over "Q.06", "Q7)", "28.", "Question No. 8" and sub-part labels such as "21A)", so a block can sit in any paper under a new number.
+- **Owner collections:** collections of drawing tasks go into the bank with `tools/ingest_task_collection.py <pdf> --paper nid-task-collection-NN --title …`. Each task becomes clean text, or an exact crop when it has a picture, and every task waits for the owner's review.
+- **NID DAT mocks:** "NID DAT mock, built for you" (on Drawing papers and Mocks) mixes six tasks of different drawing types from every source for the student's level: 3 hours, 100 marks, unseen tasks first.
+
 ## Owner review (local only)
 
 1. In the workstation, run `python3 tools/export_platform_bank.py`. It writes `dexam-bank-export.json` and `dexam-review.json`.
