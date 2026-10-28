@@ -45,6 +45,9 @@ import {
 } from '../pages/tests/TestsSectionPages'
 import { ExamWindowPage } from '../pages/tests/exam/ExamWindowPage'
 import { TestsResultPage } from '../pages/tests/TestsResultPage'
+import { TestsAnalyticsPage } from '../pages/tests/TestsAnalyticsPage'
+import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
+import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 
 export const router = createBrowserRouter([
   {
@@ -404,6 +407,15 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    // F047: practice sets run in the same full-screen exam window.
+    path: '/tests/practice/run/:attemptId',
+    element: (
+      <StudentAccessBoundary>
+        <PracticeRunPage />
+      </StudentAccessBoundary>
+    ),
+  },
+  {
     // F042: the exam window is full screen, outside the test-series shell.
     path: '/tests/exam/:paperId',
     element: (
@@ -433,24 +445,8 @@ export const router = createBrowserRouter([
       { path: 'papers', element: <TestsPapersPage /> },
       { path: 'papers/:paperId', element: <TestsPaperPage /> },
       { path: 'results/:attemptId', element: <TestsResultPage /> },
-      {
-        path: 'analytics',
-        element: (
-          <TestsComingSoonPage
-            title="Analytics"
-            description="Your score-over-time chart and paper history arrive with results."
-          />
-        ),
-      },
-      {
-        path: 'practice',
-        element: (
-          <TestsComingSoonPage
-            title="Practice"
-            description="Build topic-wise practice sets that never repeat questions."
-          />
-        ),
-      },
+      { path: 'analytics', element: <TestsAnalyticsPage /> },
+      { path: 'practice', element: <TestsPracticePage /> },
       {
         path: 'mocks',
         element: (

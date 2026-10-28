@@ -35,6 +35,9 @@ const questionSchema = z.object({
 
 const attemptPayload = z.object({
   attemptId: z.string().uuid(),
+  kind: z.enum(['paper', 'practice']).default('paper'),
+  title: z.string().nullable().optional(),
+  timed: z.boolean().default(true),
   paperId: z.string(),
   exam: z.string(),
   status: z.enum(['open', 'in_progress', 'submitted']),
@@ -108,6 +111,22 @@ export function buildBankPaper(
   }
 
   const shown = payload.questions.length
+  if (payload.kind === 'practice') {
+    return {
+      title: payload.title ?? title,
+      durationMinutes: payload.durationMinutes,
+      sections,
+      source: 'bank',
+      practiceSet: true,
+      untimed: !payload.timed,
+      notes: [
+        payload.timed
+          ? `${shown} questions, ${payload.durationMinutes} minutes (90 seconds a question).`
+          : `${shown} questions, untimed. Submit whenever you are ready.`,
+        'Questions you have not seen before come first. Answers and explanations appear after you submit.',
+      ],
+    }
+  }
   const total = Math.max(payload.objectiveCount, shown)
   const official = officialMinutes[payload.exam]
   const notes: string[] = []
@@ -230,6 +249,8 @@ const keySchema = z.union([
 
 const resultPayload = z.object({
   attemptId: z.string().uuid(),
+  kind: z.enum(['paper', 'practice']).default('paper'),
+  title: z.string().nullable().optional(),
   paperId: z.string(),
   startedAt: z.string().nullable(),
   submittedAt: z.string().nullable(),
@@ -288,7 +309,8 @@ export async function fetchAttemptResult(
   return {
     attemptId: data.attemptId,
     paperId: data.paperId,
-    title: titleFor(data.paperId),
+    title: data.title ?? titleFor(data.paperId),
+    kind: data.kind,
     preview: false,
     startedAt: data.startedAt,
     submittedAt: data.submittedAt,
@@ -356,4 +378,114 @@ export async function fetchPaperReadiness(client: SupabaseClient): Promise<Paper
   return new Map(
     rows.map((row) => [row.paper_id, { ready: row.ready_count, objective: row.objective_count }]),
   )
+}
+
+async function openedFrom(
+  client: SupabaseClient,
+  data: unknown,
+  title: string,
+): Promise<OpenedAttempt> {
+  const parsed = attemptPayload.safeParse(data)
+  if (!parsed.success) throw new BankPaperError('This practice set could not be read.')
+  const urls = await signPaths(client, mediaPaths(parsed.data.questions))
+  return {
+    attemptId: parsed.data.attemptId,
+    status: parsed.data.status,
+    deadline: parsed.data.deadline ? Date.parse(parsed.data.deadline) : null,
+    paper: buildBankPaper(title, parsed.data, urls),
+  }
+}
+
+/** Resumes the caller's unfinished attempt by id (practice sets are opened this way). */
+export async function getBankAttempt(client: SupabaseClient, attemptId: string) {
+  const result = await client.rpc('get_assessment_attempt', { p_attempt_id: attemptId })
+  if (result.error) throw new BankPaperError('This practice set is not available to your account.')
+  return openedFrom(client, result.data as unknown, 'Practice set')
+}
+
+export type PracticeOptions = {
+  topic: string
+  size: 10 | 25 | 50
+  timed: boolean
+  exam: 'uceed' | 'ceed' | 'nid' | 'nift' | null
+}
+
+/** Builds a practice set on the server; null when the topic has nothing reviewed yet. */
+export async function startPractice(
+  client: SupabaseClient,
+  options: PracticeOptions,
+): Promise<string | null> {
+  const result = await client.rpc('start_assessment_practice', {
+    p_topic: options.topic,
+    p_size: options.size,
+    p_timed: options.timed,
+    p_exam: options.exam,
+  })
+  if (result.error) {
+    if (result.error.code === 'P0002') return null
+    throw new BankPaperError('The practice set could not be started. Please try again.')
+  }
+  const parsed = z.object({ attemptId: z.string().uuid() }).safeParse(result.data as unknown)
+  if (!parsed.success) throw new BankPaperError('The practice set could not be read.')
+  return parsed.data.attemptId
+}
+
+const topicRows = z.array(
+  z.object({
+    slug: z.string(),
+    name: z.string(),
+    ready_count: z.number().int(),
+    unseen_count: z.number().int(),
+  }),
+)
+
+export type PracticeTopic = { slug: string; name: string; ready: number; unseen: number }
+
+export async function fetchPracticeTopics(
+  client: SupabaseClient,
+  exam: PracticeOptions['exam'],
+): Promise<PracticeTopic[]> {
+  const result = await client.rpc('list_assessment_practice_topics', { p_exam: exam })
+  if (result.error) throw new BankPaperError('Practice topics could not be loaded.')
+  return topicRows.parse(result.data as unknown).map((row) => ({
+    slug: row.slug,
+    name: row.name,
+    ready: row.ready_count,
+    unseen: row.unseen_count,
+  }))
+}
+
+const progressPayload = z.object({
+  attempts: z.array(
+    z.object({
+      attemptId: z.string().uuid(),
+      kind: z.enum(['paper', 'practice']),
+      title: z.string().nullable(),
+      paperId: z.string(),
+      exam: z.string(),
+      submittedAt: z.string(),
+      score: z.number(),
+      maxScore: z.number(),
+      questionCount: z.number().int(),
+    }),
+  ),
+  topics: z.array(
+    z.object({
+      slug: z.string(),
+      name: z.string(),
+      total: z.number().int(),
+      scored: z.number().int(),
+    }),
+  ),
+})
+
+export type Progress = z.infer<typeof progressPayload>
+export type ProgressAttempt = Progress['attempts'][number]
+
+export async function fetchProgress(client: SupabaseClient): Promise<Progress> {
+  const result = await client.rpc('get_assessment_progress')
+  if (result.error) throw new BankPaperError('Your progress could not be loaded.')
+  const parsed = progressPayload.safeParse(result.data as unknown)
+  if (!parsed.success) throw new BankPaperError('Your progress could not be read.')
+  return parsed.data
 }

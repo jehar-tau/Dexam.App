@@ -95,6 +95,8 @@ export type AttemptResult = {
   attemptId: string
   paperId: string
   title: string
+  /** Paper attempts link back to their paper; practice sets to the practice page. */
+  kind?: 'paper' | 'practice'
   preview: boolean
   startedAt: string | null
   submittedAt: string | null

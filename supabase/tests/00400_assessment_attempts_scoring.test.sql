@@ -91,7 +91,12 @@ select is((current_setting('test.paper')::jsonb ->> 'durationMinutes')::integer,
 select is(current_setting('test.paper')::jsonb -> 'marking' -> 'mcq', '{"correct":3,"wrong":-0.71}'::jsonb, 'paper carries the server marking');
 select set_config('test.attempt', public.open_assessment_attempt('fictionx-2026')::text, true);
 select is(jsonb_array_length(current_setting('test.attempt')::jsonb -> 'questions'), 3, 'the attempt pins the ready questions');
-select ok(position('"kind"' in current_setting('test.attempt')) = 0, 'the open attempt carries no keys');
+select ok(
+  position('"correct": [' in current_setting('test.attempt')) = 0
+    and position('"accepted"' in current_setting('test.attempt')) = 0
+    and position('"answer"' in current_setting('test.attempt')) = 0,
+  'the open attempt carries no keys'
+);
 select is(
   public.open_assessment_attempt('fictionx-2026') ->> 'attemptId',
   current_setting('test.attempt')::jsonb ->> 'attemptId',

@@ -121,9 +121,15 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
 
   return (
     <div className={styles.page}>
-      <Link className={styles.back} to={`/tests/papers${search}`}>
-        ← Back to papers
-      </Link>
+      {result.kind === 'practice' ? (
+        <Link className={styles.back} to="/tests/practice">
+          ← Back to practice
+        </Link>
+      ) : (
+        <Link className={styles.back} to={`/tests/papers${search}`}>
+          ← Back to papers
+        </Link>
+      )}
 
       <section className={styles.hero} aria-labelledby="result-title">
         <div className={styles.heroText}>
@@ -226,7 +232,13 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
                 <li key={topic.slug}>
                   <strong>{topic.name}</strong>
                   <span>
-                    {topic.scored} of {topic.total} right
+                    {topic.scored} of {topic.total} right ·{' '}
+                    <Link
+                      className={styles.link}
+                      to={`/tests/practice?topic=${encodeURIComponent(topic.slug)}${search ? '&preview=1' : ''}`}
+                    >
+                      Practise
+                    </Link>
                   </span>
                 </li>
               ))}
@@ -236,7 +248,6 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
               No topic stands out as weak in this paper. Keep practising across topics.
             </p>
           )}
-          <p className={styles.note}>Topic practice sets arrive in the next build step.</p>
         </section>
       </div>
 
@@ -291,7 +302,14 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
       </section>
 
       <div className={styles.actions}>
-        {catalog ? (
+        {result.kind === 'practice' ? (
+          <Link
+            className={styles.primary}
+            to={`/tests/practice${result.questions[0]?.topic ? `?topic=${encodeURIComponent(result.questions[0].topic)}` : ''}`}
+          >
+            Practise again
+          </Link>
+        ) : catalog ? (
           <Link className={styles.primary} to={`/tests/exam/${catalog.id}${search}`}>
             Take it again
           </Link>
