@@ -82,6 +82,8 @@ D-053 — Assessment source and first slice — Option B approved 2026-10-27: in
 
 D-054 — Test-series programme — Option A approved 2026-10-28 on all four choices: build inside dexam-platform after F037; full mixed bank with public paid sales gated on a legal view; release order self-paced R1, commerce R2, all-India live mock R3; official-style exam interface in Dexam's own code, no third-party code/text/branding — `ADR-054-test-series-programme.md`.
 
-D-055 — Assessment bank-management permissions — pending; options in `../features/F038-assessment-question-bank.md` (recommended: Admin only, MFA for import and answer keys).
+D-055 — Assessment bank-management permissions — Option A approved 2026-10-28: Admin role only for `assessment.bank.read` and `assessment.bank.import`; MFA required for import and answer-key access — recorded in `ADR-057-test-series-experience.md` and `../features/F038-assessment-question-bank.md`.
 
 D-056 — Pre-push quality gate — standing owner rule 2026-10-28: every change passes every applicable test layer, a threat review (web, AI/agent, cloning/scraping) and a Claude code/security review before push, with evidence in the PR — `../QUALITY_GATE.md`.
+
+D-057 — Test-series experience — approved 2026-10-28: separate `/tests` shell with its own sidebar; Dexam light theme by default with optional dark; official-looking exam window; no third-party assets — `ADR-057-test-series-experience.md`.

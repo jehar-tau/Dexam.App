@@ -33,10 +33,16 @@ import { StudentAssignmentsPage } from '../pages/StudentAssignmentsPage'
 import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
-import { StudentTestSeriesPage } from '../pages/StudentTestSeriesPage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
+import { TestsShell } from './tests/TestsShell'
+import { TestsPapersPage } from '../pages/tests/TestsPapersPage'
+import {
+  LegacyStudentTestsRedirect,
+  TestsComingSoonPage,
+  TestsPaperPage,
+} from '../pages/tests/TestsSectionPages'
 
 export const router = createBrowserRouter([
   {
@@ -260,11 +266,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'student/tests',
-        element: (
-          <StudentAccessBoundary>
-            <StudentTestSeriesPage />
-          </StudentAccessBoundary>
-        ),
+        element: <LegacyStudentTestsRedirect />,
       },
       {
         path: 'student/notifications',
@@ -397,6 +399,73 @@ export const router = createBrowserRouter([
       },
       { path: 'health', element: <HealthPage /> },
       { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+  {
+    // D-057: the test series has its own shell, separate from the coaching portal.
+    path: '/tests',
+    element: (
+      <StudentAccessBoundary>
+        <TestsShell />
+      </StudentAccessBoundary>
+    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <TestsComingSoonPage
+            title="Overview"
+            description="Your next paper, recent scores and streaks will appear here."
+          />
+        ),
+      },
+      { path: 'papers', element: <TestsPapersPage /> },
+      { path: 'papers/:paperId', element: <TestsPaperPage /> },
+      {
+        path: 'analytics',
+        element: (
+          <TestsComingSoonPage
+            title="Analytics"
+            description="Your score-over-time chart and paper history arrive with results."
+          />
+        ),
+      },
+      {
+        path: 'practice',
+        element: (
+          <TestsComingSoonPage
+            title="Practice"
+            description="Build topic-wise practice sets that never repeat questions."
+          />
+        ),
+      },
+      {
+        path: 'mocks',
+        element: (
+          <TestsComingSoonPage
+            title="Mocks"
+            description="All-India timed mocks with Part A, a break and Part B."
+          />
+        ),
+      },
+      {
+        path: 'bookmarks',
+        element: (
+          <TestsComingSoonPage
+            title="Bookmarks"
+            description="Questions you save while reviewing papers."
+          />
+        ),
+      },
+      {
+        path: 'sketches',
+        element: (
+          <TestsComingSoonPage
+            title="Sketches"
+            description="Your Part B drawing uploads and their feedback."
+          />
+        ),
+      },
     ],
   },
 ])
