@@ -50,7 +50,7 @@ The Supabase URL and publishable key are intended for browser use and are protec
 
 ## Supabase configuration checklist
 
-- Keep email signup and anonymous login disabled.
+- Keep anonymous login disabled. Public sign-up is open for Google only (D-058 A): enable the `public.hook_before_user_created` before-user-created hook **before** switching sign-up on, and never switch sign-up on without it.
 - Set the Auth site URL to the exact Cloudflare staging origin.
 - Allow only exact required redirect URLs; no wildcard production domains.
 - Confirm every browser-accessible table has RLS enabled.

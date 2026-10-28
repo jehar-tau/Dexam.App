@@ -87,3 +87,4 @@ D-055 — Assessment bank-management permissions — Option A approved 2026-10-2
 D-056 — Pre-push quality gate — standing owner rule 2026-10-28: every change passes every applicable test layer, a threat review (web, AI/agent, cloning/scraping) and a Claude code/security review before push, with evidence in the PR — `../QUALITY_GATE.md`.
 
 D-057 — Test-series experience — approved 2026-10-28: separate `/tests` shell with its own sidebar; Dexam light theme by default with optional dark; official-looking exam window; no third-party assets — `ADR-057-test-series-experience.md`.
+D-058 — Google-only public sign-up — approved 2026-10-28 (Option A): public sign-up on, with a before-user-created hook allowing only Google sign-ups and staff invitations being delivered; proven locally, staging next — `ADR-058-google-only-public-sign-up.md`.
