@@ -96,4 +96,45 @@ describe('Drawing papers page', () => {
     expect(rpc).toHaveBeenCalledWith('start_drawing_paper', { p_paper_id: 'nid-bdes-dat-mock-01' })
     expect(await screen.findByRole('heading', { name: 'Part B screen' })).toBeVisible()
   })
+
+  it('builds an NID DAT drawing mock from the pool and opens it', async () => {
+    const user = userEvent.setup()
+    mocks.session = { user: { id: 'student-2', email: 'y@members.dexam.invalid' } }
+    const rpc = vi.fn((name: string) =>
+      Promise.resolve(
+        name === 'list_drawing_mocks'
+          ? {
+              data: [
+                {
+                  key: 'nid-dat-bdes-2026',
+                  level: 'bdes',
+                  title: 'NID DAT B.Des drawing mock',
+                  minutes: 180,
+                  tasks: 6,
+                  totalMarks: 100,
+                  pool: 312,
+                  unseen: 300,
+                  taken: 1,
+                  openAttemptId: null,
+                  canStart: true,
+                },
+              ],
+              error: null,
+            }
+          : name === 'list_drawing_papers'
+            ? { data: [], error: null }
+            : name === 'start_drawing_mock'
+              ? { data: { attemptId }, error: null }
+              : { data: null, error: { code: 'XX000' } },
+      ),
+    )
+    mocks.client = { rpc }
+    renderApp(routes, ['/tests/drawing'])
+    const card = await screen.findByRole('region', { name: 'NID DAT B.Des drawing mock' })
+    expect(within(card).getByText('6 drawing tasks · 3 hours · 100 marks')).toBeVisible()
+    expect(within(card).getByText('300')).toBeVisible()
+    await user.click(within(card).getByRole('button', { name: 'Start mock' }))
+    expect(rpc).toHaveBeenCalledWith('start_drawing_mock', { p_key: 'nid-dat-bdes-2026' })
+    expect(await screen.findByRole('heading', { name: 'Part B screen' })).toBeVisible()
+  })
 })

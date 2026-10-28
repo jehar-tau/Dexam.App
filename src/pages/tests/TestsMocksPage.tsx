@@ -13,6 +13,7 @@ import {
 } from '../../features/testSeries/liveEvents'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestAccess } from '../../features/testSeries/testAccess'
+import { DrawingMockCards } from './DrawingMocks'
 import styles from './TestsMocksPage.module.css'
 
 // Fictional preview list; real availability is computed per student by the server.
@@ -218,6 +219,14 @@ export function TestsMocksPage() {
           )
         })}
       </div>
+      <section aria-labelledby="nid-mock-title">
+        <h2 id="nid-mock-title" className={styles.cardTitle}>
+          NID DAT: all drawing
+        </h2>
+        <div className={styles.grid}>
+          <DrawingMockCards level={level} preview={preview} />
+        </div>
+      </section>
       {preview ? (
         <p className={styles.note}>Preview shows sample mocks. Sign in to build yours.</p>
       ) : null}
@@ -260,7 +269,6 @@ export function TestsMocksPage() {
           </p>
         )}
       </section>
-      <p className={styles.note}>NID DAT mocks arrive once the 2026 NID format is confirmed.</p>
     </div>
   )
 }

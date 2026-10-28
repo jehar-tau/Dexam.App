@@ -99,7 +99,7 @@ export function PartBPage() {
       <PreStartFrame paperLabel={label}>
         <section className={styles.instructions} aria-labelledby="part-b-title">
           <h1 id="part-b-title" className={styles.instructionsTitle}>
-            {drawingPaper ? 'Drawing paper' : 'Part B: drawing'}
+            {drawingPaper ? (partB.title ?? 'Drawing paper') : 'Part B: drawing'}
           </h1>
           <div className={styles.instructionsBody}>
             {partB.available ? (

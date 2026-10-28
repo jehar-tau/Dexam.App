@@ -164,3 +164,15 @@ test('the owner question review is never part of a build', async ({ page }) => {
   const response = await page.request.get('/__review/bank.json')
   expect(response.headers()['content-type'] ?? '').not.toContain('application/json')
 })
+
+test('the Mocks page offers the 3-hour NID DAT drawing mock beside the objective mocks', async ({
+  page,
+}) => {
+  await page.goto('/tests/mocks?preview=1')
+  await expect(page.getByRole('region', { name: 'UCEED 2026 mock' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'NID DAT B.Des drawing mock' })).toContainText(
+    '6 drawing tasks · 3 hours · 100 marks',
+  )
+  await page.getByRole('button', { name: 'M.Des' }).click()
+  await expect(page.getByRole('region', { name: 'NID DAT M.Des drawing mock' })).toBeVisible()
+})

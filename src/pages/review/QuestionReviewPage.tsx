@@ -34,6 +34,8 @@ type ReviewQuestion = {
   holds: string[]
   taskMarks: number | null
   original: boolean
+  ownerProvided?: boolean
+  drawingType?: string | null
 }
 
 type ReviewData = {
@@ -339,6 +341,10 @@ const CROP_HOLDS = new Set([
 /** What marking this question right does for students. */
 function goLive(question: ReviewQuestion): string {
   if (question.original) return 'Dexam original: live for students now.'
+  if (question.ownerProvided)
+    return question.holds.includes('figure-missing-in-source')
+      ? 'Mentions a picture the source does not include; marking it right uses it as text anyway.'
+      : 'Goes into NID drawing mocks once marked right.'
   const remaining = question.block
     ? question.holds.filter((hold) => !CROP_HOLDS.has(hold))
     : question.holds
@@ -412,7 +418,11 @@ function ReviewCard({
         </span>
         <span className={styles.chips}>
           {question.original ? <span className={styles.chip}>Dexam original</span> : null}
-          {!question.block && !question.original ? (
+          {question.ownerProvided ? <span className={styles.chip}>Your collection</span> : null}
+          {question.drawingType ? (
+            <span className={styles.chip}>Type: {question.drawingType}</span>
+          ) : null}
+          {!question.block && !question.original && !question.ownerProvided ? (
             <span className={styles.chipWarn}>Shown as text (no crop)</span>
           ) : null}
           {flags.map((flag) => (
