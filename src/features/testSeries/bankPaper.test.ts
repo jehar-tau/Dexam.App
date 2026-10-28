@@ -7,7 +7,11 @@ import {
   fetchAttemptResult,
   fetchMyAttempts,
   fetchPaperReadiness,
+  fetchPracticeTopics,
+  fetchProgress,
+  getBankAttempt,
   openBankAttempt,
+  startPractice,
   submitBankAttempt,
   type BankAttemptPayload,
 } from './bankPaper'
@@ -23,6 +27,8 @@ const marking = {
 
 const payload: BankAttemptPayload = {
   attemptId: id(9),
+  kind: 'paper',
+  timed: true,
   paperId: 'uceed-2025',
   exam: 'uceed',
   status: 'open',
@@ -256,5 +262,83 @@ describe('attempt calls', () => {
     expect(bankPaperId(findPaper('uceed-2025')!)).toBe('uceed-2025')
     expect(bankPaperId(findPaper('nift-bdes-2014')!)).toBe('nift-2014-bdes-written')
     expect(bankPaperId(findPaper('nift-bdes-2013')!)).toBeNull()
+  })
+})
+
+describe('practice and progress calls', () => {
+  it('shapes a practice set: no login, untimed flag and practice notes', () => {
+    const paper = buildBankPaper(
+      'ignored',
+      { ...payload, kind: 'practice', title: 'Practice · Spatial Reasoning', timed: false },
+      urls,
+    )
+    expect(paper).toMatchObject({
+      title: 'Practice · Spatial Reasoning',
+      practiceSet: true,
+      untimed: true,
+    })
+    expect(paper.notes?.[0]).toBe('4 questions, untimed. Submit whenever you are ready.')
+  })
+
+  it('starts practice, returning null when the topic has nothing ready', async () => {
+    const mock = client({ start_assessment_practice: { data: { attemptId: id(9) }, error: null } })
+    expect(
+      await startPractice(mock.client, { topic: 'spatial', size: 10, timed: true, exam: 'uceed' }),
+    ).toBe(id(9))
+    expect(mock.rpc).toHaveBeenCalledWith('start_assessment_practice', {
+      p_topic: 'spatial',
+      p_size: 10,
+      p_timed: true,
+      p_exam: 'uceed',
+    })
+    expect(
+      await startPractice(
+        client({ start_assessment_practice: { data: null, error: { code: 'P0002' } } }).client,
+        { topic: 'spatial', size: 10, timed: true, exam: null },
+      ),
+    ).toBeNull()
+  })
+
+  it('reads topics, progress and a practice attempt by id', async () => {
+    const mock = client({
+      list_assessment_practice_topics: {
+        data: [{ slug: 'spatial', name: 'Spatial', ready_count: 12, unseen_count: 2 }],
+        error: null,
+      },
+      get_assessment_progress: {
+        data: {
+          attempts: [
+            {
+              attemptId: id(9),
+              kind: 'practice',
+              title: 'Practice · Spatial',
+              paperId: 'practice-all-spatial',
+              exam: '',
+              submittedAt: '2026-10-28T10:00:00+00:00',
+              score: 4,
+              maxScore: 10,
+              questionCount: 10,
+            },
+          ],
+          topics: [{ slug: 'spatial', name: 'Spatial', total: 10, scored: 4 }],
+        },
+        error: null,
+      },
+      get_assessment_attempt: {
+        data: { ...payload, kind: 'practice', title: 'Practice' },
+        error: null,
+      },
+    })
+    expect(await fetchPracticeTopics(mock.client, null)).toEqual([
+      { slug: 'spatial', name: 'Spatial', ready: 12, unseen: 2 },
+    ])
+    expect((await fetchProgress(mock.client)).topics[0]).toMatchObject({ scored: 4 })
+    expect((await getBankAttempt(mock.client, id(9))).paper.practiceSet).toBe(true)
+    await expect(
+      getBankAttempt(
+        client({ get_assessment_attempt: { data: null, error: { code: '42501' } } }).client,
+        id(9),
+      ),
+    ).rejects.toThrow(/not available/)
   })
 })

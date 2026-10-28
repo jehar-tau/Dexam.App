@@ -201,19 +201,21 @@ export function ExamPaperInstructions({
   onPrevious: () => void
   onBegin: () => void
 }) {
-  const [declared, setDeclared] = useState(false)
+  // Practice sets have no exam-centre declaration.
+  const [declared, setDeclared] = useState(Boolean(paper.practiceSet))
   const total = paper.sections.reduce((sum, section) => sum + section.questions.length, 0)
 
   return (
     <PreStartFrame paperLabel={paperLabel}>
       <section className={styles.instructions} aria-labelledby="exam-paper-title">
         <h1 id="exam-paper-title" className={styles.instructionsTitle}>
-          Paper instructions
+          {paper.practiceSet ? 'Practice set' : 'Paper instructions'}
         </h1>
         <div className={styles.instructionsBody}>
           <p>
-            {paperLabel} has {total} questions in {paper.sections.length} sections and lasts{' '}
-            {paper.durationMinutes} minutes.
+            {paperLabel} has {total} {total === 1 ? 'question' : 'questions'} in{' '}
+            {paper.sections.length} {paper.sections.length === 1 ? 'section' : 'sections'}
+            {paper.untimed ? ' and is untimed.' : ` and lasts ${paper.durationMinutes} minutes.`}
           </p>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -262,30 +264,36 @@ export function ExamPaperInstructions({
             {error}
           </p>
         ) : null}
-        <div className={styles.declaration}>
-          <label className={styles.declarationLabel}>
-            <input
-              type="checkbox"
-              checked={declared}
-              onChange={(event) => setDeclared(event.target.checked)}
-            />
-            <span>
-              I have read and understood the instructions. I will take this paper on my own, without
-              outside help, and the device I am using is working properly.
-            </span>
-          </label>
-        </div>
+        {paper.practiceSet ? null : (
+          <div className={styles.declaration}>
+            <label className={styles.declarationLabel}>
+              <input
+                type="checkbox"
+                checked={declared}
+                onChange={(event) => setDeclared(event.target.checked)}
+              />
+              <span>
+                I have read and understood the instructions. I will take this paper on my own,
+                without outside help, and the device I am using is working properly.
+              </span>
+            </label>
+          </div>
+        )}
         <div className={styles.instructionsFooter}>
-          <button type="button" className={styles.secondaryAction} onClick={onPrevious}>
-            Previous
-          </button>
+          {paper.practiceSet ? (
+            <span />
+          ) : (
+            <button type="button" className={styles.secondaryAction} onClick={onPrevious}>
+              Previous
+            </button>
+          )}
           <button
             type="button"
             className={styles.primaryAction}
             disabled={!declared || busy}
             onClick={onBegin}
           >
-            {busy ? 'Starting…' : 'I am ready to begin'}
+            {busy ? 'Starting…' : paper.practiceSet ? 'Start practice' : 'I am ready to begin'}
           </button>
         </div>
       </section>

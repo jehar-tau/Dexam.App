@@ -38,6 +38,10 @@ export type ExamPaper = {
   sections: ExamSection[]
   /** 'practice' is the fictional preview paper; 'bank' comes from reviewed bank questions. */
   source: 'practice' | 'bank'
+  /** A topic practice set rather than a paper: no exam-centre login or declaration. */
+  practiceSet?: boolean
+  /** Untimed practice: the clock is hidden (the server still closes it after 10 hours). */
+  untimed?: boolean
   /** Notes shown on the instruction pages, such as how the time was set. */
   notes?: string[]
 }

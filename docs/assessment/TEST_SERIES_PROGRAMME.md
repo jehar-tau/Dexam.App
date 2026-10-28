@@ -19,7 +19,7 @@ After the owner's Roughworks review, R1 is delivered in eight visible steps. Eac
 2. Exam window (F042 phase 1; the server timer and autosave follow F038)
 3. Bank in the local database (F038, plus F042 phase 2a: real papers in the exam window)
 4. Scoring and results (F044; selection likelihood F045 is a separate gate)
-5. Analytics, progress chart and practice (F046, F047)
+5. Analytics, progress chart and practice (F046, F047; see `docs/features/F046-F047-progress-and-practice.md`)
 6. Google sign-in, onboarding and free papers (F039, F041)
 7. Part B uploads and sketches (F043, F048)
 8. Mocks, commerce and the live event (R2, R3)

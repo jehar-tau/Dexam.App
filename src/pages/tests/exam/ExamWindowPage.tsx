@@ -62,6 +62,10 @@ function initialAttempt(
 
   const { attemptId, status, deadline } = server.opened
   let attempt = stored?.serverId === attemptId ? stored : createAttempt(paper, attemptId)
+  // Practice sets skip the exam-centre login and general instructions.
+  if (paper.practiceSet && (attempt.stage === 'login' || attempt.stage === 'instructions')) {
+    attempt = setStage(attempt, 'paper-instructions')
+  }
   if (status === 'in_progress' && deadline !== null) {
     attempt =
       attempt.stage === 'exam' || attempt.stage === 'submitted'
@@ -84,7 +88,7 @@ function useLightTheme() {
   }, [])
 }
 
-function StatusPage({
+export function StatusPage({
   label,
   title,
   backTo,
@@ -139,7 +143,10 @@ export function ExamWindowPage() {
     <ExamWindow
       key={key}
       owner={owner}
-      catalogPaper={catalogPaper}
+      storeKey={catalogPaper.id}
+      label={paperLabel(catalogPaper)}
+      exitTo={`/tests/papers/${catalogPaper.id}${search}`}
+      backTo={papersPath}
       paper={practicePaper}
       search={search}
     />
@@ -187,7 +194,10 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
     <ExamWindow
       key={query.data.attemptId}
       owner={owner}
-      catalogPaper={catalogPaper}
+      storeKey={catalogPaper.id}
+      label={label}
+      exitTo={`/tests/papers/${catalogPaper.id}`}
+      backTo="/tests/papers"
       paper={query.data.paper}
       search=""
       server={{ client, opened: query.data }}
@@ -195,15 +205,24 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
   )
 }
 
-function ExamWindow({
+export function ExamWindow({
   owner,
-  catalogPaper,
+  storeKey,
+  label,
+  exitTo,
+  backTo,
   paper,
   search,
   server,
 }: {
   owner: string
-  catalogPaper: CatalogPaper
+  /** Local storage key part: the catalogue paper id, or the practice set's server paper id. */
+  storeKey: string
+  label: string
+  /** Where "Back" from the login page goes. */
+  exitTo: string
+  /** Where "Back to papers" (or practice) goes. */
+  backTo: string
   paper: ExamPaper
   search: string
   server?: ServerAttempt
@@ -211,7 +230,7 @@ function ExamWindow({
   const { session } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const paperId = catalogPaper.id
+  const paperId = storeKey
 
   const [attempt, setAttempt] = useState(() => initialAttempt(owner, paperId, paper, server))
   const [now, setNow] = useState(() => Date.now())
@@ -269,8 +288,7 @@ function ExamWindow({
     }
   }, [inExam])
 
-  const papersPath = `/tests/papers${search}`
-  const label = paperLabel(catalogPaper)
+  const papersPath = backTo
   const memberId = memberIdFromEmail(session?.user.email)
   const name = search ? 'Fictional Student' : (memberId ?? 'Dexam student')
   const candidate: Candidate = {
@@ -291,7 +309,7 @@ function ExamWindow({
           paperLabel={label}
           paper={paper}
           candidate={candidate}
-          exitTo={`/tests/papers/${catalogPaper.id}${search}`}
+          exitTo={exitTo}
           onSignIn={() => setAttempt(setStage(attempt, 'instructions'))}
         />
       )
@@ -359,7 +377,7 @@ function ExamWindow({
             </section>
           </PreStartFrame>
         ) : (
-          <StatusPage label={label} title="Submitting your paper…" backTo="/tests/papers">
+          <StatusPage label={label} title="Submitting your paper…" backTo={backTo}>
             <p>Your answers are being scored. Your result opens in a moment.</p>
           </StatusPage>
         )

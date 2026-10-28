@@ -113,17 +113,25 @@ export function ExamScreen({
             )
           })}
         </nav>
-        <div
-          className={`${styles.timer} ${remaining <= WARNING_MS ? styles.timerWarning : ''}`}
-          role="timer"
-          aria-label="Time left"
-        >
-          <span className={styles.timerLabel}>Time left</span>
-          <span className={styles.timerValue}>{formatClock(remaining)}</span>
-        </div>
-        <span className={styles.visuallyHidden} aria-live="polite">
-          {remaining <= WARNING_MS ? 'Five minutes or less left.' : ''}
-        </span>
+        {paper.untimed ? (
+          <div className={styles.timer}>
+            <span className={styles.timerLabel}>Untimed practice</span>
+          </div>
+        ) : (
+          <>
+            <div
+              className={`${styles.timer} ${remaining <= WARNING_MS ? styles.timerWarning : ''}`}
+              role="timer"
+              aria-label="Time left"
+            >
+              <span className={styles.timerLabel}>Time left</span>
+              <span className={styles.timerValue}>{formatClock(remaining)}</span>
+            </div>
+            <span className={styles.visuallyHidden} aria-live="polite">
+              {remaining <= WARNING_MS ? 'Five minutes or less left.' : ''}
+            </span>
+          </>
+        )}
         <button
           type="button"
           className={styles.paletteToggle}
