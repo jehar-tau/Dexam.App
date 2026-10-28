@@ -50,6 +50,7 @@ import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
 import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
 import { TestsSketchesPage } from '../pages/tests/TestsSketchesPage'
+import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
 import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
 import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
@@ -429,6 +430,15 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    // F040: mocks run in the full exam-centre window.
+    path: '/tests/mock/run/:attemptId',
+    element: (
+      <TestsAccessBoundary>
+        <PracticeRunPage variant="mock" />
+      </TestsAccessBoundary>
+    ),
+  },
+  {
     // F043: Part B (drawing and uploads) runs full screen after Part A.
     path: '/tests/part-b/:attemptId',
     element: (
@@ -481,15 +491,7 @@ export const router = createBrowserRouter([
       { path: 'results/:attemptId', element: <TestsResultPage /> },
       { path: 'analytics', element: <TestsAnalyticsPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
-      {
-        path: 'mocks',
-        element: (
-          <TestsComingSoonPage
-            title="Mocks"
-            description="All-India timed mocks with Part A, a break and Part B."
-          />
-        ),
-      },
+      { path: 'mocks', element: <TestsMocksPage /> },
       {
         path: 'bookmarks',
         element: (

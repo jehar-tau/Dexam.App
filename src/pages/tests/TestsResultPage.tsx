@@ -314,6 +314,10 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
           >
             Practise again
           </Link>
+        ) : result.kind === 'mock' ? (
+          <Link className={styles.primary} to="/tests/mocks">
+            Take another mock
+          </Link>
         ) : catalog ? (
           <Link className={styles.primary} to={`/tests/exam/${catalog.id}${search}`}>
             Take it again

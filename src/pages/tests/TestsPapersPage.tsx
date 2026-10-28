@@ -182,7 +182,7 @@ export function TestsPapersPage() {
   const stats = preview ? previewStats : null
 
   const real = progressQuery.data
-  const realPapers = real?.attempts.filter((attempt) => attempt.kind === 'paper') ?? []
+  const realPapers = real?.attempts.filter((attempt) => attempt.kind !== 'practice') ?? []
   const realTotals = real?.topics.reduce(
     (sum, topic) => ({ total: sum.total + topic.total, scored: sum.scored + topic.scored }),
     { total: 0, scored: 0 },

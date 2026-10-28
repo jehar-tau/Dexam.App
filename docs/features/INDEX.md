@@ -43,6 +43,7 @@ IDs are stable. Use `../templates/FEATURE_SPEC_TEMPLATE.md` for new specificatio
 
 - F037 Assessment and test-series foundation — D-053 B; fictional runner preview at `/student/tests?preview=1`; merged PR #89
 - F042 Exam interface — D-057 redesign step 2; phase 1 exam window (merged #94); phase 2a serves reviewed bank papers to signed-in students; server timer and autosave in phase 2b
+- F040 Mock generator — D-057 redesign step 8a; 2026 blueprints (UCEED, CEED, NIFT GAT), per-student no-repeat mocks from the common bank
 - F043/F048 Part B drawing, uploads and evaluation — D-057 redesign step 7; timed drawing, 10-minute upload window, anonymous evaluation and release, Sketches
 - F039/F041 Public sign-in, onboarding and free papers — D-057 redesign step 6; candidate accounts, B.Des/M.Des onboarding, one free paper per exam; Google provider waits on D-058
 - F046/F047 Progress analytics and topic practice — D-057 redesign step 5; Analytics page with progress chart, topic strengths and history; server-built practice sets, unseen questions first

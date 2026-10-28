@@ -83,3 +83,10 @@ test('the Sketches page explains Part B in preview', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Sketches' })).toBeVisible()
   await expect(page.getByText('Your Part B drawings appear here')).toBeVisible()
 })
+
+test('the Mocks page lists 2026 mocks in preview', async ({ page }) => {
+  await page.goto('/tests/mocks?preview=1')
+  await expect(page.getByRole('region', { name: 'UCEED 2026 mock' })).toBeVisible()
+  await page.getByRole('button', { name: 'M.Des' }).click()
+  await expect(page.getByRole('region', { name: 'CEED 2026 mock' })).toBeVisible()
+})
