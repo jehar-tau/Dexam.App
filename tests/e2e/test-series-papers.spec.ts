@@ -91,6 +91,16 @@ test('the Mocks page lists 2026 mocks in preview', async ({ page }) => {
   await expect(page.getByRole('region', { name: 'CEED 2026 mock' })).toBeVisible()
 })
 
+test('the Overview shows standing and next steps in preview', async ({ page }) => {
+  await page.goto('/tests?preview=1')
+  await expect(page.getByRole('heading', { name: 'Up next' })).toBeVisible()
+  await expect(page.getByText('Shortlisting band')).toBeVisible()
+  await expect(page.getByRole('link', { name: /Take a full mock/ })).toHaveAttribute(
+    'href',
+    '/tests/mocks?preview=1',
+  )
+})
+
 test('a live mock opens its waiting room in preview', async ({ page }) => {
   await page.goto('/tests/mocks?preview=1')
   await page.getByRole('link', { name: /Sample all-India UCEED live mock/ }).click()

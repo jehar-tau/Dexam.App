@@ -1,16 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { EmptyState } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
-import {
-  fetchProgress,
-  type Progress,
-  type ProgressAttempt,
-} from '../../features/testSeries/bankPaper'
-import { bankPaperId, paperLabel, papers } from '../../features/testSeries/paperCatalog'
+import { fetchProgress } from '../../features/testSeries/bankPaper'
+import { categoryLabels, partALikelihood, readCategory } from '../../features/testSeries/likelihood'
 import { previewSearch } from '../../features/testSeries/previewSearch'
+import {
+  attemptName,
+  formatMarks,
+  percentOf,
+  previewProgress,
+} from '../../features/testSeries/progressView'
 import { ProgressChart, type ProgressSeries } from './ProgressChart'
 import styles from './TestsAnalyticsPage.module.css'
 
@@ -21,112 +24,6 @@ const examNames: Record<string, string> = {
   nift: 'NIFT',
 }
 const examOrder = ['uceed', 'ceed', 'nid', 'nift']
-
-const day = 24 * 60 * 60 * 1000
-const fictionalDate = (daysAgo: number) =>
-  new Date(Date.UTC(2026, 9, 27) - daysAgo * day).toISOString()
-
-// Fictional preview progress. Real progress comes from get_assessment_progress().
-const previewProgress: Progress = {
-  attempts: [
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f001',
-      kind: 'paper',
-      title: null,
-      paperId: 'uceed-2022',
-      exam: 'uceed',
-      submittedAt: fictionalDate(42),
-      score: 76,
-      maxScore: 200,
-      questionCount: 57,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f002',
-      kind: 'paper',
-      title: null,
-      paperId: 'nid-bdes-2019',
-      exam: 'nid',
-      submittedAt: fictionalDate(35),
-      score: 40,
-      maxScore: 100,
-      questionCount: 18,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f003',
-      kind: 'paper',
-      title: null,
-      paperId: 'uceed-2023',
-      exam: 'uceed',
-      submittedAt: fictionalDate(28),
-      score: 90,
-      maxScore: 200,
-      questionCount: 57,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f004',
-      kind: 'practice',
-      title: 'Practice · Spatial Reasoning',
-      paperId: 'practice-all-spatial-reasoning',
-      exam: '',
-      submittedAt: fictionalDate(21),
-      score: 7,
-      maxScore: 10,
-      questionCount: 10,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f005',
-      kind: 'paper',
-      title: null,
-      paperId: 'uceed-2024',
-      exam: 'uceed',
-      submittedAt: fictionalDate(14),
-      score: 104,
-      maxScore: 200,
-      questionCount: 57,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f006',
-      kind: 'paper',
-      title: null,
-      paperId: 'nid-bdes-2020',
-      exam: 'nid',
-      submittedAt: fictionalDate(9),
-      score: 55,
-      maxScore: 100,
-      questionCount: 19,
-    },
-    {
-      attemptId: '00000000-0000-4000-8000-00000000f007',
-      kind: 'paper',
-      title: null,
-      paperId: 'uceed-2025',
-      exam: 'uceed',
-      submittedAt: fictionalDate(2),
-      score: 128,
-      maxScore: 200,
-      questionCount: 56,
-    },
-  ],
-  topics: [
-    { slug: 'analytical-reasoning', name: 'Analytical Reasoning', total: 24, scored: 9 },
-    { slug: 'numerical-reasoning', name: 'Numerical Reasoning', total: 31, scored: 15 },
-    { slug: 'design-awareness', name: 'Design Awareness', total: 12, scored: 7 },
-    { slug: 'spatial-reasoning', name: 'Spatial Reasoning', total: 40, scored: 29 },
-    { slug: 'language', name: 'Language', total: 9, scored: 8 },
-  ],
-}
-
-const percentOf = (attempt: ProgressAttempt) =>
-  attempt.maxScore > 0 ? (attempt.score / attempt.maxScore) * 100 : 0
-
-function attemptName(attempt: ProgressAttempt) {
-  if (attempt.kind === 'practice') return attempt.title ?? 'Practice set'
-  if (attempt.kind === 'mock' || attempt.kind === 'live') return attempt.title ?? 'Mock'
-  const paper = papers.find((item) => bankPaperId(item) === attempt.paperId)
-  return paper ? paperLabel(paper) : attempt.paperId.toUpperCase()
-}
-
-const formatMarks = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(2))
 
 export function TestsAnalyticsPage() {
   const search = previewSearch(useLocation().search)
@@ -141,6 +38,7 @@ export function TestsAnalyticsPage() {
   })
 
   const progress = preview ? previewProgress : query.data
+  const [category] = useState(readCategory)
 
   if (!progress) {
     return (
@@ -285,6 +183,13 @@ export function TestsAnalyticsPage() {
                 <th scope="col">Score</th>
                 <th scope="col">%</th>
                 <th scope="col">
+                  <abbr
+                    title={`Part A shortlisting likelihood, ${categoryLabels[category]} (Dexam estimate)`}
+                  >
+                    Band
+                  </abbr>
+                </th>
+                <th scope="col">
                   <span className={styles.visuallyHidden}>Result</span>
                 </th>
               </tr>
@@ -304,6 +209,12 @@ export function TestsAnalyticsPage() {
                     {formatMarks(attempt.score)} / {formatMarks(attempt.maxScore)}
                   </td>
                   <td className={styles.mono}>{Math.round(percentOf(attempt))}%</td>
+                  <td>
+                    {attempt.kind === 'practice'
+                      ? '—'
+                      : (partALikelihood(attempt.exam, attempt.score, attempt.maxScore, category)
+                          ?.band ?? '—')}
+                  </td>
                   <td>
                     {preview ? null : (
                       <Link className={styles.link} to={`/tests/results/${attempt.attemptId}`}>

@@ -8,6 +8,15 @@ import { getSupabaseClient } from '../../features/auth/supabaseClient'
 import { fetchAttemptResult } from '../../features/testSeries/bankPaper'
 import { bankPaperId, findPaper, paperLabel, papers } from '../../features/testSeries/paperCatalog'
 import { buildPracticeResult } from '../../features/testSeries/practiceResult'
+import {
+  categoryLabels,
+  examOf,
+  LIKELIHOOD_VERSION,
+  partALikelihood,
+  readCategory,
+  saveCategory,
+  type Category,
+} from '../../features/testSeries/likelihood'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import {
   describeKey,
@@ -187,6 +196,8 @@ function ResultView({ result, search }: { result: AttemptResult; search: string 
           </div>
         </dl>
       </section>
+
+      {result.kind !== 'practice' ? <LikelihoodCard result={result} /> : null}
 
       {!result.preview && result.kind !== 'practice' ? (
         <PartBResultCard attemptId={result.attemptId} />
@@ -427,5 +438,59 @@ function ReviewItem({ question, index }: { question: ResultQuestion; index: numb
         </div>
       ) : null}
     </li>
+  )
+}
+
+/** F045: Part A shortlisting likelihood against the published cut-offs (UCEED and CEED). */
+function LikelihoodCard({ result }: { result: AttemptResult }) {
+  const [category, setCategory] = useState<Category>(readCategory)
+  const estimate = partALikelihood(
+    examOf(result.exam, result.paperId),
+    result.score,
+    result.maxScore,
+    category,
+  )
+  if (!estimate) return null
+  const choose = (value: Category) => {
+    setCategory(value)
+    saveCategory(value)
+  }
+  const years = estimate.cutoffs.map((item) => item.year)
+  return (
+    <section className={styles.panel} aria-labelledby="likelihood-title">
+      <h2 id="likelihood-title" className={styles.panelTitle}>
+        Part A shortlisting likelihood
+      </h2>
+      <p className={styles.likelihoodRow}>
+        <span className={`${styles.band} ${styles[`band${estimate.band}`]}`}>{estimate.band}</span>
+        <span className={styles.note}>
+          Your Part A scales to {estimate.scaled} / {estimate.partAMax} and clears{' '}
+          {estimate.cleared} of the last {estimate.cutoffs.length} years&apos;{' '}
+          {categoryLabels[category]} cut-offs.
+        </span>
+      </p>
+      <div className={styles.filters} role="group" aria-label="Category">
+        {(Object.keys(categoryLabels) as Category[]).map((value) => (
+          <button
+            key={value}
+            type="button"
+            className={`${styles.filter} ${category === value ? styles.filterActive : ''}`}
+            aria-pressed={category === value}
+            onClick={() => choose(value)}
+          >
+            {categoryLabels[value]}
+          </button>
+        ))}
+      </div>
+      <p className={styles.note}>
+        Cut-offs {Math.min(...years)}–{Math.max(...years)}:{' '}
+        {estimate.cutoffs.map((item) => `${item.year} ${item.cutoff}`).join(' · ')}. Computed from
+        the mean and spread {estimate.exam.toUpperCase()} publishes each year.
+      </p>
+      <p className={styles.note}>
+        Dexam estimate ({LIKELIHOOD_VERSION}), not an official prediction. Shortlisting only means
+        Part B gets marked; the final rank also depends on Part B.
+      </p>
+    </section>
   )
 }

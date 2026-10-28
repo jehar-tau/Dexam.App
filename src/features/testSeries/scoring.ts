@@ -97,6 +97,8 @@ export type AttemptResult = {
   title: string
   /** Paper attempts link back to their paper; practice sets to the practice page. */
   kind?: 'paper' | 'practice' | 'mock' | 'live'
+  /** The source exam (`uceed`, `ceed`, …), when the server reports it. */
+  exam?: string
   preview: boolean
   startedAt: string | null
   submittedAt: string | null

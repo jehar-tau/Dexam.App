@@ -143,6 +143,18 @@ describe('Results page', () => {
     expect(screen.getByText(/automatically when time ran out/)).toBeVisible()
     expect(screen.getByText('Count the corners on the top and bottom faces.')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Areas to improve' })).toBeVisible()
+
+    // F045: 2.29 / 7 scales to 65.43 / 200, clearing only UCEED 2024's OPEN cut-off.
+    const likelihood = screen.getByRole('region', { name: 'Part A shortlisting likelihood' })
+    expect(within(likelihood).getByText('Medium')).toBeVisible()
+    expect(
+      within(likelihood).getByText(/scales to 65.43 \/ 200 and clears 1 of the last 4/),
+    ).toBeVisible()
+    expect(within(likelihood).getByText(/not an official prediction/)).toBeVisible()
+    await userEvent.setup().click(within(likelihood).getByRole('button', { name: 'SC / ST / PwD' }))
+    expect(within(likelihood).getByText('High')).toBeVisible()
+    expect(window.localStorage.getItem('dexam.tests.category')).toBe('sc-st-pwd')
+    window.localStorage.removeItem('dexam.tests.category')
   })
 
   it('reports a result that cannot be loaded', async () => {
