@@ -66,7 +66,7 @@ test('on a phone the palette opens on demand and nothing scrolls sideways', asyn
 
 test('the exam window requires sign-in outside preview', async ({ page }) => {
   await page.goto('/tests/exam/uceed-2025')
-  await expect(page).toHaveURL(/\/sign-in\?returnTo=%2Ftests%2Fexam%2Fuceed-2025$/)
+  await expect(page).toHaveURL(/\/tests\/sign-in\?returnTo=%2Ftests%2Fexam%2Fuceed-2025$/)
 })
 
 test('after submitting, the preview result shows the score and a review of answers', async ({

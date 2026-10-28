@@ -152,6 +152,9 @@ export function buildBankPaper(
 
 export class BankPaperError extends Error {}
 
+/** The paper is outside the candidate's access (free paper used, or another programme). */
+export class PaperLockedError extends BankPaperError {}
+
 async function signPaths(client: SupabaseClient, paths: string[]): Promise<SignedUrls> {
   const urls: SignedUrls = new Map()
   const unique = [...new Set(paths)]
@@ -191,6 +194,11 @@ export async function openBankAttempt(
   const result = await client.rpc('open_assessment_attempt', { p_paper_id: bankPaperId })
   if (result.error) {
     if (result.error.code === 'P0002') return null
+    if (result.error.code === 'DX001') {
+      throw new PaperLockedError(
+        'This paper is not included in your access. You have already used your free paper for this exam, or it belongs to the other programme.',
+      )
+    }
     throw new BankPaperError('This paper could not be loaded for your account.')
   }
   const parsed = attemptPayload.safeParse(result.data as unknown)

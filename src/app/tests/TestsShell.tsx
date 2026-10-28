@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { useAuth } from '../../features/auth/AuthContext'
 import { memberIdFromEmail } from '../../features/testSeries/candidate'
+import { useTestAccess } from '../../features/testSeries/testAccess'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestsTheme } from '../../features/testSeries/useTestsTheme'
 import styles from './TestsShell.module.css'
@@ -104,8 +105,18 @@ export function TestsShell() {
   const search = previewSearch(location.search)
   const preview = search !== ''
   const memberId = memberIdFromEmail(session?.user.email)
-  const displayName = preview ? 'Fictional Student' : (memberId ?? 'Student')
-  const subtitle = preview ? 'B.Des · Preview' : memberId ? 'Dexam member' : ''
+  const access = useTestAccess(!preview)
+  const candidate = access.data?.kind === 'candidate' ? access.data : null
+  const displayName = preview
+    ? 'Fictional Student'
+    : (candidate?.displayName ?? memberId ?? 'Student')
+  const subtitle = preview
+    ? 'B.Des · Preview'
+    : candidate
+      ? `${candidate.profile?.level === 'mdes' ? 'M.Des' : 'B.Des'} candidate`
+      : memberId
+        ? 'Dexam member'
+        : ''
 
   const navRef = useRef<HTMLElement>(null)
 

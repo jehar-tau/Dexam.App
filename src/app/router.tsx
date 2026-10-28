@@ -48,6 +48,8 @@ import { TestsResultPage } from '../pages/tests/TestsResultPage'
 import { TestsAnalyticsPage } from '../pages/tests/TestsAnalyticsPage'
 import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
 import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
+import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
+import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
 
 export const router = createBrowserRouter([
   {
@@ -406,31 +408,34 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
+  // F039: test-series sign-in (Google for candidates, Member ID for coaching students) and setup.
+  { path: '/tests/sign-in', element: <TestsSignInPage /> },
+  { path: '/tests/welcome', element: <TestsWelcomePage /> },
   {
     // F047: practice sets run in the same full-screen exam window.
     path: '/tests/practice/run/:attemptId',
     element: (
-      <StudentAccessBoundary>
+      <TestsAccessBoundary>
         <PracticeRunPage />
-      </StudentAccessBoundary>
+      </TestsAccessBoundary>
     ),
   },
   {
     // F042: the exam window is full screen, outside the test-series shell.
     path: '/tests/exam/:paperId',
     element: (
-      <StudentAccessBoundary>
+      <TestsAccessBoundary>
         <ExamWindowPage />
-      </StudentAccessBoundary>
+      </TestsAccessBoundary>
     ),
   },
   {
     // D-057: the test series has its own shell, separate from the coaching portal.
     path: '/tests',
     element: (
-      <StudentAccessBoundary>
+      <TestsAccessBoundary>
         <TestsShell />
-      </StudentAccessBoundary>
+      </TestsAccessBoundary>
     ),
     children: [
       {
