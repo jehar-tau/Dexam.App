@@ -104,19 +104,6 @@ const coachingItems: NavItem[] = [
 /** The test series: coaching students and public candidates alike. */
 const testItems: NavItem[] = [
   {
-    label: 'Overview',
-    path: '/tests',
-    preview: true,
-    icon: (
-      <svg {...iconProps}>
-        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-        <rect x="14" y="14" width="7" height="7" rx="1.5" />
-      </svg>
-    ),
-  },
-  {
     label: 'Practice',
     path: '/tests/practice',
     preview: true,
@@ -129,19 +116,8 @@ const testItems: NavItem[] = [
     ),
   },
   {
-    label: 'Papers',
-    path: '/tests/papers',
-    preview: true,
-    icon: (
-      <svg {...iconProps}>
-        <path d="M7 3h7l5 5v13H7z" />
-        <path d="M14 3v5h5M10 13h6M10 17h6" />
-      </svg>
-    ),
-  },
-  {
-    label: 'Mocks',
-    path: '/tests/mocks',
+    label: 'Mock test',
+    path: '/tests/mock-test',
     preview: true,
     icon: (
       <svg {...iconProps}>
@@ -150,18 +126,20 @@ const testItems: NavItem[] = [
       </svg>
     ),
   },
-  {
-    label: 'Drawing',
-    path: '/tests/drawing',
-    preview: true,
-    icon: (
-      <svg {...iconProps}>
-        <path d="M4 20l4-1 11-11-3-3L5 16z" />
-        <path d="M14 6l3 3" />
-      </svg>
-    ),
-  },
 ]
+
+/** A candidate's home is the test-series home. */
+const candidateHome: NavItem = {
+  label: 'Home',
+  path: '/tests',
+  preview: true,
+  icon: (
+    <svg {...iconProps}>
+      <path d="M3 11l9-7 9 7" />
+      <path d="M5 10v10h14V10" />
+    </svg>
+  ),
+}
 
 const bellIcon = (
   <svg {...iconProps}>
@@ -359,6 +337,7 @@ export function StudentShell() {
               {visible(coachingItems.slice(1)).map((item) => navLink(item))}
             </>
           ) : null}
+          {coaching ? null : navLink(candidateHome)}
           <p className={styles.groupLabel}>Test series</p>
           {visible(testItems).map((item) => navLink(item))}
         </nav>

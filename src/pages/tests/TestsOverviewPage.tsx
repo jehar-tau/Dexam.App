@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 
 import { EmptyState } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
@@ -31,10 +31,11 @@ const examNames: Record<string, string> = {
 const examOrder = ['uceed', 'ceed', 'nid', 'nift']
 
 /**
- * The test-series home (Overview and Analytics in one page): where the student stands, what to
- * do next, the progress chart, topic strengths and every result.
+ * The student's test-series analytics: where they stand, what to do next, the progress chart,
+ * topic strengths and every result. It is the candidate's home page, and coaching students see
+ * it on their portal Home (`embedded`, under the Home page's own welcome).
  */
-export function TestsOverviewPage() {
+export function TestsOverviewPage({ embedded = false }: { embedded?: boolean }) {
   const search = previewSearch(useLocation().search)
   const preview = search !== ''
   const { session } = useAuth()
@@ -94,15 +95,19 @@ export function TestsOverviewPage() {
     .filter((entry) => entry.points.length > 0)
 
   return (
-    <div className={styles.page}>
-      <div>
-        <h1 className={styles.title}>{firstName ? `Welcome back, ${firstName}` : 'Overview'}</h1>
-        <p className={styles.note}>
-          {preview
-            ? 'Preview: fictional progress.'
-            : 'Where you stand, how you are improving and what to do next.'}
-        </p>
-      </div>
+    <div className={`${styles.page} ${embedded ? styles.embedded : ''}`}>
+      {embedded ? (
+        <h2 className={styles.sectionTitle}>Your test series</h2>
+      ) : (
+        <div>
+          <h1 className={styles.title}>{firstName ? `Welcome back, ${firstName}` : 'Home'}</h1>
+          <p className={styles.note}>
+            {preview
+              ? 'Preview: fictional progress.'
+              : 'Where you stand, how you are improving and what to do next.'}
+          </p>
+        </div>
+      )}
 
       {!data && !preview && progress.isPending && client && session ? (
         <p className={styles.note}>Loading your progress…</p>
@@ -168,10 +173,10 @@ export function TestsOverviewPage() {
             </li>
           ) : null}
           <li>
-            <Link className={styles.nextLink} to={`/tests/mocks${search}`}>
-              <span className={styles.nextTitle}>Take a full mock</span>
+            <Link className={styles.nextLink} to={`/tests/mock-test${search}`}>
+              <span className={styles.nextTitle}>Take a mock test</span>
               <span className={styles.note}>
-                Built for you on the 2026 pattern, with questions you have not seen.
+                UCEED, CEED, NID or NIFT on the 2026 pattern, with questions you have not seen.
               </span>
             </Link>
           </li>
@@ -193,10 +198,10 @@ export function TestsOverviewPage() {
         <section className={styles.panel} aria-label="Your progress">
           <EmptyState
             title="No results yet"
-            description="Take a paper or a practice set. Your scores, progress chart and topic strengths appear here."
+            description="Take a mock test or a practice set. Your scores, progress chart and topic strengths appear here."
             action={
-              <Link className={styles.link} to={`/tests/papers${search}`}>
-                Go to Papers
+              <Link className={styles.link} to={`/tests/mock-test${search}`}>
+                Start a mock test
               </Link>
             }
           />
@@ -315,4 +320,13 @@ export function TestsOverviewPage() {
       ) : null}
     </div>
   )
+}
+
+/** `/tests`: coaching students' home is the portal Home; candidates' home is this page. */
+export function TestsHomePage() {
+  const search = previewSearch(useLocation().search)
+  const access = useTestAccess(search === '')
+  if (search || access.data?.kind === 'student')
+    return <Navigate replace to={`/student${search}`} />
+  return <TestsOverviewPage />
 }

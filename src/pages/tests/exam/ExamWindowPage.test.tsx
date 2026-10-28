@@ -23,7 +23,7 @@ function renderExam(path = '/tests/exam/uceed-2025?preview=1') {
   return renderApp(
     <Routes>
       <Route path="/tests/exam/:paperId" element={<ExamWindowPage />} />
-      <Route path="/tests/papers" element={<h1>Papers</h1>} />
+      <Route path="/tests/mock-test" element={<h1>Mock test</h1>} />
       <Route path="/tests/results/:attemptId" element={<h1>Result page</h1>} />
     </Routes>,
     [path],
@@ -146,9 +146,9 @@ describe('Exam window', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, submit' }))
     expect(screen.getByRole('heading', { name: 'Your paper has been submitted.' })).toBeVisible()
     expect(screen.getByRole('table', { name: 'Responses by section' })).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Back to papers' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Back to Mock test' })).toHaveAttribute(
       'href',
-      '/tests/papers?preview=1',
+      '/tests/mock-test?preview=1',
     )
 
     await user.click(screen.getByRole('button', { name: 'Take it again' }))

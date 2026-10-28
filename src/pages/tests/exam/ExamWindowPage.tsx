@@ -112,7 +112,7 @@ export function StatusPage({
         <div className={styles.instructionsFooter}>
           <span />
           <Link className={styles.primaryAction} to={backTo}>
-            Back to papers
+            Back to Mock test
           </Link>
         </div>
       </section>
@@ -127,13 +127,13 @@ export function ExamWindowPage() {
   const catalogPaper = findPaper(paperId)
   // Fictional preview attempts never mix with a signed-in account's real ones.
   const owner = search ? 'preview' : (session?.user.id ?? 'signed-out')
-  const papersPath = `/tests/papers${search}`
+  const papersPath = `/tests/mock-test${search}`
 
   if (!catalogPaper) {
     return (
       <div className={styles.missing}>
         <h1>Paper not found</h1>
-        <Link to={papersPath}>Back to papers</Link>
+        <Link to={papersPath}>Back to Mock test</Link>
       </div>
     )
   }
@@ -147,7 +147,7 @@ export function ExamWindowPage() {
       owner={owner}
       storeKey={catalogPaper.id}
       label={paperLabel(catalogPaper)}
-      exitTo={`/tests/papers/${catalogPaper.id}${search}`}
+      exitTo={`/tests/mock-test${search}`}
       backTo={papersPath}
       paper={practicePaper}
       search={search}
@@ -180,7 +180,11 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
 
   if (!bankId || query.data === null) {
     return (
-      <StatusPage label={label} title="This paper is still being reviewed" backTo="/tests/papers">
+      <StatusPage
+        label={label}
+        title="This paper is still being reviewed"
+        backTo="/tests/mock-test"
+      >
         <p>
           None of its questions has finished review yet. Questions appear here once their figures,
           options and answer keys have been checked.
@@ -197,7 +201,7 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
             ? 'This paper is not included'
             : 'This paper could not be opened'
         }
-        backTo="/tests/papers"
+        backTo="/tests/mock-test"
       >
         <p>
           {query.error instanceof PaperLockedError
@@ -208,7 +212,7 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
     )
   }
   if (!query.data) {
-    return <StatusPage label={label} title="Loading the paper…" backTo="/tests/papers" />
+    return <StatusPage label={label} title="Loading the paper…" backTo="/tests/mock-test" />
   }
   return (
     <ExamWindow
@@ -216,8 +220,8 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
       owner={owner}
       storeKey={catalogPaper.id}
       label={label}
-      exitTo={`/tests/papers/${catalogPaper.id}`}
-      backTo="/tests/papers"
+      exitTo={'/tests/mock-test'}
+      backTo="/tests/mock-test"
       paper={query.data.paper}
       search=""
       server={{ client, opened: query.data }}
@@ -242,7 +246,7 @@ export function ExamWindow({
   label: string
   /** Where "Back" from the login page goes. */
   exitTo: string
-  /** Where "Back to papers" (or practice) goes. */
+  /** Where "Back to Mock test" (or practice) goes. */
   backTo: string
   paper: ExamPaper
   search: string
@@ -441,7 +445,7 @@ export function ExamWindow({
                 Take it again
               </button>
               <Link className={styles.primaryAction} to={papersPath}>
-                Back to papers
+                Back to Mock test
               </Link>
             </div>
           </section>

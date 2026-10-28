@@ -11,7 +11,6 @@ import {
 import { renderApp } from '../../test/render'
 import { LiveEventsStaffPage } from '../LiveEventsStaffPage'
 import { TestsLivePage } from './TestsLivePage'
-import { TestsMocksPage } from './TestsMocksPage'
 
 const mocks = vi.hoisted(() => ({
   session: null as null | { user: { id: string; email: string } },
@@ -158,36 +157,6 @@ describe('Live mock page', () => {
     renderApp(liveRoutes, ['/tests/live/uceed-jan'])
     expect(await screen.findByText(/Registration has closed/)).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Enter Part A' })).toBeNull()
-  })
-})
-
-describe('Live mocks on the Mocks page', () => {
-  it('lists the level’s live events with the student’s roll number', async () => {
-    mocks.session = { user: { id: 'student-1', email: 'x@members.dexam.invalid' } }
-    mocks.client = client({
-      get_test_access: () => ({
-        kind: 'student',
-        displayName: 'S',
-        profile: null,
-        freeSlots: [],
-        entitledPapers: [],
-      }),
-      list_assessment_mocks: () => [],
-      list_live_events: () => [
-        event('registration', { rollNo: 'UCEED--00042', attemptId: null, registeredAt: at(0) }),
-        { ...event('registration'), key: 'ceed-jan', title: 'Fictional CEED live', level: 'mdes' },
-      ],
-    })
-    renderApp(
-      <Routes>
-        <Route path="/tests/mocks" element={<TestsMocksPage />} />
-      </Routes>,
-      ['/tests/mocks'],
-    )
-    const link = await screen.findByRole('link', { name: /Fictional UCEED live mock/ })
-    expect(link).toHaveAttribute('href', '/tests/live/uceed-jan')
-    expect(link).toHaveTextContent('Roll UCEED--00042')
-    expect(screen.queryByRole('link', { name: /Fictional CEED live/ })).toBeNull()
   })
 })
 

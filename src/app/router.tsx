@@ -37,23 +37,17 @@ import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
 import { StudentShell } from './student/StudentShell'
-import { TestsPapersPage } from '../pages/tests/TestsPapersPage'
-import {
-  LegacyStudentTestsRedirect,
-  RetiredTestsSection,
-  TestsPaperPage,
-} from '../pages/tests/TestsSectionPages'
+import { LegacyStudentTestsRedirect, RetiredTestsSection } from '../pages/tests/TestsSectionPages'
 import { ExamWindowPage } from '../pages/tests/exam/ExamWindowPage'
 import { TestsResultPage } from '../pages/tests/TestsResultPage'
 import { TestsPracticePage } from '../pages/tests/TestsPracticePage'
 import { PracticeRunPage } from '../pages/tests/exam/PracticeRunPage'
 import { TestsSignInPage, TestsWelcomePage } from '../pages/tests/TestsWelcomePages'
-import { TestsMocksPage } from '../pages/tests/TestsMocksPage'
 import { TestsLivePage } from '../pages/tests/TestsLivePage'
-import { TestsOverviewPage } from '../pages/tests/TestsOverviewPage'
+import { TestsHomePage } from '../pages/tests/TestsOverviewPage'
+import { TestsMockTestPage } from '../pages/tests/TestsMockTestPage'
 import { LiveEventsStaffPage } from '../pages/LiveEventsStaffPage'
 import { TestsPlansPage } from '../pages/tests/TestsPlansPage'
-import { TestsDrawingPage } from '../pages/tests/TestsDrawingPage'
 import { PartBPage } from '../pages/tests/exam/PartBPage'
 import { PartBEvaluationPage, PartBQueuePage } from '../pages/PartBEvaluationPage'
 import { TestsAccessBoundary } from '../features/testSeries/TestsAccessBoundary'
@@ -493,20 +487,24 @@ export const router = createBrowserRouter([
       </TestsAccessBoundary>
     ),
     children: [
-      { index: true, element: <TestsOverviewPage /> },
-      { path: 'papers', element: <TestsPapersPage /> },
-      { path: 'papers/:paperId', element: <TestsPaperPage /> },
+      // D-062: candidates' home (coaching students' home is the portal Home), Practice and
+      // Mock test; results and Part B open from them.
+      { index: true, element: <TestsHomePage /> },
+      { path: 'mock-test', element: <TestsMockTestPage /> },
       { path: 'results/:attemptId', element: <TestsResultPage /> },
       { path: 'practice', element: <TestsPracticePage /> },
-      { path: 'mocks', element: <TestsMocksPage /> },
-      // D-060: timed drawing papers (Part B on its own, NID DAT drawing mocks, NIFT CAT).
-      { path: 'drawing', element: <TestsDrawingPage /> },
       { path: 'live/:key', element: <TestsLivePage /> },
       { path: 'plans', element: <TestsPlansPage /> },
-      // Analytics merged into the Overview; Bookmarks and Sketches retired (D-059).
-      { path: 'analytics', element: <RetiredTestsSection /> },
-      { path: 'bookmarks', element: <RetiredTestsSection /> },
-      { path: 'sketches', element: <RetiredTestsSection /> },
+      // Retired sections keep their links: Papers, Mocks and Drawing became Mock test (D-062);
+      // Analytics, Bookmarks and Sketches went to Home (D-059).
+      ...['papers', 'papers/:paperId', 'mocks', 'drawing'].map((path) => ({
+        path,
+        element: <RetiredTestsSection to="/tests/mock-test" />,
+      })),
+      ...['analytics', 'bookmarks', 'sketches'].map((path) => ({
+        path,
+        element: <RetiredTestsSection />,
+      })),
     ],
   },
 ])
