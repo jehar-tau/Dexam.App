@@ -21,15 +21,21 @@ test('Mock test offers exactly UCEED, CEED, NID and NIFT in the student portal s
   }
   await expect(page.getByRole('heading', { name: 'Mock test' })).toBeVisible()
   await expect(page.getByRole('region')).toHaveCount(4)
-  await expect(page.getByRole('region', { name: 'UCEED', exact: true })).toContainText('Part B drawing 1 hour')
-  await expect(page.getByRole('region', { name: 'CEED', exact: true })).toContainText('Part B drawing 2 hours')
+  await expect(page.getByRole('region', { name: 'UCEED', exact: true })).toContainText(
+    'Part B drawing 1 hour',
+  )
+  await expect(page.getByRole('region', { name: 'CEED', exact: true })).toContainText(
+    'Part B drawing 2 hours',
+  )
   await expect(page.getByRole('region', { name: 'NID DAT' })).toContainText(
     'six drawing tasks in 3 hours',
   )
   await page.getByRole('button', { name: 'M.Des' }).click()
   await expect(page.getByRole('region', { name: 'NIFT' })).toContainText('M.Des GAT')
   // Preview shows the cards; starting a paper needs a real sign-in.
-  await expect(page.getByRole('region', { name: 'UCEED', exact: true }).getByRole('button')).toBeDisabled()
+  await expect(
+    page.getByRole('region', { name: 'UCEED', exact: true }).getByRole('button'),
+  ).toBeDisabled()
 })
 
 test('dark theme re-themes the whole page and persists', async ({ page }) => {
