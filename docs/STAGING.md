@@ -96,7 +96,7 @@ The F014 acceptance run proved a clean reconstruction and recorded the time, fai
 - `STAGING_PROJECT_ID`, `STAGING_DB_PASSWORD`, a generated `ACTION_TOKEN_PEPPER`, and the named `SUPABASE_ACCESS_TOKEN` are stored only as GitHub `staging` environment secrets.
 - GitHub email verification is complete. The Cloudflare Pages GitHub App installation is restricted to `jehar-tau/Dexam.App`, and the connected `dexam-staging` Pages project deploys only `main` to `https://dexam-staging.pages.dev`.
 - A named Supabase CLI deployment token was created through Supabase's browser authorization, stored in the owner's macOS Keychain, verified by listing the owner-controlled `Dexam Staging` project, and copied directly into the encrypted GitHub `staging` environment as `SUPABASE_ACCESS_TOKEN` without printing it.
-- Supabase Auth uses `https://dexam-staging.pages.dev` as the exact site URL. Public signup, manual linking, and anonymous sign-in are disabled; email confirmation remains enabled. No redirect URLs are currently required because OAuth and email callback flows are not implemented.
+- Supabase Auth uses `https://dexam-staging.pages.dev` as the exact site URL. Manual linking and anonymous sign-in are disabled; email confirmation remains enabled. Since 2026-10-28 (D-058 A), public sign-up is on behind the Google-only before-user-created hook, with the Google provider itself still off until the owner's OAuth client is configured; see the D-058 section below. No redirect URLs are currently required; Google sign-in will need `https://dexam-staging.pages.dev/tests/welcome`.
 - No payment method, paid plan, real data, or production deployment has been introduced.
 
 ## First hosted release evidence — 2026-10-12
@@ -154,6 +154,27 @@ Every deployment rotates these Auth users to the encrypted staging password, ups
 ## Advisor handling
 
 The initial hosted report and each disposition are recorded in `STAGING_ADVISOR_TRIAGE.md`. The current branch fixes inherited anonymous privileged-function execution, enforces explicit future function grants, and adds a protected deployment gate. Supabase leaked-password protection remains unavailable on the authorized Free plan and is a production upgrade/security gate, not a reason to spend during fictional staging.
+
+### D-058 Google-only sign-up — 2026-10-28
+
+PR #99 merged as `4e364002deadf47824a8b1eea7d9c309c15273b4`, and protected run `40647447243` applied `20261028050000_google_only_signup_hook.sql`.
+
+The owner then had the staging Auth settings changed through the Management API, in this order:
+
+1. The before-user-created hook was switched on (`pg-functions://postgres/public/hook_before_user_created`), with sign-up still off.
+2. Public sign-up was switched on.
+
+**Hosted probe:**
+
+- public email sign-up refused 403 by the hook;
+- phone sign-up refused 400;
+- anonymous sign-in refused 422;
+- service-role `createUser` allowed; the probe account was deleted;
+- an invite without an approved invitation refused 403.
+
+**Rerun:** protected run `40649476005` (manual `deploy`) then passed every step with the hook on, including fixture bootstrap, hosted synthetic authorization and the staff MFA recovery probe.
+
+To roll back, switch public sign-up off first, then the hook. Details and evidence: `decisions/ADR-058-google-only-public-sign-up.md`.
 
 ## Free-tier operations
 
