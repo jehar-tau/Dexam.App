@@ -1,5 +1,5 @@
 .frame {
-  --tests-sidebar-width: 264px;
+  --student-sidebar-width: 264px;
   min-height: 100vh;
   background: var(--bg-page-warm);
   color: var(--text-body);
@@ -76,7 +76,7 @@
   z-index: 30;
   display: flex;
   flex-direction: column;
-  width: var(--tests-sidebar-width);
+  width: var(--student-sidebar-width);
   padding: var(--space-6) var(--space-4) var(--space-4);
   border-right: 1px solid var(--border-default);
   background: var(--surface-card);
@@ -146,6 +146,33 @@
   transition:
     background var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard);
+}
+
+.groupLabel {
+  margin: var(--space-4) 0 var(--space-1);
+  padding: 0 var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.groupLabel:first-child {
+  margin-top: 0;
+}
+
+.count {
+  min-width: 1.5rem;
+  padding: 0 var(--space-2);
+  margin-left: auto;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  line-height: 1.5rem;
+  text-align: center;
 }
 
 .navItem:hover {
@@ -244,10 +271,20 @@
 
 /* ---------- Main ---------- */
 
+.banner {
+  max-width: 76rem;
+  padding: var(--space-2) var(--space-4);
+  margin: 0 auto var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-soft);
+  font-size: var(--fs-body-sm);
+  text-align: center;
+}
+
 .main {
   min-height: 100vh;
   padding: var(--space-8) var(--space-8) var(--space-16);
-  margin-left: var(--tests-sidebar-width);
+  margin-left: var(--student-sidebar-width);
   outline: none;
 }
 

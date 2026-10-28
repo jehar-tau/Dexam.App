@@ -95,19 +95,19 @@ test('after submitting, the preview result shows the score and a review of answe
   expect(width.scroll).toBeLessThanOrEqual(width.client)
 })
 
-test('analytics shows the progress chart and practice links in preview', async ({ page }) => {
-  await page.goto('/tests/analytics?preview=1')
+test('the Overview shows the progress chart and practice links in preview', async ({ page }) => {
+  await page.goto('/tests?preview=1')
   const chart = page.getByRole('img', { name: /Score percentage over time/ })
   await expect(chart).toContainText('UCEED 64%')
   await chart.focus()
   await page.keyboard.press('ArrowRight')
   await expect(page.getByRole('status')).toContainText('UCEED 2022')
-  await page.getByRole('link', { name: 'Practise Analytical Reasoning' }).click()
+  await page.getByRole('link', { name: 'Practise Analytical Reasoning', exact: true }).click()
   await expect(page).toHaveURL(/\/tests\/practice\?topic=analytical-reasoning&preview=1$/)
   await expect(page.getByRole('radio', { name: /Analytical Reasoning/ })).toBeChecked()
 
   await page.setViewportSize({ width: 375, height: 812 })
-  await page.goto('/tests/analytics?preview=1')
+  await page.goto('/tests?preview=1')
   await expect(page.getByRole('img', { name: /Score percentage over time/ })).toBeVisible()
   const width = await page.locator('body').evaluate((body) => {
     const element = body as unknown as { clientWidth: number; scrollWidth: number }

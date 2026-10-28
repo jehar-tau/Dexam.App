@@ -2,11 +2,11 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 
-import { TestsShell } from '../../app/tests/TestsShell'
+import { StudentShell } from '../../app/student/StudentShell'
 import { testsThemeStorageKey } from '../../features/testSeries/useTestsTheme'
 import { renderApp } from '../../test/render'
 import { TestsPapersPage } from './TestsPapersPage'
-import { TestsComingSoonPage, TestsPaperPage } from './TestsSectionPages'
+import { TestsPaperPage } from './TestsSectionPages'
 
 vi.mock('../../features/auth/AuthContext', () => ({
   useAuth: () => ({ session: null, signOut: vi.fn() }),
@@ -15,14 +15,10 @@ vi.mock('../../features/auth/AuthContext', () => ({
 function renderTests(path: string) {
   return renderApp(
     <Routes>
-      <Route path="/tests" element={<TestsShell />}>
-        <Route index element={<TestsComingSoonPage title="Overview" description="Soon." />} />
+      <Route path="/tests" element={<StudentShell />}>
+        <Route index element={<h1>Overview</h1>} />
         <Route path="papers" element={<TestsPapersPage />} />
         <Route path="papers/:paperId" element={<TestsPaperPage />} />
-        <Route
-          path="analytics"
-          element={<TestsComingSoonPage title="Analytics" description="" />}
-        />
       </Route>
     </Routes>,
     [path],
@@ -38,20 +34,27 @@ describe('Test-series shell and Papers page', () => {
     document.documentElement.removeAttribute('data-theme')
   })
 
-  it('shows its own sidebar navigation with Papers active', () => {
+  it('shows the student portal sidebar with Papers active', () => {
     renderTests('/tests/papers?preview=1')
-    const nav = screen.getByRole('navigation', { name: 'Test series sections' })
-    for (const label of ['Overview', 'Analytics', 'Practice', 'Papers', 'Mocks', 'Bookmarks']) {
+    const nav = screen.getByRole('navigation', { name: 'Student portal sections' })
+    for (const label of ['Home', 'Coursework', 'Overview', 'Practice', 'Papers', 'Mocks']) {
       expect(within(nav).getByRole('link', { name: label })).toBeVisible()
+    }
+    for (const label of ['Analytics', 'Bookmarks', 'Sketches']) {
+      expect(within(nav).queryByRole('link', { name: label })).toBeNull()
     }
     expect(within(nav).getByRole('link', { name: 'Papers' })).toHaveAttribute(
       'aria-current',
       'page',
     )
     // Preview mode is preserved on every link.
-    expect(within(nav).getByRole('link', { name: 'Analytics' })).toHaveAttribute(
+    expect(within(nav).getByRole('link', { name: 'Overview' })).toHaveAttribute(
       'href',
-      '/tests/analytics?preview=1',
+      '/tests?preview=1',
+    )
+    expect(within(nav).getByRole('link', { name: 'Home' })).toHaveAttribute(
+      'href',
+      '/student?preview=1',
     )
   })
 

@@ -88,3 +88,4 @@ D-056 — Pre-push quality gate — standing owner rule 2026-10-28: every change
 
 D-057 — Test-series experience — approved 2026-10-28: separate `/tests` shell with its own sidebar; Dexam light theme by default with optional dark; official-looking exam window; no third-party assets — `ADR-057-test-series-experience.md`.
 D-058 — Google-only public sign-up — approved 2026-10-28 (Option A): public sign-up on, with a before-user-created hook allowing only Google sign-ups and staff invitations being delivered; proven locally, staging next — `ADR-058-google-only-public-sign-up.md`.
+D-059 — One student portal with a left sidebar — directed by the owner 2026-10-28: `/student` and `/tests` share one left-sidebar shell (coaching tools plus the test series; candidates see the test series only); Analytics merged into the Overview; Bookmarks and Sketches removed, with Part B feedback on the result page — `ADR-059-student-portal-sidebar.md`.

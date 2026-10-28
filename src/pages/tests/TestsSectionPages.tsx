@@ -19,31 +19,9 @@ import {
 } from '../../features/testSeries/paperCatalog'
 import styles from './TestsSectionPages.module.css'
 
-/** Sections that exist in the navigation but are built in later steps of D-057. */
-export function TestsComingSoonPage({
-  title,
-  description,
-}: {
-  title: string
-  description: string
-}) {
-  const search = previewSearch(useLocation().search)
-  return (
-    <div className={styles.page}>
-      <h1 className={styles.title}>{title}</h1>
-      <div className={styles.panel}>
-        <EmptyState
-          title="Coming in a later build step"
-          description={description}
-          action={
-            <Link className={styles.link} to={`/tests/papers${search}`}>
-              Go to Papers
-            </Link>
-          }
-        />
-      </div>
-    </div>
-  )
+/** Retired sections (Analytics, Bookmarks, Sketches; D-059): old links land on the Overview. */
+export function RetiredTestsSection() {
+  return <Navigate replace to={`/tests${previewSearch(useLocation().search)}`} />
 }
 
 export function TestsPaperPage() {

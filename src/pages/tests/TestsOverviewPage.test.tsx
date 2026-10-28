@@ -91,15 +91,21 @@ describe('Overview', () => {
     expect(await screen.findByRole('heading', { name: 'Welcome back, Asha' })).toBeVisible()
     const stats = await screen.findByText('Papers and mocks')
     expect(stats.parentElement).toHaveTextContent('1')
-    expect(screen.getByText('45%')).toBeVisible()
-    expect(screen.getByText('High')).toBeVisible()
+    expect(screen.getByText('Latest score').parentElement).toHaveTextContent('45%')
+    expect(screen.getByText('Shortlisting band').parentElement).toHaveTextContent('High')
+    expect(screen.getByText('Questions marked right').parentElement).toHaveTextContent('61%')
     expect(screen.getByText('Day streak').parentElement).toHaveTextContent('2')
-    expect(screen.getByRole('link', { name: /Practise Spatial Reasoning/ })).toHaveAttribute(
+    expect(
+      screen.getByRole('link', { name: /Practise Spatial Reasoning.*weakest/ }),
+    ).toHaveAttribute('href', '/tests/practice?topic=spatial')
+    const results = screen.getByRole('region', { name: 'Results' })
+    const rows = within(results).getAllByRole('row')
+    expect(rows[1]).toHaveTextContent('UCEED 2026 mock')
+    expect(rows[1]).toHaveTextContent('High')
+    expect(within(rows[1]!).getByRole('link', { name: 'View result' })).toHaveAttribute(
       'href',
-      '/tests/practice?topic=spatial',
+      '/tests/results/00000000-0000-4000-8000-0000000000b2',
     )
-    const recent = screen.getByRole('region', { name: 'Recent results' })
-    expect(within(recent).getAllByRole('listitem')[0]).toHaveTextContent('UCEED 2026 mock')
   })
 
   it('points a new student to the papers', async () => {

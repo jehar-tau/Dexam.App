@@ -172,7 +172,7 @@ export function PartBPage() {
             <p>
               {partB.status === 'evaluated'
                 ? `Your Part B has been evaluated: ${partB.score ?? 0} out of ${partB.maxScore ?? 0}.`
-                : 'Your Part B has been submitted. A Dexam evaluator will mark it; the marks appear on your result and in Sketches.'}
+                : 'Your Part B has been submitted. A Dexam evaluator will mark it; the marks and feedback appear on your result.'}
             </p>
           )}
           {partB.status === 'drawing' ? (
@@ -203,9 +203,11 @@ export function PartBPage() {
           ) : null}
         </div>
         <div className={styles.instructionsFooter}>
-          <Link className={styles.secondaryAction} to={resultPath}>
-            Back to result
-          </Link>
+          {open ? (
+            <Link className={styles.secondaryAction} to={resultPath}>
+              Back to result
+            </Link>
+          ) : null}
           {partB.status === 'drawing' && remaining > 0 ? (
             <button
               type="button"
@@ -225,8 +227,8 @@ export function PartBPage() {
               {submit.isPending ? 'Submitting…' : 'Submit Part B'}
             </button>
           ) : (
-            <Link className={styles.primaryAction} to="/tests/sketches">
-              Go to Sketches
+            <Link className={styles.primaryAction} to={resultPath}>
+              Back to result
             </Link>
           )}
         </div>

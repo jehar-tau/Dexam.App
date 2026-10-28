@@ -8,7 +8,7 @@ The owner rejected the first test-series preview: it was a 4-question demo insid
 
 ## Decisions
 
-1. **Separate app area.** The test series lives at `/tests` with its own shell: a left sidebar (Overview, Analytics, Practice, Papers, Mocks, Bookmarks, Sketches), the profile at the top, and the theme toggle and sign-out at the bottom. On phones, a top bar with an off-canvas menu. It does not use the coaching portal's top navigation. The student portal's "Test series" link opens `/tests/papers`.
+1. **Separate app area.** The test series lives at `/tests` with its own shell: a left sidebar (Overview, Analytics, Practice, Papers, Mocks, Bookmarks, Sketches), the profile at the top, and the theme toggle and sign-out at the bottom. On phones, a top bar with an off-canvas menu. It does not use the coaching portal's top navigation. The student portal's "Test series" link opens `/tests/papers`. _(Superseded by D-059 / ADR-059: one left-sidebar student portal for `/student` and `/tests`; Analytics merged into the Overview; Bookmarks and Sketches removed.)_
 2. **Theme.** The Dexam design-system light theme is the default, with orange primary actions. Dark is optional and remembered per device. The theme attribute is set on `<html>` while the shell is mounted, because the design-system aliases are declared on the root.
 3. **Exam window look.** The timed exam window (step 2) mimics the official computer-based exam (exam-centre login, official instructions and palette legend, declaration, exam screen), not the Dexam brand. Instruction wording comes from the official exam notices.
 4. **No third-party assets.** Roughworks is a quality and flow benchmark only: no code, wording, branding, explanations or question images (D-054 decision 4).
