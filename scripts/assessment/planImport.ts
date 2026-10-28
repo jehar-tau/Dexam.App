@@ -13,6 +13,8 @@ export const TRUSTED_ANSWER_STATUSES = new Set([
   'matched-source',
   'matched-source-positional',
   'independently-solved',
+  // D-063: keys the owner typed in the question review.
+  'owner-provided',
 ])
 
 // Exam names in candidate-facing text would reveal the source paper.

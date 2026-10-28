@@ -24,8 +24,12 @@ export type Verdict = {
   verdict: 'ok' | 'fix'
   reasons: string[]
   note: string
+  /** D-063: an answer key the owner typed (letters such as "B" or "A,C", or a number or range). */
+  answer?: string
   reviewedAt: string
 }
+
+const ANSWER_RE = /^(?:[A-F](?:,[A-F]){0,5}|-?\d+(?:\.\d+)?(?:\s*(?:to|-)\s*-?\d+(?:\.\d+)?)?)$/
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,119}$/
 const MEDIA_RE = /^[A-Za-z0-9][A-Za-z0-9/_.-]*\.(png|jpe?g|webp)$/i
@@ -46,7 +50,7 @@ export function safeMediaPath(root: string, requested: string): string | null {
 /** Validates one verdict from the page; returns the stored shape or an error message. */
 export function parseVerdict(body: unknown): { id: string; verdict: Verdict } | string {
   if (!body || typeof body !== 'object') return 'Expected a JSON object.'
-  const { id, verdict, reasons, note } = body as Record<string, unknown>
+  const { id, verdict, reasons, note, answer } = body as Record<string, unknown>
   if (typeof id !== 'string' || !ID_RE.test(id)) return 'Unknown question id.'
   if (verdict !== 'ok' && verdict !== 'fix') return 'Verdict must be ok or fix.'
   const list = Array.isArray(reasons) ? reasons : []
@@ -54,12 +58,20 @@ export function parseVerdict(body: unknown): { id: string; verdict: Verdict } | 
     return 'Unknown reason.'
   if (note !== undefined && (typeof note !== 'string' || note.length > 2000))
     return 'The note is too long.'
+  const raw = typeof answer === 'string' ? answer.trim() : ''
+  // Option letters are stored upper case ("A,C"); numbers and ranges as typed ("6 to 6.5").
+  const key = /^[a-f](\s*,\s*[a-f])*$/i.test(raw)
+    ? raw.toUpperCase().replace(/\s*,\s*/g, ',')
+    : raw.toLowerCase()
+  if (answer !== undefined && key && (key.length > 40 || !ANSWER_RE.test(key)))
+    return 'Answer keys are letters (A or A,C) or a number or range (12, 6 to 6.5).'
   return {
     id,
     verdict: {
       verdict,
       reasons: verdict === 'ok' ? [] : (list as string[]),
       note: typeof note === 'string' ? note.trim() : '',
+      ...(key ? { answer: key } : {}),
       reviewedAt: new Date().toISOString(),
     },
   }
