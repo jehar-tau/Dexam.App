@@ -1,19 +1,19 @@
 /* Series colours: the reference categorical palette (slots 1-4), validated with the dataviz
    palette checker for light and dark surfaces. Lines and markers carry colour; text never does. */
 .root {
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
-  --series-4: #eda100;
+  --series-1: #386451;
+  --series-2: #b95030;
+  --series-3: #3c6570;
+  --series-4: #8b671b;
   --chart-grid: var(--border-default);
   --chart-surface: var(--surface-card);
 }
 
 :global([data-theme='dark']) .root {
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
+  --series-1: #b2d5a3;
+  --series-2: #f5a38a;
+  --series-3: #afcfcc;
+  --series-4: #edc668;
 }
 
 .series1 {

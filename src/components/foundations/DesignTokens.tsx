@@ -106,8 +106,7 @@ function readToken(name: string): string {
 
 /**
  * Renders live values read from the DOM, so this cannot drift from the
- * vendored tokens in src/styles/design-system/ — see
- * docs/decisions/ADR-011-shared-design-system-repository.md.
+ * active tokens in src/styles/discovery.css — see docs/design/DISCOVERY.md.
  */
 export function DesignTokens() {
   return (

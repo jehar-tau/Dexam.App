@@ -9,6 +9,18 @@
   max-width: none;
   margin: var(--space-8) 0;
 }
+.welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-default);
+}
+.welcomeArt {
+  width: 170px;
+  flex: none;
+}
 
 .sectionTitle {
   margin: 0;
@@ -17,7 +29,7 @@
 
 .title {
   margin: 0;
-  font-size: var(--fs-h2);
+  font-size: var(--fs-h1);
 }
 
 .note {
@@ -54,9 +66,10 @@
 
 .stats dd {
   margin: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-serif);
   font-size: var(--fs-h3);
-  font-weight: var(--fw-bold);
+  font-size: 1.875rem;
+  font-weight: var(--fw-medium);
 }
 
 .panel {
@@ -189,6 +202,9 @@
 }
 
 @media (max-width: 560px) {
+  .welcomeArt {
+    width: 95px;
+  }
   .panel {
     padding: var(--space-4);
   }

@@ -3,8 +3,7 @@
   place-items: center;
   min-height: 100vh;
   padding: var(--space-8) var(--space-4);
-  background:
-    radial-gradient(80% 60% at 100% 0%, var(--accent-soft) 0%, transparent 60%), var(--bg-page-warm);
+  background: var(--bg-page-warm);
   color: var(--text-body);
   font-family: var(--font-sans);
 }
@@ -15,7 +14,11 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   background: var(--surface-card);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-xs);
+}
+.introArt {
+  width: 180px;
+  margin: var(--space-4) auto;
 }
 
 .eyebrow {
@@ -29,7 +32,7 @@
 
 .title {
   margin: 0;
-  font-size: var(--fs-h2);
+  font-size: 2.5rem;
   line-height: 1.2;
 }
 

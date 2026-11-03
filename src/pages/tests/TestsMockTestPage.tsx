@@ -9,6 +9,14 @@ import { fetchDrawingMocks, startDrawingMock } from '../../features/testSeries/d
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestAccess } from '../../features/testSeries/testAccess'
 import styles from './TestsMockTestPage.module.css'
+import { DiscoveryArt, type DiscoveryArtKind } from '../../components/brand/DiscoveryArt'
+
+const examArtwork: Record<ExamCard['exam'], DiscoveryArtKind> = {
+  uceed: 'space',
+  ceed: 'making',
+  nid: 'seeing',
+  nift: 'type',
+}
 
 type Level = 'bdes' | 'mdes'
 
@@ -116,6 +124,7 @@ export function TestsMockTestPage() {
     <div className={styles.page}>
       <div className={styles.titleRow}>
         <div>
+          <p className="eyebrow">The practice studio</p>
           <h1 className={styles.title}>Mock test</h1>
           <p className={styles.note}>
             Choose an exam and the paper starts: a new paper each time, built from Dexam&apos;s
@@ -154,6 +163,9 @@ export function TestsMockTestPage() {
           const loading = enabled && !status && (mocks.isPending || drawing.isPending)
           return (
             <section key={card.exam} className={styles.card} aria-label={card.name}>
+              <div className={styles.artwork}>
+                <DiscoveryArt kind={examArtwork[card.exam]} />
+              </div>
               <h2 className={styles.cardTitle}>{card.name}</h2>
               <p className={styles.meta}>{card.pattern(level)}</p>
               {status?.taken ? (

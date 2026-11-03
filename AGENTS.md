@@ -21,7 +21,7 @@ Dexam is an education platform for design-entrance preparation. The product owne
 - Never bypass authorization or Supabase Row Level Security.
 - Never commit secrets, `.env` files, production credentials, or student personal data.
 - Add tests with implementation. Verify lint, types, unit/integration tests, build, and relevant browser journeys before declaring completion.
-- Treat `docs/DESIGN_SYSTEM.md` and the pinned `dexam-portfolio-design-system` source as the strict UI authority. Use existing design tokens and components before creating new patterns; every reusable pattern needs an approved spec and Storybook story.
+- Treat `docs/DESIGN_SYSTEM.md` and `docs/design/DISCOVERY.md` (DEXAM Discovery 1.0, D-064) as the strict UI authority. The owner approved the assessment/academy visual language for the entire app on 2026-10-31; it supersedes the older portfolio theme. Use `src/styles/discovery.css` and existing components before creating new patterns; every reusable pattern needs an approved spec and Storybook story. Keep both academy and app design contracts in sync when the owner changes the visual direction.
 - Update `docs/CURRENT_STATE.md` when repository state materially changes.
 - Add newly deferred functionality to `docs/DEFERRED_WORK.md` with its prerequisites and approval gate; move it to the completion log when implemented or explicitly rejected.
 - Do not modify production or incur paid services without explicit approval.

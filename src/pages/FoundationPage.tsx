@@ -1,22 +1,30 @@
 import styles from './FoundationPage.module.css'
 import { PortalEntrances } from './PortalHomePage'
+import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 
 const foundations = [
-  ['Frontend', 'React, Vite and strict TypeScript'],
-  ['Backend', 'Supabase and PostgreSQL with Row Level Security'],
-  ['Verification', 'Unit, integration and browser testing'],
+  ['Learn', 'Make space for new ideas, one lesson at a time.'],
+  ['Make', 'Turn what you notice into work you can share.'],
+  ['Grow', 'Practise, get feedback, and see your progress.'],
 ] as const
 
 export function FoundationPage() {
   return (
     <section className={styles.layout} aria-labelledby="foundation-title">
-      <div>
-        <p className={styles.eyebrow}>Development foundation</p>
-        <h1 id="foundation-title">The Dexam platform starts here.</h1>
-        <p className={styles.intro}>
-          This temporary screen confirms that the application shell is healthy. Product interfaces
-          will be designed through approved feature specifications.
-        </p>
+      <div className={styles.hero}>
+        <div>
+          <p className="eyebrow">Your DEXAM learning space</p>
+          <h1 id="foundation-title">
+            Less reading.
+            <br />
+            <em>More discovering.</em>
+          </h1>
+          <p className={styles.intro}>
+            A place to practise, make things, and find your own way of seeing. Pick your workspace
+            to continue.
+          </p>
+        </div>
+        <DiscoveryArt kind="making" className={styles.heroArt} />
       </div>
       <dl className={styles.foundations}>
         {foundations.map(([term, description]) => (

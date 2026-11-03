@@ -16,7 +16,7 @@ test('staff recovery requires a staff session', async ({ page }) => {
 test('foundation shell is reachable and navigable', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.getByRole('heading', { name: 'The Dexam platform starts here.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Less reading.*More discovering/ })).toBeVisible()
 
   await page.getByRole('link', { name: 'System status' }).click()
   await expect(page).toHaveURL(/\/health$/)

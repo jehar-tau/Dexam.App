@@ -33,7 +33,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "verify": "pnpm staging:fixtures:check && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "verify": "pnpm staging:fixtures:check && pnpm design:tokens && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "supabase": "supabase",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
@@ -41,7 +41,7 @@
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
     "assessment:import": "node scripts/assessment/import-bank.ts",
-    "design:tokens": "node scripts/design/build-tokens.mjs",
+    "design:tokens": "node scripts/design/check-discovery.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -53,9 +53,10 @@
     "react-dom": "^19.3.0",
     "react-hook-form": "^7.88.0",
     "react-router-dom": "^7.18.4",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "@storybook/react-vite": "^10.6.1",

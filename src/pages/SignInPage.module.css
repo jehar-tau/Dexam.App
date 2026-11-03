@@ -10,6 +10,11 @@
   max-width: 37rem;
 }
 
+.introArt {
+  width: 240px;
+  margin: -36px 0 12px -24px;
+}
+
 .intro h1 {
   max-width: 12ch;
   margin: 0;
@@ -46,6 +51,7 @@
 
 .card {
   padding: clamp(var(--space-5), 5vw, var(--space-8));
+  border-top: 3px solid var(--brand-orange);
 }
 
 .cardHeader h2,

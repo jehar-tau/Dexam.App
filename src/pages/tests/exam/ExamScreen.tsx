@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Brand } from '../../../components/brand/Brand'
 
 import {
   clearResponse,
@@ -75,9 +76,7 @@ export function ExamScreen({
     <div className={styles.examFrame}>
       <header className={styles.examHeader} inert={confirming}>
         <span className={styles.examBrand}>
-          <span className={styles.examMark} aria-hidden="true">
-            D
-          </span>
+          <Brand subtitle="Exam window" />
           <span className={styles.examHeaderPaper}>{paperLabel}</span>
         </span>
         <span className={styles.examCandidate}>

@@ -1,0 +1,176 @@
+/* DEXAM Discovery 1.0 · owner-approved 31 October 2026.
+ * Shared visual contract: docs/DESIGN_SYSTEM.md. Legacy vendor files are archival.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+:root {
+  color-scheme: light;
+  --brand-paper: #faf9f3;
+  --brand-ink: #162824;
+  --brand-green: #386451;
+  --brand-orange: #ef633d;
+  --brand-yellow: #edc668;
+  --brand-lime: #dceba1;
+  --art-paper: #f2f2e6;
+  --art-sage: #b5c7a2;
+  --art-line: #386451;
+  --color-white: #ffffff;
+  --color-warm-bg: var(--brand-paper);
+  --color-surface: #fffefa;
+  --color-surface-muted: #f0f2e5;
+  --color-border-light: #dde0d4;
+  --color-border-medium: #87957b;
+  --color-text-primary: var(--brand-ink);
+  --color-text-secondary: #53634f;
+  --color-text-muted: #626e5c;
+  --color-primary: #244735;
+  --color-primary-hover: #386451;
+  --color-primary-active: #162824;
+  --color-primary-soft: #e6ebd5;
+  --color-primary-extra-soft: #f0f3e5;
+  --color-success: #326044;
+  --color-success-soft: #e4eedf;
+  --color-warning: #795818;
+  --color-warning-soft: #f8edce;
+  --color-danger: #a1382b;
+  --color-danger-soft: #f9e6df;
+  --color-info: #3c6570;
+  --color-info-soft: #e5eeec;
+  --color-focus-ring: #386451;
+  --color-focus-ring-offset: var(--brand-paper);
+
+  --bg-page: var(--color-warm-bg);
+  --bg-page-warm: var(--color-warm-bg);
+  --surface-card: var(--color-surface);
+  --surface-muted: var(--color-surface-muted);
+  --surface-selected: var(--color-primary-extra-soft);
+  --surface-hover: var(--color-surface-muted);
+  --border-default: var(--color-border-light);
+  --border-strong: var(--color-border-medium);
+  --border-selected: var(--color-primary);
+  --text-body: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --text-on-primary: #faf9f3;
+  --text-link: var(--color-primary);
+  --accent-primary: var(--color-primary);
+  --accent-primary-hover: var(--color-primary-hover);
+  --accent-primary-active: var(--color-primary-active);
+  --accent-soft: var(--color-primary-soft);
+  --accent-extra-soft: var(--color-primary-extra-soft);
+  --status-danger: var(--color-danger);
+
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Zilla Slab', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --fs-display: clamp(3rem, 5vw, 4.75rem);
+  --fs-h1: clamp(2.25rem, 3.3vw, 3.5rem);
+  --fs-h2: clamp(1.625rem, 2.2vw, 2rem);
+  --fs-h3: 1.375rem;
+  --fs-body-lg: 1.0625rem;
+  --fs-body: 1rem;
+  --fs-body-sm: 0.9375rem;
+  --fs-caption: 0.8125rem;
+  --fs-label: 0.8125rem;
+  --fs-metadata: 0.75rem;
+  --fs-code: 0.875rem;
+  --lh-display: 1.04;
+  --lh-h1: 1.08;
+  --lh-h2: 1.15;
+  --lh-h3: 1.25;
+  --lh-body-lg: 1.65;
+  --lh-body: 1.6;
+  --lh-body-sm: 1.55;
+  --lh-caption: 1.45;
+  --lh-label: 1.35;
+  --lh-metadata: 1.4;
+  --lh-code: 1.5;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --ls-tight: -0.035em;
+  --ls-normal: 0;
+  --ls-wide: 0.08em;
+  --ls-label: 0.12em;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-full: 999px;
+  --shadow-none: none;
+  --shadow-xs: 0 2px 0 rgb(22 40 36 / 3%);
+  --shadow-sm: 0 4px 12px rgb(22 40 36 / 5%);
+  --shadow-md: 0 8px 24px rgb(22 40 36 / 7%);
+  --shadow-lg: 0 16px 44px rgb(22 40 36 / 12%);
+  --shadow-focus-ring: 0 0 0 3px var(--color-focus-ring-offset), 0 0 0 5px var(--color-focus-ring);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 120ms;
+  --duration-standard: 180ms;
+  --hit-target-min: 44px;
+  --page-gutter: clamp(1.25rem, 4vw, 4rem);
+}
+
+/* Rebind aliases on themed containers as well as html. CSS variables inherited
+   from :root would otherwise retain their already-computed light values. */
+[data-theme] {
+  --bg-page: var(--color-warm-bg);
+  --bg-page-warm: var(--color-warm-bg);
+  --surface-card: var(--color-surface);
+  --surface-muted: var(--color-surface-muted);
+  --surface-selected: var(--color-primary-extra-soft);
+  --surface-hover: var(--color-surface-muted);
+  --border-default: var(--color-border-light);
+  --border-strong: var(--color-border-medium);
+  --border-selected: var(--color-primary);
+  --text-body: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --text-link: var(--color-primary);
+  --accent-primary: var(--color-primary);
+  --accent-primary-hover: var(--color-primary-hover);
+  --accent-primary-active: var(--color-primary-active);
+  --accent-soft: var(--color-primary-soft);
+  --accent-extra-soft: var(--color-primary-extra-soft);
+  --status-danger: var(--color-danger);
+  --shadow-focus-ring: 0 0 0 3px var(--color-focus-ring-offset), 0 0 0 5px var(--color-focus-ring);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-white: #14231e;
+  --color-warm-bg: #14231e;
+  --color-surface: #1b2c24;
+  --color-surface-muted: #25372b;
+  --color-border-light: #3b4e3b;
+  --color-border-medium: #71866b;
+  --color-text-primary: #f5f4e8;
+  --color-text-secondary: #c5cebb;
+  --color-text-muted: #b0bda7;
+  --color-primary: #dceba1;
+  --color-primary-hover: #e9f3bf;
+  --color-primary-active: #c2d687;
+  --color-primary-soft: #384b2d;
+  --color-primary-extra-soft: #2b3e2b;
+  --color-success: #b2d5a3;
+  --color-success-soft: #283e2c;
+  --color-warning: #edc668;
+  --color-warning-soft: #443b22;
+  --color-danger: #f5a38a;
+  --color-danger-soft: #482f28;
+  --color-info: #afcfcc;
+  --color-info-soft: #293e3c;
+  --color-focus-ring: #edc668;
+  --color-focus-ring-offset: #14231e;
+  --text-on-primary: #162824;
+  --art-paper: #25372b;
+  --art-sage: #8ca77d;
+  --art-line: #b5c7a2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-standard: 0ms;
+  }
+}

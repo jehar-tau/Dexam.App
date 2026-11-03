@@ -25,6 +25,7 @@
   gap: var(--space-6);
   padding: var(--space-5) var(--page-gutter);
   border-bottom: 1px solid var(--border-default);
+  background: var(--bg-page);
 }
 .brand {
   color: var(--text-body);
@@ -46,7 +47,7 @@
   flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-6) var(--space-4);
-  background: var(--bg-page-warm);
+  background: var(--bg-page);
   border-right: 1px solid var(--border-default);
 }
 .navigation a {
@@ -55,6 +56,18 @@
   align-items: center;
   gap: var(--space-2);
   min-height: var(--hit-target-min);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+.navigation a:hover {
+  background: var(--surface-hover);
+}
+.navigation a[aria-current='page'] {
+  background: var(--accent-soft);
+  color: var(--accent-primary-active);
 }
 .main {
   min-width: 0;
@@ -82,11 +95,11 @@
   grid-template-columns: 12rem minmax(0, 1fr);
 }
 .frame[data-portal='teacher'] .header {
-  border-bottom: 3px solid var(--color-info);
+  border-bottom: 1px solid var(--border-default);
 }
 .frame[data-portal='admin'] .header {
-  background: var(--color-surface-muted);
-  border-bottom: 3px solid var(--color-danger);
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--border-default);
 }
 .frame[data-portal='admin'] .navigation {
   background: var(--surface-card);

@@ -8,21 +8,25 @@ body {
 }
 
 h1 {
+  font-family: var(--font-serif);
   font-size: var(--fs-h1);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
   letter-spacing: var(--ls-tight);
   line-height: var(--lh-h1);
 }
 
 h2 {
+  font-family: var(--font-serif);
   font-size: var(--fs-h2);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
+  letter-spacing: -0.025em;
   line-height: var(--lh-h2);
 }
 
 h3 {
+  font-family: var(--font-serif);
   font-size: var(--fs-h3);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
   line-height: var(--lh-h3);
 }
 
@@ -33,6 +37,38 @@ h3 {
   font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
+}
+
+.eyebrow::before {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 8px 2px 0;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  content: '';
+}
+
+/* Compact forms and question copy stay in the UI face. */
+input,
+textarea,
+select {
+  accent-color: var(--accent-primary);
+}
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+textarea,
+select {
+  max-width: 100%;
+}
+img,
+svg {
+  max-width: 100%;
 }
 
 .measure {

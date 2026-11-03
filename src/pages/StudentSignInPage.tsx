@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Button, Callout, Card, Input } from '../components'
+import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import { useAuth } from '../features/auth/AuthContext'
 import styles from './SignInPage.module.css'
 
@@ -46,6 +47,7 @@ export function StudentSignInPage() {
   return (
     <section className={styles.layout} aria-labelledby="student-sign-in-title">
       <div className={styles.intro}>
+        <DiscoveryArt kind="seeing" className={styles.introArt} />
         <p className="eyebrow">Student access</p>
         <h1 id="student-sign-in-title">Continue your learning.</h1>
         <p className={styles.lede}>
