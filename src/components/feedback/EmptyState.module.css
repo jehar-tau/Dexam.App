@@ -6,8 +6,13 @@
   padding: var(--space-12) var(--space-6);
   text-align: center;
   background: var(--surface-muted);
-  border: 1px dashed var(--border-strong);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
+}
+
+.art {
+  width: 140px;
+  margin: -24px 0 4px;
 }
 
 .icon {
@@ -17,6 +22,7 @@
 }
 
 .title {
+  font-family: var(--font-serif);
   color: var(--text-body);
   font-size: var(--fs-h3);
   font-weight: var(--fw-semibold);

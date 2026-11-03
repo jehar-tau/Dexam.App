@@ -17,6 +17,7 @@ import { memberIdFromEmail } from '../../features/testSeries/candidate'
 import { previewSearch } from '../../features/testSeries/previewSearch'
 import { useTestAccess } from '../../features/testSeries/testAccess'
 import { useTestsTheme } from '../../features/testSeries/useTestsTheme'
+import { Brand } from '../../components/brand/Brand'
 import styles from './StudentShell.module.css'
 
 /** `preview`: the destination also works in the fictional student preview. */
@@ -204,11 +205,13 @@ export function StudentShell() {
     : []
 
   const navRef = useRef<HTMLElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   // While the mobile menu is open: Escape closes it, focus moves into it and the page
   // behind stops scrolling. (`inert` on <main> keeps keyboard focus out of the page.)
   useEffect(() => {
     if (!menuOpen) return
+    const menuOpener = menuButtonRef.current
     function onKey(event: KeyboardEvent) {
       if (event.key === 'Escape') setMenuOpen(false)
     }
@@ -219,6 +222,7 @@ export function StudentShell() {
     return () => {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = previousOverflow
+      menuOpener?.focus()
     }
   }, [menuOpen])
 
@@ -262,16 +266,7 @@ export function StudentShell() {
   const visible = (items: NavItem[]) => items.filter((item) => !preview || item.preview)
   const unreadCount = unread.data ?? 0
 
-  const brand = (
-    <>
-      <span className={styles.mark} aria-hidden="true">
-        D
-      </span>
-      <span>
-        Dexam <span className={styles.brandSub}>{coaching ? 'Student portal' : 'Test series'}</span>
-      </span>
-    </>
-  )
+  const brand = <Brand subtitle={coaching ? 'Student portal' : 'Test series'} />
 
   return (
     <div className={styles.frame} data-portal="student" data-testid="student-shell">
@@ -279,10 +274,15 @@ export function StudentShell() {
         Skip to content
       </a>
       <header className={styles.topBar}>
-        <Link className={styles.brand} to={`${home}${search}`}>
+        <Link
+          className={styles.brand}
+          to={`${home}${search}`}
+          aria-label={`Dexam ${coaching ? 'Student portal' : 'Test series'}`}
+        >
           {brand}
         </Link>
         <button
+          ref={menuButtonRef}
           type="button"
           className={styles.menuButton}
           aria-expanded={menuOpen}
@@ -300,6 +300,7 @@ export function StudentShell() {
       >
         <Link
           className={`${styles.brand} ${styles.sidebarBrand}`}
+          aria-label={`Dexam ${coaching ? 'Student portal' : 'Test series'}`}
           to={`${home}${search}`}
           onClick={closeMenu}
         >

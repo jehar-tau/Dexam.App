@@ -14,6 +14,7 @@ Use this map instead of reading the entire documentation tree.
 
 - `ARCHITECTURE.md` — system boundaries and provisional technical direction
 - `DESIGN_SYSTEM.md` — design ownership and implementation rules
+- `design/DISCOVERY.md` — owner-approved Discovery 1.0 visual contract for academy and app; read before UI work
 - `design/README.md` — Figma token/pattern export pipeline and Storybook catalog
 - `SECURITY.md` — mandatory security and privacy baseline
 - `PRODUCTION_READINESS.md` — mandatory launch gates, including replacing local email capture with verified real authentication delivery

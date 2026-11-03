@@ -1,6 +1,26 @@
 .layout {
   display: grid;
-  gap: clamp(3rem, 8vw, 8rem);
+  gap: var(--space-12);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-8);
+  align-items: center;
+  padding-block: var(--space-6);
+}
+.hero h1 {
+  font-size: var(--fs-display);
+}
+.hero em {
+  color: var(--brand-green);
+  font-weight: 500;
+}
+.heroArt {
+  width: 100%;
+  max-width: 400px;
+  justify-self: end;
 }
 
 .eyebrow {
@@ -28,14 +48,15 @@
 }
 
 .foundation {
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-strong);
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
 }
 
 .foundation dt {
   margin-bottom: var(--space-2);
-  font-size: var(--fs-body-sm);
-  font-weight: 750;
+  font: 500 var(--fs-h2)/1.2 var(--font-serif);
 }
 
 .foundation dd {
@@ -46,6 +67,13 @@
 }
 
 @media (max-width: 44rem) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .heroArt {
+    max-width: 230px;
+    justify-self: center;
+  }
   .foundations {
     grid-template-columns: 1fr;
   }

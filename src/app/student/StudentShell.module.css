@@ -1,5 +1,5 @@
 .frame {
-  --student-sidebar-width: 264px;
+  --student-sidebar-width: 248px;
   min-height: 100vh;
   background: var(--bg-page-warm);
   color: var(--text-body);
@@ -33,22 +33,6 @@
   text-decoration: none;
 }
 
-.mark {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background: var(--accent-primary);
-  color: var(--text-on-primary);
-  font-weight: var(--fw-bold);
-}
-
-.brandSub {
-  color: var(--text-muted);
-  font-weight: var(--fw-medium);
-}
-
 /* ---------- Top bar (phones and small tablets only) ---------- */
 
 .topBar {
@@ -77,15 +61,15 @@
   display: flex;
   flex-direction: column;
   width: var(--student-sidebar-width);
-  padding: var(--space-6) var(--space-4) var(--space-4);
+  padding: var(--space-8) var(--space-4) var(--space-4);
   border-right: 1px solid var(--border-default);
-  background: var(--surface-card);
+  background: var(--bg-page);
   overflow-y: auto;
 }
 
 .sidebarBrand {
   padding: 0 var(--space-2);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .profile {
@@ -178,6 +162,10 @@
 .navItem:hover {
   background: var(--surface-hover);
   color: var(--text-body);
+  text-decoration: none;
+}
+.brand:hover {
+  text-decoration: none;
 }
 
 .navItem:focus-visible,
@@ -191,7 +179,7 @@
 
 .navItemActive,
 .navItemActive:hover {
-  background: var(--accent-extra-soft);
+  background: var(--accent-soft);
   color: var(--accent-primary-active);
   font-weight: var(--fw-semibold);
 }
@@ -283,7 +271,7 @@
 
 .main {
   min-height: 100vh;
-  padding: var(--space-8) var(--space-8) var(--space-16);
+  padding: var(--space-12) clamp(24px, 4vw, 64px) var(--space-16);
   margin-left: var(--student-sidebar-width);
   outline: none;
 }

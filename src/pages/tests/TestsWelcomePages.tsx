@@ -15,6 +15,8 @@ import {
   type Level,
 } from '../../features/testSeries/testAccess'
 import styles from './TestsWelcomePages.module.css'
+import { Brand } from '../../components/brand/Brand'
+import { DiscoveryArt } from '../../components/brand/DiscoveryArt'
 
 const currentYear = 2026
 
@@ -54,6 +56,10 @@ export function TestsSignInPage() {
   return (
     <main className={styles.page}>
       <section className={styles.card} aria-labelledby="tests-sign-in-title">
+        <Link to="/" aria-label="DEXAM home">
+          <Brand />
+        </Link>
+        <DiscoveryArt kind="seeing" className={styles.introArt} />
         <p className={styles.eyebrow}>Dexam test series</p>
         <h1 id="tests-sign-in-title" className={styles.title}>
           Practise on real design-entrance papers

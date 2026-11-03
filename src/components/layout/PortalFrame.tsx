@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Portal } from '../../features/auth/portals'
 import styles from './PortalFrame.module.css'
+import { Brand } from '../brand/Brand'
 
 export type PortalFrameProps = {
   portal: Portal | null
@@ -24,7 +25,7 @@ export function PortalFrame({ portal, navigation, children, banner }: PortalFram
       {banner ? <div className={styles.banner}>{banner}</div> : null}
       <header className={styles.header}>
         <a className={styles.brand} href="/">
-          Dexam
+          <Brand />
         </a>
         <div>
           <strong>{copy[0]}</strong>

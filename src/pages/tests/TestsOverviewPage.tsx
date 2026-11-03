@@ -19,6 +19,7 @@ import {
 import { useTestAccess } from '../../features/testSeries/testAccess'
 import { ProgressChart, type ProgressSeries } from './ProgressChart'
 import styles from './TestsOverviewPage.module.css'
+import { DiscoveryArt } from '../../components/brand/DiscoveryArt'
 
 const upcomingPhases = ['registration', 'waiting', 'part-a', 'break', 'part-b', 'upload']
 
@@ -99,13 +100,17 @@ export function TestsOverviewPage({ embedded = false }: { embedded?: boolean }) 
       {embedded ? (
         <h2 className={styles.sectionTitle}>Your test series</h2>
       ) : (
-        <div>
-          <h1 className={styles.title}>{firstName ? `Welcome back, ${firstName}` : 'Home'}</h1>
-          <p className={styles.note}>
-            {preview
-              ? 'Preview: fictional progress.'
-              : 'Where you stand, how you are improving and what to do next.'}
-          </p>
+        <div className={styles.welcome}>
+          <div>
+            <p className="eyebrow">A fresh perspective</p>
+            <h1 className={styles.title}>{firstName ? `Welcome back, ${firstName}` : 'Home'}</h1>
+            <p className={styles.note}>
+              {preview
+                ? 'Preview: fictional progress.'
+                : 'Where you stand, how you are improving and what to do next.'}
+            </p>
+          </div>
+          <DiscoveryArt kind="growth" className={styles.welcomeArt} />
         </div>
       )}
 
@@ -258,7 +263,7 @@ export function TestsOverviewPage({ embedded = false }: { embedded?: boolean }) 
             <h2 id="history-title" className={styles.panelTitle}>
               Results
             </h2>
-            <div className={styles.tableWrap}>
+            <div className={styles.tableWrap} tabIndex={0} role="region" aria-label="Results table">
               <table className={styles.table}>
                 <thead>
                   <tr>

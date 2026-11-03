@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import AxeBuilder from '@axe-core/playwright'
 
 async function enterExam(page: Page) {
   await page.goto('/tests/exam/uceed-2025?preview=1')
@@ -8,6 +9,13 @@ async function enterExam(page: Page) {
   await page.getByRole('checkbox', { name: /I have read and understood/ }).check()
   await page.getByRole('button', { name: 'I am ready to begin' }).click()
   await expect(page.getByRole('heading', { name: 'Question 1' })).toBeVisible()
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+        .analyze()
+    ).violations,
+  ).toEqual([])
 }
 
 test('a candidate takes the practice paper from login to submission', async ({ page }) => {
@@ -60,6 +68,13 @@ test('on a phone the palette opens on demand and nothing scrolls sideways', asyn
     return { client: element.clientWidth, scroll: element.scrollWidth }
   })
   expect(width.scroll).toBeLessThanOrEqual(width.client)
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+        .analyze()
+    ).violations,
+  ).toEqual([])
 })
 
 test('the exam window requires sign-in outside preview', async ({ page }) => {

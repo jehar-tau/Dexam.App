@@ -17,6 +17,11 @@
   line-height: var(--lh-body-sm);
 }
 
+.callout a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .accent {
   background: var(--accent-extra-soft);
   border-color: var(--accent-soft);

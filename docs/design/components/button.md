@@ -1,7 +1,7 @@
 # Button
 
 Status: Approved
-Design source: `dexam-portfolio-design-system/project/components/core/Button.*` at `4acbb1b`
+Visual authority: [Discovery 1.0](../DISCOVERY.md), D-064. Historical behavior source: `dexam-portfolio-design-system/project/components/core/Button.*` at `4acbb1b`.
 Storybook: `Components/Core/Button`
 
 ## Purpose
@@ -16,7 +16,7 @@ Triggers a clear user action. Use one primary action per decision area; use seco
 
 ## Composition rules
 
-Buttons use an 8px radius and never use pill styling or scale animations. Action labels begin with a verb. Primary orange is reserved for the most important action.
+Buttons use a 6px radius and never use pill styling or scale animations. Action labels begin with a verb. Primary forest green is reserved for the leading action; dark mode uses the accessible lime semantic token. Orange is a decorative brand accent. Segmented filters may use pills.
 
 ## Accessibility
 

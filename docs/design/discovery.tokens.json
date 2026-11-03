@@ -1,0 +1,17 @@
+{
+  "name": "DEXAM Discovery",
+  "version": "1.0.0",
+  "approved": "2026-10-31",
+  "colors": {
+    "--brand-paper": "#faf9f3",
+    "--brand-ink": "#162824",
+    "--brand-green": "#386451",
+    "--brand-orange": "#ef633d",
+    "--brand-yellow": "#edc668",
+    "--brand-lime": "#dceba1"
+  },
+  "fonts": {
+    "sans": "Figtree",
+    "serif": "Zilla Slab"
+  }
+}

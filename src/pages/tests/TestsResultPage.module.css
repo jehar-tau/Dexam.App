@@ -53,9 +53,7 @@
   padding: var(--space-8);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
-  background:
-    radial-gradient(120% 140% at 100% 100%, var(--accent-soft) 0%, transparent 55%),
-    var(--surface-card);
+  background: var(--surface-muted);
   box-shadow: var(--shadow-xs);
 }
 

@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { Brand } from '../../../components/brand/Brand'
 
 import type { ExamPaper } from '../../../features/testSeries/examPaper'
 import { StatusLegend } from './ExamStatus'
@@ -14,10 +15,7 @@ export function PreStartFrame({ paperLabel, children }: FrameProps) {
     <div className={styles.preStart}>
       <header className={styles.examHeader}>
         <span className={styles.examBrand}>
-          <span className={styles.examMark} aria-hidden="true">
-            D
-          </span>
-          Dexam exam window
+          <Brand subtitle="Exam window" />
         </span>
         <span className={styles.examHeaderPaper}>{paperLabel}</span>
       </header>

@@ -8,6 +8,7 @@ import {
   type StudentWorkspace,
 } from '../features/student/getStudentWorkspace'
 import { TestsOverviewPage } from './tests/TestsOverviewPage'
+import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import styles from './StudentWorkspacePage.module.css'
 
 const previewWorkspace: StudentWorkspace = {
@@ -133,7 +134,7 @@ export function StudentWorkspacePage() {
           </p>
           <h1 id="student-workspace-title">Welcome{firstName ? `, ${firstName}` : ''}.</h1>
           <p className={styles.lede}>
-            Your learning journey, enrolments, and future Dexam services will live here.
+            A little practice. A new perspective. Your next step starts here.
           </p>
           {!previewEnabled ? (
             <>
@@ -144,10 +145,13 @@ export function StudentWorkspacePage() {
             </>
           ) : null}
         </div>
-        <div className={styles.identity} aria-label="Dexam identity">
-          <span>Dexam Member ID</span>
-          <strong>{workspace.memberId}</strong>
-          <small>Keep this ID for every stage of your journey.</small>
+        <div className={styles.identityWrap}>
+          <DiscoveryArt kind="seeing" className={styles.welcomeArt} />
+          <div className={styles.identity} aria-label="Dexam identity">
+            <span>Dexam Member ID</span>
+            <strong>{workspace.memberId}</strong>
+            <small>Keep this ID for every stage of your journey.</small>
+          </div>
         </div>
       </header>
 
@@ -188,6 +192,7 @@ export function StudentWorkspacePage() {
         </div>
 
         <aside className={styles.aside} aria-labelledby="coming-next-title">
+          <DiscoveryArt kind="making" className={styles.asideArt} />
           <p className="eyebrow">Built to grow with you</p>
           <h2 id="coming-next-title">More value, one identity.</h2>
           <p>

@@ -1,10 +1,10 @@
 # Design System Pipeline
 
-See `../decisions/ADR-011-shared-design-system-repository.md` for the current source of truth and `../decisions/ADR-010-design-system-tooling.md` for the component/Storybook/hosting decisions still in effect. See `../DESIGN_SYSTEM.md` for the engineering rules.
+Read [DEXAM Discovery 1.0](DISCOVERY.md) and [D-064](../decisions/ADR-064-discovery-design-system.md) for the current visual authority. `src/styles/discovery.css` is active. The component/Storybook/hosting decisions remain in effect. See `../DESIGN_SYSTEM.md` for engineering rules.
 
 ## Current source of truth
 
-The design system now lives at the shared, public repository **`dexam-portfolio-design-system`** (also used by the portfolio site), not a Figma export. Its `project/tokens/*.css` files are vendored verbatim in `src/styles/design-system/` and pinned to the source commit documented there. Dexam-specific aliases belong in `src/styles/tokens.css`; never edit the vendored files by hand.
+The owner approved the academy/assessment visual language for the whole app on 2026-10-31. Its contract is `DISCOVERY.md`, its primitives are versioned in `discovery.tokens.json`, and Storybook contains light/dark specimens. The earlier portfolio bundle remains verbatim in `src/styles/design-system/` for history; only its spacing is active. Never edit its provenance or use it to override Discovery.
 
 ## Superseded: the Figma-DTCG token pipeline
 
@@ -12,7 +12,7 @@ The design system now lives at the shared, public repository **`dexam-portfolio-
 
 1. In Figma, update the Variables.
 2. Export them as W3C Design Tokens (DTCG) JSON and save over `tokens/figma-tokens.json`.
-3. Run `pnpm design:tokens` to regenerate `src/styles/tokens.css`.
+3. Historical only: do not regenerate `src/styles/tokens.css` from the dormant Figma pipeline. `pnpm design:tokens` now checks the Discovery contract and contrast without writing files.
 4. Commit both the JSON export and the generated CSS together.
 
 Values CSS can express but Figma Variables cannot (e.g. `color-scheme`, `clamp()` expressions) live in `src/styles/tokens.manual.css` and are merged in by the same script — edit that file by hand, never `tokens.css` directly.

@@ -43,18 +43,6 @@
   font-weight: var(--fw-semibold);
 }
 
-.examMark {
-  display: inline-grid;
-  flex: none;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background: var(--accent-primary);
-  color: var(--text-on-primary);
-  font-weight: var(--fw-bold);
-}
-
 .examHeaderPaper {
   overflow: hidden;
   font-weight: var(--fw-semibold);
@@ -515,7 +503,6 @@
 .sectionTabCount {
   font-family: var(--font-mono);
   font-size: var(--fs-metadata);
-  opacity: 0.8;
 }
 
 .timer {

@@ -1,7 +1,7 @@
 # Empty State
 
 Status: Approved
-Design source: `dexam-portfolio-design-system/project/components/feedback/EmptyState.*` at `4acbb1b`
+Visual authority: [Discovery 1.0](../DISCOVERY.md), D-064. Historical behavior source: `dexam-portfolio-design-system/project/components/feedback/EmptyState.*` at `4acbb1b`.
 Storybook: `Components/Feedback/EmptyState`
 
 ## Purpose
@@ -17,7 +17,7 @@ Explains that a list or section has no content yet and, when useful, offers one 
 
 ## Composition rules
 
-Use one short title, one explanatory sentence, and at most one action. The icon is decorative and must not carry meaning by itself.
+Use one short slab-serif title, one explanatory sentence, and at most one action. The default is a small original DiscoveryArt scene; a caller may supply a decorative icon instead. Neither carries essential meaning. Use a quiet sage panel with a solid border and 10px corners.
 
 ## Accessibility
 

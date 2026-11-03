@@ -1,19 +1,35 @@
 .workspace {
   display: grid;
-  gap: var(--space-12);
+  gap: var(--space-8);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .pageHeader {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
   gap: var(--space-8);
-  align-items: end;
+  align-items: center;
   padding-bottom: var(--space-8);
   border-bottom: 1px solid var(--border-default);
 }
 
 .pageHeader h1 {
   max-width: 16ch;
+}
+
+.identityWrap {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+.welcomeArt {
+  width: 250px;
+  margin: -24px 0 -16px;
+}
+.asideArt {
+  width: 180px;
+  margin: -12px auto 0;
 }
 
 .lede {
@@ -27,10 +43,10 @@
 .identity {
   display: grid;
   gap: var(--space-2);
-  padding: var(--space-5);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  width: 100%;
+  background: transparent;
+  border-top: 1px solid var(--border-default);
 }
 
 .identity span,
@@ -46,7 +62,7 @@
 .identity strong {
   overflow-wrap: anywhere;
   font-family: var(--font-mono);
-  font-size: var(--fs-body-lg);
+  font-size: var(--fs-caption);
 }
 
 .identity small {
@@ -154,6 +170,7 @@
   gap: var(--space-4);
   padding: var(--space-6);
   background: var(--surface-muted);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
 }
 
@@ -186,6 +203,14 @@
   .pageHeader,
   .content {
     grid-template-columns: 1fr;
+  }
+  .identityWrap {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+  .welcomeArt {
+    width: 100px;
+    margin: 0;
   }
 }
 

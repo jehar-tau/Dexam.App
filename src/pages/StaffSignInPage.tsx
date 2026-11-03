@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
+import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import styles from './SignInPage.module.css'
 import { safePortalReturn, type EmployeePortal } from '../features/auth/portals'
 
@@ -42,6 +43,7 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
   return (
     <section className={styles.layout} aria-labelledby="staff-sign-in-title">
       <div className={styles.intro}>
+        <DiscoveryArt kind="making" className={styles.introArt} />
         <p className="eyebrow">Protected {portal} access</p>
         <h1 id="staff-sign-in-title">{title}</h1>
         <p className={styles.lede}>
