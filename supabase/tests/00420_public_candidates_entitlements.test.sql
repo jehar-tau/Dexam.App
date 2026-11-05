@@ -22,6 +22,12 @@ insert into public.memberships (person_id, kind, status, starts_at)
 values ('b6100000-0000-4000-8000-000000000003', 'student', 'active', now() - interval '1 day');
 
 -- Two fictional UCEED papers and one CEED paper, one ready question each.
+-- Provider verification is trusted evidence, unlike editable profile metadata.
+update auth.users set email_confirmed_at=now() where id='b6000000-0000-4000-8000-000000000001';
+update auth.identities set identity_data=identity_data||'{"email":"google-candidate@dexam.test","email_verified":true}'::jsonb
+where user_id='b6000000-0000-4000-8000-000000000001' and provider='google';
+
+-- Two fictional UCEED papers and one CEED paper, one ready question each.
 insert into public.assessment_questions (
   id, external_key, version, content_hash, question_type, prompt, response_mode,
   publication_state, quarantine_reasons, licence, source_kind

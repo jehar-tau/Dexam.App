@@ -8,6 +8,9 @@ values
   ('d9000000-0000-4000-8000-000000000003', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'mock-other@dexam.test', '');
 insert into auth.identities (provider_id, user_id, identity_data, provider, created_at, updated_at, last_sign_in_at)
 values ('mock-google-sub', 'd9000000-0000-4000-8000-000000000002', '{"sub":"mock-google-sub"}', 'google', now(), now(), now());
+update auth.users set email_confirmed_at=now() where id='d9000000-0000-4000-8000-000000000002';
+update auth.identities set identity_data=identity_data||'{"email":"mock-candidate@dexam.test","email_verified":true}'::jsonb
+where user_id='d9000000-0000-4000-8000-000000000002' and provider='google';
 insert into auth.sessions (id, user_id, aal, created_at, updated_at)
 select id, id, 'aal1', now(), now() from auth.users where id::text like 'd9000000-%';
 insert into public.people (id, member_id, display_name)

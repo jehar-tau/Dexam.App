@@ -86,7 +86,7 @@ reset role;
 -- Student A opens, begins and submits.
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"f0000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"f0000000-0000-4000-8000-000000000001"}';
-select set_config('test.paper', public.get_assessment_student_paper('fictionx-2026')::text, true);
+select set_config('test.paper', public.open_assessment_attempt('fictionx-2026')::text, true);
 select is((current_setting('test.paper')::jsonb ->> 'durationMinutes')::integer, 90, 'paper time is the official minutes scaled to ready questions');
 select is(current_setting('test.paper')::jsonb -> 'marking' -> 'mcq', '{"correct":3,"wrong":-0.71}'::jsonb, 'paper carries the server marking');
 select set_config('test.attempt', public.open_assessment_attempt('fictionx-2026')::text, true);

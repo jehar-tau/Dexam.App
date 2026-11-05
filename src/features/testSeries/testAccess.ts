@@ -21,6 +21,7 @@ export const levelExams: Record<Level, ExamKey[]> = {
 
 const accessSchema = z.object({
   kind: z.enum(['student', 'candidate']).nullable(),
+  coachingActive: z.boolean().optional(),
   displayName: z.string().nullable().optional(),
   profile: z
     .object({
@@ -102,7 +103,7 @@ export type PaperAccess = 'open' | 'free-choice' | 'free-claimed' | 'locked'
 
 /** How a candidate (or student) can reach a catalogue paper. */
 export function paperAccess(paper: CatalogPaper, access: TestAccess | undefined): PaperAccess {
-  if (!access || access.kind === 'student') return 'open'
+  if (!access || (access.kind === 'student' && access.coachingActive !== false)) return 'open'
   const bankId = bankPaperId(paper)
   if (bankId && access.entitledPapers.includes(bankId)) {
     return access.freeSlots.some((slot) => slot.paperId === bankId) ? 'free-claimed' : 'open'

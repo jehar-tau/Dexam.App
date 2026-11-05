@@ -22,6 +22,8 @@ import { EmployeePasswordRecoveryPage } from '../pages/EmployeePasswordRecoveryP
 import { StudentPasswordRecoveryPage } from '../pages/StudentPasswordRecoveryPage'
 import { StudentRecoveryAdminPage } from '../pages/StudentRecoveryAdminPage'
 import { EnrollmentCloseoutPage } from '../pages/EnrollmentCloseoutPage'
+import { AdmissionsPage } from '../pages/AdmissionsPage'
+import { GoogleLoginCallbackPage } from '../pages/GoogleLoginCallbackPage'
 import { StudentWorkArchivePage } from '../pages/StudentWorkArchivePage'
 import { StudentStudyChecklistPage } from '../pages/StudentStudyChecklistPage'
 import { ClassSchedulingPage, StudentAgendaPage } from '../pages/ClassSchedulePages'
@@ -162,6 +164,16 @@ export const router = createBrowserRouter([
           <StaffAccessBoundary requireMfa allowPreview={false}>
             <PortalAccessBoundary portal="admin">
               <NotificationCentrePage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/admissions',
+        element: (
+          <StaffAccessBoundary capability="enrollment.operate" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <AdmissionsPage />
             </PortalAccessBoundary>
           </StaffAccessBoundary>
         ),
@@ -459,6 +471,7 @@ export const router = createBrowserRouter([
   },
   // F039: test-series sign-in (Google for candidates, Member ID for coaching students) and setup.
   { path: '/tests/sign-in', element: <TestsSignInPage /> },
+  { path: '/auth/google', element: <GoogleLoginCallbackPage /> },
   { path: '/tests/welcome', element: <TestsWelcomePage /> },
   {
     // F047: practice sets run in the same full-screen exam window.

@@ -2,6 +2,8 @@
 
 Status: Implemented locally 2026-10-28 under D-054 A and D-057; in review.
 
+2026-11-05: D-065/F054 authorizes verified Google claims for admin-reserved coaching/student/staff identities before the existing candidate fallback. This replaces the prior no-linking direction only after a race-safe, verified, deliberately resolved claim implementation passes acceptance. Do not run existing `provision_google_candidate()` unchanged for an admitted student/staff account or auto-merge existing candidates. Old credentials/recovery and public candidate scope remain available; actual provider/configuration state must be inspected separately. The new path is not yet implemented.
+
 - **Google sign-in is not switched on yet:** D-058 is decided (Option A, Google-only sign-up hook), but it still waits for the owner's Google OAuth client.
 - **Everything after sign-in is built and was tried locally:** account setup, onboarding, access rules, free papers and locks. The local test used a fictional candidate with a simulated Google identity.
 

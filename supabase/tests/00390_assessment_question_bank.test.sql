@@ -135,27 +135,28 @@ select throws_ok(
   'students cannot write questions'
 );
 select is(
-  jsonb_array_length(public.get_assessment_student_paper('fiction-2026') -> 'questions'),
+  jsonb_array_length(public.open_assessment_attempt('fiction-2026') -> 'questions'),
   1,
   'the paper contains only ready objective questions'
 );
 select is(
-  (public.get_assessment_student_paper('fiction-2026') ->> 'objectiveCount')::integer,
+  (public.open_assessment_attempt('fiction-2026') ->> 'objectiveCount')::integer,
   2,
   'the paper reports how many objective questions exist'
 );
 select is(
-  public.get_assessment_student_paper('fiction-2026') -> 'questions' -> 0 ->> 'prompt',
+  public.open_assessment_attempt('fiction-2026') -> 'questions' -> 0 ->> 'prompt',
   'Which fictional shape has four equal sides?',
   'the ready question is served'
 );
 select ok(
-  position('"kind"' in public.get_assessment_student_paper('fiction-2026')::text) = 0
-  and position('official-key' in public.get_assessment_student_paper('fiction-2026')::text) = 0
-  and position('fiction-2026-q1' in public.get_assessment_student_paper('fiction-2026')::text) = 0,
+  position('"kind"' in (public.open_assessment_attempt('fiction-2026')->'questions')::text) = 0
+  and position('official-key' in public.open_assessment_attempt('fiction-2026')::text) = 0
+  and position('fiction-2026-q1' in public.open_assessment_attempt('fiction-2026')::text) = 0,
   'the candidate view carries no keys, key status or external keys'
 );
-select throws_ok($$select public.get_assessment_student_paper('../etc')$$, '22023', null, 'paper ids are validated');
+select throws_ok($$select public.open_assessment_attempt('../etc')$$, '22023', null, 'paper ids are validated');
+select throws_ok($$select public.get_assessment_student_paper('fiction-2026')$$, '42501', null, 'raw paper assembly cannot bypass attempt authorization');
 select results_eq(
   $$select paper_id, ready_count, objective_count from public.list_assessment_student_papers() where paper_id = 'fiction-2026'$$,
   $$values ('fiction-2026'::text, 1, 2)$$,

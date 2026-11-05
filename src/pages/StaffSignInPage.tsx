@@ -6,6 +6,7 @@ import { useAuth } from '../features/auth/AuthContext'
 import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import styles from './SignInPage.module.css'
 import { safePortalReturn, type EmployeePortal } from '../features/auth/portals'
+import { sharedGoogleEnabled, startPortalGoogleLogin } from '../features/auth/googleLogin'
 
 export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal }) {
   const { configured, session, signInEmployee } = useAuth()
@@ -52,7 +53,7 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
         </p>
         <ul className={styles.trustList}>
           <li>Revoked employee access is blocked by current database state.</li>
-          <li>Student and employee accounts remain separate.</li>
+          <li>Student and employee permissions remain separate.</li>
           <li>Your password is handled by the authentication service, not stored by Dexam.</li>
         </ul>
       </div>
@@ -78,6 +79,23 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
           </Callout>
         ) : null}
 
+        {sharedGoogleEnabled() ? (
+          <Button
+            disabled={!configured || submitting}
+            variant="secondary"
+            fullWidth
+            onClick={() => {
+              setSubmitting(true)
+              setError('')
+              void startPortalGoogleLogin(destination).catch((failure: unknown) => {
+                setError(failure instanceof Error ? failure.message : 'Google sign-in failed.')
+                setSubmitting(false)
+              })
+            }}
+          >
+            Continue with Google
+          </Button>
+        ) : null}
         <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
           <Input
             autoComplete="email"
