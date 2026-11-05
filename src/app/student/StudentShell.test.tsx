@@ -44,6 +44,8 @@ const noPortals: PortalAccess = {
   curriculumImpact: false,
   batches: false,
   batchAssign: false,
+  studentLogins: false,
+  studentLoginRevoke: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,

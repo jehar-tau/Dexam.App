@@ -37,6 +37,7 @@ import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { BatchesPage } from '../pages/BatchesPage'
+import { StudentGoogleLoginsPage } from '../pages/StudentGoogleLoginsPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
 import { StudentShell } from './student/StudentShell'
@@ -186,6 +187,24 @@ export const router = createBrowserRouter([
             <PortalAccessBoundary portal="admin">
               <CrmPrivacyPage />
             </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/google-access',
+        element: (
+          <StaffAccessBoundary capability="student_login.revoke" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <StudentGoogleLoginsPage portal="admin" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/google-access',
+        element: (
+          <StaffAccessBoundary capability="student_login.approve">
+            <StudentGoogleLoginsPage portal="staff" />
           </StaffAccessBoundary>
         ),
       },

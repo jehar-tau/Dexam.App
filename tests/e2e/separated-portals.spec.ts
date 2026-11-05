@@ -109,3 +109,15 @@ test('Sales create batches; teachers place students and review batch by batch (D
   })
   expect(width.scroll).toBeLessThanOrEqual(width.client)
 })
+
+test('Sales keep the App Google sign-in list; only admins revoke (D-067)', async ({ page }) => {
+  await page.goto('/staff/google-access?preview=1')
+  await expect(page.getByRole('heading', { name: 'Google sign-in list.' })).toBeVisible()
+  await expect(
+    page.getByText('Waiting for first sign-in').or(page.getByText('Signs in with Google')).first(),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /Revoke/ })).toHaveCount(0)
+  await expect(page.getByLabel('Google email for Kabir Mehta')).toBeVisible()
+  await page.goto('/admin/google-access?preview=1')
+  await expect(page).toHaveURL(/\/admin\/sign-in/)
+})

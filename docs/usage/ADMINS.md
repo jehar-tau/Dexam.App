@@ -60,6 +60,10 @@ Open **Recovery investigations** (`/staff/security/incidents`). Review the exact
 
 This records accountability; it does not retry/undo a password update, cancel the executing request, resolve provider ambiguity, unlock the account or restore prior sessions. If no eligible reviewer is available, keep the fence and contact the incident lead. Never put passwords, tokens, request payloads or MFA seeds into investigation notes or general alerts.
 
+## Dexam App Google sign-in list (D-067)
+
+`/admin/google-access` (two-step verification required) shows every current student's Google sign-in status. Admins can add, **revoke** (unlinks the Google account and ends its sessions immediately; Member ID sign-in and course access stay) and **restore** an entry. Sales can add but never revoke or undo a revocation. The App's Google switch (`app_google_login_gate`) is off until the Google client is configured and acceptance passes.
+
 ## 8. Privacy, publishing and academic powers
 
 Privacy operations require their separate capabilities and recent MFA. Use the verified-case/impact/two-person process described in the [Staff guide](STAFF.md). Ordinary administrators do not automatically gain privacy correction/erasure, academic publishing, broad file downloads or a teacher's private work queue. Protected canonical/academic domains must not be erased merely to make a CRM action succeed.
