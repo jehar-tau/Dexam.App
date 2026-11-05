@@ -42,6 +42,8 @@ const noPortals: PortalAccess = {
   closeout: false,
   classes: false,
   curriculumImpact: false,
+  batches: false,
+  batchAssign: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,
@@ -115,7 +117,7 @@ describe('Student portal sidebar', () => {
     mocks.access = { kind: 'student', displayName: 'Dual Fictional' }
     mocks.portals.mockResolvedValue({ ...noPortals, employee: true, crm: true })
     renderApp(routes, ['/student'])
-    expect(await screen.findByRole('link', { name: 'Switch to Staff portal' })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: 'Switch to Sales portal' })).toHaveAttribute(
       'href',
       '/staff',
     )

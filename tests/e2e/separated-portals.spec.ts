@@ -5,7 +5,7 @@ test('public directory has four distinct sign-in entrances', async ({ page }) =>
   for (const [name, path] of [
     ['Student', '/sign-in'],
     ['Teacher', '/teacher/sign-in'],
-    ['Staff', '/staff/sign-in'],
+    ['Sales', '/staff/sign-in'],
     ['Admin', '/admin/sign-in'],
   ]) {
     await expect(page.getByRole('link', { name: `Open ${name} portal` })).toHaveAttribute(
@@ -77,4 +77,35 @@ test('student preview does not contain staff tools or employee switches', async 
     page.getByRole('navigation').getByRole('link', { name: 'CRM', exact: true }),
   ).toHaveCount(0)
   await page.screenshot({ path: 'test-results/f033/student-preview.jpg', fullPage: false })
+})
+
+test('Sales create batches; teachers place students and review batch by batch (D-066)', async ({
+  page,
+}) => {
+  await page.goto('/staff/batches?preview=1')
+  await expect(page.getByRole('heading', { name: 'Create and fill batches.' })).toBeVisible()
+  const nav = page.getByRole('navigation').first()
+  await expect(nav.getByRole('link', { name: 'Batches' })).toHaveAttribute(
+    'href',
+    '/staff/batches?preview=1',
+  )
+  await expect(nav.getByRole('link', { name: 'Content' })).toHaveCount(0)
+  await page.getByLabel('Service type').selectOption('crash_course')
+  await page.getByLabel('Start date').fill('2027-01-10')
+  await expect(page.getByLabel('End date')).toHaveValue('2027-02-24')
+
+  await page.goto('/teacher/batches?preview=1')
+  await expect(page.getByRole('heading', { name: 'Place students in batches.' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Create batch' })).toHaveCount(0)
+  await expect(page.getByLabel('New batch for Meera Iyer')).toBeVisible()
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/teacher/reviews?preview=1')
+  await page.getByLabel('Batch').selectOption('UCEED crash course · November')
+  await expect(page.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+  const width = await page.locator('body').evaluate((body) => {
+    const element = body as unknown as { clientWidth: number; scrollWidth: number }
+    return { client: element.clientWidth, scroll: element.scrollWidth }
+  })
+  expect(width.scroll).toBeLessThanOrEqual(width.client)
 })

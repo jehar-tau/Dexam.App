@@ -29,6 +29,8 @@ const denied: PortalAccess = {
   closeout: false,
   classes: false,
   curriculumImpact: false,
+  batches: false,
+  batchAssign: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,
@@ -52,7 +54,7 @@ describe('separate portal navigation', () => {
     renderApp(nav('student'))
     expect(await screen.findByRole('link', { name: 'Coursework' })).toBeVisible()
     expect(screen.queryByRole('link', { name: 'CRM' })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Switch to Staff portal' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Switch to Sales portal' })).toHaveAttribute(
       'href',
       '/staff',
     )
@@ -77,7 +79,47 @@ describe('separate portal navigation', () => {
   it('does not expose admin operations to a non-admin employee', async () => {
     mocks.access.mockResolvedValue({ ...denied, employee: true, employees: true })
     renderApp(nav('admin'))
-    await screen.findByRole('link', { name: 'Switch to Staff portal' })
+    await screen.findByRole('link', { name: 'Switch to Sales portal' })
+    expect(screen.queryByRole('link', { name: 'Employees' })).not.toBeInTheDocument()
+  })
+  it('splits Sales and Teacher tools (D-066)', async () => {
+    mocks.access.mockResolvedValue({
+      ...denied,
+      employee: true,
+      crm: true,
+      batches: true,
+      batchAssign: true,
+      distribution: true,
+      content: true,
+      privacy: true,
+    })
+    const sales = renderApp(nav('staff'))
+    expect(await screen.findByRole('link', { name: 'Batches' })).toHaveAttribute(
+      'href',
+      '/staff/batches',
+    )
+    expect(screen.getByRole('link', { name: 'CRM' })).toBeVisible()
+    for (const name of ['Content', 'Distribution', 'Privacy'])
+      expect(screen.queryByRole('link', { name })).not.toBeInTheDocument()
+    sales.unmount()
+    renderApp(nav('teacher'))
+    expect(await screen.findByRole('link', { name: 'Distribution' })).toHaveAttribute(
+      'href',
+      '/teacher/distribution',
+    )
+    expect(screen.getByRole('link', { name: 'Batches' })).toHaveAttribute(
+      'href',
+      '/teacher/batches',
+    )
+    expect(screen.queryByRole('link', { name: 'CRM' })).not.toBeInTheDocument()
+  })
+  it('shows Privacy in the admin portal only', async () => {
+    mocks.access.mockResolvedValue({ ...denied, employee: true, privacy: true })
+    renderApp(nav('admin'))
+    expect(await screen.findByRole('link', { name: 'Privacy' })).toHaveAttribute(
+      'href',
+      '/admin/privacy',
+    )
     expect(screen.queryByRole('link', { name: 'Employees' })).not.toBeInTheDocument()
   })
   it('shows only current authorized admin operations', async () => {

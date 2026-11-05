@@ -6,11 +6,11 @@ export function PortalHomePage({ portal }: { portal: EmployeePortal }) {
   const copy = {
     teacher: [
       'Your teaching workspace.',
-      'Review assigned student work and prepare academic content. Content appears only with explicit course-scoped editing or publishing permissions; publishing does not distribute assignments.',
+      'Review submitted work batch by batch, prepare content, distribute assignments and place students into batches. Each tool appears only with your current course-scoped permissions; publishing does not distribute assignments.',
     ],
     staff: [
-      'Your operations workspace.',
-      'Choose an assigned admissions, content or course-delivery tool from this portal’s menu. Tools appear only when your current account has the required authority.',
+      'Your sales workspace.',
+      'Work your leads, hand converted students to admissions and create batches by course, service type and start date. Tools appear only when your current account has the required authority.',
     ],
     admin: [
       'Your administration workspace.',

@@ -23,6 +23,8 @@ const denied: PortalAccess = {
   closeout: false,
   classes: false,
   curriculumImpact: false,
+  batches: false,
+  batchAssign: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,
@@ -54,13 +56,25 @@ describe('portal presentation access', () => {
     })
     expect(mocks.rpc).toHaveBeenNthCalledWith(2, 'current_person_can_open_teacher_content')
   })
-  it('permits content-only scoped teachers but not unrelated content staff', () => {
-    expect(
-      canOpenPortal('teacher', { ...denied, employee: true, content: true, teacher: true }),
-    ).toBe(true)
-    expect(
-      canOpenPortal('teacher', { ...denied, employee: true, content: true, teacher: false }),
-    ).toBe(false)
+  it('opens the teacher portal for every teaching tool after D-066', () => {
+    for (const key of [
+      'reviews',
+      'content',
+      'distribution',
+      'batchAssign',
+      'classes',
+      'curriculumImpact',
+    ] as const) {
+      expect(canOpenPortal('teacher', { ...denied, employee: true, [key]: true })).toBe(true)
+      expect(canOpenPortal('teacher', { ...denied, [key]: true })).toBe(false)
+    }
+    expect(canOpenPortal('teacher', { ...denied, employee: true, batches: true, crm: true })).toBe(
+      false,
+    )
+  })
+  it('lets privacy operators reach the admin portal without other admin tools', () => {
+    expect(canOpenPortal('admin', { ...denied, employee: true, privacy: true })).toBe(true)
+    expect(canOpenPortal('admin', { ...denied, privacy: true })).toBe(false)
   })
   it.each([
     { data: 'true', error: null },
@@ -76,6 +90,11 @@ describe('portal presentation access', () => {
     ['/student/coursework', 'student'],
     ['/teacher/reviews', 'teacher'],
     ['/staff/reviews', 'teacher'],
+    ['/staff/assignments', 'teacher'],
+    ['/staff/classes', 'teacher'],
+    ['/staff/crm/privacy', 'admin'],
+    ['/staff/batches', 'staff'],
+    ['/teacher/batches', 'teacher'],
     ['/staff/crm', 'staff'],
     ['/staff/employees', 'admin'],
     ['/admin/recovery', 'admin'],

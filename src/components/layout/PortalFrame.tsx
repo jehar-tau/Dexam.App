@@ -12,7 +12,7 @@ export type PortalFrameProps = {
 const descriptions = {
   student: ['Learn at your pace', 'Your courses, your work, your next step.'],
   teacher: ['Teaching workspace', 'Focused reviews. Thoughtful feedback.'],
-  staff: ['Dexam operations', 'Admissions, content and course delivery.'],
+  staff: ['Dexam sales', 'Leads, admissions and batches.'],
   admin: ['Protected administration', 'Account security and accountable operations.'],
 } as const
 export function PortalFrame({ portal, navigation, children, banner }: PortalFrameProps) {

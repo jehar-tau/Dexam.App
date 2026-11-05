@@ -1,8 +1,10 @@
 # Current State
 
-Last updated: 2026-11-05
+Last updated: 2026-11-06
 
 ## Current phase
+
+2026-11-06 D-066/F055 (owner decision in chat): staff entrance becomes the Sales portal; teaching tools move to the Teacher portal with batch-wise reviews; Privacy moves to Admin. Sales create batches (existing cohorts) by course, service type and dates with editable placeholder default durations; Sales and scoped teachers place students with recorded history; students never read batch dates (column grant). Built on `feature/sales-teacher-portals-batches`, stacked on the F054 PR #113 branch; not merged or deployed. See F055.
 
 2026-11-05 Claude continuation: PR #112 (the handoff checkpoint) was merged into `main` at 13:16 UTC with green CI, although the handoff marked it a draft not to merge. Its gates stay off and nothing was deployed, but `main` now carries the unfinished F054 migrations, so **do not deploy `main` until F054's full Red-risk acceptance and owner staging approval**. Continuation work stays on `feature/shared-admissions-google-access`. Authenticated file retrieval (handoff item 2) is now implemented locally; see F054 for evidence, the 4-hour legacy-link drain and limits. Remaining handoff items 3–8 are unchanged.
 

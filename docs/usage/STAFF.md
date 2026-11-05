@@ -4,6 +4,12 @@ Content tools are also available inside the Teacher portal for explicitly author
 
 [Handbook home](README.md) · [Access and help](ACCESS_AND_TROUBLESHOOTING.md)
 
+## Sales portal and batches (D-066)
+
+`/staff` is now the **Sales portal**: CRM, CRM assignment, Handoffs, Enrolments, **Batches** and Course closeout. Content, Distribution, Classes and Curriculum preview moved to the [Teacher portal](TEACHERS.md); Privacy moved to the Admin portal (`/admin/privacy`). The older `/staff/...` links still open those tools with their original checks.
+
+Open **Batches** (`/staff/batches`) to create a batch: name, service type (end-to-end learning, crash course, portfolio or interview preparation), start date and end date. The end date is pre-filled from the service type's default duration and can be changed. Students see only the batch name, never its dates. Use **Place students** on the same page to put a converted, enrolled student into a batch or move them; give a reason. Moves keep the student's access dates and past work and are recorded. A student whose enrolment has its own fixed curriculum must be moved by an admin.
+
 ## Access and responsibilities
 
 Open `/staff/sign-in` with your established employee email/password, then `/staff` for the operations portal. Teacher and Admin have their own entrances/layouts on the same backend. Your membership, capabilities, offering assignments and MFA determine which workspaces you can use. Sales, CRM Coordinator, Enrolment Operator, content editor/publisher, assignment distributor, class scheduler and privacy operator are distinct responsibilities—not powers every employee automatically has.
@@ -57,7 +63,7 @@ If reissue is permitted, provide its required reason and understand that earlier
 
 ## 5. Academic content staff: edit lessons and assignments
 
-Open **Content** (`/staff/content`) with the appropriate offering-scoped authority.
+Open **Content** in the Teacher portal (`/teacher/content`; `/staff/content` still works) with the appropriate offering-scoped authority.
 
 1. Choose the curriculum/version and topic. Published content is immutable. Create an editable copy/new draft before changing published material; do not expect an in-place edit of existing students' version.
 2. Edit topic/lesson titles and the text-first material in the draft. Add/remove permitted lesson files while the lesson is editable. Lesson attachment limits are five PDF/JPEG/PNG/WebP files, 10 MB each; inspect prepared images and confirm upload completion.
@@ -73,7 +79,7 @@ With both required existing authorities and an explicit offering-scoped preview 
 
 ## 6. Release assignments
 
-Open **Distribution** (`/staff/assignments`) with explicit assignment-distribution scope.
+Open **Distribution** in the Teacher portal (`/teacher/distribution`; `/staff/assignments` still works) with explicit assignment-distribution scope.
 
 1. Select the offering and a published assignment/version.
 2. Choose **One cohort** or **Selected students**; inspect the exact target set.

@@ -14,6 +14,8 @@ export const navigationSchema = z.strictObject({
   closeout: z.boolean(),
   classes: z.boolean(),
   curriculumImpact: z.boolean(),
+  batches: z.boolean(),
+  batchAssign: z.boolean(),
   employees: z.boolean(),
   studentRecovery: z.boolean(),
   staffRecovery: z.boolean(),

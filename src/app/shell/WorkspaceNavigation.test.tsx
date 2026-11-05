@@ -25,6 +25,8 @@ const denied: NavigationAccess = {
   closeout: false,
   classes: false,
   curriculumImpact: false,
+  batches: false,
+  batchAssign: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,

@@ -8,7 +8,7 @@ Sign in through `/admin/sign-in` using your own established employee identity. T
 
 The product owner, Rohin and Siddhant Modi are planning nominees; this handbook does not provision their accounts or establish their eligibility. Never share one administrator identity. Two-person actions need distinct eligible people; lost-MFA recovery of an admin needs two other eligible actors. A three-person nomination alone does not prove everyone is provisioned, available or independently attributable.
 
-Admin aliases include `/admin/employees`, `/admin/security`, `/admin/recovery`, `/admin/student-recovery` and `/admin/incidents`. Existing `/staff/...` bookmarks used in the detailed procedures below remain supported with original checks. Use **Switch to Staff portal** for separately permitted staff/privacy responsibilities. Missing/denied tools mean authority or environment must be checked, not that a menu link should bypass the rule.
+Admin aliases include `/admin/employees`, `/admin/security`, `/admin/recovery`, `/admin/student-recovery` and `/admin/incidents`. Existing `/staff/...` bookmarks used in the detailed procedures below remain supported with original checks. **Privacy** now lives here (`/admin/privacy`); privacy operators without the Elevated Admin role can open the Admin portal and see only Privacy. Use **Switch to Sales portal** for separately permitted sales responsibilities. Missing/denied tools mean authority or environment must be checked, not that a menu link should bypass the rule.
 
 ## 2. Own MFA and sessions
 

@@ -23,6 +23,7 @@ import {
 import styles from './TeacherFeedbackPage.module.css'
 
 type RecordingTarget = 'written_dictation' | 'correction_dictation' | 'voice_note'
+const noBatch = 'No batch'
 
 const previewQueue: FeedbackQueueItem[] = [
   {
@@ -32,6 +33,7 @@ const previewQueue: FeedbackQueueItem[] = [
     displayName: 'Aarohi Deshmukh',
     assignmentTitle: 'Line confidence practice',
     assignmentGroup: 'Drawing foundations',
+    batchName: 'Weekend studio · December',
     submittedAt: '2026-10-08T11:30:00.000Z',
     submissionFileCount: 1,
     feedbackRevisionId: null,
@@ -52,6 +54,7 @@ const previewQueue: FeedbackQueueItem[] = [
     displayName: 'Kabir Mehta',
     assignmentTitle: 'Draw a one-point perspective room',
     assignmentGroup: 'Perspective & Objects',
+    batchName: 'UCEED crash course · November',
     submittedAt: '2026-10-09T09:15:00.000Z',
     submissionFileCount: 2,
     feedbackRevisionId: null,
@@ -140,7 +143,13 @@ export function TeacherFeedbackPage() {
   const queue = previewEnabled ? previewQueue : (queueQuery.data ?? [])
   const [selectedAttemptId, setSelectedAttemptId] = useState(searchParams.get('attempt') ?? '')
   const [publishedAttempts, setPublishedAttempts] = useState<string[]>([])
-  const visibleQueue = queue.filter((item) => !publishedAttempts.includes(item.submissionAttemptId))
+  const pendingQueue = queue.filter((item) => !publishedAttempts.includes(item.submissionAttemptId))
+  // D-066: teachers review batch by batch. '' is every batch; noBatch is students without one.
+  const [batchFilter, setBatchFilter] = useState('')
+  const batchNames = [...new Set(pendingQueue.map((item) => item.batchName ?? noBatch))].sort()
+  const visibleQueue = batchFilter
+    ? pendingQueue.filter((item) => (item.batchName ?? noBatch) === batchFilter)
+    : pendingQueue
   const requestedInstanceId = searchParams.get('instance')
   const selected =
     visibleQueue.find((item) => item.submissionAttemptId === selectedAttemptId) ??
@@ -547,9 +556,31 @@ export function TeacherFeedbackPage() {
         </div>
       </header>
 
+      {batchNames.length > 1 || batchFilter ? (
+        <div className={styles.batchFilter}>
+          <label htmlFor="review-batch">Batch</label>
+          <select
+            id="review-batch"
+            value={batchFilter}
+            onChange={(event) => {
+              setBatchFilter(event.target.value)
+              setSelectedAttemptId('')
+            }}
+          >
+            <option value="">All batches ({pendingQueue.length})</option>
+            {batchNames.map((name) => (
+              <option key={name} value={name}>
+                {name} ({pendingQueue.filter((item) => (item.batchName ?? noBatch) === name).length}
+                )
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
       {visibleQueue.length === 0 ? (
         <EmptyState
-          title="Review queue complete"
+          title={batchFilter ? 'Nothing waiting in this batch' : 'Review queue complete'}
           description="Newly submitted assignments will appear here."
         />
       ) : selected ? (
@@ -572,6 +603,7 @@ export function TeacherFeedbackPage() {
               >
                 <span>{item.assignmentGroup}</span>
                 <strong>{item.displayName}</strong>
+                <small>{item.batchName ?? noBatch}</small>
                 <small>{item.assignmentTitle}</small>
                 <small>
                   Attempt {item.attemptNumber ?? 1} · Version {item.submissionVersion ?? 1}

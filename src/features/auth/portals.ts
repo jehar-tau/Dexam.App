@@ -6,7 +6,7 @@ export type EmployeePortal = Exclude<Portal, 'student'>
 export const portalLabels: Record<Portal, string> = {
   student: 'Student portal',
   teacher: 'Teacher portal',
-  staff: 'Staff portal',
+  staff: 'Sales portal',
   admin: 'Admin portal',
 }
 export const portalSignIn: Record<Portal, string> = {
@@ -25,12 +25,19 @@ export function portalForPath(path: string): Portal | null {
     path.startsWith('/student/')
   )
     return 'student'
-  if (path === '/teacher' || path.startsWith('/teacher/') || path === '/staff/reviews')
+  if (
+    path === '/teacher' ||
+    path.startsWith('/teacher/') ||
+    ['/staff/reviews', '/staff/assignments', '/staff/classes', '/staff/curriculum-impact'].includes(
+      path,
+    )
+  )
     return 'teacher'
   if (
     path === '/admin' ||
     path.startsWith('/admin/') ||
     [
+      '/staff/crm/privacy',
       '/staff/employees',
       '/staff/student-recovery',
       '/staff/security/recovery',
@@ -44,9 +51,18 @@ export function portalForPath(path: string): Portal | null {
 
 export function canOpenPortal(portal: Portal, access: PortalAccess): boolean {
   if (portal === 'student') return access.student
-  if (portal === 'admin') return access.employee && access.administrator
+  // D-066: privacy operators use the admin portal for the Privacy tool only; its own guard stays.
+  if (portal === 'admin') return access.employee && (access.administrator || access.privacy)
   if (portal === 'teacher')
-    return access.employee && (access.reviews || Boolean(access.teacher && access.content))
+    return (
+      access.employee &&
+      (access.reviews ||
+        access.content ||
+        access.distribution ||
+        access.batchAssign ||
+        access.classes ||
+        access.curriculumImpact)
+    )
   return access.employee
 }
 

@@ -48,6 +48,12 @@ When work resumes, read the linked source, verify the current code and recent co
 
 D-050 B / F035 resumes only explicit content-authoring/publication access in the Teacher portal, named materials and safe draft-topic removal. DW-010's wider curriculum reader, roster, attendance and full in-review rubric remain deferred; no global Teacher authoring authority or student-distribution authority is implied.
 
+DW-049 — Batch seat capacity and availability (F055/D-066): Sales currently plan availability by choosing batch dates. Resume when the owner defines seat limits, waitlists or teacher availability; then add enforced capacity in `assign_student_batch`/admissions with tests.
+
+DW-050 — Upcoming batches at conversion (F055/D-066): the enrolment handoff still offers only batches that have already started. Decide whether a converted lead may be enrolled straight into an upcoming batch and what access applies before its start, then change `list_enrolment_handoff_choices` with tests.
+
+DW-051 — Owner-confirmed service durations (F055/D-066): end-to-end 365, crash course 45, portfolio 90, interview 30 days are placeholders that only pre-fill end dates. Replace with the owner's values by migration; add an admin editor only if durations change often.
+
 DW-048 — Teacher draft voice-note controls: source audit during handbook review found that `TeacherFeedbackPage` renders a draft `<audio controls />` without a source and has no dedicated remove action. Published student audio is a separate path. Correct and test draft playback/removal within existing private-file/access rules; do not describe those controls as working before verification. No new transcription/AI provider is authorized by this defect record.
 
 Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignment title/group, not the full brief/rubric. The handbook must not promise guidance is rendered. A bounded review-context/read API and its teacher authority must be specified/approved before implementation; do not silently override the deferred wider teacher reader or expose content-staff files.

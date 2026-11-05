@@ -1,0 +1,32 @@
+/* The directory and editors are wide work surfaces: header above, full-width card below. */
+.layout {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+.layout > * {
+  min-width: 0;
+}
+.intro {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 48rem;
+}
+.intro h1,
+.intro p {
+  margin: 0;
+}
+.lede {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body-lg);
+}
+.card {
+  padding: clamp(var(--space-5), 5vw, var(--space-8));
+  border-top: 3px solid var(--brand-orange);
+}
+.form {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
