@@ -1,25 +1,28 @@
 begin;
 select no_plan();
 
--- A coaching student and a B.Des candidate.
+-- Two coaching students and a B.Des candidate.
 insert into auth.users (id, instance_id, aud, role, email, encrypted_password)
 select format('e3000000-0000-4000-8000-00000000000%s', n)::uuid, '00000000-0000-0000-0000-000000000000',
   'authenticated', 'authenticated', format('nidmock-%s@dexam.test', n), ''
-from generate_series(1, 2) n;
+from generate_series(1, 3) n;
 insert into auth.sessions (id, user_id, aal, created_at, updated_at)
 select id, id, 'aal1', now(), now() from auth.users where id::text like 'e3000000-%';
 insert into public.people (id, member_id, display_name)
 values
   ('e3100000-0000-4000-8000-000000000001', 'DXM-RVNSTUDE2EEE', 'Fictional NID Student'),
-  ('e3100000-0000-4000-8000-000000000002', null, 'Fictional NID Candidate');
+  ('e3100000-0000-4000-8000-000000000002', null, 'Fictional NID Candidate'),
+  ('e3100000-0000-4000-8000-000000000003', 'DXM-RVNSTUDE3EEE', 'Fictional NID Second Student');
 insert into public.auth_identities (person_id, auth_user_id, kind)
 values
   ('e3100000-0000-4000-8000-000000000001', 'e3000000-0000-4000-8000-000000000001', 'member_id'::public.auth_identity_kind),
-  ('e3100000-0000-4000-8000-000000000002', 'e3000000-0000-4000-8000-000000000002', 'oauth_google'::public.auth_identity_kind);
+  ('e3100000-0000-4000-8000-000000000002', 'e3000000-0000-4000-8000-000000000002', 'oauth_google'::public.auth_identity_kind),
+  ('e3100000-0000-4000-8000-000000000003', 'e3000000-0000-4000-8000-000000000003', 'member_id'::public.auth_identity_kind);
 insert into public.memberships (person_id, kind, status, starts_at)
 values
   ('e3100000-0000-4000-8000-000000000001', 'student'::public.membership_kind, 'active', now() - interval '1 day'),
-  ('e3100000-0000-4000-8000-000000000002', 'candidate'::public.membership_kind, 'active', now() - interval '1 day');
+  ('e3100000-0000-4000-8000-000000000002', 'candidate'::public.membership_kind, 'active', now() - interval '1 day'),
+  ('e3100000-0000-4000-8000-000000000003', 'student'::public.membership_kind, 'active', now() - interval '1 day');
 insert into public.candidate_profiles (person_id, level, exams, exam_year)
 values ('e3100000-0000-4000-8000-000000000002', 'bdes', '{nid-bdes}', 2027);
 
@@ -112,6 +115,86 @@ select is(
      join public.assessment_attempt_tasks b on b.question_id = a.question_id
      where a.attempt_id = current_setting('test.mock2')::uuid and b.attempt_id = current_setting('test.mock')::uuid),
   0, 'the second mock repeats no task while new ones remain'
+);
+
+-- The draw is random, so check the rules over many draws: 200 times, build a first mock, finish it
+-- and build a second (each pass rolled back), keeping the worst case seen. A pass that broke a rule
+-- one time in ten would almost surely show here.
+set local request.jwt.claims = '{"sub":"e3000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1","session_id":"e3000000-0000-4000-8000-000000000003"}';
+do $$
+declare
+  v_first uuid;
+  v_second uuid;
+  v_value integer;
+  v_passes integer := 0;
+  v_fewest_kinds integer := 5;
+  v_most_mdes integer := 0;
+  v_most_repeats integer := 0;
+begin
+  for i in 1 .. 200 loop
+    begin
+      v_first := (public.start_drawing_mock('nid-dat-bdes-2026') ->> 'attemptId')::uuid;
+      select count(distinct t.slug) into v_value
+        from public.assessment_attempt_tasks x
+        join public.assessment_questions q on q.id = x.question_id
+        join public.assessment_topics t on t.id = q.topic_id
+        where x.attempt_id = v_first
+          and t.slug in ('drawing-scene', 'drawing-story', 'drawing-product', 'drawing-communication', 'drawing-creative');
+      v_fewest_kinds := least(v_fewest_kinds, v_value);
+      select count(*) into v_value
+        from public.assessment_attempt_tasks x
+        join public.assessment_question_provenance p on p.question_id = x.question_id
+        where x.attempt_id = v_first and p.paper_id = 'nid-mdes-dat-mock-90';
+      v_most_mdes := greatest(v_most_mdes, v_value);
+      update public.assessment_attempts set part_b_status = 'submitted', part_b_submitted_at = now()
+        where id = v_first;
+      v_second := (public.start_drawing_mock('nid-dat-bdes-2026') ->> 'attemptId')::uuid;
+      select count(*) into v_value
+        from public.assessment_attempt_tasks a
+        join public.assessment_attempt_tasks b on b.question_id = a.question_id
+        where a.attempt_id = v_second and b.attempt_id = v_first;
+      v_most_repeats := greatest(v_most_repeats, v_value);
+      v_passes := v_passes + 1;
+      raise exception using errcode = 'DXT00';
+    exception when sqlstate 'DXT00' then
+      null;
+    end;
+  end loop;
+  perform set_config('test.passes', v_passes::text, true);
+  perform set_config('test.fewest_kinds', v_fewest_kinds::text, true);
+  perform set_config('test.most_mdes', v_most_mdes::text, true);
+  perform set_config('test.most_repeats', v_most_repeats::text, true);
+end;
+$$;
+select is(current_setting('test.passes')::integer, 200, 'two hundred random draws ran');
+select is(current_setting('test.fewest_kinds')::integer, 5, 'every draw has a scene, story, product, communication and creative task');
+select is(current_setting('test.most_mdes')::integer, 0, 'no draw puts an M.Des-only task in a B.Des mock');
+select is(current_setting('test.most_repeats')::integer, 0, 'no second mock repeats a task while new ones remain');
+
+-- When a slot's type has no unseen task left, an unseen task of another type beats a repeat.
+insert into public.assessment_attempts (
+  id, person_id, paper_id, exam, status, started_at, submitted_at, submit_reason,
+  duration_minutes, objective_count, marking, kind, title, drawing_minutes, part_b_status, part_b_submitted_at
+)
+values (
+  'e3300000-0000-4000-8000-000000000001', 'e3100000-0000-4000-8000-000000000003', 'mock-nid-dat-bdes-2026',
+  'nid', 'submitted', now(), now(), 'candidate', 180, 0, '{}'::jsonb, 'drawing', 'NID DAT B.Des drawing mock',
+  180, 'submitted', now()
+);
+insert into public.assessment_attempt_tasks (attempt_id, question_id, position, max_marks)
+values
+  ('e3300000-0000-4000-8000-000000000001', 'e3200000-0000-4000-8000-000000000007', 0, 20),
+  ('e3300000-0000-4000-8000-000000000001', 'e3200000-0000-4000-8000-000000000008', 1, 20);
+select set_config('test.mock3', public.start_drawing_mock('nid-dat-bdes-2026') ->> 'attemptId', true);
+select is(
+  (select count(*)::integer from public.assessment_attempt_tasks where attempt_id = current_setting('test.mock3')::uuid),
+  6, 'a mock still gets six tasks once one type is used up'
+);
+select is(
+  (select count(*)::integer from public.assessment_attempt_tasks
+     where attempt_id = current_setting('test.mock3')::uuid
+       and question_id in ('e3200000-0000-4000-8000-000000000007', 'e3200000-0000-4000-8000-000000000008')),
+  0, 'and it repeats neither communication task the student already drew'
 );
 
 -- The candidate gets one free drawing mock.

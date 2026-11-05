@@ -39,6 +39,7 @@ The owner also supplied a scanned collection of NID-style drawing tasks to add t
   - new functions `assessment_drawing_level`, `assessment_drawing_blueprint`, `assessment_drawing_pool` (service only), `current_person_can_start_drawing_mock`, `list_drawing_mocks` and `start_drawing_mock`;
   - regenerated `begin_part_b` (keeps pinned tasks and their marks) and `get_part_b` (title, pinned count, tasks hidden before the start).
 - **pgTAP** `00490_nid_drawing_mocks.test.sql`.
+- **Order fix** `20261105021000_drawing_mock_unseen_first.sql`: the first version ranked a slot's type above an unseen task, so a slot whose type had no unseen task left repeated one while unseen tasks of other types remained. Unseen now comes first and type decides among them. The pgTAP file checks the rules over 200 random draws and pins the used-up-type case.
 - **Re-crop:** every block was re-cropped, so all crops are pending the owner's review again; none had been approved yet.
 - **Printed marks stay:** marks printed inside a block (for example "(20 marks)") are still there. A mixed mock sets its own marks per task.
 - **Text quality:** task text from phone screenshots is machine-read, so the review page is where wording errors get fixed.
