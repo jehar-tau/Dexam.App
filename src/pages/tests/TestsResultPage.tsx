@@ -5,6 +5,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { EmptyState } from '../../components'
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../../features/files/protectedFiles'
 import { fetchAttemptResult } from '../../features/testSeries/bankPaper'
 import { bankPaperId, findPaper, paperLabel, papers } from '../../features/testSeries/paperCatalog'
 import { buildPracticeResult } from '../../features/testSeries/practiceResult'
@@ -73,8 +74,11 @@ export function TestsResultPage() {
       }),
     enabled: !isPreview && Boolean(client && session),
     staleTime: Infinity,
+    // Figures are private object URLs owned by this view; reopening re-checks access.
+    gcTime: 0,
     retry: false,
   })
+  useObjectUrlBundle(query.data?.media)
 
   const result = isPreview ? previewResult : query.data
   const papersPath = `/tests/mock-test${search}`

@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+import { fictionalDownload } from '../../test/storage'
+
 import {
   BankPaperError,
   beginBankAttempt,
@@ -132,33 +134,41 @@ function client(responses: Record<string, { data: unknown; error: unknown }>) {
   const rpc = vi.fn((name: string) =>
     Promise.resolve(responses[name] ?? { data: null, error: { message: 'unexpected' } }),
   )
-  const createSignedUrls = vi.fn(() =>
-    Promise.resolve({
-      data: [
-        { path: 'ab/fig.png', signedUrl: 'https://local/sign/ab', error: null },
-        { path: 'cd/opt.png', signedUrl: 'https://local/sign/cd', error: null },
-        { path: 'ef/missing.png', signedUrl: '', error: 'Object not found' },
-      ],
-      error: null,
-    }),
-  )
+  const download = fictionalDownload((path) => path.includes('missing'))
+  const from = vi.fn(() => ({ download }))
   return {
     rpc,
-    createSignedUrls,
-    client: { rpc, storage: { from: () => ({ createSignedUrls }) } } as unknown as SupabaseClient,
+    download,
+    from,
+    client: { rpc, storage: { from } } as unknown as SupabaseClient,
   }
 }
 
 describe('attempt calls', () => {
-  it('opens an attempt, signing every figure once', async () => {
+  it('opens an attempt, reading every figure once through the session', async () => {
     const mock = client({ open_assessment_attempt: { data: payload, error: null } })
     const opened = await openBankAttempt(mock.client, 'UCEED 2025', 'uceed-2025')
     expect(mock.rpc).toHaveBeenCalledWith('open_assessment_attempt', { p_paper_id: 'uceed-2025' })
-    expect(mock.createSignedUrls).toHaveBeenCalledWith(
-      ['ab/fig.png', 'cd/opt.png', 'ef/missing.png'],
-      14400,
-    )
+    expect(mock.from).toHaveBeenCalledWith('assessment-media')
+    expect(mock.download.mock.calls.map(([path]) => path).sort()).toEqual([
+      'ab/fig.png',
+      'cd/opt.png',
+      'ef/missing.png',
+    ])
+    expect(mock.download).toHaveBeenCalledWith('ab/fig.png', {}, { cache: 'no-store' })
     expect(opened).toMatchObject({ attemptId: id(9), status: 'open', deadline: null })
+    expect(opened!.media.size).toBe(2)
+    opened!.media.revoke()
+  })
+
+  it('fails the paper when none of its figures can be read', async () => {
+    const mock = client({ open_assessment_attempt: { data: payload, error: null } })
+    mock.download.mockImplementation(() =>
+      Promise.resolve({ data: null, error: { message: 'Object not found' } }),
+    )
+    await expect(openBankAttempt(mock.client, 'UCEED 2025', 'uceed-2025')).rejects.toThrow(
+      'The figures for this paper could not be opened.',
+    )
   })
 
   it('returns null when nothing is reviewed and reports other failures', async () => {
@@ -239,7 +249,15 @@ describe('attempt calls', () => {
     })
     const result = await fetchAttemptResult(mock.client, id(9), () => 'UCEED 2025')
     expect(result).toMatchObject({ title: 'UCEED 2025', score: 3, maxScore: 7, preview: false })
-    expect(result.questions[0]!.figures[0]!.src).toBe('https://local/sign/ab')
+    expect(result.questions[0]!.figures[0]!.src).toBe('blob:fictional/ab/fig.png')
+    result.media.revoke()
+
+    // A result whose figures are all unreadable still opens, without them.
+    mock.download.mockImplementation(() =>
+      Promise.resolve({ data: null, error: { message: 'Object not found' } }),
+    )
+    const bare = await fetchAttemptResult(mock.client, id(9), () => 'UCEED 2025')
+    expect(bare.questions[0]!.figures).toEqual([])
   })
 
   it('lists attempts and paper readiness', async () => {

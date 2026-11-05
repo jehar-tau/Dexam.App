@@ -664,25 +664,24 @@ try {
   const page = await studentContext.newPage()
   await page.goto('http://127.0.0.1:5173/student/archive')
   await page.getByText('Published fictional drawing feedback.', { exact: true }).waitFor()
-  await page
-    .getByRole('button', { name: 'Prepare download: Fictional drawing.pdf', exact: true })
-    .click()
-  const link = page.getByRole('link', { name: 'Download retained file', exact: true })
-  await link.waitFor()
-  const signedURL = await link.getAttribute('href')
-  const downloaded = await fetch(signedURL)
-  if (
-    !downloaded.ok ||
-    Buffer.compare(Buffer.from(await downloaded.arrayBuffer()), Buffer.from(bytes)) !== 0
-  )
-    throw new Error('Retained file download failed.')
-  const signed = await must(
+  // D-065: the archive returns the bytes to the request itself; no link is left on the page.
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download Fictional drawing.pdf', exact: true }).click()
+  const saved = await downloadPromise
+  if (saved.suggestedFilename() !== 'Fictional drawing.pdf')
+    throw new Error('Retained file name changed.')
+  if (await page.getByRole('link', { name: /retained file/ }).count())
+    throw new Error('Retained file link exposed.')
+  const retained = await must(
     await student.functions.invoke('student-work-archive-file', {
       body: { fileId: uploaded.file.id, kind: 'submission' },
     }),
   )
-  if (Date.parse(signed.expiresAt) - Date.now() > 61000)
-    throw new Error('Download TTL exceeds bound.')
+  if (
+    !(retained instanceof Blob) ||
+    Buffer.compare(Buffer.from(await retained.arrayBuffer()), Buffer.from(bytes)) !== 0
+  )
+    throw new Error('Retained file download failed.')
   await page.screenshot({ path: 'test-results/f019-closeout/archive-desktop.png', fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   if (!(await page.locator('body').evaluate((body) => body.scrollWidth <= body.clientWidth)))

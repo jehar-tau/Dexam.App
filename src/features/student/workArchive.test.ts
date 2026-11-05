@@ -15,7 +15,19 @@ describe('private work archive service', () => {
     mocks.rpc.mockResolvedValue({ error: null, data: [{ secret: 'do-not-echo' }] })
     await expect(getWorkArchive()).rejects.toThrow('Your work archive could not be loaded.')
   })
-  it('rejects external download destinations and does not expose provider errors', async () => {
+  it('returns the retained bytes typed from the checked header, never a link', async () => {
+    mocks.invoke.mockResolvedValue({
+      error: null,
+      data: new Blob(['voice']),
+      response: new Response(null, { headers: { 'X-Dexam-File-Type': 'audio/webm' } }),
+    })
+    const file = await getArchiveDownload('file', 'voice')
+    expect(file.type).toBe('audio/webm')
+    expect(mocks.invoke).toHaveBeenCalledWith('student-work-archive-file', {
+      body: { fileId: 'file', kind: 'voice' },
+    })
+  })
+  it('rejects old link responses and does not expose provider errors', async () => {
     mocks.invoke.mockResolvedValue({
       error: null,
       data: { path: 'https://evil.invalid/private', expiresAt: '2026-10-14T10:00:00Z' },

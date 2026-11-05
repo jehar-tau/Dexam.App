@@ -1,4 +1,5 @@
 import { getSupabaseClient } from '../auth/supabaseClient'
+import { ObjectUrlBundle, loadProtectedObjectUrls } from '../files/protectedFiles'
 
 export type FeedbackSourceKind = 'human' | 'dictation_assisted' | 'ai_proofread'
 export type FeedbackOutcome = 'review_completed' | 'correction_requested'
@@ -27,8 +28,11 @@ export type ReviewSubmissionFile = {
   id: string
   mimeType: string
   name: string
-  signedUrl: string
+  /** Private object URL owned by `ReviewSubmissionFiles.media`, never a reusable link. */
+  url: string
 }
+
+export type ReviewSubmissionFiles = { files: ReviewSubmissionFile[]; media?: ObjectUrlBundle }
 
 type Row = Record<string, unknown>
 
@@ -75,9 +79,10 @@ export async function getFeedbackReviewQueue(): Promise<FeedbackQueueItem[]> {
   }))
 }
 
+/** Each file is read through the reviewer's session, so Storage re-checks review access. */
 export async function getReviewSubmissionFiles(
   submissionAttemptId: string,
-): Promise<ReviewSubmissionFile[]> {
+): Promise<ReviewSubmissionFiles> {
   const client = clientOrThrow()
   const result = await client
     .from('submission_files')
@@ -87,20 +92,26 @@ export async function getReviewSubmissionFiles(
     .is('purged_at', null)
     .order('position')
   if (result.error || !Array.isArray(result.data)) throw new Error(unavailableMessage)
-  return Promise.all(
-    (result.data as Row[]).map(async (row) => {
-      const signed = await client.storage
-        .from('student-submissions')
-        .createSignedUrl(text(row.object_path), 15 * 60)
-      if (signed.error) throw new Error(unavailableMessage)
-      return {
-        id: text(row.id),
-        name: text(row.original_file_name),
-        mimeType: text(row.mime_type),
-        signedUrl: signed.data.signedUrl,
-      }
-    }),
+  const rows = result.data as Row[]
+  const media = new ObjectUrlBundle()
+  const urls = await loadProtectedObjectUrls(
+    client,
+    'student-submissions',
+    rows.map((row) => text(row.object_path)),
+    media,
   )
+  const files = rows.map((row) => ({
+    id: text(row.id),
+    name: text(row.original_file_name),
+    mimeType: text(row.mime_type),
+    url: urls.get(text(row.object_path)) ?? '',
+  }))
+  // A reviewer must see every submitted file, so one unreadable file fails the whole set.
+  if (files.some((file) => !file.url)) {
+    media.revoke()
+    throw new Error(unavailableMessage)
+  }
+  return { files, media }
 }
 
 export async function startFeedbackDraft(submissionAttemptId: string) {

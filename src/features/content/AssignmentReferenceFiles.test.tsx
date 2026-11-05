@@ -4,7 +4,7 @@ import { renderApp } from '../../test/render'
 import { AssignmentReferenceFiles } from './AssignmentReferenceFiles'
 const mocks = vi.hoisted(() => ({
   rpc: vi.fn(),
-  signed: vi.fn(),
+  download: vi.fn(),
   current: vi.fn(),
   dispose: vi.fn(),
 }))
@@ -15,7 +15,7 @@ vi.mock('../auth/supabaseClient', () => ({ getSupabaseClient: () => ({ rpc: mock
 vi.mock('../auth/accountOperation', () => ({
   captureAccountOperation: () =>
     Promise.resolve({
-      client: { storage: { from: () => ({ createSignedUrl: mocks.signed }) } },
+      client: { storage: { from: () => ({ download: mocks.download }) } },
       assertCurrent: mocks.current,
       dispose: mocks.dispose,
     }),
@@ -37,34 +37,33 @@ describe('named private assignment references', () => {
     })
   })
   afterEach(() => vi.unstubAllEnvs())
-  it('shows descriptive names without treating them as storage paths', async () => {
+  it('downloads bytes with the session under the descriptive name, with no signed link', async () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
-    mocks.signed.mockResolvedValue({
-      data: {
-        signedUrl:
-          'https://fictional.test/storage/v1/object/sign/assignment-materials/offering/version/file.pdf?token=fictional',
-      },
-      error: null,
+    vi.stubGlobal('URL', {
+      ...URL,
+      createObjectURL: () => 'blob:fictional/brief',
+      revokeObjectURL: () => {},
     })
+    mocks.download.mockResolvedValue({ data: new Blob(['pdf']), error: null })
     renderApp(<AssignmentReferenceFiles versionId="version" />)
     await userEvent.click(
       await screen.findByRole('button', { name: 'Download Construction guide' }),
     )
-    expect(mocks.signed).toHaveBeenCalledWith('offering/version/file.pdf', 60, {
-      download: 'brief.pdf',
-    })
+    expect(mocks.download).toHaveBeenCalledWith(
+      'offering/version/file.pdf',
+      {},
+      { cache: 'no-store' },
+    )
     expect(click).toHaveBeenCalledOnce()
+    const link = click.mock.contexts[0] as HTMLAnchorElement
+    expect(link.download).toBe('brief.pdf')
+    expect(link.getAttribute('href')).toBe('blob:fictional/brief')
     expect(mocks.dispose).toHaveBeenCalledOnce()
     click.mockRestore()
+    vi.unstubAllGlobals()
   })
-  it('rejects cross-origin links and keeps provider details private', async () => {
-    mocks.signed.mockResolvedValue({
-      data: {
-        signedUrl:
-          'https://other.test/storage/v1/object/sign/assignment-materials/file?token=wrong',
-      },
-      error: null,
-    })
+  it('reports denied access without provider details', async () => {
+    mocks.download.mockResolvedValue({ data: null, error: { message: 'Object not found' } })
     renderApp(<AssignmentReferenceFiles versionId="version" />)
     await userEvent.click(
       await screen.findByRole('button', { name: 'Download Construction guide' }),
@@ -81,7 +80,7 @@ describe('named private assignment references', () => {
       await screen.findByRole('button', { name: 'Download Construction guide' }),
     )
     expect(await screen.findByRole('alert')).toHaveTextContent('current access')
-    expect(mocks.signed).not.toHaveBeenCalled()
+    expect(mocks.download).not.toHaveBeenCalled()
     expect(click).not.toHaveBeenCalled()
     click.mockRestore()
   })

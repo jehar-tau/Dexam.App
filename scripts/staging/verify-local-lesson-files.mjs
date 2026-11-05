@@ -258,14 +258,14 @@ try {
       source_type: 'manual',
     }),
   )
-  const signed = await must(
+  // D-065: the function returns the bytes themselves; there is no signed link to replay.
+  const downloaded = await must(
     await student.functions.invoke('lesson-material-file', {
       body: { lessonId: lesson, fileId: asset },
     }),
   )
-  const downloaded = await fetch(new URL(signed.path, config.API_URL))
   if (
-    !downloaded.ok ||
+    !(downloaded instanceof Blob) ||
     Buffer.compare(Buffer.from(await downloaded.arrayBuffer()), Buffer.from(bytes)) !== 0
   )
     throw new Error('Private download mismatch')

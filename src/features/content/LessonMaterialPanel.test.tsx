@@ -26,6 +26,18 @@ describe('lesson material panel', () => {
     expect(screen.queryByLabelText('Attach lesson file')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Remove notes.pdf' })).not.toBeInTheDocument()
   })
+  it('saves the downloaded bytes under the lesson file name, with no link', async () => {
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    mocks.list.mockResolvedValue([{ id: 'fictional', file_name: 'notes.pdf', byte_size: 20 }])
+    mocks.download.mockResolvedValue(new Blob(['pdf'], { type: 'application/pdf' }))
+    renderApp(<LessonFiles lessonId="fictional-lesson" />)
+    await userEvent.click(await screen.findByRole('button', { name: 'Download notes.pdf' }))
+    expect(mocks.download).toHaveBeenCalledWith('fictional-lesson', 'fictional')
+    const link = click.mock.contexts[0] as HTMLAnchorElement
+    expect(link.download).toBe('notes.pdf')
+    expect(link.getAttribute('href')).toMatch(/^blob:/)
+    click.mockRestore()
+  })
   it('lets editors remove a draft reference and refresh the list', async () => {
     mocks.list
       .mockResolvedValueOnce([{ id: 'fictional', file_name: 'notes.pdf', byte_size: 20 }])

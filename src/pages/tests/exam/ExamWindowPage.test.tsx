@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { attemptStorageKey } from '../../../features/testSeries/examAttempt'
 import { renderApp } from '../../../test/render'
+import { fictionalDownload } from '../../../test/storage'
 import { ExamWindowPage } from './ExamWindowPage'
 
 const mocks = vi.hoisted(() => ({
@@ -233,13 +234,7 @@ describe('Exam window with the question bank', () => {
       rpc,
       storage: {
         from: () => ({
-          createSignedUrls: () =>
-            Promise.resolve({
-              data: [
-                { path: 'ab/figure.png', signedUrl: 'http://127.0.0.1/signed/ab', error: null },
-              ],
-              error: null,
-            }),
+          download: fictionalDownload(),
         }),
       },
     }
@@ -273,7 +268,7 @@ describe('Exam window with the question bank', () => {
     expect(screen.getByRole('timer', { name: 'Time left' })).toHaveTextContent(/00:(40:00|39:5\d)/)
     expect(screen.getByRole('img', { name: 'Figure 1 for question 1' })).toHaveAttribute(
       'src',
-      'http://127.0.0.1/signed/ab',
+      'blob:fictional/ab/figure.png',
     )
     await user.click(screen.getByRole('radio', { name: /Square/ }))
     await user.click(screen.getByRole('button', { name: 'Save & Next' }))

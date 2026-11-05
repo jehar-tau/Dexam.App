@@ -49,7 +49,7 @@ The author answers each applicable item in the PR's security section. "Not appli
 - **Access control:** row-level security on every exposed table, plus server-side checks. Never trust role, price, entitlement, score, ownership, timer or file metadata sent by the browser.
 - **Injection:** no string-built SQL; parameterised RPCs; no dynamic `eval`; no HTML rendered from content without sanitising (prevents XSS).
 - **Authentication and session:** MFA where required, session revocation, safe redirects, protection against brute force and credential stuffing.
-- **File uploads:** allow-listed type and size, content checks, private storage, short-lived signed URLs, enforced deadlines.
+- **File uploads:** allow-listed type and size, content checks, private storage, per-request session-authorised reads (no reusable signed links, D-065), enforced deadlines.
 - **Webhooks and integrations:** signature verification, idempotency, replay protection, no SSRF to internal addresses.
 - **Data exposure:** answer keys, provenance and other students' data never reach the browser; error messages and logs leak nothing sensitive.
 
@@ -64,7 +64,7 @@ The author answers each applicable item in the PR's security section. "Not appli
 
 ### 3.3 Cloning and scraping attacks
 
-- **Question-bank harvesting:** questions reach students only inside an attempt, a few at a time. There are no list or enumeration endpoints and no keys client-side. Media uses attempt-scoped signed URLs with short lifetimes. Requests are rate-limited per account and IP, and the no-repeat ledger plus generation limits stop farming of questions through endless attempts.
+- **Question-bank harvesting:** questions reach students only inside an attempt, a few at a time. There are no list or enumeration endpoints and no keys client-side. Media is read per request with the candidate's session, so Storage re-checks attempt access every time and there is no shareable link (D-065). Requests are rate-limited per account and IP, and the no-repeat ledger plus generation limits stop farming of questions through endless attempts.
 - **Leak tracing:** add per-candidate traceable marks to served questions and media where a Decision Gate approves them, so leaked papers can be traced.
 - **Account sharing and bots:** detect concurrent sessions per account, use verified sign-in, apply bot checks on sign-up and purchase, and lock an attempt to one session.
 - **Site, brand and phishing clones:** watch for look-alike domains, keep official domains and sender identities (SPF/DKIM/DMARC) documented, and keep security headers and CSP so the site cannot be framed. Never put secrets in the client bundle.

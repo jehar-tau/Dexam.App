@@ -30,7 +30,7 @@ vi.mock('../features/feedback/teacherFeedback', () => ({
         writtenText: 'Existing fictional feedback.',
       },
     ]),
-  getReviewSubmissionFiles: () => Promise.resolve([]),
+  getReviewSubmissionFiles: () => Promise.resolve({ files: [] }),
   startFeedbackDraft: mocks.start,
   saveFeedbackDraft: mocks.save,
   publishFeedback: mocks.publish,

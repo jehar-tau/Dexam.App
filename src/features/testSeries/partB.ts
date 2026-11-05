@@ -1,6 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 
+import { ObjectUrlBundle, loadProtectedObjectUrls } from '../files/protectedFiles'
+
 /**
  * F043 Part B (drawing and uploads) and F048 evaluation. The server pins the drawing tasks and
  * times the drawing and the upload window; the storage policy refuses uploads outside it.
@@ -127,21 +129,19 @@ export async function uploadPartBFile(
   })
 }
 
-/** Signed links for task figures (bank media) and uploaded sheets. */
-export async function signPartBMedia(client: SupabaseClient, partB: PartB) {
-  const urls = new Map<string, string>()
-  const figures = [...new Set(partB.tasks.flatMap((task) => task.figures.map((f) => f.path)))]
+/**
+ * Task figures (bank media) and uploaded sheets, each read through the caller's session so Storage
+ * re-checks attempt access per request. Hold `media` with useObjectUrlBundle while shown.
+ */
+export async function loadPartBMedia(client: SupabaseClient, partB: PartB) {
+  const media = new ObjectUrlBundle()
+  const figures = partB.tasks.flatMap((task) => task.figures.map((f) => f.path))
   const uploads = partB.tasks.flatMap((task) => task.uploads.map((u) => u.path))
-  const sign = async (bucket: string, paths: string[]) => {
-    if (!paths.length) return
-    const signed = await client.storage.from(bucket).createSignedUrls(paths, 60 * 60)
-    if (signed.error) return
-    for (const entry of signed.data) {
-      if (entry.path && entry.signedUrl && !entry.error) urls.set(entry.path, entry.signedUrl)
-    }
-  }
-  await Promise.all([sign('assessment-media', figures), sign(PART_B_BUCKET, uploads)])
-  return urls
+  const [figureUrls, uploadUrls] = await Promise.all([
+    loadProtectedObjectUrls(client, 'assessment-media', figures, media),
+    loadProtectedObjectUrls(client, PART_B_BUCKET, uploads, media),
+  ])
+  return { urls: new Map([...figureUrls, ...uploadUrls]), media }
 }
 
 const queueSchema = z.array(

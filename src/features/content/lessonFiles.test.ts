@@ -14,20 +14,29 @@ describe('lesson file client', () => {
     mocks.rpc.mockResolvedValue({ error: { message: 'private provider details' } })
     await expect(removeLessonFile('fictional', 'file')).rejects.toThrow('could not be removed')
   })
-  it('accepts only signed lesson bucket paths on configured origin', async () => {
-    vi.stubEnv('VITE_SUPABASE_URL', 'https://fictional.test')
-    const path =
-      '/storage/v1/object/sign/lesson-materials/10000000-0000-4000-8000-000000000001?token=fictional'
-    mocks.invoke.mockResolvedValue({ data: { path }, error: null })
-    expect(await getLessonDownload('lesson', 'file')).toBe('https://fictional.test' + path)
+  it('accepts only the bytes themselves, typed from the checked stored-type header', async () => {
+    const response = (type: string) =>
+      new Response(null, { headers: { 'X-Dexam-File-Type': type } })
+    mocks.invoke.mockResolvedValue({
+      data: new Blob(['fictional']),
+      error: null,
+      response: response('application/pdf'),
+    })
+    const file = await getLessonDownload('lesson', 'file')
+    expect(file).toBeInstanceOf(Blob)
+    expect(file.type).toBe('application/pdf')
+    mocks.invoke.mockResolvedValue({
+      data: new Blob(['<script>']),
+      error: null,
+      response: response('text/html'),
+    })
+    expect((await getLessonDownload('lesson', 'file')).type).toBe('application/octet-stream')
     for (const unsafe of [
-      'https://other.test' + path,
-      '//other.test' + path,
-      path + '#fragment',
-      '/storage/v1/object/sign/student-submissions/id?token=fake',
-      path.replace('?token=fictional', '?other=1'),
+      { data: { path: '/storage/v1/object/sign/lesson-materials/id?token=old' }, error: null },
+      { data: 'text body', error: null },
+      { data: null, error: { message: 'private provider details' } },
     ]) {
-      mocks.invoke.mockResolvedValue({ data: { path: unsafe }, error: null })
+      mocks.invoke.mockResolvedValue(unsafe)
       await expect(getLessonDownload('lesson', 'file')).rejects.toThrow('could not be verified')
     }
   })

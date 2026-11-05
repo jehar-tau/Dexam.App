@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 
 import { useAuth } from '../../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../../../features/files/protectedFiles'
 import { formatClock } from '../../../features/testSeries/examAttempt'
 import {
   beginPartB,
@@ -11,7 +12,7 @@ import {
   PART_B_MAX_FILES,
   partBFileProblem,
   partBStatusLabel,
-  signPartBMedia,
+  loadPartBMedia,
   startPartBUpload,
   submitPartB,
   uploadPartBFile,
@@ -33,12 +34,15 @@ export function PartBPage() {
     queryKey: key,
     queryFn: async () => {
       const partB = await fetchPartB(client!, attemptId)
-      return { partB, urls: await signPartBMedia(client!, partB) }
+      return { partB, ...(await loadPartBMedia(client!, partB)) }
     },
     enabled: Boolean(client && session),
+    // Sheets and figures are private object URLs owned by this view; reopening re-checks access.
+    gcTime: 0,
     refetchOnWindowFocus: false,
     retry: false,
   })
+  useObjectUrlBundle(query.data?.media)
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000)
@@ -49,6 +53,7 @@ export function PartBPage() {
     queryClient.setQueryData(key, (current: typeof query.data) => ({
       partB,
       urls: current?.urls ?? new Map<string, string>(),
+      media: current?.media,
     }))
   const begin = useMutation({
     mutationFn: () => beginPartB(client!, attemptId),

@@ -23,7 +23,7 @@ describe('studentAssignments', () => {
     mocks.createSignedUrl.mockReset()
   })
 
-  it('maps published feedback and creates only a short-lived authorized voice URL', async () => {
+  it('maps published feedback and keeps the voice note as a private path without minting a link', async () => {
     mocks.order.mockResolvedValue({
       data: [
         {
@@ -71,11 +71,6 @@ describe('studentAssignments', () => {
       ],
       error: null,
     })
-    mocks.createSignedUrl.mockResolvedValue({
-      data: { signedUrl: 'https://private.test/voice' },
-      error: null,
-    })
-
     const assignments = await getStudentAssignments()
 
     expect(assignments[0]?.attempts[0]?.feedback).toEqual({
@@ -84,9 +79,10 @@ describe('studentAssignments', () => {
       correctionReason: null,
       publishedAt: '2026-10-12T09:00:00.000Z',
       aiAssisted: true,
-      voiceUrl: 'https://private.test/voice',
+      voicePath: 'revision-id/audio-id.webm',
     })
-    expect(mocks.createSignedUrl).toHaveBeenCalledWith('revision-id/audio-id.webm', 900)
+    // The page opens the voice note through the session when shown; no link is minted here.
+    expect(mocks.createSignedUrl).not.toHaveBeenCalled()
   })
 
   it('maps only the private instances, immutable version, attempts, and files returned by RLS', async () => {

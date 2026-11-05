@@ -13,6 +13,7 @@ import {
 import { practicePaper } from '../../features/testSeries/examPaper'
 import { renderApp } from '../../test/render'
 import { TestsResultPage } from './TestsResultPage'
+import { fictionalDownload } from '../../test/storage'
 
 const mocks = vi.hoisted(() => ({
   session: null as null | { user: { id: string; email: string } },
@@ -135,7 +136,7 @@ describe('Results page', () => {
           error: null,
         }),
       ),
-      storage: { from: () => ({ createSignedUrls: vi.fn() }) },
+      storage: { from: () => ({ download: fictionalDownload() }) },
     }
     renderResult('/tests/results/00000000-0000-4000-8000-0000000000a1')
     expect(await screen.findByRole('heading', { name: 'UCEED 2025' })).toBeVisible()

@@ -3,6 +3,7 @@ import { getSupabaseClient } from '../auth/supabaseClient'
 import { prepareSubmissionFile } from '../student/prepareSubmissionFile'
 import { validateMaterialFile } from './contentWorkspace'
 import { captureAccountOperation } from '../auth/accountOperation'
+import { protectedFunctionFile } from '../files/protectedFiles'
 const schema = z.object({
   id: z.string().uuid(),
   file_name: z.string().min(1).max(180),
@@ -50,22 +51,12 @@ export async function removeLessonFile(lessonId: string, fileId: string) {
   })
   if (result.error) throw new Error('The file could not be removed from this draft.')
 }
+/** The function checks lesson access and returns the bytes themselves, never a signed link. */
 export async function getLessonDownload(lessonId: string, fileId: string) {
   const result = await client().functions.invoke('lesson-material-file', {
     body: { lessonId, fileId },
   })
-  const parsed = z.object({ path: z.string() }).safeParse(result.data)
-  const base = import.meta.env.VITE_SUPABASE_URL,
-    path = parsed.success ? parsed.data.path : null
-  if (
-    result.error ||
-    !base ||
-    typeof path !== 'string' ||
-    !/^\/storage\/v1\/object\/sign\/lesson-materials\/[0-9a-f-]{36}\?/.test(path) ||
-    path.includes('#')
-  )
-    throw new Error(failed)
-  const url = new URL(path, base)
-  if (url.origin !== new URL(base).origin || !url.searchParams.get('token')) throw new Error(failed)
-  return url.toString()
+  const file = protectedFunctionFile(result)
+  if (!file) throw new Error(failed)
+  return file
 }
