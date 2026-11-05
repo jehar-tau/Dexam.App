@@ -3,6 +3,8 @@
 Status: Implemented and merged through PR #16 — D-024 Option B
 Risk: Red — canonical identity, duplicate resolution, enrolment approval, and student access
 
+2026-11-05: D-065/F054 authorizes an additional direct administrator admission path using this same canonical identity/enrolment model. Keep CRM Sales request-only scope and existing deliberate identity resolution; do not duplicate the student directory or merge on guardian/contact email. Race-safe login reservations/manual receipts are new work, not already implemented by F012.
+
 ## Purpose and problem
 
 F010 lets assigned Sales staff request enrolment review without creating student access. F004 provides canonical students, offerings, cohorts, enrolments, and activation packs. The missing bridge is a safe Enrolment Operator workflow that consumes only explicit CRM requests, resolves possible identity matches, chooses the correct learning context, and creates the approved enrolment without widening CRM access.

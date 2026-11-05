@@ -4,6 +4,8 @@ Status: In review — database and first student interface implemented
 Risk: Red
 Owner: Product owner with Codex engineering support
 
+2026-11-05 approved extension: D-065/F054 adds a shared canonical admissions directory, explicit student login reservations, manually confirmed external-payment evidence and explicit access validity/lifecycle editing. The historical first-foundation payment/lifecycle exclusions below are not the latest requested scope; F054 tracks the new implementation and acceptance. No new transaction or live activation is complete yet.
+
 ## Purpose and problem
 
 Dexam needs a small, trustworthy academic record that answers three questions before a student receives an activation pack: what they joined, which delivery group they belong to, and whether that enrolment is currently approved. The model must support the first entrance-preparation course without binding a lifelong member identity to one course, year, or institution.

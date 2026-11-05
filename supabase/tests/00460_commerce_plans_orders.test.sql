@@ -13,6 +13,11 @@ insert into auth.sessions (id, user_id, aal, created_at, updated_at)
 select id, id, 'aal1', now(), now() from auth.users where id::text like 'e9000000-%';
 
 -- Two fictional UCEED papers so the purchase has something to unlock.
+update auth.users set email_confirmed_at=now() where id::text like 'e9000000-%';
+update auth.identities i set identity_data=i.identity_data||jsonb_build_object('email',u.email,'email_verified',true)
+from auth.users u where u.id=i.user_id and u.id::text like 'e9000000-%' and i.provider='google';
+
+-- Two fictional UCEED papers so the purchase has something to unlock.
 insert into public.assessment_questions (
   id, external_key, version, content_hash, question_type, prompt, response_mode,
   publication_state, quarantine_reasons, licence, source_kind

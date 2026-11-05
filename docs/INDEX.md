@@ -4,6 +4,8 @@ Use this map instead of reading the entire documentation tree.
 
 ## Read at the start of work
 
+- `CLOUD_CODE_HANDOFF.md` — unfinished F054 draft checkpoint, implemented scope, exact remaining work and safe continuation instructions for a new Claude/Cloud Code session
+
 - `CURRENT_STATE.md` — what exists, what is next, and known blockers
 - `RELEASE_STATUS.md` — concise implemented-core, remaining launch dependencies and deliberately deferred-module map
 - `usage/README.md` — application usage handbook with separate student, teacher, staff and administrator guides; current sign-in/separation limitations

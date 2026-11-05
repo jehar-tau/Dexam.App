@@ -3,6 +3,8 @@
 Status: Accepted for fictional/local scope through PRs #35–#37 — production delivery and reconciliation remain gated
 Risk: Red
 
+2026-11-05: D-065/F054 approves verified Google sign-in/claims for authorized staff on the same identity backend. Preserve the established invitation, role assignment, live-session, MFA/recovery and sensitive contact-change controls below; Google sign-in alone grants no role. Keep old login/recovery working until the new claim and acceptance path is verified. No live provider setting, real invitation or identity migration is authorized by this brief.
+
 ## Purpose and problem
 
 Staff can sign in and use MFA, but employee accounts still require developer-controlled provisioning. Forgotten employee passwords have no application recovery journey. Build a controlled invite-only experience without exposing administrator-selected passwords or bypassing existing MFA and suspension rules.

@@ -4,6 +4,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Callout, Card, Input } from '../components'
 import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import { useAuth } from '../features/auth/AuthContext'
+import { sharedGoogleEnabled, startPortalGoogleLogin } from '../features/auth/googleLogin'
 import styles from './SignInPage.module.css'
 
 function safeReturnTo(value: string | null) {
@@ -73,6 +74,23 @@ export function StudentSignInPage() {
           </Callout>
         ) : null}
 
+        {sharedGoogleEnabled() ? (
+          <Button
+            disabled={!configured || submitting}
+            variant="secondary"
+            fullWidth
+            onClick={() => {
+              setSubmitting(true)
+              setError('')
+              void startPortalGoogleLogin(destination).catch((failure: unknown) => {
+                setError(failure instanceof Error ? failure.message : 'Google sign-in failed.')
+                setSubmitting(false)
+              })
+            }}
+          >
+            Continue with Google
+          </Button>
+        ) : null}
         <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
           <Input
             autoCapitalize="characters"

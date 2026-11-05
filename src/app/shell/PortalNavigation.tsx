@@ -34,6 +34,7 @@ const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['curriculumImpact', 'Curriculum preview', '/staff/curriculum-impact'],
 ]
 const adminLinks: [keyof NavigationAccess, string, string][] = [
+  ['enrolments', 'Admissions', '/admin/admissions'],
   ['employees', 'Employees', '/admin/employees'],
   ['studentRecovery', 'Student recovery', '/admin/student-recovery'],
   ['staffRecovery', 'Staff recovery', '/admin/recovery'],

@@ -3,6 +3,8 @@
 Status: Implementation authorized — D-032 Option B approved 2026-10-14
 Risk: Red
 
+2026-11-05: D-065/F054 extends the requested lifecycle to explicit time-limited access, renewal, suspension/revocation and recorded batch transfers. Preserve this feature's bounded finalized-own-work archive and historical links. Whether automatic access expiry itself begins that archive remains an owner question; do not invent an anchor or physical-retention extension. The old lifecycle exclusions below describe the original F019 slice, not the full newly approved direction.
+
 ## Purpose
 
 Provide an explicit, scoped, audited end to an active enrolment while preserving the student's permanent identity and other courses. Resolve the gap between current active-only reads and D-018's download opportunity for retained finalized submissions.
