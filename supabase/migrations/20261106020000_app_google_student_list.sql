@@ -106,7 +106,10 @@ begin
   if exists(select 1 from public.auth_identities where person_id=target.person_id and kind='employee_email') then
    raise exception using errcode='40001',message='use verified provider linking for the established employee account'; end if;
   identity_kind:='employee_email';
- elsif target.purpose in ('student','both') and exists(select 1 from public.memberships where person_id=target.person_id and kind='student' and status='active') then
+ elsif target.purpose in ('student','both') and exists(select 1 from public.memberships where person_id=target.person_id and kind='student' and status='active')
+  -- D-067: a student reservation must never give a Google account a staff person's authority.
+  and not exists(select 1 from public.memberships where person_id=target.person_id and kind='employee')
+  and not exists(select 1 from public.auth_identities where person_id=target.person_id and kind='employee_email') then
   identity_kind:='oauth_google';
  else raise exception using errcode='42501',message='approved active membership required'; end if;
  -- A newly linked Auth user inherits every existing canonical-person cutoff.
@@ -158,6 +161,8 @@ begin
     left join public.approved_login_emails a on a.person_id=p.id
     -- Student-only entries; 'employee'/'both' logins are staff-managed and never revoked here.
     where p.status='active' and (a.purpose is null or a.purpose='student')
+      and not exists(select 1 from public.memberships e where e.person_id=p.id and e.kind='employee')
+      and not exists(select 1 from public.auth_identities i where i.person_id=p.id and i.kind='employee_email')
       and (needle='' or position(needle in lower(p.display_name))>0 or position(needle in lower(coalesce(p.member_id,'')))>0
         or position(needle in coalesce(a.email,''))>0)
     order by p.display_name,p.member_id limit 100;
@@ -186,6 +191,10 @@ begin
   if not exists(select 1 from public.people p join public.memberships m on m.person_id=p.id
       where p.id=p_person_id and p.status='active' and m.kind='student' and m.status='active') then
     raise exception using errcode='22023',message='only current students can be added'; end if;
+  -- Staff Google logins follow verified employee linking, never this Sales-reachable list.
+  if exists(select 1 from public.memberships where person_id=p_person_id and kind='employee')
+    or exists(select 1 from public.auth_identities where person_id=p_person_id and kind='employee_email') then
+    raise exception using errcode='22023',message='staff members are not added through the student Google list'; end if;
   select * into existing from public.approved_login_emails where person_id=p_person_id for update;
   if found then
     if existing.purpose<>'student' then

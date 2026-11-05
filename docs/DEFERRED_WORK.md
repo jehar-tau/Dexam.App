@@ -56,6 +56,8 @@ DW-051 — Owner-confirmed service durations (F055/D-066): end-to-end 365, crash
 
 DW-052 — Same Google account used for Mock Test and the App (F056/D-067): a student who already signed up to Mock Test with the Google email later listed for the App is refused for admin identity review (no automatic merge, D-065). Decide the resolution procedure (link the candidate to the student, or keep separate Google accounts per product) before live rollout.
 
+DW-053 — Stronger Sales controls for the App Google list (F056/D-067): Sales can add any current student's Google email without MFA or student confirmation. Decide whether to require Sales MFA for `student_login.approve` or a student-side confirmation before the first Google sign-in.
+
 DW-048 — Teacher draft voice-note controls: source audit during handbook review found that `TeacherFeedbackPage` renders a draft `<audio controls />` without a source and has no dedicated remove action. Published student audio is a separate path. Correct and test draft playback/removal within existing private-file/access rules; do not describe those controls as working before verification. No new transcription/AI provider is authorized by this defect record.
 
 Teacher review-context gap (DW-010 / D-031 A): the current queue exposes assignment title/group, not the full brief/rubric. The handbook must not promise guidance is rendered. A bounded review-context/read API and its teacher authority must be specified/approved before implementation; do not silently override the deferred wider teacher reader or expose content-staff files.

@@ -56,6 +56,12 @@ select throws_ok($$select public.approve_student_google_login('ae200000-0000-400
 select throws_ok($$select public.approve_student_google_login('ae200000-0000-4000-8000-000000000003','ae100000-0000-4000-8000-000000000007','app7@fixture.invalid','Former student')$$,'22023',null,'former students cannot be added');
 select throws_ok($$select public.approve_student_google_login('ae200000-0000-4000-8000-000000000004','ae100000-0000-4000-8000-000000000006','app6@fixture.invalid','Candidate')$$,'22023',null,'Mock Test candidates cannot be added');
 select throws_ok($$select public.revoke_student_google_login('ae200000-0000-4000-8000-000000000005','ae100000-0000-4000-8000-000000000004',1,'Sales revoke')$$,'42501',null,'Sales cannot revoke');
+-- Security review: Sales must not bind a Google account to a staff member who is also a student.
+reset role;
+insert into public.memberships(person_id,kind,status,starts_at) values('ae100000-0000-4000-8000-000000000003','student','active',now()-interval '1 day');
+set local role authenticated;
+select is((select count(*)::int from public.list_student_google_logins('fictional teacher')),0,'staff-students are not on the student list');
+select throws_ok($$select public.approve_student_google_login('ae200000-0000-4000-8000-000000000012','ae100000-0000-4000-8000-000000000003','app5@fixture.invalid','Takeover attempt')$$,'22023',null,'Sales cannot add a staff member');
 select throws_ok($$select * from public.approved_login_emails$$,'42501',null,'no direct table access');
 -- A teacher has no list access.
 set local request.jwt.claims='{"sub":"ae000000-0000-4000-8000-000000000003","session_id":"ae000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
@@ -71,6 +77,15 @@ select is(public.claim_app_google_login(),'{"allowed":true,"audience":"student"}
 set local request.jwt.claims='{"sub":"ae000000-0000-4000-8000-000000000005","session_id":"ae000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
 select is(public.claim_app_google_login(),'{"allowed":false}'::jsonb,'unlisted Google account refused');
 select is(public.current_person_id(),null,'no person created for the unlisted account');
+-- Even a reservation written directly for a staff-student never binds Google to the staff person.
+reset role;
+insert into public.approved_login_emails(person_id,email,purpose,created_by) values('ae100000-0000-4000-8000-000000000003','app5@fixture.invalid','student','ae100000-0000-4000-8000-000000000002');
+set local role authenticated;
+set local request.jwt.claims='{"sub":"ae000000-0000-4000-8000-000000000005","session_id":"ae000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
+select throws_ok($$select public.claim_app_google_login()$$,'42501',null,'student reservation cannot bind Google to a staff person');
+reset role;
+delete from public.approved_login_emails where person_id='ae100000-0000-4000-8000-000000000003';
+set local role authenticated;
 -- A Mock Test candidate's Google account is refused by the App.
 set local request.jwt.claims='{"sub":"ae000000-0000-4000-8000-000000000006","session_id":"ae000000-0000-4000-8000-000000000006","role":"authenticated","aal":"aal1"}';
 select is(public.claim_app_google_login(),'{"allowed":false}'::jsonb,'Mock Test candidate cannot enter the App');

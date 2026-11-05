@@ -36,6 +36,16 @@ Status: owner-directed 2026-11-06 (D-067). Implemented locally on `feature/app-g
 2. **Revoke removes Google sign-in only**, not course access.
 3. **Restoring is admin-only.**
 
+## Security review
+
+Fixed: a person who is also staff can never be added to, or bound through, the student Google list. Without this, a Sales user could have bound an outside Google account to a staff member who is also a student, giving that account the staff member's authority.
+
+Accepted by owner direction, for confirmation:
+
+- Sales can list every current student's name, Member ID and Google email.
+- Sales can add a Google email for any current student without the student confirming it.
+- Requiring two-step verification for Sales, or a student-side confirmation step, would further reduce the risk of a compromised Sales account (DW-053).
+
 ## Limits
 
 - **Real Google sign-in needs a Google OAuth client.** It is the same client Mock Test is waiting for (F039 "To switch Google on locally"). Until then, the claim is proven with simulated verified Google identities.
