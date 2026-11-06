@@ -2,6 +2,14 @@
 
 [Handbook home](README.md) · [Access and help](ACCESS_AND_TROUBLESHOOTING.md)
 
+## Your teacher home (D-068 follow-up)
+
+The Teacher portal home walks you through the three steps, showing only the tools you hold:
+
+1. **Lessons & assignments** (`/teacher/content`): write lessons, attach files and create assignments with instructions and a marking rubric. A published curriculum is locked; choose **Create editable curriculum** to change it, and **New assignment** to add one. Publishing alone sends nothing to students.
+2. **Assign to students** (`/teacher/distribution`): send a published assignment to a batch or chosen students, with a due date.
+3. **Review & feedback** (`/teacher/reviews`): filter by batch, open each submission, write or dictate feedback for that student and publish it.
+
 ## Access and current scope
 
 Teachers sign in at `/teacher/sign-in` with their established employee email/password and land at `/teacher`. This is the same identity, not a new teacher account. Review authority and content authoring/publication are separately scoped; Teacher alone grants neither content editing nor publishing, CRM, administration or scheduling.

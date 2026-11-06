@@ -49,10 +49,9 @@ test('admin entry never accepts fictional preview as authority', async ({ page }
 test('teacher preview is distinct from student and operational menus', async ({ page }) => {
   await page.goto('/teacher/reviews?preview=1')
   await expect(page.getByRole('heading', { name: 'Feedback review.' })).toBeVisible()
-  await expect(page.getByRole('navigation').getByRole('link', { name: 'Reviews' })).toHaveAttribute(
-    'href',
-    '/teacher/reviews?preview=1',
-  )
+  await expect(
+    page.getByRole('navigation').getByRole('link', { name: 'Review & feedback' }),
+  ).toHaveAttribute('href', '/teacher/reviews?preview=1')
   await expect(
     page.getByRole('navigation').getByRole('link', { name: 'CRM', exact: true }),
   ).toHaveCount(0)
@@ -89,7 +88,7 @@ test('Sales create batches; teachers place students and review batch by batch (D
     'href',
     '/staff/batches?preview=1',
   )
-  await expect(nav.getByRole('link', { name: 'Content' })).toHaveCount(0)
+  await expect(nav.getByRole('link', { name: 'Lessons & assignments' })).toHaveCount(0)
   await page.getByLabel('Service type').selectOption('crash_course')
   await page.getByLabel('Start date').fill('2027-01-10')
   await expect(page.getByLabel('End date')).toHaveValue('2027-02-24')

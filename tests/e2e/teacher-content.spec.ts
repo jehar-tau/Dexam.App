@@ -2,10 +2,9 @@ import { expect, test } from '@playwright/test'
 
 test('teacher content supports several named lesson and assignment files', async ({ page }) => {
   await page.goto('/teacher/content?preview=1')
-  await expect(page.getByRole('link', { name: 'Content', exact: true })).toHaveAttribute(
-    'href',
-    '/teacher/content?preview=1',
-  )
+  await expect(
+    page.getByRole('link', { name: 'Lessons & assignments', exact: true }),
+  ).toHaveAttribute('href', '/teacher/content?preview=1')
   await expect(page.getByRole('heading', { name: 'Content workspace', exact: true })).toBeVisible()
   const files = ['study.pdf', 'example.pdf'].map((name) => ({
     name,

@@ -34,9 +34,10 @@ const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['closeout', 'Course closeout', '/staff/enrolment-closeout'],
 ]
 const teacherLinks: [keyof NavigationAccess, string, string][] = [
-  ['reviews', 'Reviews', '/teacher/reviews'],
-  ['content', 'Content', '/teacher/content'],
-  ['distribution', 'Distribution', '/teacher/distribution'],
+  // Plain task names: teachers create work, assign it, then give feedback.
+  ['content', 'Lessons & assignments', '/teacher/content'],
+  ['distribution', 'Assign to students', '/teacher/distribution'],
+  ['reviews', 'Review & feedback', '/teacher/reviews'],
   ['batchAssign', 'Batches', '/teacher/batches'],
   ['classes', 'Classes', '/teacher/classes'],
   ['curriculumImpact', 'Curriculum preview', '/teacher/curriculum-impact'],

@@ -68,11 +68,11 @@ describe('separate portal navigation', () => {
   it('shows separately authorized content alongside teacher reviews', async () => {
     mocks.access.mockResolvedValue({ ...denied, employee: true, reviews: true, content: true })
     renderApp(nav('teacher'))
-    expect(await screen.findByRole('link', { name: 'Reviews' })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: 'Review & feedback' })).toHaveAttribute(
       'href',
       '/teacher/reviews',
     )
-    expect(screen.getByRole('link', { name: 'Content' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Lessons & assignments' })).toHaveAttribute(
       'href',
       '/teacher/content',
     )
@@ -108,7 +108,7 @@ describe('separate portal navigation', () => {
       expect(screen.queryByRole('link', { name })).not.toBeInTheDocument()
     sales.unmount()
     renderApp(nav('teacher'))
-    expect(await screen.findByRole('link', { name: 'Distribution' })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: 'Assign to students' })).toHaveAttribute(
       'href',
       '/teacher/distribution',
     )
