@@ -28,6 +28,7 @@ const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['enrolments', 'Handoffs', '/staff/enrolment-handoffs'],
   ['enrolments', 'Enrolments', '/staff/enrolments'],
   ['batches', 'Batches', '/staff/batches'],
+  ['studentLogins', 'Google sign-in list', '/staff/google-access'],
   ['closeout', 'Course closeout', '/staff/enrolment-closeout'],
 ]
 const teacherLinks: [keyof NavigationAccess, string, string][] = [
@@ -41,6 +42,7 @@ const teacherLinks: [keyof NavigationAccess, string, string][] = [
 const adminLinks: [keyof NavigationAccess, string, string][] = [
   ['enrolments', 'Admissions', '/admin/admissions'],
   ['employees', 'Employees', '/admin/employees'],
+  ['studentLoginRevoke', 'Google sign-in list', '/admin/google-access'],
   ['privacy', 'Privacy', '/admin/privacy'],
   ['studentRecovery', 'Student recovery', '/admin/student-recovery'],
   ['staffRecovery', 'Staff recovery', '/admin/recovery'],
@@ -96,6 +98,7 @@ export function PortalNavigation({
           'crmAssignments',
           'enrolments',
           'batches',
+          'studentLogins',
           'reviews',
           'content',
           'distribution',

@@ -42,21 +42,35 @@ export async function startPortalGoogleLogin(returnTo: string) {
       'Google sign-in could not start. Your existing password sign-in remains available.',
     )
 }
+const notListed =
+  'This Google account is not on the Dexam App student list. Ask Dexam sales or an admin to add the Google email you paid with. Your Member ID sign-in still works.'
+const claimMessages: Record<string, string> = {
+  '40001': 'An existing account needs administrator identity review. No accounts were merged.',
+  '55000': 'Google sign-in for the Dexam App is not switched on yet. Use your Member ID.',
+}
+// D-067: the App admits listed students (and current staff) only. Unlike the Mock Test
+// sign-up, it never creates a test-series candidate for an unlisted Google account.
 export async function finishPortalGoogleLogin() {
   const client = getSupabaseClient()
   if (!client || !sharedGoogleEnabled())
     throw new Error('Shared Google sign-in is not enabled in this environment.')
   const operation = await captureAccountOperation(client)
+  let refused = ''
   try {
-    const result = await operation.client.rpc('provision_google_candidate')
+    const result = await operation.client.rpc('claim_app_google_login')
     operation.assertCurrent()
-    if (result.error)
-      throw new Error(
-        result.error.code === '40001'
-          ? 'An existing account needs administrator identity review. No accounts were merged.'
-          : 'Your approved identity could not be confirmed. Check with Dexam; Google login alone does not grant access.',
-      )
+    const allowed =
+      !result.error &&
+      typeof result.data === 'object' &&
+      result.data !== null &&
+      (result.data as { allowed?: unknown }).allowed === true
+    if (!allowed) refused = claimMessages[result.error?.code ?? ''] ?? notListed
   } finally {
     operation.dispose()
+  }
+  if (refused) {
+    // Leave no signed-in Google session behind on a refused App sign-in.
+    await client.auth.signOut({ scope: 'local' }).catch(() => undefined)
+    throw new Error(refused)
   }
 }

@@ -10,6 +10,10 @@ Content tools are also available inside the Teacher portal for explicitly author
 
 Open **Batches** (`/staff/batches`) to create a batch: name, service type (end-to-end learning, crash course, portfolio or interview preparation), start date and end date. The end date is pre-filled from the service type's default duration and can be changed. Students see only the batch name, never its dates. Use **Place students** on the same page to put a converted, enrolled student into a batch or move them; give a reason. Moves keep the student's access dates and past work and are recorded. A student whose enrolment has its own fixed curriculum must be moved by an admin.
 
+## Dexam App Google sign-in list (D-067)
+
+Open **Google sign-in list** (`/staff/google-access`) in the Sales portal. Search for the current student, enter the Google email they will sign in with, add a reason such as "paid full course fee" and choose **Add to Google list**. Only listed students can enter the Dexam App with Google; the list is separate from Dexam Mock Test sign-up. You cannot revoke or restore an entry; ask an admin.
+
 ## Access and responsibilities
 
 Open `/staff/sign-in` with your established employee email/password, then `/staff` for the operations portal. Teacher and Admin have their own entrances/layouts on the same backend. Your membership, capabilities, offering assignments and MFA determine which workspaces you can use. Sales, CRM Coordinator, Enrolment Operator, content editor/publisher, assignment distributor, class scheduler and privacy operator are distinct responsibilities—not powers every employee automatically has.

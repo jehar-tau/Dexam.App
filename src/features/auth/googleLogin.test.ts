@@ -1,12 +1,13 @@
 import { finishPortalGoogleLogin, safeGoogleReturnTo, startPortalGoogleLogin } from './googleLogin'
 const mocks = vi.hoisted(() => ({
   oauth: vi.fn(),
+  signOut: vi.fn(),
   rpc: vi.fn(),
   assertCurrent: vi.fn(),
   dispose: vi.fn(),
 }))
 vi.mock('./supabaseClient', () => ({
-  getSupabaseClient: () => ({ auth: { signInWithOAuth: mocks.oauth } }),
+  getSupabaseClient: () => ({ auth: { signInWithOAuth: mocks.oauth, signOut: mocks.signOut } }),
 }))
 vi.mock('./accountOperation', () => ({
   captureAccountOperation: () =>
@@ -61,16 +62,31 @@ describe('portal Google login', () => {
     await expect(startPortalGoogleLogin('/student')).rejects.toThrow('not enabled')
     expect(mocks.oauth).not.toHaveBeenCalled()
   })
-  it('calls the approved-claim-before-candidate server operation', async () => {
-    mocks.rpc.mockResolvedValue({ error: null, data: { created: false } })
+  it('lets a listed student in through the App-only claim', async () => {
+    mocks.rpc.mockResolvedValue({ error: null, data: { allowed: true, audience: 'student' } })
     await finishPortalGoogleLogin()
-    expect(mocks.rpc).toHaveBeenCalledWith('provision_google_candidate')
+    expect(mocks.rpc).toHaveBeenCalledWith('claim_app_google_login')
+    expect(mocks.rpc).not.toHaveBeenCalledWith('provision_google_candidate')
     expect(mocks.assertCurrent).toHaveBeenCalledOnce()
     expect(mocks.dispose).toHaveBeenCalledOnce()
+    expect(mocks.signOut).not.toHaveBeenCalled()
+  })
+  it('refuses and signs out an unlisted Google account', async () => {
+    mocks.signOut.mockResolvedValue({ error: null })
+    mocks.rpc.mockResolvedValue({ error: null, data: { allowed: false } })
+    await expect(finishPortalGoogleLogin()).rejects.toThrow('not on the Dexam App student list')
+    expect(mocks.signOut).toHaveBeenCalledWith({ scope: 'local' })
   })
   it('does not navigate through a canonical identity conflict', async () => {
+    mocks.signOut.mockResolvedValue({ error: null })
     mocks.rpc.mockResolvedValue({ error: { code: '40001', message: 'private' } })
     await expect(finishPortalGoogleLogin()).rejects.toThrow('No accounts were merged')
     expect(mocks.dispose).toHaveBeenCalledOnce()
+    expect(mocks.signOut).toHaveBeenCalled()
+  })
+  it('explains when the App switch is off', async () => {
+    mocks.signOut.mockResolvedValue({ error: null })
+    mocks.rpc.mockResolvedValue({ error: { code: '55000', message: 'private' } })
+    await expect(finishPortalGoogleLogin()).rejects.toThrow('not switched on yet')
   })
 })
