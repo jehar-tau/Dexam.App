@@ -11,6 +11,7 @@ const rowSchema = z.object({
   linked: z.boolean(),
   revision: z.number().int().positive().nullable(),
   revoked_at: z.iso.datetime({ offset: true }).nullable(),
+  admission_paid: z.boolean(),
 })
 export type StudentGoogleLogin = {
   personId: string
@@ -21,6 +22,7 @@ export type StudentGoogleLogin = {
   linked: boolean
   revision: number | null
   revokedAt: string | null
+  admissionPaid: boolean
 }
 
 const unavailable = 'The Google sign-in list could not be loaded. Check your access and try again.'
@@ -45,6 +47,7 @@ export async function getStudentGoogleLogins(search: string): Promise<StudentGoo
     linked: row.linked,
     revision: row.revision,
     revokedAt: row.revoked_at,
+    admissionPaid: row.admission_paid,
   }))
 }
 

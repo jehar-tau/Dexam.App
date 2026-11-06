@@ -6,7 +6,11 @@ import { useAuth } from '../features/auth/AuthContext'
 import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import styles from './SignInPage.module.css'
 import { safePortalReturn, type EmployeePortal } from '../features/auth/portals'
-import { sharedGoogleEnabled, startPortalGoogleLogin } from '../features/auth/googleLogin'
+import {
+  passwordSignInEnabled,
+  sharedGoogleEnabled,
+  startPortalGoogleLogin,
+} from '../features/auth/googleLogin'
 
 export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal }) {
   const { configured, session, signInEmployee } = useAuth()
@@ -25,6 +29,7 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
   const [submitting, setSubmitting] = useState(false)
 
   if (session) return <Navigate replace to={destination} />
+  const withPassword = passwordSignInEnabled()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -48,13 +53,19 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
         <p className="eyebrow">Protected {portal} access</p>
         <h1 id="staff-sign-in-title">{title}</h1>
         <p className={styles.lede}>
-          Sign in with your verified employee email. Access is checked against your current role
-          every time a protected workspace opens.
+          {withPassword
+            ? 'Sign in with your verified employee email.'
+            : 'Sign in with the Google account of your employee email.'}{' '}
+          Access is checked against your current role every time a protected workspace opens.
         </p>
         <ul className={styles.trustList}>
           <li>Revoked employee access is blocked by current database state.</li>
           <li>Student and employee permissions remain separate.</li>
-          <li>Your password is handled by the authentication service, not stored by Dexam.</li>
+          <li>
+            {withPassword
+              ? 'Your password is handled by the authentication service, not stored by Dexam.'
+              : 'Turn on 2-Step Verification in your Google account: it protects your Dexam access.'}
+          </li>
         </ul>
       </div>
 
@@ -68,8 +79,13 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
                 : 'Employee sign in'}
           </h2>
           <p>
-            Use your established employee email. This entrance does not grant a role.
-            {portal === 'admin' ? ' Administrative operations require MFA.' : ''}
+            {withPassword
+              ? 'Use your established employee email.'
+              : 'Use the Google account whose email Dexam has on record for you.'}{' '}
+            This entrance does not grant a role.
+            {portal === 'admin' && withPassword
+              ? ' Administrative operations require MFA or Google sign-in.'
+              : ''}
           </p>
         </div>
 
@@ -82,7 +98,7 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
         {sharedGoogleEnabled() ? (
           <Button
             disabled={!configured || submitting}
-            variant="secondary"
+            variant={withPassword ? 'secondary' : 'primary'}
             fullWidth
             onClick={() => {
               setSubmitting(true)
@@ -96,43 +112,56 @@ export function StaffSignInPage({ portal = 'staff' }: { portal?: EmployeePortal 
             Continue with Google
           </Button>
         ) : null}
-        <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
-          <Input
-            autoComplete="email"
-            disabled={!configured || submitting}
-            label="Employee email"
-            name="email"
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="name@company.com"
-            required
-            type="email"
-            value={email}
-          />
-          <Input
-            autoComplete="current-password"
-            disabled={!configured || submitting}
-            label="Password"
-            minLength={8}
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            type="password"
-            value={password}
-          />
-          {error ? (
-            <p className={styles.error} role="alert">
-              {error}
-            </p>
-          ) : null}
-          <Button disabled={!configured || submitting} fullWidth type="submit">
-            {submitting ? 'Signing in securely…' : 'Sign in'}
-          </Button>
-        </form>
+        {withPassword ? (
+          <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
+            <Input
+              autoComplete="email"
+              disabled={!configured || submitting}
+              label="Employee email"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="name@company.com"
+              required
+              type="email"
+              value={email}
+            />
+            <Input
+              autoComplete="current-password"
+              disabled={!configured || submitting}
+              label="Password"
+              minLength={8}
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+            {error ? (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            ) : null}
+            <Button disabled={!configured || submitting} fullWidth type="submit">
+              {submitting ? 'Signing in securely…' : 'Sign in'}
+            </Button>
+          </form>
+        ) : error ? (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        ) : null}
 
-        <p className={styles.support}>
-          <Link to="/staff/recover">Forgot your employee password?</Link> Access is invite-only.
-          Contact your Dexam administrator if you cannot use your account.
-        </p>
+        {withPassword ? (
+          <p className={styles.support}>
+            <Link to="/staff/recover">Forgot your employee password?</Link> Access is invite-only.
+            Contact your Dexam administrator if you cannot use your account.
+          </p>
+        ) : (
+          <p className={styles.support}>
+            Access is invite-only. Contact your Dexam administrator if your Google account is not
+            recognised.
+          </p>
+        )}
       </Card>
     </section>
   )

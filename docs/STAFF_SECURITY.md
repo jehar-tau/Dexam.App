@@ -2,6 +2,10 @@
 
 Authority: F015, D-027 Option B, D-028 Option B. No production data or paid service is authorized.
 
+## Google sign-in replaces two-step verification (D-068)
+
+When Google sign-in is switched on, staff sign in with the Google account whose email Dexam holds for them. A live Google session counts as staff security for every sensitive action; no Dexam authenticator is needed. **Turn on 2-Step Verification in your Google account** — Dexam cannot enforce it for personal Google accounts, so it is your protection if your Google password leaks. A password session (when password sign-in is enabled) still needs the authenticator below. Revoking a person's roles, membership or Google access still ends their access immediately.
+
 ## Normal use
 
 Open `/staff/security` after staff sign-in. Enrol an authenticator deliberately; keep its setup key only in the employee's authenticator, not a ticket, screenshot, chat, or repository. Verify its current code. A separately stored backup authenticator can be enrolled after verification.

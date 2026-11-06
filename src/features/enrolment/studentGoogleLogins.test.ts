@@ -22,6 +22,7 @@ describe('student Google sign-in list service', () => {
           linked: false,
           revision: 1,
           revoked_at: null,
+          admission_paid: true,
         },
       ],
     })

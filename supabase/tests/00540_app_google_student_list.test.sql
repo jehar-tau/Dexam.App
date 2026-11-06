@@ -70,6 +70,17 @@ select throws_ok($$select public.approve_student_google_login('ae200000-0000-400
 
 -- The listed student enters the App with Google and keeps the canonical person.
 set local request.jwt.claims='{"sub":"ae000000-0000-4000-8000-000000000004","session_id":"ae000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+-- D-068: not before the admission fee is recorded, and the Google account is not linked meanwhile.
+select is(public.claim_app_google_login(),'{"allowed":false,"reason":"admission_fee_pending"}'::jsonb,'unpaid listed student is refused');
+select is(public.current_person_id(),null,'unpaid student''s Google account is not linked');
+reset role;
+insert into public.offerings(id,code,title,status) values('ae700000-0000-4000-8000-000000000001','APPFIX','Fictional App Course','active');
+insert into public.enrollments(id,person_id,offering_id,status,source_type)
+  values('ae800000-0000-4000-8000-000000000004','ae100000-0000-4000-8000-000000000004','ae700000-0000-4000-8000-000000000001','active','fixture');
+insert into public.student_payments(request_key,enrollment_id,person_id,kind,method,amount_paise,paid_on,collected_by_person_id,recorded_by_person_id)
+  values('ae900000-0000-4000-8000-000000000004','ae800000-0000-4000-8000-000000000004','ae100000-0000-4000-8000-000000000004',
+    'admission_fee','cash',500000,current_date,'ae100000-0000-4000-8000-000000000001','ae100000-0000-4000-8000-000000000001');
+set local role authenticated;
 select is(public.claim_app_google_login(),'{"allowed":true,"audience":"student"}'::jsonb,'listed student is allowed');
 select is(public.current_person_id(),'ae100000-0000-4000-8000-000000000004'::uuid,'Google maps to the existing student');
 select is(public.claim_app_google_login(),'{"allowed":true,"audience":"student"}'::jsonb,'returning sign-in is idempotent');

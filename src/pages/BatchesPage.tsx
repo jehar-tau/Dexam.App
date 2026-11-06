@@ -32,6 +32,7 @@ const previewWorkspace: BatchWorkspace = {
       id: '00000000-0000-4000-8000-0000000000a1',
       title: 'Design Entrance Foundation',
       canAssign: true,
+      durationDays: null,
     },
   ],
   batches: [
@@ -112,16 +113,24 @@ type FormState = {
   endTouched: boolean
   status: (typeof batchStatuses)[number]
 }
-function blankForm(workspace: BatchWorkspace): FormState {
+// The course length set by an admin wins; otherwise the service type's default.
+function defaultDuration(workspace: BatchWorkspace, offeringId: string, serviceType: string) {
+  return (
+    workspace.offerings.find((offering) => offering.id === offeringId)?.durationDays ??
+    workspace.serviceTypes.find((type) => type.key === serviceType)?.defaultDurationDays
+  )
+}
+function blankForm(workspace: BatchWorkspace, offeringId: string): FormState {
   const type = workspace.serviceTypes[0]
   const start = today()
+  const days = defaultDuration(workspace, offeringId, type?.key ?? '')
   return {
     requestKey: crypto.randomUUID(),
     batch: null,
     name: '',
     serviceType: type?.key ?? '',
     startsOn: start,
-    endsOn: type ? addDays(start, type.defaultDurationDays) : '',
+    endsOn: days ? addDays(start, days) : '',
     endTouched: false,
     status: 'active',
   }
@@ -154,12 +163,14 @@ function BatchForm({
           endTouched: true,
           status: editing.status === 'planned' ? 'active' : editing.status,
         }
-      : blankForm(workspace),
+      : blankForm(workspace, offeringId),
   )
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const defaultDays = (key: string) =>
-    workspace.serviceTypes.find((type) => type.key === key)?.defaultDurationDays
+  const courseDays = workspace.offerings.find(
+    (offering) => offering.id === offeringId,
+  )?.durationDays
+  const defaultDays = (key: string) => defaultDuration(workspace, offeringId, key)
 
   function update(change: Partial<FormState>) {
     setForm((current) => {
@@ -193,7 +204,7 @@ function BatchForm({
         status: form.status,
       })
       await onSaved(form.batch ? 'Batch updated.' : 'Batch created.')
-      if (!form.batch) setForm(blankForm(workspace))
+      if (!form.batch) setForm(blankForm(workspace, offeringId))
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'The batch could not be saved.')
     } finally {
@@ -248,7 +259,11 @@ function BatchForm({
           <Input
             label="End date"
             type="date"
-            hint={days ? `Default for this service: ${days} days. You can change it.` : undefined}
+            hint={
+              days
+                ? `Default ${courseDays ? 'course length' : 'for this service'}: ${days} days. You can change it.`
+                : undefined
+            }
             value={form.endsOn}
             disabled={busy}
             onChange={(event) => update({ endsOn: event.target.value, endTouched: true })}

@@ -9,6 +9,7 @@ import {
   portalSignIn,
   type Portal,
 } from '../../features/auth/portals'
+import { passwordSignInEnabled } from '../../features/auth/googleLogin'
 import type { NavigationAccess } from '../../features/auth/navigationAccess'
 import styles from './AppShell.module.css'
 
@@ -29,6 +30,7 @@ const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['enrolments', 'Enrolments', '/staff/enrolments'],
   ['batches', 'Batches', '/staff/batches'],
   ['studentLogins', 'Google sign-in list', '/staff/google-access'],
+  ['payments', 'Payments', '/staff/payments'],
   ['closeout', 'Course closeout', '/staff/enrolment-closeout'],
 ]
 const teacherLinks: [keyof NavigationAccess, string, string][] = [
@@ -42,12 +44,16 @@ const teacherLinks: [keyof NavigationAccess, string, string][] = [
 const adminLinks: [keyof NavigationAccess, string, string][] = [
   ['enrolments', 'Admissions', '/admin/admissions'],
   ['employees', 'Employees', '/admin/employees'],
+  ['courses', 'Courses', '/admin/courses'],
+  ['paymentLedger', 'Payment ledger', '/admin/payments'],
   ['studentLoginRevoke', 'Google sign-in list', '/admin/google-access'],
   ['privacy', 'Privacy', '/admin/privacy'],
   ['studentRecovery', 'Student recovery', '/admin/student-recovery'],
   ['staffRecovery', 'Staff recovery', '/admin/recovery'],
   ['staffRecovery', 'Recovery investigations', '/admin/incidents'],
 ]
+// D-068: password and authenticator recovery tools leave the menu while sign-in is Google-only.
+const passwordRecoveryPaths = new Set(['/admin/student-recovery', '/admin/recovery'])
 export function PortalNavigation({
   portal,
   previewEnabled,
@@ -140,7 +146,12 @@ export function PortalNavigation({
       {active && portal === 'admin' ? (
         <>
           {link('Admin home', '/admin')}
-          {adminLinks.filter(([key]) => allowed(key)).map(([, label, path]) => link(label, path))}
+          {adminLinks
+            .filter(
+              ([key, , path]) =>
+                allowed(key) && (passwordSignInEnabled() || !passwordRecoveryPaths.has(path)),
+            )
+            .map(([, label, path]) => link(label, path))}
         </>
       ) : null}
       {active && portal ? (

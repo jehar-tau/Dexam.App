@@ -4,6 +4,8 @@ Last updated: 2026-11-06
 
 ## Current phase
 
+2026-11-06 D-068/F057 (owner direction in chat): Google sign-in for every portal (password screens hidden but kept; `VITE_ENABLE_PASSWORD_SIGN_IN` restores them); a live Google session replaces Dexam two-step verification for staff; single-admin approval; admins add courses and set length, total fee and admission fee; an append-only payment ledger in the Sales portal (record, totals) and Admin portal (full ledger, corrections, agreed fees) with private receipts and a collected-by dropdown; a listed student enters the Dexam App only once the admission fee is recorded. Branch `feature/google-only-payments-ledger` from `main` (which now includes F054–F056 through #116). Not merged or deployed; gates stay off. See F057.
+
 2026-11-06 D-067/F056: Dexam App Google sign-in is limited to full-course students on a Google sign-in list that Sales and admins fill and admins revoke; the App never creates Mock Test candidates. Separate `app_google_login_gate`, off by default. Real Google needs the owner's OAuth client (shared with Mock Test). Branch `feature/app-google-student-login`, stacked on F055; not merged or deployed. See F056.
 
 2026-11-06 D-066/F055 (owner decision in chat): staff entrance becomes the Sales portal; teaching tools move to the Teacher portal with batch-wise reviews; Privacy moves to Admin. Sales create batches (existing cohorts) by course, service type and dates with editable placeholder default durations; Sales and scoped teachers place students with recorded history; students never read batch dates (column grant). Built on `feature/sales-teacher-portals-batches`, stacked on the F054 PR #113 branch; not merged or deployed. See F055.

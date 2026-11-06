@@ -15,7 +15,7 @@ const enrolment = '00000000-0000-4000-8000-0000000000c1'
 const workspace = {
   canManage: true,
   serviceTypes: [{ key: 'crash_course', label: 'Crash course', defaultDurationDays: 45 }],
-  offerings: [{ id: offering, title: 'Fictional course', canAssign: true }],
+  offerings: [{ id: offering, title: 'Fictional course', canAssign: true, durationDays: null }],
   batches: [
     {
       id: batch,

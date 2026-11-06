@@ -38,6 +38,8 @@ import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
 import { BatchesPage } from '../pages/BatchesPage'
 import { StudentGoogleLoginsPage } from '../pages/StudentGoogleLoginsPage'
+import { CoursesPage } from '../pages/CoursesPage'
+import { PaymentsPage } from '../pages/PaymentsPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
 import { StudentShell } from './student/StudentShell'
@@ -197,6 +199,34 @@ export const router = createBrowserRouter([
             <PortalAccessBoundary portal="admin">
               <StudentGoogleLoginsPage portal="admin" />
             </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/courses',
+        element: (
+          <StaffAccessBoundary capability="course.manage" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <CoursesPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/payments',
+        element: (
+          <StaffAccessBoundary capability="payment.ledger.read" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <PaymentsPage portal="admin" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/payments',
+        element: (
+          <StaffAccessBoundary capability="payment.record" allowPreview={false}>
+            <PaymentsPage portal="staff" />
           </StaffAccessBoundary>
         ),
       },

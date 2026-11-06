@@ -21,6 +21,7 @@ const rows = [
     linked: true,
     revision: 1,
     revokedAt: null,
+    admissionPaid: true,
   },
   {
     personId: '00000000-0000-4000-8000-0000000000d2',
@@ -31,6 +32,7 @@ const rows = [
     linked: false,
     revision: null,
     revokedAt: null,
+    admissionPaid: true,
   },
 ]
 const card = (name: string) => screen.getByText(name).closest('li')!
