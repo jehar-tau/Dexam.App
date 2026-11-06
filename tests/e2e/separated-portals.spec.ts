@@ -121,3 +121,15 @@ test('Sales keep the App Google sign-in list; only admins revoke (D-067)', async
   await page.goto('/admin/google-access?preview=1')
   await expect(page).toHaveURL(/\/admin\/sign-in/)
 })
+
+test('payments and courses never open from fictional preview (D-068)', async ({ page }) => {
+  for (const [path, entrance] of [
+    ['/staff/payments?preview=1', '/staff/sign-in'],
+    ['/admin/payments?preview=1', '/admin/sign-in'],
+    ['/admin/courses?preview=1', '/admin/sign-in'],
+  ] as const) {
+    await page.goto(path)
+    await expect(page).toHaveURL(new RegExp(`${entrance.replace(/\//g, '\\/')}\\?returnTo=`))
+    await expect(page.getByText('Payment ledger.')).toHaveCount(0)
+  }
+})

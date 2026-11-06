@@ -27,7 +27,7 @@ const workspace = (canManage: boolean) => ({
     { key: 'end_to_end', label: 'End-to-end learning', defaultDurationDays: 365 },
     { key: 'crash_course', label: 'Crash course', defaultDurationDays: 45 },
   ],
-  offerings: [{ id: offering, title: 'Fictional course', canAssign: true }],
+  offerings: [{ id: offering, title: 'Fictional course', canAssign: true, durationDays: null }],
   batches: [
     {
       id: december,

@@ -24,6 +24,11 @@ export function safeGoogleReturnTo(value: string | null): string {
 export function sharedGoogleEnabled() {
   return import.meta.env.VITE_ENABLE_SHARED_GOOGLE_LOGIN === 'true'
 }
+// D-068: once Google sign-in is on, it is the only sign-in for every portal. Password sign-in
+// stays in the code and returns only when VITE_ENABLE_PASSWORD_SIGN_IN is set.
+export function passwordSignInEnabled() {
+  return !sharedGoogleEnabled() || import.meta.env.VITE_ENABLE_PASSWORD_SIGN_IN === 'true'
+}
 export async function startPortalGoogleLogin(returnTo: string) {
   const client = getSupabaseClient()
   if (!client || !sharedGoogleEnabled())
@@ -43,10 +48,12 @@ export async function startPortalGoogleLogin(returnTo: string) {
     )
 }
 const notListed =
-  'This Google account is not on the Dexam App student list. Ask Dexam sales or an admin to add the Google email you paid with. Your Member ID sign-in still works.'
+  'This Google account is not on the Dexam App student list. Ask Dexam sales or an admin to add the Google email you paid with.'
+const admissionFeePending =
+  'Your Google email is on the list, but your admission fee has not been recorded yet. Ask Dexam sales to record it, then sign in again.'
 const claimMessages: Record<string, string> = {
   '40001': 'An existing account needs administrator identity review. No accounts were merged.',
-  '55000': 'Google sign-in for the Dexam App is not switched on yet. Use your Member ID.',
+  '55000': 'Google sign-in for the Dexam App is not switched on yet.',
 }
 // D-067: the App admits listed students (and current staff) only. Unlike the Mock Test
 // sign-up, it never creates a test-series candidate for an unlisted Google account.
@@ -59,12 +66,15 @@ export async function finishPortalGoogleLogin() {
   try {
     const result = await operation.client.rpc('claim_app_google_login')
     operation.assertCurrent()
-    const allowed =
-      !result.error &&
-      typeof result.data === 'object' &&
-      result.data !== null &&
-      (result.data as { allowed?: unknown }).allowed === true
-    if (!allowed) refused = claimMessages[result.error?.code ?? ''] ?? notListed
+    const data =
+      !result.error && typeof result.data === 'object' && result.data !== null
+        ? (result.data as { allowed?: unknown; reason?: unknown })
+        : null
+    if (data?.allowed !== true)
+      refused =
+        data?.reason === 'admission_fee_pending'
+          ? admissionFeePending
+          : (claimMessages[result.error?.code ?? ''] ?? notListed)
   } finally {
     operation.dispose()
   }

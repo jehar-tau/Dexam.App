@@ -4,7 +4,11 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Callout, Card, Input } from '../components'
 import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import { useAuth } from '../features/auth/AuthContext'
-import { sharedGoogleEnabled, startPortalGoogleLogin } from '../features/auth/googleLogin'
+import {
+  passwordSignInEnabled,
+  sharedGoogleEnabled,
+  startPortalGoogleLogin,
+} from '../features/auth/googleLogin'
 import styles from './SignInPage.module.css'
 
 function safeReturnTo(value: string | null) {
@@ -29,6 +33,7 @@ export function StudentSignInPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (session) return <Navigate replace to={destination} />
+  const withPassword = passwordSignInEnabled()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -52,12 +57,17 @@ export function StudentSignInPage() {
         <p className="eyebrow">Student access</p>
         <h1 id="student-sign-in-title">Continue your learning.</h1>
         <p className={styles.lede}>
-          Sign in with the permanent Dexam Member ID from your activation pack and the password you
-          created privately.
+          {withPassword
+            ? 'Sign in with the permanent Dexam Member ID from your activation pack and the password you created privately.'
+            : 'Sign in with the Google account you gave Dexam when you took admission.'}
         </p>
         <ul className={styles.trustList}>
           <li>Your Member ID remains yours throughout your Dexam journey.</li>
-          <li>Dexam staff cannot see or recover your password.</li>
+          <li>
+            {withPassword
+              ? 'Dexam staff cannot see or recover your password.'
+              : 'Your access opens once your admission fee is recorded.'}
+          </li>
           <li>Suspended or ended access is checked against current records.</li>
         </ul>
       </div>
@@ -65,7 +75,11 @@ export function StudentSignInPage() {
       <Card className={styles.card}>
         <div className={styles.cardHeader}>
           <h2>Student sign in</h2>
-          <p>Use the same Member ID every time you return.</p>
+          <p>
+            {withPassword
+              ? 'Use the same Member ID every time you return.'
+              : 'Use the same Google account every time you return.'}
+          </p>
         </div>
 
         {!configured ? (
@@ -77,7 +91,7 @@ export function StudentSignInPage() {
         {sharedGoogleEnabled() ? (
           <Button
             disabled={!configured || submitting}
-            variant="secondary"
+            variant={withPassword ? 'secondary' : 'primary'}
             fullWidth
             onClick={() => {
               setSubmitting(true)
@@ -91,50 +105,65 @@ export function StudentSignInPage() {
             Continue with Google
           </Button>
         ) : null}
-        <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
-          <Input
-            autoCapitalize="characters"
-            autoComplete="username"
-            disabled={!configured || submitting}
-            label="Dexam Member ID"
-            maxLength={16}
-            name="memberId"
-            onChange={(event) => setMemberId(event.target.value)}
-            placeholder="DXM-7K3M9Q2RW5TY"
-            required
-            spellCheck={false}
-            value={memberId}
-          />
-          <Input
-            autoComplete="current-password"
-            disabled={!configured || submitting}
-            label="Password"
-            maxLength={128}
-            minLength={12}
-            name="password"
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            type="password"
-            value={password}
-          />
-          {error ? (
-            <p className={styles.error} role="alert">
-              {error}
-            </p>
-          ) : null}
-          <Button disabled={!configured || submitting} fullWidth type="submit">
-            {submitting ? 'Signing in securely…' : 'Sign in'}
-          </Button>
-        </form>
+        {withPassword ? (
+          <form className={styles.form} onSubmit={(event) => void handleSubmit(event)}>
+            <Input
+              autoCapitalize="characters"
+              autoComplete="username"
+              disabled={!configured || submitting}
+              label="Dexam Member ID"
+              maxLength={16}
+              name="memberId"
+              onChange={(event) => setMemberId(event.target.value)}
+              placeholder="DXM-7K3M9Q2RW5TY"
+              required
+              spellCheck={false}
+              value={memberId}
+            />
+            <Input
+              autoComplete="current-password"
+              disabled={!configured || submitting}
+              label="Password"
+              maxLength={128}
+              minLength={12}
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+            {error ? (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            ) : null}
+            <Button disabled={!configured || submitting} fullWidth type="submit">
+              {submitting ? 'Signing in securely…' : 'Sign in'}
+            </Button>
+          </form>
+        ) : error ? (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        ) : null}
 
-        <p className={styles.support}>
-          First visit? <Link to="/activate">Activate your account</Link> using the one-time pack
-          provided by Dexam.
-        </p>
-        <p className={styles.support}>
-          Forgot your password? Ask Dexam for an independently approved pack, then{' '}
-          <Link to="/student/recover">recover your student account</Link>.
-        </p>
+        {withPassword ? (
+          <>
+            <p className={styles.support}>
+              First visit? <Link to="/activate">Activate your account</Link> using the one-time pack
+              provided by Dexam.
+            </p>
+            <p className={styles.support}>
+              Forgot your password? Ask Dexam for an independently approved pack, then{' '}
+              <Link to="/student/recover">recover your student account</Link>.
+            </p>
+          </>
+        ) : (
+          <p className={styles.support}>
+            Not recognised? Ask Dexam sales to add the Google email you use and record your
+            admission fee.
+          </p>
+        )}
       </Card>
     </section>
   )

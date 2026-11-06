@@ -13,7 +13,15 @@ const workspaceSchema = z.object({
       defaultDurationDays: z.number().int().positive(),
     }),
   ),
-  offerings: z.array(z.object({ id: z.uuid(), title: z.string(), canAssign: z.boolean() })),
+  offerings: z.array(
+    z.object({
+      id: z.uuid(),
+      title: z.string(),
+      canAssign: z.boolean(),
+      // D-068: the admin-set course length, when present, pre-fills a new batch's end date.
+      durationDays: z.number().int().positive().nullable(),
+    }),
+  ),
   batches: z.array(
     z.object({
       id: z.uuid(),

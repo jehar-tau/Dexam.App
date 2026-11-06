@@ -33,6 +33,9 @@ const denied: PortalAccess = {
   batchAssign: false,
   studentLogins: false,
   studentLoginRevoke: false,
+  courses: false,
+  payments: false,
+  paymentLedger: false,
   employees: false,
   studentRecovery: false,
   staffRecovery: false,
@@ -137,6 +140,46 @@ describe('separate portal navigation', () => {
       '/admin/employees',
     )
     expect(screen.queryByRole('link', { name: 'Staff recovery' })).not.toBeInTheDocument()
+  })
+  it('adds Payments for Sales and Courses and the ledger for admins (D-068)', async () => {
+    mocks.access.mockResolvedValue({ ...denied, employee: true, payments: true })
+    const { unmount } = renderApp(nav('staff'))
+    expect(await screen.findByRole('link', { name: 'Payments' })).toHaveAttribute(
+      'href',
+      '/staff/payments',
+    )
+    unmount()
+    mocks.access.mockResolvedValue({
+      ...denied,
+      employee: true,
+      administrator: true,
+      courses: true,
+      paymentLedger: true,
+    })
+    renderApp(nav('admin'))
+    expect(await screen.findByRole('link', { name: 'Courses' })).toHaveAttribute(
+      'href',
+      '/admin/courses',
+    )
+    expect(screen.getByRole('link', { name: 'Payment ledger' })).toHaveAttribute(
+      'href',
+      '/admin/payments',
+    )
+  })
+  it('hides password recovery tools while sign-in is Google-only', async () => {
+    vi.stubEnv('VITE_ENABLE_SHARED_GOOGLE_LOGIN', 'true')
+    mocks.access.mockResolvedValue({
+      ...denied,
+      employee: true,
+      administrator: true,
+      studentRecovery: true,
+      staffRecovery: true,
+    })
+    renderApp(nav('admin'))
+    expect(await screen.findByRole('link', { name: 'Recovery investigations' })).toBeVisible()
+    expect(screen.queryByRole('link', { name: 'Student recovery' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Staff recovery' })).not.toBeInTheDocument()
+    vi.unstubAllEnvs()
   })
   it('retires portal tools on failed foreground refresh', async () => {
     vi.useFakeTimers()

@@ -1,4 +1,9 @@
-import { finishPortalGoogleLogin, safeGoogleReturnTo, startPortalGoogleLogin } from './googleLogin'
+import {
+  finishPortalGoogleLogin,
+  passwordSignInEnabled,
+  safeGoogleReturnTo,
+  startPortalGoogleLogin,
+} from './googleLogin'
 const mocks = vi.hoisted(() => ({
   oauth: vi.fn(),
   signOut: vi.fn(),
@@ -83,6 +88,23 @@ describe('portal Google login', () => {
     await expect(finishPortalGoogleLogin()).rejects.toThrow('No accounts were merged')
     expect(mocks.dispose).toHaveBeenCalledOnce()
     expect(mocks.signOut).toHaveBeenCalled()
+  })
+  it('refuses a listed student whose admission fee is not recorded', async () => {
+    mocks.signOut.mockResolvedValue({ error: null })
+    mocks.rpc.mockResolvedValue({
+      error: null,
+      data: { allowed: false, reason: 'admission_fee_pending' },
+    })
+    await expect(finishPortalGoogleLogin()).rejects.toThrow('admission fee has not been recorded')
+    expect(mocks.signOut).toHaveBeenCalledWith({ scope: 'local' })
+  })
+  it('makes Google the only sign-in once it is switched on', () => {
+    expect(passwordSignInEnabled()).toBe(false)
+    vi.stubEnv('VITE_ENABLE_PASSWORD_SIGN_IN', 'true')
+    expect(passwordSignInEnabled()).toBe(true)
+    vi.stubEnv('VITE_ENABLE_PASSWORD_SIGN_IN', '')
+    vi.stubEnv('VITE_ENABLE_SHARED_GOOGLE_LOGIN', '')
+    expect(passwordSignInEnabled()).toBe(true)
   })
   it('explains when the App switch is off', async () => {
     mocks.signOut.mockResolvedValue({ error: null })

@@ -22,6 +22,7 @@ const previewRows: StudentGoogleLogin[] = [
     linked: true,
     revision: 1,
     revokedAt: null,
+    admissionPaid: true,
   },
   {
     personId: '00000000-0000-4000-8000-0000000000d2',
@@ -32,6 +33,7 @@ const previewRows: StudentGoogleLogin[] = [
     linked: false,
     revision: null,
     revokedAt: null,
+    admissionPaid: true,
   },
   {
     personId: '00000000-0000-4000-8000-0000000000d3',
@@ -42,6 +44,7 @@ const previewRows: StudentGoogleLogin[] = [
     linked: false,
     revision: 2,
     revokedAt: '2026-11-01T10:00:00+05:30',
+    admissionPaid: true,
   },
 ]
 
@@ -49,7 +52,9 @@ function status(row: StudentGoogleLogin): [string, 'success' | 'accent' | 'warni
   if (row.state === 'approved')
     return row.linked
       ? ['Signs in with Google', 'success']
-      : ['Waiting for first sign-in', 'accent']
+      : row.admissionPaid
+        ? ['Waiting for first sign-in', 'accent']
+        : ['Admission fee pending', 'warning']
   if (row.state === 'revoked') return ['Revoked', 'warning']
   return ['Not on the list', 'neutral']
 }
@@ -195,8 +200,8 @@ export function StudentGoogleLoginsPage({ portal }: { portal: 'staff' | 'admin' 
         <p className="eyebrow">Dexam App · Google sign-in</p>
         <h1>Google sign-in list.</h1>
         <p>
-          Only full-course students on this list can enter the Dexam App with Google. Add the Google
-          email the student will use.{' '}
+          Only full-course students on this list can enter the Dexam App with Google, once their
+          admission fee is recorded in Payments. Add the Google email the student will use.{' '}
           {admin
             ? 'As an admin you can also revoke or restore a student’s Google sign-in.'
             : 'Admins revoke access.'}{' '}

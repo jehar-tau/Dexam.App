@@ -20,14 +20,15 @@ export async function getStaffMfaState() {
   if (assurance.error || factors.error || !assurance.data || !factors.data) {
     throw new Error(unavailable)
   }
-  let currentLevel = assurance.data.currentLevel
-  if (currentLevel === 'aal2') {
-    const live = await client.rpc('current_session_has_live_mfa')
-    if (live.error) throw new Error(unavailable)
-    if (live.data !== true) currentLevel = 'aal1'
-  }
+  // D-068: the server decides. A live Google session counts like a live verified authenticator,
+  // and an aal2 token alone is not enough.
+  const live = await client.rpc('current_session_has_live_mfa')
+  if (live.error || typeof live.data !== 'boolean') throw new Error(unavailable)
+  const currentLevel = live.data ? 'aal2' : 'aal1'
   return {
     currentLevel,
+    // Authenticator changes still need a code-verified (aal2) token, not only a Google session.
+    authenticatorVerified: live.data && assurance.data.currentLevel === 'aal2',
     factors: factors.data.totp.filter((factor) => factor.status === 'verified'),
   }
 }
@@ -55,7 +56,7 @@ export async function verifyStaffTotp(factorId: string, code: string) {
   const { error } = await client.auth.mfa.challengeAndVerify({ factorId, code })
   if (error) throw new Error('We could not verify that code. Try a current code again.')
   const state = await getStaffMfaState()
-  if (state.currentLevel !== 'aal2') throw new Error(unavailable)
+  if (!state.authenticatorVerified) throw new Error(unavailable)
 }
 
 export async function cancelStaffTotpEnrollment(factorId: string) {
@@ -96,7 +97,7 @@ export async function signOutAllStaffSessions() {
 export async function removeStaffTotpFactor(factorId: string) {
   const client = await requireActiveClient()
   const state = await getStaffMfaState()
-  if (state.currentLevel !== 'aal2')
+  if (!state.authenticatorVerified)
     throw new Error('Verify your authenticator before removing a factor.')
   if (!state.factors.some((factor) => factor.id === factorId))
     throw new Error('That authenticator is not available.')

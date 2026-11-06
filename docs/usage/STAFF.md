@@ -12,7 +12,15 @@ Open **Batches** (`/staff/batches`) to create a batch: name, service type (end-t
 
 ## Dexam App Google sign-in list (D-067)
 
-Open **Google sign-in list** (`/staff/google-access`) in the Sales portal. Search for the current student, enter the Google email they will sign in with, add a reason such as "paid full course fee" and choose **Add to Google list**. Only listed students can enter the Dexam App with Google; the list is separate from Dexam Mock Test sign-up. You cannot revoke or restore an entry; ask an admin.
+Open **Google sign-in list** (`/staff/google-access`) in the Sales portal. Search for the current student, enter the Google email they will sign in with, add a reason such as "paid full course fee" and choose **Add to Google list**. Only listed students whose admission fee is recorded can enter the Dexam App with Google; the list is separate from Dexam Mock Test sign-up. You cannot revoke or restore an entry; ask an admin.
+
+## Payments (D-068)
+
+Open **Payments** (`/staff/payments`) in the Sales portal whenever a student pays, however they pay. Find the student, choose **Open payments**, then fill in: what the payment is for (admission fee, course fee or other), the amount in rupees, the date paid, the method (cash, UPI / QR code, card machine, bank transfer or cheque), the transaction ID (not needed for cash), who collected it, and optionally a photo or PDF of the receipt (up to 5 MB). Each payment gets a receipt number such as DXR-000012.
+
+You see every student's course fee, paid total and balance. Transaction IDs, receipts and who collected a payment are visible only to whoever recorded it and to admins. You cannot edit or delete a payment; if you made a mistake, ask an admin to record a correction.
+
+A student on the Google sign-in list can enter the Dexam App only after their admission fee is recorded here. The list shows **Admission fee pending** until then.
 
 ## Access and responsibilities
 

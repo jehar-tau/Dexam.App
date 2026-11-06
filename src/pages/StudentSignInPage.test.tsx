@@ -60,4 +60,13 @@ describe('StudentSignInPage', () => {
     ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeDisabled()
   })
+
+  it('offers only Google once Google sign-in is switched on', () => {
+    vi.stubEnv('VITE_ENABLE_SHARED_GOOGLE_LOGIN', 'true')
+    renderApp(<StudentSignInPage />, ['/sign-in'])
+    expect(screen.getByRole('button', { name: 'Continue with Google' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Dexam Member ID')).not.toBeInTheDocument()
+    expect(screen.getByText(/record your admission fee/)).toBeInTheDocument()
+    vi.unstubAllEnvs()
+  })
 })

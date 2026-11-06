@@ -90,4 +90,13 @@ describe('StaffSignInPage', () => {
       expect(screen.getByTestId('destination')).not.toHaveTextContent('/enrolments')
     },
   )
+
+  it('offers only Google once Google sign-in is switched on', () => {
+    vi.stubEnv('VITE_ENABLE_SHARED_GOOGLE_LOGIN', 'true')
+    renderApp(<StaffSignInPage portal="admin" />, ['/admin/sign-in'])
+    expect(screen.getByRole('button', { name: 'Continue with Google' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
+    expect(screen.queryByText('Forgot your employee password?')).not.toBeInTheDocument()
+    vi.unstubAllEnvs()
+  })
 })

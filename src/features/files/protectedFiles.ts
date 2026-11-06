@@ -13,6 +13,7 @@ export type ProtectedBucket =
   | 'assessment-media'
   | 'assessment-part-b'
   | 'assignment-materials'
+  | 'payment-receipts'
   | 'student-submissions'
   | 'teacher-feedback-audio'
 

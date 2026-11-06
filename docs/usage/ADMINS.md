@@ -60,9 +60,16 @@ Open **Recovery investigations** (`/staff/security/incidents`). Review the exact
 
 This records accountability; it does not retry/undo a password update, cancel the executing request, resolve provider ambiguity, unlock the account or restore prior sessions. If no eligible reviewer is available, keep the fence and contact the incident lead. Never put passwords, tokens, request payloads or MFA seeds into investigation notes or general alerts.
 
+## Google sign-in, courses and the payment ledger (D-068)
+
+- **Sign-in.** With Google sign-in on, everyone signs in with Google. Your Google session replaces the Dexam authenticator for admin actions; turn on 2-Step Verification in your Google account. Student and staff password-recovery tools leave the menu while sign-in is Google-only.
+- **Courses** (`/admin/courses`): add a course (permanent code, name, status, length in days, total fee, admission fee, reason) or edit one. The length pre-fills new batch end dates. A course with open enrolments cannot be archived.
+- **Payment ledger** (`/admin/payments`): every payment with student, course, method, transaction ID, who collected and who recorded it, and the receipt. Payments are never edited or deleted: use **Correct DXR-…** with a signed amount (for example -500) and a reason; a payment cannot go below zero. **Agreed fee** replaces the course fee for one student (for example a scholarship).
+- **App access.** A student on the Google sign-in list enters the Dexam App only once their recorded payments reach the course's admission fee (any payment if the course has none).
+
 ## Dexam App Google sign-in list (D-067)
 
-`/admin/google-access` (two-step verification required) shows every current student's Google sign-in status. Admins can add, **revoke** (unlinks the Google account and ends its sessions immediately; Member ID sign-in and course access stay) and **restore** an entry. Sales can add but never revoke or undo a revocation. The App's Google switch (`app_google_login_gate`) is off until the Google client is configured and acceptance passes.
+`/admin/google-access` (Google sign-in or two-step verification required) shows every current student's Google sign-in status. Admins can add, **revoke** (unlinks the Google account and ends its sessions immediately; Member ID sign-in and course access stay) and **restore** an entry. Sales can add but never revoke or undo a revocation. The App's Google switch (`app_google_login_gate`) is off until the Google client is configured and acceptance passes.
 
 ## 8. Privacy, publishing and academic powers
 
