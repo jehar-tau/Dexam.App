@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { protectedFileResponse } from '../_shared/protected-file-response.mjs'
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
@@ -41,34 +42,26 @@ Deno.serve(async (request) => {
     const file = lookup.data?.[0]
     if (lookup.error || !file)
       return reply(403, { message: 'This retained file is not available to your account.' })
-    const remaining = Math.floor((Date.parse(file.expires_at) - Date.now()) / 1000)
-    const seconds = Math.min(60, remaining)
-    if (seconds < 1) return reply(403, { message: 'The archive has expired.' })
-    const signed = await admin.storage
-      .from(file.bucket)
-      .createSignedUrl(file.object_path, seconds, { download: true })
-    if (signed.error)
+    if (!['student-submissions', 'teacher-feedback-audio'].includes(file.bucket))
       return reply(404, { message: 'This retained file is missing or no longer available.' })
-    const signedURL = new URL(signed.data.signedUrl)
-    const token = signedURL.searchParams.get('token')
-    if (!token) return reply(404, { message: 'Download proof unavailable.' })
-    const claims = JSON.parse(atob(token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/')))
-    if (
-      typeof claims.exp !== 'number' ||
-      claims.exp * 1000 > Date.parse(file.expires_at) ||
-      claims.exp * 1000 <= Date.now()
-    )
-      return reply(403, { message: 'The archive download window has ended.' })
+    if (!(Date.parse(file.expires_at) > Date.now()))
+      return reply(403, { message: 'The archive has expired.' })
+    // D-065: return the bytes to this authorised request; never a reusable signed link.
+    const stored = await admin.storage.from(file.bucket).download(file.object_path)
+    if (stored.error || !stored.data)
+      return reply(404, { message: 'This retained file is missing or no longer available.' })
     const recheck = await caller.rpc('get_student_archive_file', {
       p_file_id: body.fileId,
       p_kind: body.kind,
     })
-    if (recheck.error || recheck.data?.[0]?.object_path !== file.object_path)
+    const current = recheck.data?.[0]
+    if (
+      recheck.error ||
+      current?.object_path !== file.object_path ||
+      !(Date.parse(current.expires_at) > Date.now())
+    )
       return reply(403, { message: 'Current file access changed.' })
-    return reply(200, {
-      path: signedURL.pathname + signedURL.search,
-      expiresAt: new Date(claims.exp * 1000).toISOString(),
-    })
+    return protectedFileResponse(stored.data, stored.data.type, headers)
   } catch {
     return reply(400, { message: 'The file request could not be completed.' })
   }

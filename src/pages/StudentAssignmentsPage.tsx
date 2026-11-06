@@ -2,6 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AssignmentReferenceFiles } from '../features/content/AssignmentReferenceFiles'
+import { getSupabaseClient } from '../features/auth/supabaseClient'
+import { useProtectedObjectUrl } from '../features/files/protectedFiles'
 
 import { Badge, Button, Callout, Card, EmptyState } from '../components'
 import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
@@ -67,7 +69,7 @@ const previewAssignments: StudentAssignment[] = [
           correctionReason: null,
           publishedAt: '2026-10-10T08:45:00.000Z',
           aiAssisted: true,
-          voiceUrl: null,
+          voicePath: null,
         },
         files: [
           {
@@ -85,6 +87,17 @@ const previewAssignments: StudentAssignment[] = [
     ],
   },
 ]
+
+/** Voice notes open through the student's session; there is no reusable audio link. */
+function VoiceFeedback({ attemptNumber, path }: { attemptNumber: number; path: string }) {
+  const voice = useProtectedObjectUrl(getSupabaseClient(), 'teacher-feedback-audio', path)
+  if (voice.status === 'unavailable')
+    return <p role="status">The voice feedback is not available to your account right now.</p>
+  if (voice.status !== 'ready') return <p role="status">Loading voice feedback…</p>
+  return (
+    <audio aria-label={`Voice feedback for attempt ${attemptNumber}`} controls src={voice.url} />
+  )
+}
 
 function displayStatus(status: string) {
   return status.replaceAll('_', ' ').replace(/^./, (value) => value.toUpperCase())
@@ -711,11 +724,10 @@ export function StudentAssignmentsPage() {
                             <strong>What to correct:</strong> {attempt.feedback.correctionReason}
                           </Callout>
                         ) : null}
-                        {attempt.feedback.voiceUrl ? (
-                          <audio
-                            aria-label={`Voice feedback for attempt ${attempt.attemptNumber}`}
-                            controls
-                            src={attempt.feedback.voiceUrl}
+                        {attempt.feedback.voicePath ? (
+                          <VoiceFeedback
+                            attemptNumber={attempt.attemptNumber}
+                            path={attempt.feedback.voicePath}
                           />
                         ) : null}
                         <small>

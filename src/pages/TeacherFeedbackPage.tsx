@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AssignmentReferenceFiles } from '../features/content/AssignmentReferenceFiles'
+import { useObjectUrlBundle } from '../features/files/protectedFiles'
 
 import { Badge, Button, Callout, EmptyState } from '../components'
 import { useWorkspaceLifetime } from '../app/useWorkspaceLifetime'
@@ -22,6 +23,7 @@ import {
 import styles from './TeacherFeedbackPage.module.css'
 
 type RecordingTarget = 'written_dictation' | 'correction_dictation' | 'voice_note'
+const noBatch = 'No batch'
 
 const previewQueue: FeedbackQueueItem[] = [
   {
@@ -31,6 +33,7 @@ const previewQueue: FeedbackQueueItem[] = [
     displayName: 'Aarohi Deshmukh',
     assignmentTitle: 'Line confidence practice',
     assignmentGroup: 'Drawing foundations',
+    batchName: 'Weekend studio · December',
     submittedAt: '2026-10-08T11:30:00.000Z',
     submissionFileCount: 1,
     feedbackRevisionId: null,
@@ -51,6 +54,7 @@ const previewQueue: FeedbackQueueItem[] = [
     displayName: 'Kabir Mehta',
     assignmentTitle: 'Draw a one-point perspective room',
     assignmentGroup: 'Perspective & Objects',
+    batchName: 'UCEED crash course · November',
     submittedAt: '2026-10-09T09:15:00.000Z',
     submissionFileCount: 2,
     feedbackRevisionId: null,
@@ -73,7 +77,7 @@ const previewFiles: Record<string, ReviewSubmissionFile[]> = {
       id: 'preview-line-practice',
       mimeType: 'image/jpeg',
       name: 'line-practice.jpg',
-      signedUrl: '/previews/line-practice-submission.svg',
+      url: '/previews/line-practice-submission.svg',
     },
   ],
   'preview-attempt-two': [
@@ -81,13 +85,13 @@ const previewFiles: Record<string, ReviewSubmissionFile[]> = {
       id: 'preview-perspective-room',
       mimeType: 'image/jpeg',
       name: 'perspective-room.jpg',
-      signedUrl: '/previews/perspective-room-submission.svg',
+      url: '/previews/perspective-room-submission.svg',
     },
     {
       id: 'preview-reference-sheet',
       mimeType: 'application/pdf',
       name: 'construction-notes.pdf',
-      signedUrl: '/previews/line-practice-submission.svg',
+      url: '/previews/line-practice-submission.svg',
     },
   ],
 }
@@ -139,7 +143,13 @@ export function TeacherFeedbackPage() {
   const queue = previewEnabled ? previewQueue : (queueQuery.data ?? [])
   const [selectedAttemptId, setSelectedAttemptId] = useState(searchParams.get('attempt') ?? '')
   const [publishedAttempts, setPublishedAttempts] = useState<string[]>([])
-  const visibleQueue = queue.filter((item) => !publishedAttempts.includes(item.submissionAttemptId))
+  const pendingQueue = queue.filter((item) => !publishedAttempts.includes(item.submissionAttemptId))
+  // D-066: teachers review batch by batch. '' is every batch; noBatch is students without one.
+  const [batchFilter, setBatchFilter] = useState('')
+  const batchNames = [...new Set(pendingQueue.map((item) => item.batchName ?? noBatch))].sort()
+  const visibleQueue = batchFilter
+    ? pendingQueue.filter((item) => (item.batchName ?? noBatch) === batchFilter)
+    : pendingQueue
   const requestedInstanceId = searchParams.get('instance')
   const selected =
     visibleQueue.find((item) => item.submissionAttemptId === selectedAttemptId) ??
@@ -150,8 +160,12 @@ export function TeacherFeedbackPage() {
     queryKey: ['feedback-submission-files', selected?.submissionAttemptId],
     queryFn: () => getReviewSubmissionFiles(selected!.submissionAttemptId),
     enabled: Boolean(selected) && !previewEnabled,
+    // Files are private object URLs owned by this view; reopening re-checks review access.
+    gcTime: 0,
+    refetchOnWindowFocus: false,
     retry: false,
   })
+  useObjectUrlBundle(filesQuery.data?.media)
   const [revisionId, setRevisionId] = useState<string | null>(null)
   const [updatedFilesReviewed, setUpdatedFilesReviewed] = useState(false)
   const [writtenText, setWrittenText] = useState('')
@@ -163,7 +177,8 @@ export function TeacherFeedbackPage() {
   const [correctionReason, setCorrectionReason] = useState('')
   const [correctionProofreadOriginal, setCorrectionProofreadOriginal] = useState('')
   const [correctionProofreadSuggestion, setCorrectionProofreadSuggestion] = useState('')
-  const [expandedFile, setExpandedFile] = useState<ReviewSubmissionFile | null>(null)
+  // An id, not the file: a refetch replaces (and revokes) the private object URLs it points at.
+  const [expandedFileId, setExpandedFileId] = useState<string | null>(null)
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -200,17 +215,17 @@ export function TeacherFeedbackPage() {
     setCorrectionReason('')
     setCorrectionProofreadOriginal('')
     setCorrectionProofreadSuggestion('')
-    setExpandedFile(null)
+    setExpandedFileId(null)
   }, [selected])
 
   useEffect(() => {
-    if (!expandedFile) return
+    if (!expandedFileId) return
     function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') setExpandedFile(null)
+      if (event.key === 'Escape') setExpandedFileId(null)
     }
     window.addEventListener('keydown', closeOnEscape)
     return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [expandedFile])
+  }, [expandedFileId])
 
   async function ensureDraft() {
     lifetime.assertActive()
@@ -445,8 +460,9 @@ export function TeacherFeedbackPage() {
   const displayedFiles = selected
     ? previewEnabled
       ? (previewFiles[selected.submissionAttemptId] ?? [])
-      : (filesQuery.data ?? [])
+      : (filesQuery.data?.files ?? [])
     : []
+  const expandedFile = displayedFiles.find((file) => file.id === expandedFileId) ?? null
 
   function recordingStatus(target: RecordingTarget, label: string) {
     if (recordingTarget !== target) return null
@@ -540,9 +556,31 @@ export function TeacherFeedbackPage() {
         </div>
       </header>
 
+      {batchNames.length > 1 || batchFilter ? (
+        <div className={styles.batchFilter}>
+          <label htmlFor="review-batch">Batch</label>
+          <select
+            id="review-batch"
+            value={batchFilter}
+            onChange={(event) => {
+              setBatchFilter(event.target.value)
+              setSelectedAttemptId('')
+            }}
+          >
+            <option value="">All batches ({pendingQueue.length})</option>
+            {batchNames.map((name) => (
+              <option key={name} value={name}>
+                {name} ({pendingQueue.filter((item) => (item.batchName ?? noBatch) === name).length}
+                )
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
       {visibleQueue.length === 0 ? (
         <EmptyState
-          title="Review queue complete"
+          title={batchFilter ? 'Nothing waiting in this batch' : 'Review queue complete'}
           description="Newly submitted assignments will appear here."
         />
       ) : selected ? (
@@ -565,6 +603,7 @@ export function TeacherFeedbackPage() {
               >
                 <span>{item.assignmentGroup}</span>
                 <strong>{item.displayName}</strong>
+                <small>{item.batchName ?? noBatch}</small>
                 <small>{item.assignmentTitle}</small>
                 <small>
                   Attempt {item.attemptNumber ?? 1} · Version {item.submissionVersion ?? 1}
@@ -612,12 +651,12 @@ export function TeacherFeedbackPage() {
                       aria-label={`Preview ${file.name}`}
                       className={styles.filePreview}
                       key={file.id}
-                      onClick={() => setExpandedFile(file)}
+                      onClick={() => setExpandedFileId(file.id)}
                       type="button"
                     >
                       <span className={styles.thumbnail}>
                         {file.mimeType.startsWith('image/') ? (
-                          <img alt="" src={file.signedUrl} />
+                          <img alt="" src={file.url} />
                         ) : (
                           <span>PDF</span>
                         )}
@@ -930,7 +969,7 @@ export function TeacherFeedbackPage() {
         <div
           className={styles.viewerBackdrop}
           onClick={(event) => {
-            if (event.currentTarget === event.target) setExpandedFile(null)
+            if (event.currentTarget === event.target) setExpandedFileId(null)
           }}
           role="presentation"
         >
@@ -945,24 +984,21 @@ export function TeacherFeedbackPage() {
                 <p className="eyebrow">Submitted file</p>
                 <h2 id="submission-viewer-title">{expandedFile.name}</h2>
               </div>
-              <Button onClick={() => setExpandedFile(null)} variant="ghost">
+              <Button onClick={() => setExpandedFileId(null)} variant="ghost">
                 Close preview
               </Button>
             </header>
             <div className={styles.viewerCanvas}>
               {expandedFile.mimeType.startsWith('image/') ? (
-                <img
-                  alt={`Expanded submission: ${expandedFile.name}`}
-                  src={expandedFile.signedUrl}
-                />
+                <img alt={`Expanded submission: ${expandedFile.name}`} src={expandedFile.url} />
               ) : (
                 <iframe
-                  src={expandedFile.signedUrl}
+                  src={expandedFile.url}
                   title={`Expanded submission: ${expandedFile.name}`}
                 />
               )}
             </div>
-            <a href={expandedFile.signedUrl} rel="noreferrer" target="_blank">
+            <a href={expandedFile.url} rel="noreferrer" target="_blank">
               Open original in a new tab
             </a>
           </section>

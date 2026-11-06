@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { getSupabaseClient } from '../auth/supabaseClient'
+import { protectedFunctionFile } from '../files/protectedFiles'
 const date = z.string().datetime({ offset: true })
 const fileSchema = z.object({
   id: z.string().uuid(),
@@ -44,26 +45,15 @@ export async function getWorkArchive() {
     throw new Error('Your work archive could not be loaded. Please retry.')
   return parsed.data
 }
+/** The function re-checks the archive window and returns the bytes themselves, never a link. */
 export async function getArchiveDownload(fileId: string, kind: 'submission' | 'voice') {
   const result = await client().functions.invoke('student-work-archive-file', {
     body: { fileId, kind },
   })
-  const parsed = z.object({ path: z.string(), expiresAt: date }).safeParse(result.data)
-  const base = import.meta.env.VITE_SUPABASE_URL
-  if (
-    result.error ||
-    !parsed.success ||
-    !base ||
-    !/^\/storage\/v1\/object\/sign\/(student-submissions|teacher-feedback-audio)\//.test(
-      parsed.data.path,
-    ) ||
-    parsed.data.path.includes('#')
-  )
+  const file = protectedFunctionFile(result)
+  if (!file)
     throw new Error(
       'This retained file could not be downloaded. It may be missing, expired, or no longer authorized.',
     )
-  const url = new URL(parsed.data.path, base)
-  if (url.origin !== new URL(base).origin)
-    throw new Error('Download response could not be verified.')
-  return { url: url.toString(), expiresAt: parsed.data.expiresAt }
+  return file
 }

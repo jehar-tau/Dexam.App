@@ -109,8 +109,25 @@ insert into public.assessment_attempts(id,person_id,paper_id,exam,duration_minut
 values('ab930000-0000-4000-8000-000000000001',(current_setting('test.admission')::jsonb->>'personId')::uuid,'uceed-fiction-a','uceed',60,0,'{}'),
  ('ab930000-0000-4000-8000-000000000002',(current_setting('test.admission')::jsonb->>'personId')::uuid,'uceed-fiction-b','uceed',60,0,'{}');
 select is((select basis from public.assessment_attempt_access_basis where attempt_id='ab930000-0000-4000-8000-000000000001'),'coaching','attempt records creation-time coaching basis');
+-- D-065 file retrieval: the browser reads private figures with its own session, so the Storage
+-- policy itself must apply the current access window on every request (no signed link).
+insert into public.assessment_questions(id,external_key,version,content_hash,question_type,prompt,response_mode,publication_state,quarantine_reasons,licence,source_kind,visual_dependency)
+values('ab940000-0000-4000-8000-000000000001','f054-file-a',1,repeat('a',64),'mcq','Fictional figure A','auto','ready','{}','original','original',true),
+ ('ab940000-0000-4000-8000-000000000002','f054-file-b',1,repeat('b',64),'mcq','Fictional figure B','auto','ready','{}','original','original',true);
+insert into public.assessment_question_assets(question_id,role,storage_path,sha256,mime_type)
+values('ab940000-0000-4000-8000-000000000001','figure','f054-fiction/a.png',repeat('c',64),'image/png'),
+ ('ab940000-0000-4000-8000-000000000002','figure','f054-fiction/b.png',repeat('d',64),'image/png');
+insert into public.assessment_attempt_questions(attempt_id,question_id,position)
+values('ab930000-0000-4000-8000-000000000001','ab940000-0000-4000-8000-000000000001',0),
+ ('ab930000-0000-4000-8000-000000000002','ab940000-0000-4000-8000-000000000002',0);
+insert into storage.objects(bucket_id,name,owner_id)
+values('assessment-media','f054-fiction/a.png',null),('assessment-media','f054-fiction/b.png',null);
+set local role authenticated;
+select is((select count(*)::integer from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),2,'active coaching session reads its attempt figures through Storage');
+reset role;
 update public.enrollment_access_windows set expires_at=statement_timestamp();
 set local role authenticated;
+select is((select count(*)::integer from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),0,'same old session reads no coaching figures at exact expiry');
 select is(public.current_person_can_read_curriculum('ab900000-0000-4000-8000-000000000001'),false,'same old session loses curriculum at exact expiry');
 select is(public.current_person_can_edit_topic_checklist((current_setting('test.admission')::jsonb->>'enrollmentId')::uuid,'ab920000-0000-4000-8000-000000000001'),false,'same old session loses checklist mutation at expiry');
 select throws_ok($$select public.set_student_topic_mark((current_setting('test.admission')::jsonb->>'enrollmentId')::uuid,'ab920000-0000-4000-8000-000000000001',true)$$,'42501',null,'direct checklist RPC cannot bypass expiry');
@@ -123,6 +140,7 @@ values((current_setting('test.admission')::jsonb->>'personId')::uuid,'purchase',
 set local role authenticated;
 select is(public.current_person_can_take_tests(),true,'independent valid purchase survives coaching expiry');
 select lives_ok($$select public.get_assessment_attempt('ab930000-0000-4000-8000-000000000001')$$,'purchased paper attempt remains accessible');
+select is((select array_agg(name order by name) from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),array['f054-fiction/a.png']::text[],'purchase restores only its own paper figures, not expired coaching figures');
 select throws_ok($$select public.get_assessment_attempt('ab930000-0000-4000-8000-000000000002')$$,'42501',null,'purchase for A cannot restore expired coaching attempt B');
 select throws_ok($$select public.begin_assessment_attempt('ab930000-0000-4000-8000-000000000002')$$,'42501',null,'direct attempt mutation cannot use an unrelated purchase');
 select is((public.get_test_access()->>'coachingActive')::boolean,false,'client is explicitly told unlimited coaching has expired');

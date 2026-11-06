@@ -6,6 +6,7 @@ import { renderApp } from '../../test/render'
 import { PracticeRunPage } from './exam/PracticeRunPage'
 import { TestsOverviewPage } from './TestsOverviewPage'
 import { TestsPracticePage } from './TestsPracticePage'
+import { fictionalDownload } from '../../test/storage'
 
 const mocks = vi.hoisted(() => ({
   session: null as null | { user: { id: string; email: string } },
@@ -32,7 +33,7 @@ const rpcClient = (responses: Record<string, { data: unknown; error: unknown }>)
   const rpc = vi.fn((name: string) =>
     Promise.resolve(responses[name] ?? { data: null, error: { code: 'XX000' } }),
   )
-  return { rpc, storage: { from: () => ({ createSignedUrls: vi.fn() }) } }
+  return { rpc, storage: { from: () => ({ download: fictionalDownload() }) } }
 }
 
 describe('Overview progress (merged Analytics)', () => {

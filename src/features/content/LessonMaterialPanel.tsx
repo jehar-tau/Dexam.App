@@ -13,6 +13,7 @@ import styles from './LessonMaterialPanel.module.css'
 import { setContentFileLabel, validateMaterialFile } from './contentWorkspace'
 import { watchAccountChanges } from '../auth/accountOperation'
 import { getSupabaseClient } from '../auth/supabaseClient'
+import { saveBlob } from '../files/protectedFiles'
 
 function AttachmentName({
   name,
@@ -147,13 +148,8 @@ function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: b
       setBusy(false)
     }
   }
-  async function download(id: string) {
-    const url = await getLessonDownload(lessonId, id)
-    const link = document.createElement('a')
-    link.href = url
-    link.rel = 'noreferrer'
-    link.download = ''
-    link.click()
+  async function download(id: string, fileName: string) {
+    saveBlob(await getLessonDownload(lessonId, id), fileName)
   }
   return (
     <section aria-label="Lesson downloads" className={styles.panel}>
@@ -177,7 +173,7 @@ function LiveLessonFiles({ lessonId, editable }: { lessonId: string; editable: b
             variant="secondary"
             aria-label={`Download ${file.file_name}`}
             disabled={busy}
-            onClick={() => void action(() => download(file.id))}
+            onClick={() => void action(() => download(file.id, file.file_name))}
           >
             Download
           </Button>

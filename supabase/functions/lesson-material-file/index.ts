@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { boundedBody, maxLessonBytes, validLessonFile } from '../_shared/lesson-file-validation.mjs'
+import { protectedFileResponse } from '../_shared/protected-file-response.mjs'
 const headers = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',
@@ -77,15 +78,14 @@ Deno.serve(async (request) => {
       file = lookup.data?.[0]
     if (lookup.error || !file)
       return reply(403, { message: 'This lesson file is not available to your account.' })
-    const signed = await admin.storage
-      .from('lesson-materials')
-      .createSignedUrl(file.object_path, 60, { download: file.file_name })
-    if (signed.error) return reply(404, { message: 'This lesson file is unavailable.' })
+    // D-065: return the bytes to this authorised request; never a reusable signed link.
+    const stored = await admin.storage.from('lesson-materials').download(file.object_path)
+    if (stored.error || !stored.data)
+      return reply(404, { message: 'This lesson file is unavailable.' })
     const recheck = await caller.rpc('get_lesson_file', args)
     if (recheck.error || recheck.data?.[0]?.object_path !== file.object_path)
       return reply(403, { message: 'Current lesson access changed.' })
-    const signedURL = new URL(signed.data.signedUrl)
-    return reply(200, { path: signedURL.pathname + signedURL.search })
+    return protectedFileResponse(stored.data, stored.data.type, headers)
   } catch {
     return reply(400, { message: 'The lesson file request could not be completed.' })
   } finally {

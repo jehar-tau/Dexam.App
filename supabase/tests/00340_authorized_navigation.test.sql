@@ -27,7 +27,7 @@ select is(public.get_my_navigation_access()->>'student','true','student learning
 select is(public.get_my_navigation_access()->>'employee','false','student has no staff security');
 select is((select count(*) from jsonb_each(public.get_my_navigation_access()) e where e.value='true'::jsonb),1::bigint,'student sees only own audience flag');
 select is((select count(*) from jsonb_each(public.get_my_navigation_access()) e where jsonb_typeof(e.value)<>'boolean'),0::bigint,'DTO contains boolean values only');
-select is((select count(*) from jsonb_object_keys(public.get_my_navigation_access())),15::bigint,'bounded exact DTO shape');
+select is((select count(*) from jsonb_object_keys(public.get_my_navigation_access())),19::bigint,'bounded exact DTO shape');
 set local request.jwt.claims='{"sub":"f0260000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1","session_id":"f0260000-0000-4000-8000-000000000002"}';
 select is(public.get_my_navigation_access()->>'distribution','true','scoped distributor visible without global bypass');
 select is(public.current_person_can_open_assignment_distribution(),true,'scoped distributor entrance matches existing API scope');

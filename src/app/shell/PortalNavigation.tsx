@@ -21,21 +21,29 @@ const studentLinks = [
   ['Class agenda', '/student/agenda'],
   ['Work archive', '/student/archive'],
 ] as const
+// D-066: the staff entrance is the Sales portal; teaching tools live in the Teacher portal.
 const staffLinks: [keyof NavigationAccess, string, string][] = [
   ['crm', 'CRM', '/staff/crm'],
   ['crmAssignments', 'CRM assignment', '/staff/crm/assignments'],
-  ['privacy', 'Privacy', '/staff/crm/privacy'],
   ['enrolments', 'Handoffs', '/staff/enrolment-handoffs'],
   ['enrolments', 'Enrolments', '/staff/enrolments'],
-  ['content', 'Content', '/staff/content'],
-  ['distribution', 'Distribution', '/staff/assignments'],
+  ['batches', 'Batches', '/staff/batches'],
+  ['studentLogins', 'Google sign-in list', '/staff/google-access'],
   ['closeout', 'Course closeout', '/staff/enrolment-closeout'],
-  ['classes', 'Classes', '/staff/classes'],
-  ['curriculumImpact', 'Curriculum preview', '/staff/curriculum-impact'],
+]
+const teacherLinks: [keyof NavigationAccess, string, string][] = [
+  ['reviews', 'Reviews', '/teacher/reviews'],
+  ['content', 'Content', '/teacher/content'],
+  ['distribution', 'Distribution', '/teacher/distribution'],
+  ['batchAssign', 'Batches', '/teacher/batches'],
+  ['classes', 'Classes', '/teacher/classes'],
+  ['curriculumImpact', 'Curriculum preview', '/teacher/curriculum-impact'],
 ]
 const adminLinks: [keyof NavigationAccess, string, string][] = [
   ['enrolments', 'Admissions', '/admin/admissions'],
   ['employees', 'Employees', '/admin/employees'],
+  ['studentLoginRevoke', 'Google sign-in list', '/admin/google-access'],
+  ['privacy', 'Privacy', '/admin/privacy'],
   ['studentRecovery', 'Student recovery', '/admin/student-recovery'],
   ['staffRecovery', 'Staff recovery', '/admin/recovery'],
   ['staffRecovery', 'Recovery investigations', '/admin/incidents'],
@@ -78,17 +86,24 @@ export function PortalNavigation({
     return (
       <>
         {(Object.keys(portalSignIn) as Portal[]).map((kind) =>
-          link(
-            kind === 'staff' ? 'Staff sign in' : `${portalLabels[kind]} sign in`,
-            portalSignIn[kind],
-          ),
+          link(`${portalLabels[kind]} sign in`, portalSignIn[kind]),
         )}
         {link('System status', '/health')}
       </>
     )
   const allowed = (key: keyof NavigationAccess) =>
     demo
-      ? ['crm', 'crmAssignments', 'privacy', 'enrolments', 'content', 'distribution'].includes(key)
+      ? [
+          'crm',
+          'crmAssignments',
+          'enrolments',
+          'batches',
+          'studentLogins',
+          'reviews',
+          'content',
+          'distribution',
+          'batchAssign',
+        ].includes(key)
       : Boolean(current?.employee && current[key])
   const active = portal && (demo || (current && canOpenPortal(portal, current)))
   const demoSearch = demo ? '?preview=1' : ''
@@ -109,13 +124,14 @@ export function PortalNavigation({
       {active && portal === 'teacher' ? (
         <>
           {link('Teacher home', '/teacher', demoSearch)}
-          {demo || current?.reviews ? link('Reviews', '/teacher/reviews', demoSearch) : null}
-          {allowed('content') ? link('Content', '/teacher/content', demoSearch) : null}
+          {teacherLinks
+            .filter(([key]) => allowed(key))
+            .map(([, label, path]) => link(label, path, demoSearch))}
         </>
       ) : null}
       {active && portal === 'staff' ? (
         <>
-          {link('Staff home', '/staff', demoSearch)}
+          {link('Sales home', '/staff', demoSearch)}
           {staffLinks
             .filter(([key]) => allowed(key))
             .map(([, label, path]) => link(label, path, demoSearch))}

@@ -5,6 +5,7 @@ import { Button, Callout } from '../../components'
 import { useAuth } from '../auth/AuthContext'
 import { getSupabaseClient } from '../auth/supabaseClient'
 import { captureAccountOperation } from '../auth/accountOperation'
+import { downloadProtectedObject, saveBlob } from '../files/protectedFiles'
 
 const filesSchema = z
   .array(
@@ -91,24 +92,14 @@ function LiveAssignmentReferenceFiles({
                 const operation = await captureAccountOperation(client)
                 try {
                   operation.assertCurrent()
-                  const result = await operation.client.storage
-                    .from('assignment-materials')
-                    .createSignedUrl(file.object_path, 60, { download: file.file_name })
-                  operation.assertCurrent()
-                  if (result.error || !result.data?.signedUrl) throw new Error('Unavailable')
-                  if (!import.meta.env.VITE_SUPABASE_URL) throw new Error('Unavailable')
-                  const url = new URL(result.data.signedUrl),
-                    base = new URL(import.meta.env.VITE_SUPABASE_URL)
-                  if (
-                    url.origin !== base.origin ||
-                    !url.pathname.startsWith('/storage/v1/object/sign/assignment-materials/') ||
-                    !url.searchParams.get('token')
+                  // Read with the pinned session; Storage re-checks access for this request.
+                  const blob = await downloadProtectedObject(
+                    operation.client,
+                    'assignment-materials',
+                    file.object_path,
                   )
-                    throw new Error('Unavailable')
-                  const link = document.createElement('a')
-                  link.href = url.toString()
-                  link.rel = 'noreferrer'
-                  link.click()
+                  operation.assertCurrent()
+                  saveBlob(blob, file.file_name)
                 } catch {
                   setError('The reference file could not be downloaded. Check current access.')
                 } finally {

@@ -1,0 +1,80 @@
+.workspace {
+  display: grid;
+  gap: var(--space-8);
+}
+.workspace > *,
+.layout > * {
+  min-width: 0;
+}
+.pageHeader {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-default);
+}
+.pageHeader p {
+  max-width: 42rem;
+  color: var(--text-secondary);
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 0.7fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.stack,
+.form,
+.batchList {
+  display: grid;
+}
+.stack,
+.form,
+.batchList {
+  gap: var(--space-5);
+}
+.dates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-4);
+}
+.batchHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+.meta {
+  color: var(--text-secondary);
+}
+.students {
+  display: grid;
+  gap: var(--space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.student {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-default);
+}
+.studentControls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+.single {
+  display: grid;
+  max-width: 56rem;
+}
+.single > * {
+  min-width: 0;
+}

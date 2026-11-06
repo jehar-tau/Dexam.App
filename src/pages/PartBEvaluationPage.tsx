@@ -4,12 +4,13 @@ import { Link, useParams } from 'react-router-dom'
 
 import { EmptyState } from '../components'
 import { getSupabaseClient } from '../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../features/files/protectedFiles'
 import {
   fetchPartB,
   listPartBQueue,
   releasePartB,
   savePartBEvaluation,
-  signPartBMedia,
+  loadPartBMedia,
   type PartBTask,
 } from '../features/testSeries/partB'
 import styles from './PartBEvaluationPage.module.css'
@@ -101,10 +102,15 @@ export function PartBEvaluationPage() {
     queryKey: key,
     queryFn: async () => {
       const partB = await fetchPartB(client!, attemptId)
-      return { partB, urls: await signPartBMedia(client!, partB) }
+      return { partB, ...(await loadPartBMedia(client!, partB)) }
     },
     enabled: Boolean(client),
+    // Candidate sheets are private object URLs owned by this view; reopening re-checks access.
+    // Saving and releasing refresh it explicitly, so focus changes do not re-download every sheet.
+    gcTime: 0,
+    refetchOnWindowFocus: false,
   })
+  useObjectUrlBundle(query.data?.media)
   const release = useMutation({
     mutationFn: () => releasePartB(client!, attemptId),
     onSuccess: () => {

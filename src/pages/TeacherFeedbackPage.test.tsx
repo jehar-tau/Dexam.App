@@ -45,6 +45,18 @@ describe('TeacherFeedbackPage', () => {
     expect(mocks.getFeedbackReviewQueue).not.toHaveBeenCalled()
   })
 
+  it('filters the review queue batch by batch', async () => {
+    const user = userEvent.setup()
+    renderApp(<TeacherFeedbackPage />, ['/teacher/reviews?preview=1'])
+
+    const batch = await screen.findByLabelText('Batch')
+    expect(screen.getByRole('option', { name: 'All batches (2)' })).toBeInTheDocument()
+    await user.selectOptions(batch, 'UCEED crash course · November')
+    expect(screen.getByRole('heading', { name: 'Kabir Mehta' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Aarohi Deshmukh' })).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Feedback review queue')).not.toHaveTextContent('Aarohi')
+  })
+
   it('keeps playable voice feedback gated by a written equivalent confirmation', async () => {
     const user = userEvent.setup()
     renderApp(<TeacherFeedbackPage />, ['/staff/reviews?preview=1'])

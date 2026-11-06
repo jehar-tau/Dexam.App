@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Callout, Card } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
+import { fileNameFor, saveBlob } from '../features/files/protectedFiles'
 import { getArchiveDownload, getWorkArchive } from '../features/student/workArchive'
 import styles from './SignInPage.module.css'
 export function StudentWorkArchivePage() {
@@ -15,24 +16,16 @@ export function StudentWorkArchivePage() {
     gcTime: 0,
     refetchInterval: 30_000,
   })
-  const [download, setDownload] = useState<{ url: string; expiresAt: string } | null>(null),
-    [busy, setBusy] = useState(false),
+  const [busy, setBusy] = useState(false),
     [error, setError] = useState('')
-  useEffect(() => {
-    if (!download) return
-    const timer = window.setTimeout(
-      () => setDownload(null),
-      Math.max(0, Date.parse(download.expiresAt) - Date.now()),
-    )
-    return () => window.clearTimeout(timer)
-  }, [download])
-  async function requestDownload(id: string, kind: 'submission' | 'voice') {
+  /** Each download re-checks access and the archive window; no link outlives the request. */
+  async function requestDownload(id: string, kind: 'submission' | 'voice', name?: string) {
     if (busy) return
     setBusy(true)
     setError('')
-    setDownload(null)
     try {
-      setDownload(await getArchiveDownload(id, kind))
+      const file = await getArchiveDownload(id, kind)
+      saveBlob(file, name ?? fileNameFor('voice-feedback', file.type))
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Download unavailable.')
     } finally {
@@ -104,9 +97,9 @@ export function StudentWorkArchivePage() {
                           <Button
                             variant="secondary"
                             disabled={busy}
-                            onClick={() => void requestDownload(file.id, 'submission')}
+                            onClick={() => void requestDownload(file.id, 'submission', file.name)}
                           >
-                            Prepare download: {file.name}
+                            Download {file.name}
                           </Button>
                         </div>
                       ))
@@ -129,7 +122,7 @@ export function StudentWorkArchivePage() {
                             disabled={busy}
                             onClick={() => void requestDownload(id, 'voice')}
                           >
-                            Prepare voice feedback download
+                            Download voice feedback
                           </Button>
                         ))}
                       </div>
@@ -141,17 +134,6 @@ export function StudentWorkArchivePage() {
           ))
         )}
         {error ? <p role="alert">{error}</p> : null}
-        {download && !archive.isError && !archive.isPending ? (
-          <Callout tone="neutral">
-            <a href={download.url} target="_blank" rel="noreferrer">
-              Download retained file
-            </a>
-            <p>
-              This private link expires in at most 60 seconds. A fresh request checks your access
-              again.
-            </p>
-          </Callout>
-        ) : null}
       </div>
     </section>
   )

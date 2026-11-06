@@ -1,17 +1,17 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 
+import { ObjectUrlBundle, loadProtectedObjectUrls } from '../files/protectedFiles'
+
 import type { ExamResponse } from './examAttempt'
 import type { ExamPaper, ExamQuestion, ExamQuestionKind, ExamSection } from './examPaper'
 import type { AttemptResult, Marking, ResultQuestion } from './scoring'
 
 /**
  * F038/F042/F044: real papers and attempts. The server pins the questions an attempt serves,
- * sets its deadline, scores it and releases keys only with the result. Figures are private and
- * opened with signed links.
+ * sets its deadline, scores it and releases keys only with the result. Figures are private: each
+ * one is read through the candidate's session, so Storage re-checks attempt access per request.
  */
-
-const SIGNED_URL_SECONDS = 4 * 60 * 60
 
 const markingSchema = z.object({
   correct: z.number(),
@@ -63,7 +63,7 @@ const msqLadder =
   'Part marks when only correct options are chosen; −1 if any wrong option is chosen.'
 const practiceNote = 'Dexam practice marking: this exam does not publish a per-question scheme.'
 
-export type SignedUrls = Map<string, string>
+export type MediaUrls = Map<string, string>
 
 function sectionMarking(marking: Marking | undefined): ExamSection['marking'] {
   if (!marking) return undefined
@@ -75,7 +75,7 @@ function sectionMarking(marking: Marking | undefined): ExamSection['marking'] {
 export function buildBankPaper(
   title: string,
   payload: BankAttemptPayload,
-  urls: SignedUrls,
+  urls: MediaUrls,
 ): ExamPaper {
   const sections: ExamSection[] = []
   for (const item of payload.questions) {
@@ -187,18 +187,19 @@ export class BankPaperError extends Error {}
 /** The paper is outside the candidate's access (free paper used, or another programme). */
 export class PaperLockedError extends BankPaperError {}
 
-async function signPaths(client: SupabaseClient, paths: string[]): Promise<SignedUrls> {
-  const urls: SignedUrls = new Map()
-  const unique = [...new Set(paths)]
-  if (!unique.length) return urls
-  const signed = await client.storage
-    .from('assessment-media')
-    .createSignedUrls(unique, SIGNED_URL_SECONDS)
-  if (signed.error) throw new BankPaperError('The figures for this paper could not be opened.')
-  for (const entry of signed.data) {
-    if (entry.path && entry.signedUrl && !entry.error) urls.set(entry.path, entry.signedUrl)
+/**
+ * Private figures for one loaded view; the caller holds the bundle while it is shown. A missing
+ * figure is left out, as before. An exam that can read none of its figures fails so the candidate
+ * retries instead of sitting a paper without them; a result still opens without figures.
+ */
+async function loadMedia(client: SupabaseClient, paths: string[], forExam: boolean) {
+  const media = new ObjectUrlBundle()
+  const urls: MediaUrls = await loadProtectedObjectUrls(client, 'assessment-media', paths, media)
+  if (forExam && paths.length && !urls.size) {
+    media.revoke()
+    throw new BankPaperError('The figures for this paper could not be opened.')
   }
-  return urls
+  return { urls, media }
 }
 
 const mediaPaths = (questions: z.infer<typeof questionSchema>[]) =>
@@ -212,6 +213,8 @@ export type OpenedAttempt = {
   status: BankAttemptPayload['status']
   deadline: number | null
   paper: ExamPaper
+  /** Owns the paper's figure URLs; hold it with useObjectUrlBundle while the paper is shown. */
+  media: ObjectUrlBundle
 }
 
 /**
@@ -235,12 +238,13 @@ export async function openBankAttempt(
   }
   const parsed = attemptPayload.safeParse(result.data as unknown)
   if (!parsed.success) throw new BankPaperError('This paper could not be read.')
-  const urls = await signPaths(client, mediaPaths(parsed.data.questions))
+  const { urls, media } = await loadMedia(client, mediaPaths(parsed.data.questions), true)
   return {
     attemptId: parsed.data.attemptId,
     status: parsed.data.status,
     deadline: parsed.data.deadline ? Date.parse(parsed.data.deadline) : null,
     paper: buildBankPaper(title, parsed.data, urls),
+    media,
   }
 }
 
@@ -318,7 +322,7 @@ export async function fetchAttemptResult(
   client: SupabaseClient,
   attemptId: string,
   titleFor: (bankPaperId: string) => string,
-): Promise<AttemptResult> {
+): Promise<AttemptResult & { media: ObjectUrlBundle }> {
   const result = await client.rpc('get_assessment_attempt_result', { p_attempt_id: attemptId })
   if (result.error) {
     throw new BankPaperError(
@@ -330,7 +334,7 @@ export async function fetchAttemptResult(
   const parsed = resultPayload.safeParse(result.data as unknown)
   if (!parsed.success) throw new BankPaperError('This result could not be read.')
   const data = parsed.data
-  const urls = await signPaths(client, mediaPaths(data.questions))
+  const { urls, media } = await loadMedia(client, mediaPaths(data.questions), false)
   const questions: ResultQuestion[] = data.questions.map((question) => {
     const images = question.figures.flatMap((figure) => {
       const src = urls.get(figure.path)
@@ -374,6 +378,7 @@ export async function fetchAttemptResult(
     maxScore: data.maxScore,
     marking: data.marking,
     questions,
+    media,
   }
 }
 
@@ -440,12 +445,13 @@ async function openedFrom(
 ): Promise<OpenedAttempt> {
   const parsed = attemptPayload.safeParse(data)
   if (!parsed.success) throw new BankPaperError('This practice set could not be read.')
-  const urls = await signPaths(client, mediaPaths(parsed.data.questions))
+  const { urls, media } = await loadMedia(client, mediaPaths(parsed.data.questions), true)
   return {
     attemptId: parsed.data.attemptId,
     status: parsed.data.status,
     deadline: parsed.data.deadline ? Date.parse(parsed.data.deadline) : null,
     paper: buildBankPaper(title, parsed.data, urls),
+    media,
   }
 }
 

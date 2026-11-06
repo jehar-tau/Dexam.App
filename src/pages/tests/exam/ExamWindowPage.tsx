@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useAuth } from '../../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../../../features/files/protectedFiles'
 import {
   beginBankAttempt,
   openBankAttempt,
@@ -177,6 +178,7 @@ function BankExamWindow({ owner, catalogPaper }: { owner: string; catalogPaper: 
     refetchOnWindowFocus: false,
     retry: false,
   })
+  useObjectUrlBundle(query.data?.media)
 
   if (!bankId || query.data === null) {
     return (

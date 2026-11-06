@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 
 import { useAuth } from '../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../../features/files/protectedFiles'
 import {
   fetchPartB,
   partBStatusLabel,
-  signPartBMedia,
+  loadPartBMedia,
   type PartB,
 } from '../../features/testSeries/partB'
 import { PrintedBlock } from './exam/PrintedBlock'
@@ -26,12 +27,14 @@ export function PartBResultCard({ attemptId }: { attemptId: string }) {
       const done = partB.status === 'submitted' || partB.status === 'evaluated'
       return {
         partB,
-        urls: done ? await signPartBMedia(client!, partB) : new Map<string, string>(),
+        ...(done ? await loadPartBMedia(client!, partB) : { urls: new Map<string, string>() }),
       }
     },
     enabled: Boolean(client && session),
+    gcTime: 0,
     retry: false,
   })
+  useObjectUrlBundle(query.data && 'media' in query.data ? query.data.media : undefined)
   const partB = query.data?.partB
   if (
     !partB ||

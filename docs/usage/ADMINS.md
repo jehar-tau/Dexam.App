@@ -8,7 +8,7 @@ Sign in through `/admin/sign-in` using your own established employee identity. T
 
 The product owner, Rohin and Siddhant Modi are planning nominees; this handbook does not provision their accounts or establish their eligibility. Never share one administrator identity. Two-person actions need distinct eligible people; lost-MFA recovery of an admin needs two other eligible actors. A three-person nomination alone does not prove everyone is provisioned, available or independently attributable.
 
-Admin aliases include `/admin/employees`, `/admin/security`, `/admin/recovery`, `/admin/student-recovery` and `/admin/incidents`. Existing `/staff/...` bookmarks used in the detailed procedures below remain supported with original checks. Use **Switch to Staff portal** for separately permitted staff/privacy responsibilities. Missing/denied tools mean authority or environment must be checked, not that a menu link should bypass the rule.
+Admin aliases include `/admin/employees`, `/admin/security`, `/admin/recovery`, `/admin/student-recovery` and `/admin/incidents`. Existing `/staff/...` bookmarks used in the detailed procedures below remain supported with original checks. **Privacy** now lives here (`/admin/privacy`); privacy operators without the Elevated Admin role can open the Admin portal and see only Privacy. Use **Switch to Sales portal** for separately permitted sales responsibilities. Missing/denied tools mean authority or environment must be checked, not that a menu link should bypass the rule.
 
 ## 2. Own MFA and sessions
 
@@ -59,6 +59,10 @@ Current proposal/verification windows are 15 minutes. Expired or uncertain execu
 Open **Recovery investigations** (`/staff/security/incidents`). Review the exact uncertain employee/student request within your existing authority. An eligible non-target admin acknowledges that the investigation keeps the reset blocked and selects **Open investigation**. A different eligible non-target admin records **Record independent review** after checking the exact case and current authority/MFA.
 
 This records accountability; it does not retry/undo a password update, cancel the executing request, resolve provider ambiguity, unlock the account or restore prior sessions. If no eligible reviewer is available, keep the fence and contact the incident lead. Never put passwords, tokens, request payloads or MFA seeds into investigation notes or general alerts.
+
+## Dexam App Google sign-in list (D-067)
+
+`/admin/google-access` (two-step verification required) shows every current student's Google sign-in status. Admins can add, **revoke** (unlinks the Google account and ends its sessions immediately; Member ID sign-in and course access stay) and **restore** an entry. Sales can add but never revoke or undo a revocation. The App's Google switch (`app_google_login_gate`) is off until the Google client is configured and acceptance passes.
 
 ## 8. Privacy, publishing and academic powers
 

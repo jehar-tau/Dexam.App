@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { partBFileProblem } from '../../features/testSeries/partB'
 import { renderApp } from '../../test/render'
+import { fictionalDownload } from '../../test/storage'
 import { PartBEvaluationPage, PartBQueuePage } from '../PartBEvaluationPage'
 import { PartBPage } from './exam/PartBPage'
 import { PartBResultCard } from './PartBResultCard'
@@ -69,11 +70,7 @@ function client(handlers: Record<string, (args: Record<string, unknown>) => unkn
     storage: {
       from: () => ({
         upload,
-        createSignedUrls: (paths: string[]) =>
-          Promise.resolve({
-            data: paths.map((path) => ({ path, signedUrl: `https://local/${path}`, error: null })),
-            error: null,
-          }),
+        download: fictionalDownload(),
       }),
     },
   }
@@ -191,7 +188,7 @@ describe('Part B page', () => {
     await user.click(screen.getByRole('button', { name: 'Begin drawing' }))
     expect(await screen.findByRole('img', { name: 'Task 1, as printed' })).toHaveAttribute(
       'src',
-      'https://local/ab/printed.png',
+      'blob:fictional/ab/printed.png',
     )
   })
 

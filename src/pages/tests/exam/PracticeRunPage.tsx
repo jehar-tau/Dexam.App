@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { useAuth } from '../../../features/auth/AuthContext'
 import { getSupabaseClient } from '../../../features/auth/supabaseClient'
+import { useObjectUrlBundle } from '../../../features/files/protectedFiles'
 import { getBankAttempt } from '../../../features/testSeries/bankPaper'
 import { ExamWindow, StatusPage } from './ExamWindowPage'
 
@@ -37,6 +38,7 @@ export function PracticeRunPage({
     refetchOnWindowFocus: false,
     retry: false,
   })
+  useObjectUrlBundle(query.data?.media)
 
   if (query.isError || !client) {
     return (

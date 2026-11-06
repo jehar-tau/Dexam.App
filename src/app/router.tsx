@@ -36,6 +36,8 @@ import { StudentCourseworkPage } from '../pages/StudentCourseworkPage'
 import { StudentSignInPage } from '../pages/StudentSignInPage'
 import { StudentWorkspacePage } from '../pages/StudentWorkspacePage'
 import { TeacherFeedbackPage } from '../pages/TeacherFeedbackPage'
+import { BatchesPage } from '../pages/BatchesPage'
+import { StudentGoogleLoginsPage } from '../pages/StudentGoogleLoginsPage'
 import { PortalHomePage } from '../pages/PortalHomePage'
 import { PortalAccessBoundary } from '../features/auth/PortalAccessBoundary'
 import { StudentShell } from './student/StudentShell'
@@ -174,6 +176,82 @@ export const router = createBrowserRouter([
           <StaffAccessBoundary capability="enrollment.operate" requireMfa allowPreview={false}>
             <PortalAccessBoundary portal="admin">
               <AdmissionsPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/privacy',
+        element: (
+          <StaffAccessBoundary capability="privacy.manage" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <CrmPrivacyPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'admin/google-access',
+        element: (
+          <StaffAccessBoundary capability="student_login.revoke" requireMfa allowPreview={false}>
+            <PortalAccessBoundary portal="admin">
+              <StudentGoogleLoginsPage portal="admin" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/google-access',
+        element: (
+          <StaffAccessBoundary capability="student_login.approve">
+            <StudentGoogleLoginsPage portal="staff" />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/distribution',
+        element: (
+          <StaffAccessBoundary capability="assignment.distribute">
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <AssignmentDistributionPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/batches',
+        element: (
+          <StaffAccessBoundary>
+            <PortalAccessBoundary portal="teacher" allowPreview>
+              <BatchesPage portal="teacher" />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'staff/batches',
+        element: (
+          <StaffAccessBoundary>
+            <BatchesPage portal="staff" />
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/classes',
+        element: (
+          <StaffAccessBoundary allowPreview={false}>
+            <PortalAccessBoundary portal="teacher">
+              <ClassSchedulingPage />
+            </PortalAccessBoundary>
+          </StaffAccessBoundary>
+        ),
+      },
+      {
+        path: 'teacher/curriculum-impact',
+        element: (
+          <StaffAccessBoundary allowPreview={false}>
+            <PortalAccessBoundary portal="teacher">
+              <CurriculumImpactPage />
             </PortalAccessBoundary>
           </StaffAccessBoundary>
         ),

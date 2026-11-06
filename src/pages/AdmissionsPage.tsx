@@ -18,7 +18,7 @@ import {
   type AdmissionIdentity,
   type AdmissionRow,
 } from '../features/enrolment/admissions'
-import styles from './SignInPage.module.css'
+import styles from './AdmissionsPage.module.css'
 
 /** Wall-clock input is always India time, never the operator's device timezone. */
 function indiaInstant(value: string) {
