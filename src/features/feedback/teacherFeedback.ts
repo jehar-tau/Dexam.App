@@ -10,6 +10,7 @@ export type FeedbackQueueItem = {
   previousFeedbackText?: string | null
   aiAssisted: boolean
   assignmentGroup: string
+  batchName?: string | null
   assignmentInstanceId: string
   assignmentTitle: string
   displayName: string
@@ -76,6 +77,7 @@ export async function getFeedbackReviewQueue(): Promise<FeedbackQueueItem[]> {
     sourceKind: nullableText(row.source_kind) as FeedbackSourceKind | null,
     voiceEquivalentConfirmed: row.voice_equivalent_confirmed === true,
     aiAssisted: row.ai_assisted === true,
+    batchName: typeof row.batch_name === 'string' ? row.batch_name : null,
   }))
 }
 

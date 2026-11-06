@@ -8,6 +8,8 @@ Teachers sign in at `/teacher/sign-in` with their established employee email/pas
 
 Choose **Reviews** (`/teacher/reviews`) for assigned reviews or **Content** (`/teacher/content`) when explicitly authorized for academic authoring/publication. A scoped teacher author can enter without a review grant, but cannot use Reviews. Existing `/staff/reviews` and `/staff/content` bookmarks retain their operation checks. Eligible portal-switch links change the workspace, not the signed-in person.
 
+The Teacher portal also holds **Distribution** (`/teacher/distribution`), **Batches** (`/teacher/batches`), **Classes** and **Curriculum preview** when your scope allows them (D-066). In **Reviews**, use the **Batch** filter to work through submissions one batch at a time; you are notified when a student's submission is ready for review. In **Batches** you can place enrolled students of your courses into an open batch or move them, with a reason; Sales create the batches and their dates. Students never see batch dates.
+
 Keep your own employee account and required MFA current. If Reviews is missing/denied, the operator should verify your active membership, review capability and teaching scope. A missing assignment may also mean the student has not finalized a submission. The wider teacher coursework reader/roster/attendance dashboard remains deferred under D-031 A.
 
 ## Prepare topics and assignments
