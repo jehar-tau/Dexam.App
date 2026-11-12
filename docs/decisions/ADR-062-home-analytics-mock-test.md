@@ -25,5 +25,6 @@ Status: Directed by the product owner on 2026-10-29.
 
 - **Migration** `20261029030000_mock_part_b.sql`: new functions `assessment_mock_part_b_size`, `assessment_mock_part_b_pool` and `assessment_pin_mock_part_b` (service only); regenerated `begin_part_b` and `get_part_b`.
 - **pgTAP** `00500_mock_part_b.test.sql`.
+- **Order fix** `20261112010000_mock_part_b_unseen_first.sql`: the first version ranked UCEED's drawing/aptitude type for a position above an unseen task, so once the student had drawn every task of that type the position repeated one while unseen tasks of the other type remained. Unseen now comes first and the type decides among them. The pgTAP file pins the case where every drawing task is used and checks the rules over 200 random draws.
 - **Pages:** TestsPapersPage, TestsMocksPage and TestsDrawingPage are removed. `TestsMockTestPage` replaces them. Live mocks stay reachable from Home's "Up next".
 - **Still available:** the year-wise exam window (`/tests/exam/<paper>`) and its results still work for past sittings, but nothing links to start one.
