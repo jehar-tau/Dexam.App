@@ -1,8 +1,24 @@
 # Current State
 
-Last updated: 2026-11-06
+Last updated: 2026-11-20
 
 ## Current phase
+
+### Execution checkpoint from `main` at `7c6664a`
+
+F054 authenticated file retrieval, F055 Sales/Teacher portals and batches, F056 listed-student sign-in and F057 courses/payments reached `main` through PRs #113–117. PR #118 then updated UCEED Part B selection. The November 5–6 branch and draft statuses below describe those dates.
+
+| Work remaining                                             | Execution status                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F054 admin directory and manual admission history (DW-007) | This branch adds course, batch and expiry filters, directory paging, and per-enrolment receipt and change history. See the F054 spec for local verification.                                                                                                                                                                                                                                                                       |
+| F054 acceptance                                            | Verify direct mock/live resume after a coaching entitlement changes, independent enrolments and pinned-curriculum transfers, concurrent claims and account switches, and the remaining authenticated admission/edit and Google browser journeys. Real Google acceptance needs an authorized test identity.                                                                                                                         |
+| Admissions policy and onboarding                           | Decide whether automatic expiry starts the 12-month own-work archive. Explicit closeout remains the current rule. New or mismatched staff Google identities, server-enforced Google-only sessions, receipt-ledger consolidation and balance follow-up have separate decisions in DW-055–058.                                                                                                                                       |
+| Mock Test connection                                       | DW-052/054 require a cross-product identity, entitlement and results contract with the Mock Test backend. Existing tabs remain in place pending that integration.                                                                                                                                                                                                                                                                  |
+| Staging and real launch                                    | Main verification passed. The staging dry run found `20261105021000_drawing_mock_unseen_first.sql` predates a migration already recorded on staging. Reconcile its migration history and obtain Red-risk staging acceptance. Production still requires recovery, privacy, operating ownership and release approval under `PRODUCTION_READINESS.md`. [Staging run](https://github.com/jehar-tau/Dexam.App/actions/runs/43209875078) |
+
+The earlier staging run also stopped at navigation verification after applying the Sales/Teacher and listed-student migrations. The hosted fixture verifier still expects 15 fields. The current navigation RPC returns 22. Update the expected role-specific permissions and rehearse both the verifier and the out-of-order migration on a disposable database before resuming staging. [Earlier staging run](https://github.com/jehar-tau/Dexam.App/actions/runs/42226774569)
+
+The remaining deferred modules, source dependencies and policy decisions are indexed in `DEFERRED_WORK.md`.
 
 2026-11-06 D-068/F057 (owner direction in chat): Google sign-in for every portal (password screens hidden but kept; `VITE_ENABLE_PASSWORD_SIGN_IN` restores them); a live Google session replaces Dexam two-step verification for staff; single-admin approval; admins add courses and set length, total fee and admission fee; an append-only payment ledger in the Sales portal (record, totals) and Admin portal (full ledger, corrections, agreed fees) with private receipts and a collected-by dropdown; a listed student enters the Dexam App only once the admission fee is recorded. Branch `feature/google-only-payments-ledger` from `main` (which now includes F054–F056 through #116). Not merged or deployed; gates stay off. See F057.
 

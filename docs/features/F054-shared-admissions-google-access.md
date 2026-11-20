@@ -52,3 +52,13 @@ Evidence: unit/component tests for the helper and every consumer; pgTAP proof th
 ## Sources
 
 Reviewed 2026-11-05: [Supabase identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking), [Google sign-in](https://supabase.com/docs/guides/auth/social-sign-in/auth-google), [Storage access control](https://supabase.com/docs/guides/storage/security/access-control). Provider automatic identity linking is not canonical business-person linking; preserve Dexam's explicit evidence and conflict checks.
+
+## Admin directory and history follow-up
+
+The admin directory displays 50 enrolments per page, ordered by name, person and enrolment. Search and access state combine with course, batch and inclusive expiry date in India time. The filter options include archived courses and closed batches with enrolments. New admissions and transfers still use the existing active choices. Narrow the search at the existing directory offset limit.
+
+An administrator with current F054 authority can read an enrolment’s manual admission receipts and changes while admissions writes are disabled. The screen shows the recorded amount, method, reference, payment and confirmation times, confirming administrator, edit reason and changes to the stored values. The paged reader projects selected fields and omits private retry metadata. Its pages contain up to 25 receipts and 25 changes each, ordered newest first with an ID tie-break. New activity between requests can shift offset-based pages. The existing one-argument history reader retains its prior contract.
+
+Local acceptance used a fictional administrator with a real local Auth/TOTP session, the protected route and PostgREST. Chromium exercised course, batch, text and inclusive expiry filtering, an empty result, keyboard history disclosure and the persisted receipt and edit. At 1440 px and 390 px the history fit the viewport; axe reported no WCAG A/AA findings in the exercised desktop light and mobile light/dark states. Dark-mode coverage applied the existing theme tokens. Separate component and database regressions exercise page boundaries, historical choices, account isolation, independent enrolments and authorization denial.
+
+The admissions authority helper still requires recent TOTP at AAL2. Verify how a Google-only admin should satisfy F054 before rollout. The remaining Google callback, mutation workflows, assessment rights, archive decision and staging acceptance are tracked in `CURRENT_STATE.md`.

@@ -2,6 +2,8 @@
 
 Repository: <https://github.com/jehar-tau/Dexam.App>
 
+**November 20 update.** This is the historical November 5 handoff. Continue from current `main` and the execution checkpoint in `CURRENT_STATE.md`. PRs #112–118 have merged. The F054 specification and DW-007 track the directory and history follow-up.
+
 Branch: `feature/shared-admissions-google-access`. This is an **unfinished draft checkpoint**, not a release. Do not merge or deploy it merely because existing tests pass. `main` already contains Discovery styling through PR #111 (`8fffcd1`). Work on this branch, not a second admissions implementation.
 
 ## Start here

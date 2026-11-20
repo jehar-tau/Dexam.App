@@ -1,4 +1,10 @@
-import { admitStudent, editAdmission, listAdmissions, type AdmissionDraft } from './admissions'
+import {
+  admitStudent,
+  editAdmission,
+  getAdmissionHistory,
+  listAdmissions,
+  type AdmissionDraft,
+} from './admissions'
 const mocks = vi.hoisted(() => ({ rpc: vi.fn(), assertCurrent: vi.fn(), dispose: vi.fn() }))
 vi.mock('../auth/supabaseClient', () => ({ getSupabaseClient: () => ({}) }))
 vi.mock('../auth/accountOperation', () => ({
@@ -66,6 +72,65 @@ describe('shared admissions contract', () => {
   it('rejects malformed directory responses without leaking data', async () => {
     mocks.rpc.mockResolvedValue({ data: [{ private: 'secret' }], error: null })
     await expect(listAdmissions('query')).rejects.toThrow('response could not be verified')
+  })
+  it('preserves directory scope, offset and the last microsecond of the India expiry date', async () => {
+    mocks.rpc.mockResolvedValue({ data: [], error: null })
+    await listAdmissions('DXM', 'scheduled', {
+      offeringId: draft.offeringId,
+      cohortId: request,
+      expiresBefore: '2027-01-01T23:59:59.999999+05:30',
+      offset: 50,
+    })
+    expect(mocks.rpc).toHaveBeenCalledWith('list_admissions_directory', {
+      p_search: 'DXM',
+      p_state: 'scheduled',
+      p_offering: draft.offeringId,
+      p_cohort: request,
+      p_expires_before: '2027-01-01T23:59:59.999999+05:30',
+      p_offset: 50,
+    })
+  })
+  it('reads one enrolment history page with manual receipt evidence and public audit fields', async () => {
+    const receipt = {
+      id: request,
+      evidenceKind: 'manual',
+      method: 'cash',
+      amountPaise: 500000,
+      currency: 'INR',
+      paidAt: draft.paidAt,
+      reference: 'Fixture receipt',
+      confirmedBy: person,
+      confirmedByName: null,
+      confirmedAt: draft.paidAt,
+    }
+    const change = {
+      id: 1,
+      actorId: person,
+      actorName: 'Fixture admin',
+      action: 'admitted',
+      reason: 'Fixture admission',
+      at: draft.paidAt,
+      prior: {},
+      next: { receiptId: request, request: { internal: true } },
+    }
+    mocks.rpc.mockResolvedValue({
+      data: { changes: [change], receipts: [receipt], hasMore: false },
+      error: null,
+    })
+    const page = await getAdmissionHistory(enrollment, 1)
+    expect(mocks.rpc).toHaveBeenCalledWith('get_admission_history_page', {
+      p_enrollment: enrollment,
+      p_page: 1,
+    })
+    expect(page.changes[0]?.next).toEqual({ receiptId: request })
+    expect(page.receipts).toEqual([receipt])
+    mocks.rpc.mockResolvedValue({
+      data: { changes: [], receipts: Array(26).fill(receipt), hasMore: true },
+      error: null,
+    })
+    await expect(getAdmissionHistory(enrollment, 0)).rejects.toThrow(
+      'response could not be verified',
+    )
   })
   it('discards responses after account changes', async () => {
     mocks.rpc.mockResolvedValue({ data: [], error: null })

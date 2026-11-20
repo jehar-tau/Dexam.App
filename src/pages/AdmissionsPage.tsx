@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
 import {
@@ -18,6 +18,8 @@ import {
   type AdmissionIdentity,
   type AdmissionRow,
 } from '../features/enrolment/admissions'
+import fieldStyles from '../components/forms/Input.module.css'
+import { AdmissionHistory } from './AdmissionHistory'
 import styles from './AdmissionsPage.module.css'
 
 /** Wall-clock input is always India time, never the operator's device timezone. */
@@ -27,14 +29,13 @@ function indiaInstant(value: string) {
   if (!Number.isFinite(result.getTime())) throw new Error('Choose a valid date and time.')
   return result.toISOString()
 }
+const indiaTime = new Intl.DateTimeFormat('en-IN', {
+  timeZone: 'Asia/Kolkata',
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
 function displayTime(value: string | null) {
-  return value
-    ? new Intl.DateTimeFormat('en-IN', {
-        timeZone: 'Asia/Kolkata',
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }).format(new Date(value))
-    : 'Not configured'
+  return value ? indiaTime.format(new Date(value)) : 'Not configured'
 }
 const emptyForm = {
   name: '',
@@ -50,10 +51,24 @@ const emptyForm = {
   method: 'cash' as AdmissionDraft['method'],
 }
 
+const directoryPageSize = 50
+const maximumDirectoryOffset = 100_000
+const initialFilters = { search: '', state: '', offeringId: '', cohortId: '', expiryDate: '' }
+
 export function AdmissionsPage() {
   const { session } = useAuth()
-  const [search, setSearch] = useState(''),
-    [state, setState] = useState('')
+  return session ? (
+    <AdmissionsWorkspace key={session.user.id} accountId={session.user.id} />
+  ) : (
+    <p role="status">Sign in to view admissions.</p>
+  )
+}
+
+function AdmissionsWorkspace({ accountId }: { accountId: string }) {
+  const directoryHeading = useRef<HTMLHeadingElement>(null)
+  const [filters, setFilters] = useState(initialFilters)
+  const [offset, setOffset] = useState(0)
+  const [historyId, setHistoryId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyForm),
     [confirmed, setConfirmed] = useState(false)
   const [identity, setIdentity] = useState<AdmissionIdentity | null>(null)
@@ -64,27 +79,72 @@ export function AdmissionsPage() {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [message, setMessage] = useState('')
-  const [selected, setSelected] = useState<AdmissionRow | null>(null)
+  const [editTarget, setSelected] = useState<AdmissionRow | null>(null)
   const [action, setAction] = useState<AdmissionEdit['action']>('details')
   const [editValue, setEditValue] = useState(''),
     [editStart, setEditStart] = useState(''),
     [editReason, setEditReason] = useState('')
   const choices = useQuery({
-    queryKey: ['admission-choices', session?.user.id],
+    queryKey: ['admission-choices', accountId],
     queryFn: getAdmissionChoices,
     retry: false,
     staleTime: 0,
     gcTime: 0,
   })
   const directory = useQuery({
-    queryKey: ['admissions', session?.user.id, search, state],
-    queryFn: () => listAdmissions(search, state),
+    queryKey: ['admissions', accountId, filters, offset],
+    queryFn: () =>
+      listAdmissions(filters.search, filters.state, {
+        offeringId: filters.offeringId || undefined,
+        cohortId: filters.cohortId || undefined,
+        // Postgres stores microseconds and the directory's cutoff is inclusive.
+        expiresBefore: filters.expiryDate
+          ? `${filters.expiryDate}T23:59:59.999999+05:30`
+          : undefined,
+        offset,
+      }),
     retry: false,
     staleTime: 0,
     gcTime: 0,
   })
-  const enabled = choices.data?.enabled === true
+  const enabled = choices.isSuccess && choices.data.enabled
+  const directoryOfferings = choices.data?.directoryOfferings ?? choices.data?.offerings ?? []
   const offering = choices.data?.offerings.find((row) => row.id === form.offeringId)
+  const rows = directory.isSuccess ? directory.data.slice(0, directoryPageSize) : []
+  const hasNext = directory.isSuccess && directory.data.length > directoryPageSize
+  const selected =
+    editTarget &&
+    rows.some(
+      (row) =>
+        row.enrollmentId === editTarget.enrollmentId &&
+        row.revision === editTarget.revision &&
+        row.loginRevision === editTarget.loginRevision &&
+        row.state === editTarget.state,
+    )
+      ? editTarget
+      : null
+  function closeRecord() {
+    setSelected(null)
+    setHistoryId(null)
+    if (editTarget) {
+      setConfirmed(false)
+      setRequestKey(crypto.randomUUID())
+    }
+  }
+  function filter(key: keyof typeof initialFilters, value: string) {
+    setFilters((current) => ({
+      ...current,
+      [key]: value,
+      ...(key === 'offeringId' ? { cohortId: '' } : {}),
+    }))
+    setOffset(0)
+    closeRecord()
+  }
+  function movePage(nextOffset: number) {
+    directoryHeading.current?.focus()
+    setOffset(nextOffset)
+    closeRecord()
+  }
   function change(key: keyof typeof form, value: string) {
     setForm((current) => ({
       ...current,
@@ -143,9 +203,14 @@ export function AdmissionsPage() {
       <Card className={styles.card}>
         {choices.isPending ? <p role="status">Checking admission configuration…</p> : null}
         {choices.isError ? (
-          <p role="alert">
-            Admission choices are unavailable. Check your current role and recent MFA.
-          </p>
+          <>
+            <p role="alert">
+              Admission choices are unavailable. Check your current role and recent MFA.
+            </p>
+            <Button variant="secondary" onClick={() => void choices.refetch()}>
+              Retry admission choices
+            </Button>
+          </>
         ) : null}
         {!enabled && !choices.isPending ? (
           <Callout tone="warning" icon="warning">
@@ -153,46 +218,103 @@ export function AdmissionsPage() {
             is complete. This page does not enable them.
           </Callout>
         ) : null}
-        <h2>Student directory</h2>
-        <Input
-          label="Search name, Member ID or approved login email"
-          maxLength={254}
-          value={search}
-          disabled={busy}
-          onChange={(e) => {
-            setSearch(e.target.value)
-            setSelected(null)
-          }}
-        />
-        <label>
-          Access state
-          <select value={state} disabled={busy} onChange={(e) => setState(e.target.value)}>
-            <option value="">All states</option>
-            {['active', 'scheduled', 'expired', 'suspended', 'revoked', 'ended', 'legacy'].map(
-              (value) => (
-                <option key={value} value={value}>
-                  {value}
+        <h2 ref={directoryHeading} tabIndex={-1}>
+          Student directory
+        </h2>
+        <div className={styles.filters}>
+          <Input
+            label="Search name, Member ID or approved login email"
+            maxLength={254}
+            value={filters.search}
+            disabled={busy}
+            onChange={(e) => filter('search', e.target.value)}
+          />
+          <label className={fieldStyles.field}>
+            <span className={fieldStyles.label}>Access state</span>
+            <select
+              className={fieldStyles.input}
+              value={filters.state}
+              disabled={busy}
+              onChange={(e) => filter('state', e.target.value)}
+            >
+              <option value="">All states</option>
+              {['active', 'scheduled', 'expired', 'suspended', 'revoked', 'ended', 'legacy'].map(
+                (value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ),
+              )}
+            </select>
+          </label>
+          <label className={fieldStyles.field}>
+            <span className={fieldStyles.label}>Filter by course</span>
+            <select
+              className={fieldStyles.input}
+              value={filters.offeringId}
+              disabled={busy || !choices.isSuccess}
+              onChange={(e) => filter('offeringId', e.target.value)}
+            >
+              <option value="">All courses</option>
+              {directoryOfferings.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.title}
                 </option>
-              ),
-            )}
-          </select>
-        </label>
+              ))}
+            </select>
+          </label>
+          <label className={fieldStyles.field}>
+            <span className={fieldStyles.label}>Filter by batch</span>
+            <select
+              className={fieldStyles.input}
+              value={filters.cohortId}
+              disabled={busy || !filters.offeringId || !choices.isSuccess}
+              onChange={(e) => filter('cohortId', e.target.value)}
+            >
+              <option value="">All batches</option>
+              {directoryOfferings
+                .find((course) => course.id === filters.offeringId)
+                ?.batches.map((batch) => (
+                  <option key={batch.id} value={batch.id}>
+                    {batch.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <Input
+            label="Access expires on or before (India time)"
+            type="date"
+            value={filters.expiryDate}
+            disabled={busy}
+            onChange={(e) => filter('expiryDate', e.target.value)}
+          />
+        </div>
         {directory.isPending ? (
           <p role="status">Loading shared records…</p>
         ) : directory.isError ? (
           <>
             <p role="alert">Directory could not be loaded.</p>
             <Button onClick={() => void directory.refetch()}>Retry directory</Button>
+            {offset > 0 && (
+              <Button variant="secondary" onClick={() => movePage(offset - directoryPageSize)}>
+                Previous results
+              </Button>
+            )}
           </>
         ) : (
           <>
-            {!directory.data.length ? <p>No matching student enrolments.</p> : null}
-            {directory.data.length === 100 ? (
-              <p>Showing the first 100 results. Narrow your search to locate a student.</p>
+            {!rows.length ? (
+              <p>
+                {offset ? 'No enrolments remain on this page.' : 'No matching student enrolments.'}
+              </p>
             ) : null}
-            {directory.data.map((row) => (
-              <article key={row.enrollmentId}>
-                <h3>
+            {rows.map((row) => (
+              <article
+                key={row.enrollmentId}
+                className={styles.record}
+                aria-labelledby={`record-${row.enrollmentId}`}
+              >
+                <h3 id={`record-${row.enrollmentId}`}>
                   {row.name ?? 'Student'} · {row.memberId ?? 'No Member ID'}
                 </h3>
                 <p>
@@ -203,29 +325,79 @@ export function AdmissionsPage() {
                   <br />
                   {displayTime(row.startsAt)} → {displayTime(row.expiresAt)}
                 </p>
-                <Button
-                  variant="secondary"
-                  disabled={
-                    busy ||
-                    !enabled ||
-                    row.revision === null ||
-                    row.state === 'ended' ||
-                    row.state === 'revoked'
-                  }
-                  onClick={() => {
-                    setSelected(row)
-                    setAction('details')
-                    setEditValue(row.name ?? '')
-                    setEditStart('')
-                    setEditReason('')
-                    setConfirmed(false)
-                    setRequestKey(crypto.randomUUID())
-                  }}
-                >
-                  Review changes
-                </Button>
+                <div className={styles.actions}>
+                  <Button
+                    variant="secondary"
+                    disabled={busy}
+                    aria-expanded={historyId === row.enrollmentId}
+                    onClick={() => {
+                      closeRecord()
+                      setHistoryId(historyId === row.enrollmentId ? null : row.enrollmentId)
+                    }}
+                  >
+                    {historyId === row.enrollmentId ? 'Hide history' : 'View history'}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    disabled={
+                      busy ||
+                      !enabled ||
+                      row.revision === null ||
+                      row.state === 'ended' ||
+                      row.state === 'revoked'
+                    }
+                    onClick={() => {
+                      setHistoryId(null)
+                      setSelected(row)
+                      setAction('details')
+                      setEditValue(row.name ?? '')
+                      setEditStart('')
+                      setEditReason('')
+                      setConfirmed(false)
+                      setRequestKey(crypto.randomUUID())
+                    }}
+                  >
+                    Review changes
+                  </Button>
+                </div>
+                {historyId === row.enrollmentId ? (
+                  <AdmissionHistory
+                    accountId={accountId}
+                    enrollmentId={row.enrollmentId}
+                    formatTime={displayTime}
+                    batches={
+                      directoryOfferings.find((course) => course.id === row.offeringId)?.batches ??
+                      []
+                    }
+                  />
+                ) : null}
               </article>
             ))}
+            {(offset > 0 || hasNext) && (
+              <nav aria-label="Directory pages" className={styles.actions}>
+                <Button
+                  variant="secondary"
+                  disabled={busy || offset === 0}
+                  onClick={() => movePage(offset - directoryPageSize)}
+                >
+                  Previous results
+                </Button>
+                <span role="status">
+                  Page {offset / directoryPageSize + 1}
+                  {rows.length ? ` · Enrolments ${offset + 1}–${offset + rows.length}` : ''}
+                </span>
+                <Button
+                  variant="secondary"
+                  disabled={busy || !hasNext || offset >= maximumDirectoryOffset}
+                  onClick={() => movePage(offset + directoryPageSize)}
+                >
+                  Next results
+                </Button>
+                {offset >= maximumDirectoryOffset && hasNext && (
+                  <p>Narrow your filters to see additional enrolments.</p>
+                )}
+              </nav>
+            )}
           </>
         )}
         {selected ? (
@@ -373,11 +545,21 @@ export function AdmissionsPage() {
               <Button type="submit" disabled={busy || !enabled || !confirmed}>
                 {busy ? 'Recording…' : 'Record reviewed change'}
               </Button>
-              <Button variant="ghost" disabled={busy} onClick={() => setSelected(null)}>
+              <Button variant="ghost" disabled={busy} onClick={closeRecord}>
                 Cancel change
               </Button>
             </fieldset>
           </form>
+        ) : editTarget ? (
+          <div>
+            <p role="alert">
+              The selected enrolment is no longer available for this edit. Review its current
+              details before making a change.
+            </p>
+            <Button variant="secondary" onClick={closeRecord}>
+              Close change
+            </Button>
+          </div>
         ) : (
           <form
             className={styles.form}
