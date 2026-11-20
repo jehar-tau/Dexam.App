@@ -122,6 +122,45 @@ values('ab930000-0000-4000-8000-000000000001','ab940000-0000-4000-8000-000000000
  ('ab930000-0000-4000-8000-000000000002','ab940000-0000-4000-8000-000000000002',0);
 insert into storage.objects(bucket_id,name,owner_id)
 values('assessment-media','f054-fiction/a.png',null),('assessment-media','f054-fiction/b.png',null);
+-- Exercise the same mock and live Part A entry points that a student uses to resume.
+-- Use a separate unseen question, leaving the two Storage figures above independent.
+insert into public.assessment_questions (
+  id, external_key, version, content_hash, question_type, prompt, response_mode,
+  publication_state, quarantine_reasons, licence, source_kind
+) values (
+  'ab940000-0000-4000-8000-000000000003', 'f054-resume-question', 1, repeat('e',64),
+  'mcq', 'Fictional resume question', 'auto', 'ready', '{}', 'original', 'original'
+);
+insert into public.assessment_question_provenance (question_id, exam, year, paper_id, question_no)
+values ('ab940000-0000-4000-8000-000000000003', 'uceed', 2099, 'uceed-2099-resume', '1');
+insert into public.live_events (
+  id, key, title, blueprint_key, status, registration_closes_at, part_a_starts_at,
+  part_a_minutes, break_minutes, part_b_minutes, seat_limit
+) values (
+  'ab950000-0000-4000-8000-000000000001', 'f054-resume', 'Fictional resume event',
+  'uceed-2026', 'published', now() + interval '1 hour', now() + interval '2 hours', 60, 15, 60, 10
+);
+insert into public.live_event_questions (event_id, question_id, position)
+values ('ab950000-0000-4000-8000-000000000001', 'ab940000-0000-4000-8000-000000000003', 0);
+
+set local role authenticated;
+select lives_ok($$select public.register_live_event('f054-resume')$$, 'the current coaching student registers for the live mock');
+select set_config('test.resume_mock', public.start_assessment_mock('uceed-2026') ->> 'attemptId', true);
+reset role;
+update public.live_events
+  set registration_closes_at = now() - interval '2 minutes', part_a_starts_at = now() - interval '1 minute'
+  where key = 'f054-resume';
+set local role authenticated;
+select set_config('test.resume_live', public.join_live_part_a('f054-resume') ->> 'attemptId', true);
+select is(public.start_assessment_mock('uceed-2026') ->> 'attemptId', current_setting('test.resume_mock'),
+  'current coaching resumes the same unfinished mock');
+select is(public.join_live_part_a('f054-resume') ->> 'attemptId', current_setting('test.resume_live'),
+  'current coaching resumes the same live Part A attempt');
+reset role;
+select is((select count(*) from public.assessment_attempt_access_basis
+           where basis = 'coaching' and attempt_id in (
+             current_setting('test.resume_mock')::uuid, current_setting('test.resume_live')::uuid
+           )), 2::bigint, 'both ordinary entry points created coaching-based attempts');
 set local role authenticated;
 select is((select count(*)::integer from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),2,'active coaching session reads its attempt figures through Storage');
 reset role;
@@ -134,6 +173,10 @@ select throws_ok($$select public.set_student_topic_mark((current_setting('test.a
 select is(jsonb_array_length(public.list_student_topic_checklist()),0,'expiry exposes no lessons via checklist reader');
 select is(public.current_person_can_take_tests(),false,'expired coaching membership grants no unlimited tests');
 select throws_ok($$select public.get_assessment_attempt('ab930000-0000-4000-8000-000000000001')$$,'42501',null,'stale session cannot reopen coaching attempt after expiry');
+select throws_ok($$select public.start_assessment_mock('uceed-2026')$$, '42501', null,
+  'the same session cannot resume the mock after coaching expires');
+select throws_ok($$select public.join_live_part_a('f054-resume')$$, '42501', null,
+  'the same session cannot resume live Part A after coaching expires');
 reset role;
 insert into public.assessment_entitlements(person_id,source,paper_id,expires_at)
 values((current_setting('test.admission')::jsonb->>'personId')::uuid,'purchase','uceed-fiction-a',now()+interval '1 month');
@@ -143,6 +186,12 @@ select lives_ok($$select public.get_assessment_attempt('ab930000-0000-4000-8000-
 select is((select array_agg(name order by name) from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),array['f054-fiction/a.png']::text[],'purchase restores only its own paper figures, not expired coaching figures');
 select throws_ok($$select public.get_assessment_attempt('ab930000-0000-4000-8000-000000000002')$$,'42501',null,'purchase for A cannot restore expired coaching attempt B');
 select throws_ok($$select public.begin_assessment_attempt('ab930000-0000-4000-8000-000000000002')$$,'42501',null,'direct attempt mutation cannot use an unrelated purchase');
+select is(public.open_assessment_attempt('uceed-fiction-a') ->> 'attemptId',
+  'ab930000-0000-4000-8000-000000000001', 'the separate purchase resumes its own existing paper');
+select throws_ok($$select public.start_assessment_mock('uceed-2026')$$, '42501', null,
+  'purchasing another paper leaves the expired coaching mock unavailable');
+select throws_ok($$select public.join_live_part_a('f054-resume')$$, '42501', null,
+  'purchasing another paper leaves the expired coaching live attempt unavailable');
 select is((public.get_test_access()->>'coachingActive')::boolean,false,'client is explicitly told unlimited coaching has expired');
 reset role;
 update public.role_assignments set role_key='teacher' where person_id='ab100000-0000-4000-8000-000000000003';
