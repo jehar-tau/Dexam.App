@@ -30,3 +30,62 @@
   gap: var(--space-5);
   margin-top: var(--space-6);
 }
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  align-items: end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.record {
+  border-top: 1px solid var(--border-default);
+  padding-block: var(--space-4);
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.history {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-muted);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.history h4,
+.history h5 {
+  font-size: var(--fs-body-lg);
+  margin-block: var(--space-3);
+}
+
+.entries {
+  display: grid;
+  gap: var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.entries:empty,
+.values:empty {
+  display: none;
+}
+
+.entries p,
+.values {
+  margin-block: var(--space-1);
+}
+
+.values dt {
+  color: var(--text-secondary);
+}
+
+.values dd {
+  margin-left: 0;
+}

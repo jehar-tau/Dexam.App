@@ -22,12 +22,65 @@ export const admissionRowSchema = z.object({
   state: z.enum(['legacy', 'active', 'scheduled', 'expired', 'suspended', 'revoked', 'ended']),
 })
 export type AdmissionRow = z.infer<typeof admissionRowSchema>
+const instant = z.iso.datetime({ offset: true })
+const historyValues = z.object({
+  name: z.string().nullable().optional(),
+  state: z.string().optional(),
+  revision: revision.optional(),
+  cohortId: id.nullable().optional(),
+  startsAt: instant.optional(),
+  expiresAt: instant.optional(),
+  receiptId: id.optional(),
+})
+const historyPage = z.object({
+  changes: z
+    .array(
+      z.object({
+        id: revision,
+        actorId: id,
+        actorName: z.string().nullable(),
+        action: z.enum([
+          'admitted',
+          'details',
+          'dates',
+          'renewal',
+          'suspension',
+          'revocation',
+          'batch_transfer',
+        ]),
+        reason: z.string(),
+        prior: historyValues,
+        next: historyValues,
+        at: instant,
+      }),
+    )
+    .max(25),
+  receipts: z
+    .array(
+      z.object({
+        id,
+        evidenceKind: z.literal('manual'),
+        method: z.enum(['cash', 'online_transfer', 'card_machine']),
+        amountPaise: z.number().int().nonnegative().safe(),
+        currency: z.literal('INR'),
+        paidAt: instant,
+        reference: z.string(),
+        confirmedBy: id,
+        confirmedByName: z.string().nullable(),
+        confirmedAt: instant,
+      }),
+    )
+    .max(25),
+  hasMore: z.boolean(),
+})
+const offeringChoices = z.array(
+  z.object({ id, title: z.string(), batches: z.array(z.object({ id, name: z.string() })) }),
+)
 const choicesSchema = z.object({
   enabled: z.boolean(),
   timezone: z.literal('Asia/Kolkata'),
-  offerings: z.array(
-    z.object({ id, title: z.string(), batches: z.array(z.object({ id, name: z.string() })) }),
-  ),
+  offerings: offeringChoices,
+  directoryOfferings: offeringChoices.optional(),
 })
 export const admissionIdentitySchema = z.object({
   personId: id,
@@ -73,11 +126,35 @@ async function rpc<T>(
     operation.dispose()
   }
 }
-export function listAdmissions(search: string, state?: string) {
+export type AdmissionDirectoryFilters = {
+  offeringId?: string
+  cohortId?: string
+  expiresBefore?: string
+  offset?: number
+}
+export function listAdmissions(
+  search: string,
+  state?: string,
+  filters: AdmissionDirectoryFilters = {},
+) {
   return rpc(
     'list_admissions_directory',
-    { p_search: search, p_state: state || null },
-    z.array(admissionRowSchema),
+    {
+      p_search: search,
+      p_state: state || null,
+      p_offering: filters.offeringId || null,
+      p_cohort: filters.cohortId || null,
+      p_expires_before: filters.expiresBefore || null,
+      p_offset: filters.offset ?? 0,
+    },
+    z.array(admissionRowSchema).max(100),
+  )
+}
+export function getAdmissionHistory(enrollmentId: string, page: number) {
+  return rpc(
+    'get_admission_history_page',
+    { p_enrollment: id.parse(enrollmentId), p_page: z.number().int().nonnegative().parse(page) },
+    historyPage,
   )
 }
 export function getAdmissionChoices() {
