@@ -68,6 +68,14 @@ The Supabase URL and publishable key are intended for browser use and are protec
 5. Cloudflare builds the same `main` commit with staging public configuration.
 6. Hosted acceptance checks `/health`, direct nested-route refresh, sign-in boundaries, and the changed journey.
 
+### November 21 migration and navigation checkpoint
+
+The November 6 staging job applied the later batch and student-login migrations, then stopped at synthetic navigation verification (15 expected fields, 19 returned). By November 12 the drawing-mock migration `20261105021000_drawing_mock_unseen_first.sql` had an earlier timestamp than the recorded staging frontier. The normal preview stopped before applying it. [November 6 run](https://github.com/jehar-tau/Dexam.App/actions/runs/42226774569) · [November 12 run](https://github.com/jehar-tau/Dexam.App/actions/runs/43209875078)
+
+On a disposable database built from `7c6664a` with that one migration delayed, the ordinary preview reproduced the refusal. A local include-all preview listed that file alone. Two drawing checks failed before applying it. Afterwards all 42 drawing/Part B checks passed and the two affected drawing function definitions matched the fresh-install baseline. The updated navigation verifier also passed all nine real fictional sessions with the current 22-field contract.
+
+For the next authorized staging release, compare the current hosted migration ledger and drawing function definitions with the verified baseline. Review the exact pending set against that comparison before applying a one-time reconciliation. Then rerun the protected release and its synthetic role checks; the local rehearsal establishes expected results for that comparison.
+
 If database deployment fails, do not retry by editing the dashboard. Fix or add a migration in a reviewed pull request. Staging may be rebuilt if its fictional state is no longer trustworthy.
 
 ### Guarded rebuild mode
@@ -144,6 +152,8 @@ The bootstrap manifest contains only reserved `.invalid` email addresses, clearl
 | Inactive employee denial | `inactive-employee.staging@dexam.invalid`  |
 
 Every deployment rotates these Auth users to the encrypted staging password, upserts the fictional identity and permission baseline, and checks current database state after obtaining a real session. Privacy and security-sensitive permissions must remain denied at password-only `aal1`; successful `aal2` access remains gated by DW-003 rather than being weakened for staging.
+
+The navigation probe signs in each of the nine fixtures and reads `get_my_navigation_access`. It validates the same 22 boolean fields as the browser and compares each value with that fixture’s `expectedNavigation` in `scripts/staging/synthetic-fixtures.mjs`. For example, Sales can see payment entry, while the full payment ledger stays hidden in this password-only session. A revoked or inactive employee should see no destinations. A mismatched flag is reported by fixture and flag name. Invalid payloads and provider errors produce a generic failure for the affected fixture.
 
 ## Synthetic acceptance evidence — 2026-10-12
 
