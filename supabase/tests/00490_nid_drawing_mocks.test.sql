@@ -26,6 +26,16 @@ values
 insert into public.candidate_profiles (person_id, level, exams, exam_year)
 values ('e3100000-0000-4000-8000-000000000002', 'bdes', '{nid-bdes}', 2027);
 
+-- The first student's coaching access is managed by F054, as it is for a new admission.
+insert into public.offerings (id,code,title,status) values
+  ('e3400000-0000-4000-8000-000000000001', 'F054_DRAW', 'Fictional drawing course', 'active');
+insert into public.enrollments (id,person_id,offering_id,status,source_type) values
+  ('e3500000-0000-4000-8000-000000000001', 'e3100000-0000-4000-8000-000000000001',
+   'e3400000-0000-4000-8000-000000000001', 'active', 'test_fixture');
+insert into public.enrollment_access_windows (enrollment_id,starts_at,expires_at,updated_by) values
+  ('e3500000-0000-4000-8000-000000000001', now() - interval '1 day', now() + interval '1 day',
+   'e3100000-0000-4000-8000-000000000001');
+
 -- A fictional drawing pool: 14 B.Des-or-both tasks across types, and 3 M.Des-only tasks
 -- (on top of whatever the database already holds).
 select set_config('test.base', (select count(*) from public.assessment_drawing_pool('bdes'))::text, true);
@@ -60,6 +70,11 @@ select is(
 );
 select ok(not has_function_privilege('authenticated', 'public.assessment_drawing_pool(text)', 'execute'),
   'students cannot list the raw drawing pool');
+select ok(
+  not has_function_privilege('authenticated', 'public.current_person_open_drawing_mock(text)', 'execute')
+  and not has_function_privilege('anon', 'public.current_person_open_drawing_mock(text)', 'execute'),
+  'the resume lookup is internal to the existing catalogue and start RPCs'
+);
 
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"e3000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"e3000000-0000-4000-8000-000000000001"}';
@@ -214,6 +229,41 @@ select throws_ok(
 reset role;
 set local role anon;
 select throws_ok($$select public.list_drawing_mocks()$$, '42501', null, 'signed-out visitors cannot list drawing mocks');
+
+-- The NID catalogue and the start button must agree with the Part B screen on resume.
+reset role;
+insert into public.assessment_entitlements (person_id,source,paper_id,expires_at) values
+  ('e3100000-0000-4000-8000-000000000001', 'purchase', 'uceed-fixture-other', now() + interval '1 month');
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"e3000000-0000-4000-8000-000000000001","role":"authenticated","aal":"aal1","session_id":"e3000000-0000-4000-8000-000000000001"}';
+select is((select m->>'openAttemptId' from jsonb_array_elements(public.list_drawing_mocks()) m where m->>'key' = 'nid-dat-bdes-2026'),
+  current_setting('test.mock2'), 'the NID card offers the current coaching attempt');
+select is(public.start_drawing_mock('nid-dat-bdes-2026')->>'attemptId', current_setting('test.mock2'),
+  'resuming active coaching preserves the pinned drawing attempt');
+
+reset role;
+update public.enrollment_access_windows set expires_at = statement_timestamp()
+  where enrollment_id = 'e3500000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is(public.current_person_can_open_paper('uceed-fixture-other'), true, 'the unrelated paper is still owned');
+select is((select jsonb_build_array(m->'openAttemptId', m->'canStart') from jsonb_array_elements(public.list_drawing_mocks()) m where m->>'key' = 'nid-dat-bdes-2026'),
+  '[null,false]'::jsonb, 'an unrelated purchase leaves the expired NID sitting unavailable on the card');
+select throws_ok($$select public.start_drawing_mock('nid-dat-bdes-2026')$$, 'DX001', null,
+  'a stale start request cannot resume the expired NID sitting with an unrelated purchase');
+select throws_ok($$select public.get_part_b(current_setting('test.mock2')::uuid)$$, '42501', null,
+  'the Part B screen also refuses the expired coaching sitting');
+
+reset role;
+insert into public.assessment_entitlements (person_id,source,paper_id,expires_at) values
+  ('e3100000-0000-4000-8000-000000000001', 'purchase', 'mock-nid-dat-bdes-2026', now() + interval '1 month');
+set local role authenticated;
+select is((select m->>'openAttemptId' from jsonb_array_elements(public.list_drawing_mocks()) m where m->>'key' = 'nid-dat-bdes-2026'),
+  current_setting('test.mock2'), 'a purchase for this drawing paper restores the correct Continue link');
+select is(public.start_drawing_mock('nid-dat-bdes-2026')->>'attemptId', current_setting('test.mock2'),
+  'the exact purchase resumes the original pinned sitting');
+select is(public.get_part_b(current_setting('test.mock2')::uuid)->>'attemptId', current_setting('test.mock2'),
+  'the purchased sitting opens in Part B');
+reset role;
 
 select * from finish();
 rollback;
