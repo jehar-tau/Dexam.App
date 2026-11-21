@@ -113,7 +113,7 @@ export async function startDrawingMock(client: SupabaseClient, key: string): Pro
   if (result.error) {
     throw new DrawingPaperError(
       result.error.code === 'DX001'
-        ? 'You have used your free drawing mock. More unlock with a plan.'
+        ? 'This drawing mock is outside your current access.'
         : result.error.code === 'P0002'
           ? 'Not enough drawing tasks are ready for this mock yet.'
           : 'The drawing mock could not be built. Try again.',

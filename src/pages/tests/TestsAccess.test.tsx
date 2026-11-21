@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 
@@ -170,6 +170,65 @@ describe('test-series sign-in and onboarding', () => {
       await screen.findByRole('heading', { name: 'This login cannot use the test series' }),
     ).toBeVisible()
   })
+
+  it.each([
+    { openAttemptId: null, entitledPapers: ['uceed-fixture-other'] },
+    {
+      openAttemptId: 'ab350000-0000-4000-8000-000000000001',
+      entitledPapers: ['mock-nid-dat-bdes-2026'],
+    },
+  ])(
+    'uses the eligible sitting returned by the NID card after coaching ends ($openAttemptId)',
+    async ({ openAttemptId, entitledPapers }) => {
+      mocks.session = { user: { id: 'student', email: 'drawing@fixture.invalid' } }
+      mocks.client = client((name) => {
+        if (name === 'get_test_access')
+          return {
+            data: {
+              kind: 'student',
+              profile: null,
+              displayName: 'Fictional student',
+              freeSlots: [],
+              coachingActive: false,
+              entitledPapers,
+            },
+            error: null,
+          }
+        if (name === 'list_drawing_mocks')
+          return {
+            data: [
+              {
+                key: 'nid-dat-bdes-2026',
+                level: 'bdes',
+                title: 'Fictional NID mock',
+                minutes: 180,
+                tasks: 6,
+                totalMarks: 100,
+                pool: 6,
+                unseen: 0,
+                taken: 1,
+                openAttemptId,
+                canStart: Boolean(openAttemptId),
+              },
+            ],
+            error: null,
+          }
+        return { data: [], error: null }
+      })
+      renderApp(routes, ['/tests/mock-test'])
+      const card = within(await screen.findByRole('region', { name: 'NID DAT' }))
+      await card.findByText('Taken 1 time')
+      if (openAttemptId) {
+        expect(card.getByRole('link', { name: 'Continue' })).toHaveAttribute(
+          'href',
+          `/tests/part-b/${openAttemptId}`,
+        )
+      } else {
+        expect(card.queryByRole('link', { name: 'Continue' })).not.toBeInTheDocument()
+        expect(card.getByRole('button', { name: 'Start' })).toBeDisabled()
+      }
+    },
+  )
 
   it('lets a coaching student straight through', async () => {
     mocks.session = { user: { id: 'student', email: 'dxm-x@members.dexam.invalid' } }

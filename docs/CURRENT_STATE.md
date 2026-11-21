@@ -249,6 +249,7 @@ F014 is accepted through PR #25 and protected rebuild run `38298241510`. F015 st
 
 ## Implementation active
 
+- The NID drawing card and start action now honor current access to the unfinished sitting. An eligible student resumes the original pinned tasks. After coaching expires, a purchase for a different paper leaves the NID card locked.
 - F054 assessment acceptance now covers resuming an unfinished objective mock and rejoining live Part A through the student RPCs. The fictional student can resume both while coaching is active. Once coaching expires, a separate paper purchase still opens that paper and leaves both coaching attempts closed. The broader access audit is tracked in `CLOUD_CODE_HANDOFF.md`.
 
 - F015 completed its approved fictional-stage scope: enrolment/challenge, backup factor, guarded removal, live MFA enforcement, durable previous-session denial, recent verification, independent recovery, supported provider deletion, and minimized audit. PRs #31–#33 merged after checks/review inspection. Local verification passed 156 application tests, 656 database assertions, 43 Chromium journeys, actual TOTP/Edge acceptance, and desktop/mobile visual checks. Protected run `38422519675` repeated nine existing role checks and real hosted recovery acceptance; disposable fixtures were removed. See `STAFF_SECURITY.md` for use/failure/escalation guidance.
