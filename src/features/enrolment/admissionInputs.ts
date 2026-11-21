@@ -27,6 +27,32 @@ function instant(value: string): number {
   return result
 }
 
+/** A datetime-local field in the admission form always represents an India-time minute. */
+export function indiaInputInstant(value: string): string {
+  return new Date(instant(`${value}:00+05:30`)).toISOString()
+}
+
+export function presetExpiryInput(start: string, preset: AccessPreset): string {
+  const end = previewAccessExpiry(indiaInputInstant(start), preset)
+  const wallTime = new Date(Date.parse(end) + indiaOffsetMs)
+  if (wallTime.getUTCFullYear() > 9999)
+    throw new Error('The selected expiry is outside the supported date range.')
+  return wallTime.toISOString().slice(0, 16)
+}
+
+export function assertLaterExpiry(
+  start: string,
+  expiry: string,
+  message = 'Access expiry must be after its start.',
+) {
+  const startMs = instant(start)
+  const endMs = instant(expiry)
+  // Existing database windows can have finer precision than the form's minute picker.
+  const fraction = (value: string) => Number(value.match(/\.\d+/)?.[0] ?? 0)
+  if (endMs < startMs || (endMs === startMs && fraction(expiry) <= fraction(start)))
+    throw new Error(message)
+}
+
 /** Calendar arithmetic in the explicitly displayed admission timezone, not browser timezone.
  * Month ends clamp to the final real day; 30 days means exactly 30 × 24 hours.
  */

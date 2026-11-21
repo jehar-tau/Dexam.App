@@ -4,6 +4,8 @@ Last updated: 2026-11-21
 
 ## Current phase
 
+The local `fix/admission-duration-preset` branch corrects the F054 form’s duration and custom-expiry handling. The authenticated browser regression and receipt-retry evidence are recorded in [F054](features/F054-shared-admissions-google-access.md#admission-dates).
+
 ### Execution checkpoint from `main` at `7c6664a`
 
 F054 authenticated file retrieval, F055 Sales/Teacher portals and batches, F056 listed-student sign-in and F057 courses/payments reached `main` through PRs #113–117. PR #118 then updated UCEED Part B selection. The November 5–6 branch and draft statuses below describe those dates.

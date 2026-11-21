@@ -109,6 +109,96 @@ describe('admissions workspace', () => {
     expect(mocks.admit).not.toHaveBeenCalled()
   })
 
+  it('recalculates the chosen duration when the start changes and preserves a custom expiry', async () => {
+    const user = userEvent.setup()
+    mocks.choices.mockResolvedValue({ enabled: true, timezone: 'Asia/Kolkata', offerings: [] })
+    renderApp(<AdmissionsPage />)
+    await screen.findByRole('button', { name: 'View history' })
+    const start = screen.getByLabelText('Access start — Asia/Kolkata')
+    const expiry = screen.getByLabelText(/Access expiry — Asia/)
+    const preset = screen.getByLabelText('Duration preset')
+    fireEvent.change(start, { target: { value: '2028-01-01T01:05' } })
+    await user.selectOptions(preset, '12')
+    expect(expiry).toHaveValue('2029-01-01T01:05')
+    fireEvent.change(start, { target: { value: '2028-02-29T01:05' } })
+    expect(expiry).toHaveValue('2029-02-28T01:05')
+    fireEvent.change(expiry, { target: { value: '2029-05-15T11:25' } })
+    expect(preset).toHaveValue('')
+    fireEvent.change(start, { target: { value: '2028-04-01T11:25' } })
+    expect(expiry).toHaveValue('2029-05-15T11:25')
+    await user.selectOptions(preset, '30')
+    expect(expiry).toHaveValue('2028-05-01T11:25')
+  })
+
+  it('submits corrected India-time dates and retries the same reviewed admission without changing its key', async () => {
+    const user = userEvent.setup()
+    mocks.choices.mockResolvedValue({
+      enabled: true,
+      timezone: 'Asia/Kolkata',
+      offerings: [
+        {
+          id: 'course',
+          title: 'Fictional course',
+          batches: [{ id: 'group', name: 'Fictional batch' }],
+        },
+      ],
+    })
+    mocks.search.mockResolvedValue([])
+    mocks.admit
+      .mockRejectedValueOnce(new Error('Response was lost.'))
+      .mockResolvedValueOnce({ replayed: true })
+    renderApp(<AdmissionsPage />)
+    await screen.findByRole('button', { name: 'View history' })
+    const fill = (label: string | RegExp, value: string) =>
+      fireEvent.change(screen.getByLabelText(label), { target: { value } })
+    fill('Student display name', 'Fictional learner')
+    fill('Dedicated student login email', 'learner@fixture.invalid')
+    await user.click(screen.getByRole('button', { name: 'Check existing identity' }))
+    await user.click(await screen.findByRole('radio', { name: /this is a new person/ }))
+    await user.selectOptions(screen.getByLabelText('Programme'), 'course')
+    await user.selectOptions(screen.getByLabelText('Delivery batch'), 'group')
+    fill('Access start — Asia/Kolkata', '2028-01-01T01:05')
+    await user.selectOptions(screen.getByLabelText('Duration preset'), '12')
+    fill('Access start — Asia/Kolkata', '2028-02-29T01:05')
+    fill(/Amount actually received/, '1200')
+    fill('Payment received at — Asia/Kolkata', '2026-11-01T18:00')
+    fill(/Receipt\/reference/, 'Fictional receipt')
+    fill('Admission reason', 'Fictional review')
+    await user.click(screen.getByRole('checkbox', { name: /I verified the canonical student/ }))
+    const submit = screen.getByRole('button', { name: 'Record admission and manual receipt' })
+    await user.click(submit)
+    expect(await screen.findByRole('alert')).toHaveTextContent('Response was lost')
+    const admission = mocks.admit.mock.calls[0]?.[0]
+    expect(admission).toMatchObject({
+      startsAt: '2028-02-28T19:35:00.000Z',
+      expiresAt: '2029-02-27T19:35:00.000Z',
+      paidAt: '2026-11-01T12:30:00.000Z',
+      requestKey: expect.any(String),
+    })
+    await user.click(submit)
+    await screen.findByText(/Admission recorded/)
+    expect(mocks.admit.mock.calls[1]?.[0]).toEqual(admission)
+    expect(screen.getByLabelText('Duration preset')).toHaveValue('')
+    expect(screen.getByLabelText(/Access expiry — Asia/)).toHaveValue('')
+  })
+
+  it('clears a previous expiry on preset overflow and recovers when the start is corrected', async () => {
+    const user = userEvent.setup()
+    mocks.choices.mockResolvedValue({ enabled: true, timezone: 'Asia/Kolkata', offerings: [] })
+    renderApp(<AdmissionsPage />)
+    await screen.findByRole('button', { name: 'View history' })
+    const start = screen.getByLabelText('Access start — Asia/Kolkata')
+    const expiry = screen.getByLabelText(/Access expiry — Asia/)
+    fireEvent.change(start, { target: { value: '2028-09-01T00:30' } })
+    await user.selectOptions(screen.getByLabelText('Duration preset'), '48')
+    fireEvent.change(start, { target: { value: '9996-01-01T00:30' } })
+    expect(expiry).toHaveValue('')
+    expect(screen.getByRole('alert')).toHaveTextContent(/supported date range/)
+    fireEvent.change(start, { target: { value: '2028-10-01T00:30' } })
+    expect(expiry).toHaveValue('2032-10-01T00:30')
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('keeps directory pages bounded and resets the page and batch when filters change', async () => {
     const user = userEvent.setup()
     const records = Array.from({ length: 100 }, (_, index) => ({
