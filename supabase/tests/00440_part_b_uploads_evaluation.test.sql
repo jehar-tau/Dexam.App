@@ -26,6 +26,16 @@ values
 insert into public.role_assignments (person_id, role_key, scope_type, scope_id, grant_reason)
 values ('c8100000-0000-4000-8000-000000000003', 'elevated_admin', 'global', null, 'F048 evaluator test');
 
+-- A receives coaching through a managed enrolment; its window can expire independently of membership.
+insert into public.offerings (id, code, title, status)
+values ('c8300000-0000-4000-8000-000000000001', 'F054_PARTB', 'Fictional Part B course', 'active');
+insert into public.enrollments (id, person_id, offering_id, status, source_type) values
+  ('c8400000-0000-4000-8000-000000000001', 'c8100000-0000-4000-8000-000000000001',
+   'c8300000-0000-4000-8000-000000000001', 'active', 'test_fixture');
+insert into public.enrollment_access_windows (enrollment_id, starts_at, expires_at, updated_by) values
+  ('c8400000-0000-4000-8000-000000000001', now() - interval '1 day', now() + interval '1 day',
+   'c8100000-0000-4000-8000-000000000003');
+
 -- One objective question and two drawing tasks on a fictional CEED paper.
 insert into public.assessment_questions (
   id, external_key, version, content_hash, question_type, prompt, response_mode,
@@ -156,6 +166,38 @@ select is(public.get_part_b(current_setting('test.attempt')::uuid) ->> 'status',
 select is(public.get_part_b(current_setting('test.attempt')::uuid) ->> 'score', '52.50', 'and the Part B score');
 select is(public.get_part_b(current_setting('test.attempt')::uuid) -> 'tasks' -> 0 ->> 'feedback', 'Good proportions.', 'and the feedback');
 select is(jsonb_array_length(public.list_my_part_b()), 1, 'Sketches lists the sitting');
+select is(public.get_part_b(current_setting('test.attempt')::uuid) #>> '{tasks,0,uploads,0,path}',
+  current_setting('test.path'), 'the released review includes the student’s original registered sheet');
+select is((select count(*) from storage.objects where bucket_id = 'assessment-part-b' and name = current_setting('test.path')),
+  1::bigint, 'the same student can read the released sheet while coaching is active');
+
+reset role;
+update public.enrollment_access_windows set expires_at = statement_timestamp()
+  where enrollment_id = 'c8400000-0000-4000-8000-000000000001';
+set local role authenticated;
+select throws_ok($$select public.get_part_b(current_setting('test.attempt')::uuid)$$, '42501', null,
+  'at coaching expiry the student can no longer open the released Part B review');
+select is((select count(*) from storage.objects where bucket_id = 'assessment-part-b' and name = current_setting('test.path')),
+  0::bigint, 'at expiry the existing student session cannot read the private sheet row');
+
+reset role;
+insert into public.assessment_entitlements (person_id, source, paper_id, expires_at)
+values ('c8100000-0000-4000-8000-000000000001', 'purchase', 'ceed-other-fixture', now() + interval '1 month');
+set local role authenticated;
+select is(public.current_person_can_open_paper('ceed-other-fixture'), true, 'the separate paper entitlement is current');
+select throws_ok($$select public.get_part_b(current_setting('test.attempt')::uuid)$$, '42501', null,
+  'a purchase for another paper leaves the released Part B review closed');
+select is((select count(*) from storage.objects where bucket_id = 'assessment-part-b' and name = current_setting('test.path')),
+  0::bigint, 'the other paper purchase does not restore access to the sheet row');
+
+reset role;
+insert into public.assessment_entitlements (person_id, source, paper_id, expires_at)
+values ('c8100000-0000-4000-8000-000000000001', 'purchase', 'ceed-2093', now() + interval '1 month');
+set local role authenticated;
+select is(public.get_part_b(current_setting('test.attempt')::uuid) #>> '{tasks,0,uploads,0,path}',
+  current_setting('test.path'), 'purchasing the exact paper returns the originally registered sheet in its review');
+select is((select count(*) from storage.objects where bucket_id = 'assessment-part-b' and name = current_setting('test.path')),
+  1::bigint, 'purchasing the exact paper restores the private sheet row to that same student');
 reset role;
 
 select * from finish();

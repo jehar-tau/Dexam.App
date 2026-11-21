@@ -124,12 +124,15 @@ insert into storage.objects(bucket_id,name,owner_id)
 values('assessment-media','f054-fiction/a.png',null),('assessment-media','f054-fiction/b.png',null);
 -- Exercise the same mock and live Part A entry points that a student uses to resume.
 -- Use a separate unseen question, leaving the two Storage figures above independent.
+insert into public.assessment_topics (id, slug, name)
+values ('ab960000-0000-4000-8000-000000000001', 'f054-resume-topic', 'Fictional practice topic');
 insert into public.assessment_questions (
   id, external_key, version, content_hash, question_type, prompt, response_mode,
-  publication_state, quarantine_reasons, licence, source_kind
+  publication_state, quarantine_reasons, licence, source_kind, topic_id
 ) values (
   'ab940000-0000-4000-8000-000000000003', 'f054-resume-question', 1, repeat('e',64),
-  'mcq', 'Fictional resume question', 'auto', 'ready', '{}', 'original', 'original'
+  'mcq', 'Fictional resume question', 'auto', 'ready', '{}', 'original', 'original',
+  'ab960000-0000-4000-8000-000000000001'
 );
 insert into public.assessment_question_provenance (question_id, exam, year, paper_id, question_no)
 values ('ab940000-0000-4000-8000-000000000003', 'uceed', 2099, 'uceed-2099-resume', '1');
@@ -162,6 +165,21 @@ select is((select count(*) from public.assessment_attempt_access_basis
              current_setting('test.resume_mock')::uuid, current_setting('test.resume_live')::uuid
            )), 2::bigint, 'both ordinary entry points created coaching-based attempts');
 set local role authenticated;
+-- Complete a normal topic-practice sitting and leave the next set open in the same session.
+select set_config('test.finished_practice',
+  public.start_assessment_practice('f054-resume-topic', 10, false, 'uceed')->>'attemptId', true);
+select lives_ok($$select public.begin_assessment_attempt(current_setting('test.finished_practice')::uuid)$$,
+  'the coaching student begins the first practice set');
+select lives_ok($$select public.submit_assessment_attempt(current_setting('test.finished_practice')::uuid, '{}'::jsonb)$$,
+  'the coaching student submits the first practice set');
+select is(public.get_assessment_attempt_result(current_setting('test.finished_practice')::uuid)->>'attemptId',
+  current_setting('test.finished_practice'), 'the student can read their submitted practice result during coaching');
+select is(array(select item->>'attemptId' from jsonb_array_elements(public.get_assessment_progress()->'attempts') item),
+  array[current_setting('test.finished_practice')], 'the submitted practice result appears on the student overview');
+select set_config('test.open_practice',
+  public.start_assessment_practice('f054-resume-topic', 10, true, 'uceed')->>'attemptId', true);
+select is(public.get_assessment_attempt(current_setting('test.open_practice')::uuid)->>'attemptId',
+  current_setting('test.open_practice'), 'the student can resume the second practice set during coaching');
 select is((select count(*)::integer from storage.objects where bucket_id='assessment-media' and name like 'f054-fiction/%'),2,'active coaching session reads its attempt figures through Storage');
 reset role;
 update public.enrollment_access_windows set expires_at=statement_timestamp();
@@ -177,6 +195,12 @@ select throws_ok($$select public.start_assessment_mock('uceed-2026')$$, '42501',
   'the same session cannot resume the mock after coaching expires');
 select throws_ok($$select public.join_live_part_a('f054-resume')$$, '42501', null,
   'the same session cannot resume live Part A after coaching expires');
+select throws_ok($$select public.get_assessment_attempt_result(current_setting('test.finished_practice')::uuid)$$,
+  '42501', null, 'the same session cannot open the practice result after coaching expires');
+select throws_ok($$select public.get_assessment_attempt(current_setting('test.open_practice')::uuid)$$,
+  '42501', null, 'the same session cannot continue its practice set after coaching expires');
+select throws_ok($$select public.get_assessment_progress()$$, '42501', null,
+  'without separate access the expired student cannot read the assessment overview');
 reset role;
 insert into public.assessment_entitlements(person_id,source,paper_id,expires_at)
 values((current_setting('test.admission')::jsonb->>'personId')::uuid,'purchase','uceed-fiction-a',now()+interval '1 month');
@@ -192,6 +216,20 @@ select throws_ok($$select public.start_assessment_mock('uceed-2026')$$, '42501',
   'purchasing another paper leaves the expired coaching mock unavailable');
 select throws_ok($$select public.join_live_part_a('f054-resume')$$, '42501', null,
   'purchasing another paper leaves the expired coaching live attempt unavailable');
+select throws_ok($$select public.get_assessment_attempt_result(current_setting('test.finished_practice')::uuid)$$,
+  '42501', null, 'a different paper purchase does not reopen the coaching practice result');
+select throws_ok($$select public.get_assessment_attempt(current_setting('test.open_practice')::uuid)$$,
+  '42501', null, 'a different paper purchase does not reopen the unfinished coaching practice set');
+select lives_ok($$select public.begin_assessment_attempt('ab930000-0000-4000-8000-000000000001')$$,
+  'the student begins the independently purchased paper');
+select lives_ok($$select public.submit_assessment_attempt('ab930000-0000-4000-8000-000000000001', '{}'::jsonb)$$,
+  'the student submits the independently purchased paper');
+select is(public.get_assessment_attempt_result('ab930000-0000-4000-8000-000000000001')->>'attemptId',
+  'ab930000-0000-4000-8000-000000000001', 'the purchased paper releases its own result');
+select is(array(select item->>'attemptId' from jsonb_array_elements(public.get_assessment_progress()->'attempts') item),
+  array['ab930000-0000-4000-8000-000000000001'], 'the overview contains only the independently purchased result');
+select is(array(select attempt_id::text from public.list_assessment_attempts()),
+  array['ab930000-0000-4000-8000-000000000001'], 'history lists only attempts the student can still open');
 select is((public.get_test_access()->>'coachingActive')::boolean,false,'client is explicitly told unlimited coaching has expired');
 reset role;
 update public.role_assignments set role_key='teacher' where person_id='ab100000-0000-4000-8000-000000000003';
