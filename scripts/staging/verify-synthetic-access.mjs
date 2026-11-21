@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 import { accounts, academicFixture, isAllowedSupabaseUrl } from './synthetic-fixtures.mjs'
+import { verifySyntheticNavigation } from './verify-synthetic-navigation.mjs'
 
 const supabaseUrl = process.env.STAGING_SUPABASE_URL
 const publicKey = process.env.STAGING_PUBLIC_KEY
@@ -24,24 +25,6 @@ async function verifyRpc(client, name, parameters, expected, message) {
   const result = await client.rpc(name, parameters)
   if (result.error) throw new Error(`${message} failed (${result.error.code ?? 'unknown'}).`)
   assertEqual(result.data, expected, message)
-}
-
-async function verifyNavigation(client, student, employee) {
-  const result = await client.rpc('get_my_navigation_access')
-  if (
-    result.error ||
-    !result.data ||
-    Object.values(result.data).some((flag) => typeof flag !== 'boolean')
-  )
-    throw new Error('Minimal navigation boundary failed.')
-  assertEqual(result.data.student, student, 'Student navigation')
-  assertEqual(Object.keys(result.data).length, 15, 'Minimal navigation field count')
-  assertEqual(result.data.employee, employee, 'Employee navigation')
-  for (const key of ['employees', 'studentRecovery', 'staffRecovery', 'curriculumImpact'])
-    assertEqual(result.data[key], false, 'Unassured or ungranted privileged navigation')
-  if (!employee)
-    for (const [key, value] of Object.entries(result.data))
-      if (key !== 'student') assertEqual(value, false, 'Inactive staff navigation')
 }
 
 async function verifyStudent(account) {
@@ -72,7 +55,7 @@ async function verifyStudent(account) {
     true,
     'Student membership boundary',
   )
-  await verifyNavigation(client, true, false)
+  await verifySyntheticNavigation(client, account)
   await client.auth.signOut({ scope: 'local' })
   console.log('Verified fictional Student boundary.')
 }
@@ -137,7 +120,7 @@ async function verifyEmployee(account) {
     account.key === 'enrolment_operator',
     `${account.label} explicit scheduling boundary`,
   )
-  await verifyNavigation(client, false, expectedActive)
+  await verifySyntheticNavigation(client, account)
   await client.auth.signOut({ scope: 'local' })
   console.log(`Verified ${account.label} boundary.`)
 }

@@ -5,6 +5,7 @@ export const endedTimestamp = '2026-02-15T09:00:00.000Z'
 export const accounts = [
   {
     key: 'student',
+    expectedNavigation: ['student'],
     label: 'Fictional Student',
     email: 'dxm-stg22student@members.dexam.invalid',
     memberId: 'DXM-STG22STUDENT',
@@ -19,6 +20,7 @@ export const accounts = [
   },
   {
     key: 'teacher',
+    expectedNavigation: ['employee', 'content', 'distribution', 'reviews', 'batchAssign'],
     label: 'Fictional Teacher',
     email: 'teacher.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000002',
@@ -37,6 +39,7 @@ export const accounts = [
   },
   {
     key: 'sales',
+    expectedNavigation: ['employee', 'crm', 'batches', 'studentLogins', 'payments'],
     label: 'Fictional Sales',
     email: 'sales.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000003',
@@ -50,6 +53,7 @@ export const accounts = [
   },
   {
     key: 'crm_coordinator',
+    expectedNavigation: ['employee', 'crmAssignments', 'payments'],
     label: 'Fictional CRM Coordinator',
     email: 'crm-coordinator.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000004',
@@ -63,6 +67,7 @@ export const accounts = [
   },
   {
     key: 'enrolment_operator',
+    expectedNavigation: ['employee', 'enrolments', 'closeout', 'classes', 'payments'],
     label: 'Fictional Enrolment Operator',
     email: 'enrolment-operator.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000005',
@@ -76,6 +81,7 @@ export const accounts = [
   },
   {
     key: 'privacy_operator',
+    expectedNavigation: ['employee', 'payments'],
     label: 'Fictional Privacy Operator',
     email: 'privacy-operator.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000006',
@@ -89,6 +95,15 @@ export const accounts = [
   },
   {
     key: 'elevated_admin',
+    expectedNavigation: [
+      'employee',
+      'crmAssignments',
+      'enrolments',
+      'closeout',
+      'batches',
+      'studentLogins',
+      'payments',
+    ],
     label: 'Fictional Elevated Admin',
     email: 'elevated-admin.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000007',
@@ -102,6 +117,7 @@ export const accounts = [
   },
   {
     key: 'revoked_employee',
+    expectedNavigation: [],
     label: 'Fictional Revoked Employee',
     email: 'revoked-employee.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000008',
@@ -115,6 +131,7 @@ export const accounts = [
   },
   {
     key: 'inactive_employee',
+    expectedNavigation: [],
     label: 'Fictional Inactive Employee',
     email: 'inactive-employee.staging@dexam.invalid',
     personId: '10000000-0000-4000-8000-000000000009',
