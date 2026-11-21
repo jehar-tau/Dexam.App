@@ -20,9 +20,11 @@ Admin-reviewed changes include non-identity details, dates, renewal, suspension/
 - A transfer records delivery-group history and preserves pinned curriculum/assignment history and validity dates. Renewal is an explicit audited action, not an implicit side effect of transfer or payment.
 - Existing signed bearer links cannot be made immediately revocable by merely checking before signing. Protected content needs authenticated retrieval checks rather than exposing long-lived bearer URLs. Before any live rollout, drain previously issued URLs within their documented maximum lifetime; do not rotate live provider credentials or move/delete content as an improvised revocation mechanism. Previously downloaded bytes cannot be recalled.
 
-## Remaining policy question
+## Automatic expiry and access to finalized work
 
-The owner was asked whether automatic access expiry anchors the existing 12-month finalized-own-work/published-feedback archive at that expiry timestamp, or whether archive eligibility still requires explicit manual course closeout. This affects archive metadata/access, not physical retention. Do not enable scheduled-expiry archive behavior before the answer is recorded. Default access start, instalment/refund/discount/backdating policy, contact replacement and legacy identity migration remain unassumed; explicit reviewed dates and existing guards must be retained.
+On 2026-11-21 the owner chose automatic coaching expiry as the start of the existing 12-month work archive. For each eligible enrolment, the student can read their own finalized submissions and associated published feedback from the end of coaching up to the 12-month anniversary. Earlier explicit completion or withdrawal continues to start the archive on its recorded end date. A later administrative closeout preserves the original deadline.
+
+This decision governs access to retained files. Physical retention, payment policy, contact replacement and legacy identity migration remain separate decisions.
 
 ## Activation boundary
 

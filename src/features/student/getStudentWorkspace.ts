@@ -2,6 +2,7 @@ import { getSupabaseClient } from '../auth/supabaseClient'
 
 export type StudentEnrollment = {
   activatedAt: string | null
+  archiveAvailable: boolean
   approvedAt: string | null
   cohortName: string | null
   enrollmentId: string
@@ -23,36 +24,29 @@ type ProfileRow = {
 type EnrollmentRow = {
   activated_at?: unknown
   approved_at?: unknown
-  cohort?: unknown
-  id?: unknown
-  offering?: unknown
-  status?: unknown
+  cohort_name?: unknown
+  enrollment_id?: unknown
+  offering_title?: unknown
+  access_state?: unknown
+  archive_available?: unknown
 }
 
 const unavailableMessage = 'Your learning workspace could not be loaded. Please try again.'
-
-function relatedText(value: unknown, key: string, nullable = false) {
-  if (nullable && value === null) return null
-  if (!value || typeof value !== 'object') return undefined
-  const text = (value as Record<string, unknown>)[key]
-  return typeof text === 'string' ? text : undefined
-}
 
 function nullableDate(value: unknown) {
   return value === null || typeof value === 'string' ? value : undefined
 }
 
 function parseEnrollment(row: EnrollmentRow): StudentEnrollment | null {
-  const offeringTitle = relatedText(row.offering, 'title')
-  const cohortName = relatedText(row.cohort, 'name', true)
   const approvedAt = nullableDate(row.approved_at)
   const activatedAt = nullableDate(row.activated_at)
 
   if (
-    typeof row.id !== 'string' ||
-    typeof row.status !== 'string' ||
-    typeof offeringTitle !== 'string' ||
-    cohortName === undefined ||
+    typeof row.enrollment_id !== 'string' ||
+    typeof row.access_state !== 'string' ||
+    typeof row.offering_title !== 'string' ||
+    (row.cohort_name !== null && typeof row.cohort_name !== 'string') ||
+    typeof row.archive_available !== 'boolean' ||
     approvedAt === undefined ||
     activatedAt === undefined
   ) {
@@ -60,10 +54,11 @@ function parseEnrollment(row: EnrollmentRow): StudentEnrollment | null {
   }
 
   return {
-    enrollmentId: row.id,
-    status: row.status,
-    offeringTitle,
-    cohortName,
+    enrollmentId: row.enrollment_id,
+    status: row.access_state,
+    archiveAvailable: row.archive_available,
+    offeringTitle: row.offering_title,
+    cohortName: row.cohort_name,
     approvedAt,
     activatedAt,
   }
@@ -75,12 +70,7 @@ export async function getStudentWorkspace(): Promise<StudentWorkspace> {
 
   const [profileResult, enrollmentResult] = await Promise.all([
     client.from('people').select('member_id, display_name').single(),
-    client
-      .from('enrollments')
-      .select(
-        'id, status, approved_at, activated_at, offering:offerings(title), cohort:cohorts(name)',
-      )
-      .order('created_at', { ascending: false }),
+    client.rpc('list_my_student_enrollment_access'),
   ])
 
   const profile = profileResult.data as ProfileRow | null

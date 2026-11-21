@@ -15,6 +15,19 @@ describe('private work archive service', () => {
     mocks.rpc.mockResolvedValue({ error: null, data: [{ secret: 'do-not-echo' }] })
     await expect(getWorkArchive()).rejects.toThrow('Your work archive could not be loaded.')
   })
+  it('loads an automatically expired course and its archive deadline', async () => {
+    const course = {
+      enrollmentId: 'a0200000-0000-4000-8000-000000000001',
+      offeringTitle: 'Drawing',
+      status: 'expired',
+      endedAt: '2026-11-21T10:00:00Z',
+      expiresAt: '2027-11-21T10:00:00Z',
+      attempts: [],
+    }
+    mocks.rpc.mockResolvedValue({ error: null, data: [course] })
+    expect(await getWorkArchive()).toEqual([course])
+  })
+
   it('returns the retained bytes typed from the checked header, never a link', async () => {
     mocks.invoke.mockResolvedValue({
       error: null,

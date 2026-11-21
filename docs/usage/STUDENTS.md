@@ -57,7 +57,7 @@ Open `/student/study-checklist`. Mark/unmark topics while active to track your o
 
 ## 9. After the course ends
 
-Course completion/withdrawal ends lessons and new submissions for that enrolment. Your Member ID and other eligible courses remain separate. Open **Work archive** (`/student/archive`) to privately view/download eligible finalized submissions and already-published feedback during the 12-month window after course end. It is not lifetime storage, editable submission space, or an archive of all lessons/drafts.
+Course completion/withdrawal ends lessons and new submissions for that enrolment. Your Member ID and other eligible courses remain separate. Open **Work archive** (`/student/archive`) to privately view/download eligible finalized submissions and already-published feedback for 12 months from your coaching expiry or an earlier recorded completion or withdrawal. The archive shows your download deadline for each course. It is not lifetime storage, editable submission space, or an archive of all lessons/drafts.
 
 Download any work you need to keep before access expires. The app may display expiry information; do not rely on an external reminder. Access expiry is separate from eventual physical retention cleanup and approved holds. Missing/expired items cannot be restored by guessing old file links.
 

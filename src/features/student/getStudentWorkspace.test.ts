@@ -11,10 +11,9 @@ vi.mock('../auth/supabaseClient', () => ({
       if (table === 'people') {
         return { select: () => ({ single: mocks.profile }) }
       }
-      return {
-        select: () => ({ order: mocks.enrollments }),
-      }
+      throw new Error('Unexpected table')
     },
+    rpc: mocks.enrollments,
   }),
 }))
 
@@ -32,12 +31,13 @@ describe('getStudentWorkspace', () => {
     mocks.enrollments.mockResolvedValue({
       data: [
         {
-          id: 'enrolment-id',
-          status: 'active',
+          enrollment_id: 'enrolment-id',
+          access_state: 'expired',
+          archive_available: true,
           approved_at: '2026-10-05T10:00:00.000Z',
           activated_at: '2026-10-06T10:00:00.000Z',
-          offering: { title: 'Design Entrance Foundation' },
-          cohort: { name: 'Studio Batch' },
+          offering_title: 'Design Entrance Foundation',
+          cohort_name: 'Studio Batch',
         },
       ],
       error: null,
@@ -49,7 +49,8 @@ describe('getStudentWorkspace', () => {
       enrollments: [
         {
           enrollmentId: 'enrolment-id',
-          status: 'active',
+          status: 'expired',
+          archiveAvailable: true,
           approvedAt: '2026-10-05T10:00:00.000Z',
           activatedAt: '2026-10-06T10:00:00.000Z',
           offeringTitle: 'Design Entrance Foundation',
@@ -57,6 +58,7 @@ describe('getStudentWorkspace', () => {
         },
       ],
     })
+    expect(mocks.enrollments).toHaveBeenCalledWith('list_my_student_enrollment_access')
   })
 
   it('accepts an enrolment without a cohort', async () => {
@@ -67,12 +69,13 @@ describe('getStudentWorkspace', () => {
     mocks.enrollments.mockResolvedValue({
       data: [
         {
-          id: 'enrolment-id',
-          status: 'active',
+          enrollment_id: 'enrolment-id',
+          access_state: 'expired',
+          archive_available: true,
           approved_at: null,
           activated_at: null,
-          offering: { title: 'Portfolio Workshop' },
-          cohort: null,
+          offering_title: 'Portfolio Workshop',
+          cohort_name: null,
         },
       ],
       error: null,

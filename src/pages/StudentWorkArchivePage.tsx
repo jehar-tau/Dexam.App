@@ -4,8 +4,18 @@ import { Link } from 'react-router-dom'
 import { Button, Callout, Card } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
 import { fileNameFor, saveBlob } from '../features/files/protectedFiles'
-import { getArchiveDownload, getWorkArchive } from '../features/student/workArchive'
+import {
+  getArchiveDownload,
+  getWorkArchive,
+  type WorkArchive,
+} from '../features/student/workArchive'
 import styles from './SignInPage.module.css'
+const courseEndLabels: Record<WorkArchive['status'], string> = {
+  completed: 'Course completed on',
+  withdrawn: 'Withdrawal recorded on',
+  expired: 'Coaching expired on',
+}
+
 export function StudentWorkArchivePage() {
   const { session } = useAuth()
   const archive = useQuery({
@@ -38,9 +48,9 @@ export function StudentWorkArchivePage() {
         <p className="eyebrow">Private work archive</p>
         <h1 id="archive-title">Take your work forward.</h1>
         <p className={styles.lede}>
-          Your finalized submissions and published feedback remain read-only for 12 months after a
-          course ends. Download files before the shown expiry; purged files cannot be recovered.
-          Lessons, reference materials and new submissions are not part of this archive.
+          You can read your finalized submissions and published feedback for 12 months after your
+          coaching expires, or after an earlier course completion or withdrawal. Download any files
+          you want to keep before the deadline shown for each course.
         </p>
         <Link to="/student">Back to student workspace</Link>
         <p>
@@ -59,8 +69,8 @@ export function StudentWorkArchivePage() {
           <Card>
             <h2>No retained course archive</h2>
             <p>
-              Eligible completed or withdrawn courses appear here until their 12-month archive
-              window ends.
+              Your eligible courses appear here when coaching expires or the course closes. Each
+              archive is available for 12 months.
             </p>
           </Card>
         ) : (
@@ -68,7 +78,7 @@ export function StudentWorkArchivePage() {
             <Card key={course.enrollmentId}>
               <h2>{course.offeringTitle}</h2>
               <p>
-                {course.status} · Ended {new Date(course.endedAt).toLocaleDateString()}
+                {courseEndLabels[course.status]} {new Date(course.endedAt).toLocaleDateString()}
               </p>
               <Callout tone="warning" icon="warning">
                 Download before {new Date(course.expiresAt).toLocaleString()}. This is not

@@ -112,7 +112,7 @@ There is no recurrence, attendance, conferencing integration, advance reminder o
 
 Open **Course closeout** (`/staff/enrolment-closeout`) with existing enrolment-operation scope. Search the Member ID/name, select the exact course enrolment, choose **Completed** or **Withdrawn**, record the required reason and acknowledge the stated access change. Choose **Close this enrolment** only after review.
 
-Closeout ends lessons/new submissions for that enrolment; eligible finalized own-work/published-feedback archive lasts 12 months after course end. It preserves the Member ID and other courses. This is not account deletion, lifetime lesson access, pause/resume, transfer, backdating, automatic expiry or an approved undo/reopen workflow. Treat mistakes as support incidents rather than editing database rows or silently creating another enrolment.
+Closeout ends lessons and new submissions for that enrolment. A student's archive of finalized work and published feedback opens when coaching expires or when the course is closed earlier. It runs for 12 months from that date. It preserves the Member ID and other courses. This is not account deletion, lifetime lesson access, pause/resume, transfer, backdating, automatic expiry or an approved undo/reopen workflow. Treat mistakes as support incidents rather than editing database rows or silently creating another enrolment.
 
 ## 9. Privacy responsibilities
 
