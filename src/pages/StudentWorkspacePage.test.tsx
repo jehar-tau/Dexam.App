@@ -51,6 +51,37 @@ describe('StudentWorkspacePage', () => {
     )
   })
 
+  it.each([
+    ['expired', true],
+    ['expired', false],
+    ['scheduled', false],
+    ['revoked', false],
+    ['suspended', false],
+  ])(
+    'restricts %s course links to current archive eligibility (%s)',
+    async (status, archiveAvailable) => {
+      mocks.getStudentWorkspace.mockResolvedValue({
+        displayName: 'Fictional Learner',
+        memberId: 'DXM-2K3M9Q2RW5TY',
+        enrollments: [
+          {
+            enrollmentId: 'course-id',
+            offeringTitle: 'Fictional Course',
+            status,
+            archiveAvailable,
+          },
+        ],
+      })
+      renderApp(<StudentWorkspacePage />)
+      await screen.findByRole('heading', { name: 'Fictional Course' })
+      expect(screen.queryByRole('link', { name: /Open coursework/ })).not.toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /Open assignments/ })).not.toBeInTheDocument()
+      expect(Boolean(screen.queryByRole('link', { name: 'Open private work archive' }))).toBe(
+        archiveAvailable,
+      )
+    },
+  )
+
   it('shows a helpful empty state before the first enrolment', async () => {
     mocks.getStudentWorkspace.mockResolvedValue({
       displayName: null,

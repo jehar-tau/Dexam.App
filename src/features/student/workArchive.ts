@@ -27,7 +27,7 @@ const attemptSchema = z.object({
 const archiveSchema = z.object({
   enrollmentId: z.string().uuid(),
   offeringTitle: z.string(),
-  status: z.enum(['completed', 'withdrawn']),
+  status: z.enum(['completed', 'withdrawn', 'expired']),
   endedAt: date,
   expiresAt: date,
   attempts: z.array(attemptSchema),

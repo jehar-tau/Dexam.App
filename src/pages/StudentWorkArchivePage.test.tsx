@@ -48,6 +48,22 @@ describe('private student work archive', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('identifies an archive that opened when coaching expired', async () => {
+    mocks.get.mockResolvedValue([
+      {
+        enrollmentId: 'course',
+        offeringTitle: 'Drawing',
+        status: 'expired',
+        endedAt: '2026-11-21T10:00:00Z',
+        expiresAt: '2027-11-21T10:00:00Z',
+        attempts: [],
+      },
+    ])
+    renderApp(<StudentWorkArchivePage />)
+    expect(await screen.findByText(/Coaching expired on/)).toBeVisible()
+    expect(screen.getByText(/Download before/)).toBeVisible()
+  })
+
   it('downloads a retained file directly under its name, with no link left on the page', async () => {
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
     mocks.get.mockResolvedValue([

@@ -7,6 +7,7 @@ import {
   type StudentEnrollment,
   type StudentWorkspace,
 } from '../features/student/getStudentWorkspace'
+import { useAuth } from '../features/auth/AuthContext'
 import { TestsOverviewPage } from './tests/TestsOverviewPage'
 import { DiscoveryArt } from '../components/brand/DiscoveryArt'
 import styles from './StudentWorkspacePage.module.css'
@@ -20,6 +21,7 @@ const previewWorkspace: StudentWorkspace = {
       offeringTitle: 'Design Entrance Foundation',
       cohortName: 'Studio Batch · Autumn 2026',
       status: 'active',
+      archiveAvailable: false,
       approvedAt: '2026-10-05T10:00:00.000Z',
       activatedAt: '2026-10-06T10:00:00.000Z',
     },
@@ -34,6 +36,16 @@ function enrollmentTone(status: string) {
 
 function displayStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1).replaceAll('_', ' ')
+}
+
+function accessDescription(enrollment: StudentEnrollment) {
+  if (enrollment.status === 'active') return 'Learning access is available'
+  if (enrollment.archiveAvailable)
+    return 'Your finalized work is available in your read-only archive.'
+  if (enrollment.status === 'scheduled') return 'Learning access starts on your scheduled date.'
+  if (['completed', 'withdrawn', 'expired', 'ended'].includes(enrollment.status))
+    return 'Learning access has ended.'
+  return 'Contact Dexam support'
 }
 
 function EnrollmentCard({
@@ -63,13 +75,7 @@ function EnrollmentCard({
         </div>
         <div>
           <dt>Access</dt>
-          <dd>
-            {enrollment.status === 'active'
-              ? 'Learning access is available'
-              : ['completed', 'withdrawn'].includes(enrollment.status)
-                ? 'Course ended; retained finalized work is read-only in your archive'
-                : 'Contact Dexam support'}
-          </dd>
+          <dd>{accessDescription(enrollment)}</dd>
         </div>
       </dl>
       {enrollment.status === 'active' ? (
@@ -82,7 +88,7 @@ function EnrollmentCard({
           </Link>
         </div>
       ) : null}
-      {['completed', 'withdrawn'].includes(enrollment.status) ? (
+      {enrollment.archiveAvailable ? (
         <Link to="/student/archive">Open private work archive</Link>
       ) : null}
     </Card>
@@ -90,11 +96,14 @@ function EnrollmentCard({
 }
 
 export function StudentWorkspacePage() {
+  const { session } = useAuth()
   const [searchParams] = useSearchParams()
   const previewEnabled =
     import.meta.env.VITE_ENABLE_STUDENT_PREVIEW === 'true' && searchParams.get('preview') === '1'
   const workspaceQuery = useQuery({
-    queryKey: ['student-workspace', previewEnabled],
+    queryKey: ['student-workspace', previewEnabled, session?.user.id],
+    gcTime: 0,
+    refetchInterval: previewEnabled ? false : 30_000,
     queryFn: () => (previewEnabled ? Promise.resolve(previewWorkspace) : getStudentWorkspace()),
     retry: false,
   })

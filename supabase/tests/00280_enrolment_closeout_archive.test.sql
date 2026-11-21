@@ -209,6 +209,66 @@ values('fa400000-0000-4000-8000-000000000001','fa200000-0000-4000-8000-000000000
 update public.feedback_revisions set status='published',outcome='review_completed',published_at=now(),published_by_person_id='e1000000-0000-4000-8000-000000000001' where id='fa400000-0000-4000-8000-000000000001';
 insert into public.feedback_revisions(submission_attempt_id,assignment_version_id,revision_number,written_text,created_by_person_id,updated_by_person_id)
 values('fa200000-0000-4000-8000-000000000001','e9000000-0000-4000-8000-000000000001',2,'PRIVATE DRAFT NOT IN ARCHIVE','e1000000-0000-4000-8000-000000000001','e1000000-0000-4000-8000-000000000001');
+-- A ready file on the draft also exercises direct retrieval, independently of the archive list.
+insert into public.submission_files(id,submission_attempt_id,object_path,original_file_name,mime_type,byte_size,original_byte_size,position,status,ready_at)
+values('fa300000-0000-4000-8000-000000000002','fa200000-0000-4000-8000-000000000002','fa100000-0000-4000-8000-000000000001/fa200000-0000-4000-8000-000000000002/fa300000-0000-4000-8000-000000000002.pdf','Fictional draft.pdf','application/pdf',100,100,1,'ready',now());
+
+-- Automatic expiry opens the owner's finalized-work archive without closing the enrolment.
+update public.cohorts set curriculum_version_id='e5000000-0000-4000-8000-000000000001'
+where id='e3000000-0000-4000-8000-000000000001';
+insert into public.enrollment_access_windows(enrollment_id,starts_at,expires_at,updated_by) values
+  ('e4000000-0000-4000-8000-000000000001',now()-interval '2 days',now()+interval '1 day','e1000000-0000-4000-8000-000000000001');
+set local role authenticated;
+set local request.jwt.claims='{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+select is(public.list_student_work_archive(),'[]'::jsonb,'current coaching does not open the automatic archive before expiry');
+select ok(public.current_person_can_read_curriculum('e5000000-0000-4000-8000-000000000001'),'the student can read the assigned curriculum before expiry');
+
+reset role;
+update public.enrollment_access_windows set expires_at=now() where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select ok(public.current_person_can_read_work_archive('e4000000-0000-4000-8000-000000000001'),'archive opens at coaching expiry while the enrolment is still active');
+select is(jsonb_array_length(public.list_student_work_archive()),1,'the independently active second course is excluded');
+select is(public.list_student_work_archive()->0->>'status','expired','the automatic archive reports expiry to the student');
+select is((public.list_student_work_archive()->0->>'endedAt')::timestamptz,now(),'archive uses the automatic expiry as its start');
+select is((public.list_student_work_archive()->0->>'expiresAt')::timestamptz,now()+interval '12 months','archive ends twelve calendar months after coaching expiry');
+select is(jsonb_array_length(public.list_student_work_archive()->0->'attempts'),1,'automatic archive includes only the finalized attempt');
+select is(public.list_student_work_archive()#>>'{0,attempts,0,id}','fa200000-0000-4000-8000-000000000001','archive identifies the correct finalized attempt');
+select is(jsonb_array_length(public.list_student_work_archive()#>'{0,attempts,0,feedback}'),1,'automatic archive contains only the published feedback');
+select is(position('PRIVATE DRAFT' in public.list_student_work_archive()::text),0,'automatic archive never discloses a draft review');
+select is((select expires_at from public.get_student_archive_file('fa300000-0000-4000-8000-000000000001','submission')),
+  now()+interval '12 months','retained own file uses the same archive end as the list');
+select is(public.current_person_can_read_curriculum('e5000000-0000-4000-8000-000000000001'),false,'automatic archive does not keep lessons open');
+select is(public.list_student_topic_checklist(),'[]'::jsonb,'automatic finalized-work archive does not expose the curriculum checklist');
+select is((select count(*)::integer from public.get_student_archive_file('fa300000-0000-4000-8000-000000000002','submission')),0,'a ready upload from a draft cannot be downloaded from the archive');
+select is(public.current_person_can_access_assignment_instance('fa100000-0000-4000-8000-000000000001'),false,'automatic archive does not reopen active assignment access');
+set local request.jwt.claims='{"sub":"e0000000-0000-4000-8000-000000000003","session_id":"e0000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+select is(public.list_student_work_archive(),'[]'::jsonb,'the other student cannot list the expired learner’s work');
+select is((select count(*)::integer from public.get_student_archive_file('fa300000-0000-4000-8000-000000000001','submission')),0,'the other student cannot retrieve the archived file by ID');
+
+reset role;
+update public.enrollment_access_windows set expires_at=now()-interval '2 hours' where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+set local request.jwt.claims='{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
+select is(public.list_student_work_archive()#>'{0,attempts}','[]'::jsonb,'work finalized after coaching expired is excluded');
+select is((select count(*)::integer from public.get_student_archive_file('fa300000-0000-4000-8000-000000000001','submission')),0,'direct file retrieval also excludes work finalized after expiry');
+reset role;
+update public.enrollment_access_windows set state='suspended' where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is(public.current_person_can_read_work_archive('e4000000-0000-4000-8000-000000000001'),false,'a suspended coaching window cannot open the automatic archive');
+reset role;
+update public.enrollment_access_windows set state='revoked' where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is(public.current_person_can_read_work_archive('e4000000-0000-4000-8000-000000000001'),false,'a revoked coaching window cannot open the automatic archive');
+reset role;
+update public.enrollment_access_windows set state='active',starts_at=now()-interval '14 months',expires_at=now()-interval '12 months'
+where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is(public.current_person_can_read_work_archive('e4000000-0000-4000-8000-000000000001'),false,'automatic archive excludes the exact twelve-month end');
+select is(public.list_student_work_archive(),'[]'::jsonb,'archive list closes at the same end');
+reset role;
+-- This learner expires automatically before the operator's later closeout.
+update public.enrollment_access_windows set starts_at=now()-interval '2 days',expires_at=now()-interval '30 minutes'
+where enrollment_id='e4000000-0000-4000-8000-000000000001';
 set local role anon;
 select throws_ok('select public.list_student_work_archive()','42501',null,'anonymous archive denied');
 reset role;
@@ -233,6 +293,38 @@ select throws_ok($$update public.submission_attempts set status='submitted',subm
 set local role authenticated;
 set local request.jwt.claims='{"sub":"e0000000-0000-4000-8000-000000000002","session_id":"e0000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
 select is(public.current_person_can_read_work_archive('e4000000-0000-4000-8000-000000000001'),true,'own ended work archive available');
+select is((public.list_student_work_archive()->0->>'endedAt')::timestamptz,now()-interval '30 minutes',
+  'an explicit closeout after automatic expiry does not restart the archive');
+reset role;
+-- Replay the ordering of two audited transitions for the same explicitly closed enrolment.
+update public.enrollment_access_windows set state='revoked',updated_at=now()-interval '1 minute'
+where enrollment_id='e4000000-0000-4000-8000-000000000001';
+insert into public.admission_change_history(enrollment_id,request_key,actor_person_id,action,reason,prior_values,new_values,occurred_at)
+values ('e4000000-0000-4000-8000-000000000001',gen_random_uuid(),'e1000000-0000-4000-8000-000000000001','suspension','Fictional suspension','{"state":"active"}','{"state":"suspended"}',now()-interval '15 minutes'),
+       ('e4000000-0000-4000-8000-000000000001',gen_random_uuid(),'e1000000-0000-4000-8000-000000000001','revocation','Fictional revocation','{"state":"suspended"}','{"state":"revoked"}',now()-interval '1 minute');
+set local role authenticated;
+select is((public.list_student_work_archive()->0->>'endedAt')::timestamptz,now()-interval '30 minutes',
+  'suspension and revocation after automatic expiry cannot restart the archive at closeout');
+select is((select expires_at from public.get_student_archive_file('fa300000-0000-4000-8000-000000000001','submission')),
+  (now()-interval '30 minutes')+interval '12 months','late changes cannot extend the file download deadline');
+reset role;
+-- Now suspension precedes the natural end. A later revocation must not disguise that first suspension.
+update public.enrollment_access_windows set expires_at=now()-interval '5 minutes'
+where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is((public.list_student_work_archive()->0->>'endedAt')::timestamptz,current_setting('test.ended_at')::timestamptz,
+  'suspension before natural expiry leaves the subsequent explicit closeout as the first archive anchor');
+reset role;
+-- Compare the same closeout to a window scheduled to end later.
+update public.enrollment_access_windows set expires_at=now()+interval '1 day' where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
+select is((public.list_student_work_archive()->0->>'endedAt')::timestamptz,current_setting('test.ended_at')::timestamptz,
+  'manual closeout before coaching expiry keeps its original archive start');
+select is(public.list_student_work_archive()->0->>'status','completed','early manual closeout retains its explicit status');
+reset role;
+-- Preserve the original F019 fixture with no access window for the remaining legacy checks.
+delete from public.enrollment_access_windows where enrollment_id='e4000000-0000-4000-8000-000000000001';
+set local role authenticated;
 select is(public.current_person_can_access_assignment_instance('fa100000-0000-4000-8000-000000000001'),false,'archive does not reopen active assignment authority');
 select is(jsonb_array_length(public.list_student_work_archive()->0->'attempts'),1,'only finalized attempt included');
 select is(jsonb_array_length(public.list_student_work_archive()->0->'attempts'->0->'feedback'),1,'only published feedback included');
