@@ -3,7 +3,7 @@ select no_plan();
 insert into auth.users(id,instance_id,aud,role,email,email_confirmed_at,raw_user_meta_data)
 select ('ac000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,
  '00000000-0000-0000-0000-000000000000','authenticated','authenticated',
- 'claim'||n||'@fixture.invalid',now(),'{"email_verified":true}' from generate_series(1,5) n;
+ 'claim'||n||'@fixture.invalid',case when n not in (3,4) then now() end,'{"email_verified":true}' from generate_series(1,5) n;
 insert into auth.identities(provider_id,user_id,identity_data,provider)
 select 'fixture-google-'||n,('ac000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,
  jsonb_build_object('sub','fixture-google-'||n,'email','claim'||n||'@fixture.invalid','email_verified',n<>2),'google' from generate_series(1,5) n;
@@ -42,7 +42,22 @@ select is((select count(*)::integer from public.role_assignments where person_id
 set local role authenticated;
 set local request.jwt.claims='{"sub":"ac000000-0000-4000-8000-000000000002","session_id":"ac000000-0000-4000-8000-000000000002","role":"authenticated","aal":"aal1"}';
 select throws_ok('select public.provision_google_candidate()','42501',null,'editable metadata cannot replace provider email verification');
+-- Both Google identity records report verified emails, but Auth has not confirmed either address. The first
+-- reservation belongs to an existing employee; the second belongs to someone other than the candidate.
+set local request.jwt.claims='{"sub":"ac000000-0000-4000-8000-000000000003","session_id":"ac000000-0000-4000-8000-000000000003","role":"authenticated","aal":"aal1"}';
+select throws_ok('select public.claim_app_google_login()','42501','verified Google identity required','unconfirmed Auth email cannot claim an unbound employee reservation');
+select throws_ok('select public.provision_google_candidate()','42501','verified Google identity required','unconfirmed Auth email cannot fall through to candidate creation');
 set local request.jwt.claims='{"sub":"ac000000-0000-4000-8000-000000000004","session_id":"ac000000-0000-4000-8000-000000000004","role":"authenticated","aal":"aal1"}';
+select throws_ok('select public.claim_app_google_login()','42501','verified Google identity required','unconfirmed Auth email cannot use a different student reservation');
+select throws_ok('select public.provision_google_candidate()','42501','verified Google identity required','candidate callback also checks Auth confirmation before resolving a conflicting reservation');
+reset role;
+select is((select count(*)::int from public.auth_identities where auth_user_id='ac000000-0000-4000-8000-000000000003'),0,'unconfirmed employee login remains unbound');
+select is((select person_id from public.auth_identities where auth_user_id='ac000000-0000-4000-8000-000000000004'),'ac100000-0000-4000-8000-000000000004'::uuid,'existing candidate keeps its original canonical person');
+select is((select person_id from public.approved_login_emails where email='claim4@fixture.invalid'),'ac100000-0000-4000-8000-000000000005'::uuid,'the other student retains the reservation');
+select is((select count(*)::int from public.memberships where person_id='ac100000-0000-4000-8000-000000000004' and kind<>'candidate'),0,'rejected claims add no student or employee membership');
+-- Auth confirmation supplies the missing proof, but it cannot resolve a conflict between people.
+update auth.users set email_confirmed_at=now() where id='ac000000-0000-4000-8000-000000000004';
+set local role authenticated;
 select throws_ok('select public.provision_google_candidate()','40001',null,'existing candidate is never automatically merged into reserved student');
 set local request.jwt.claims='{"sub":"ac000000-0000-4000-8000-000000000005","session_id":"ac000000-0000-4000-8000-000000000005","role":"authenticated","aal":"aal1"}';
 select is(public.provision_google_candidate(),'{"created":true}'::jsonb,'unreserved verified Google identity keeps approved candidate-only experience');
