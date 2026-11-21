@@ -4,7 +4,8 @@ import { Button, Callout, Card, Input } from '../components'
 import { useAuth } from '../features/auth/AuthContext'
 import {
   accessPresets,
-  previewAccessExpiry,
+  indiaInputInstant,
+  presetExpiryInput,
   type AccessPreset,
 } from '../features/enrolment/admissionInputs'
 import {
@@ -22,13 +23,6 @@ import fieldStyles from '../components/forms/Input.module.css'
 import { AdmissionHistory } from './AdmissionHistory'
 import styles from './AdmissionsPage.module.css'
 
-/** Wall-clock input is always India time, never the operator's device timezone. */
-function indiaInstant(value: string) {
-  if (!value) throw new Error('Choose an explicit date and time in Asia/Kolkata.')
-  const result = new Date(`${value}:00+05:30`)
-  if (!Number.isFinite(result.getTime())) throw new Error('Choose a valid date and time.')
-  return result.toISOString()
-}
 const indiaTime = new Intl.DateTimeFormat('en-IN', {
   timeZone: 'Asia/Kolkata',
   dateStyle: 'medium',
@@ -44,6 +38,7 @@ const emptyForm = {
   cohortId: '',
   start: '',
   expiry: '',
+  preset: '' as AccessPreset | '',
   amount: '',
   paid: '',
   reference: '',
@@ -123,6 +118,18 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
     )
       ? editTarget
       : null
+  let expiry = form.expiry
+  let durationError = ''
+  if (form.preset) {
+    expiry = ''
+    if (form.start) {
+      try {
+        expiry = presetExpiryInput(form.start, form.preset)
+      } catch (failure) {
+        durationError = failure instanceof Error ? failure.message : 'Choose a valid access start.'
+      }
+    }
+  }
   function closeRecord() {
     setSelected(null)
     setHistoryId(null)
@@ -145,11 +152,13 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
     setOffset(nextOffset)
     closeRecord()
   }
-  function change(key: keyof typeof form, value: string) {
+  function change<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((current) => ({
       ...current,
       [key]: value,
       ...(key === 'offeringId' ? { cohortId: '' } : {}),
+      ...(key === 'expiry' ? { preset: '' as const } : {}),
+      ...(key === 'preset' && !value ? { expiry } : {}),
     }))
     setConfirmed(false)
     setRequestKey(crypto.randomUUID())
@@ -414,9 +423,12 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
                   reason: editReason,
                   ...(action === 'details' ? { name: editValue } : {}),
                   ...(action === 'dates'
-                    ? { startsAt: indiaInstant(editStart), expiresAt: indiaInstant(editValue) }
+                    ? {
+                        startsAt: indiaInputInstant(editStart),
+                        expiresAt: indiaInputInstant(editValue),
+                      }
                     : {}),
-                  ...(action === 'renewal' ? { expiresAt: indiaInstant(editValue) } : {}),
+                  ...(action === 'renewal' ? { expiresAt: indiaInputInstant(editValue) } : {}),
                   ...(action === 'batch_transfer' ? { cohortId: editValue } : {}),
                 })
                 setSelected(null)
@@ -573,9 +585,9 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
                   requestKey,
                   existingPerson: identity?.personId ?? null,
                   cohortId: form.cohortId || null,
-                  startsAt: indiaInstant(form.start),
-                  expiresAt: indiaInstant(form.expiry),
-                  paidAt: indiaInstant(form.paid),
+                  startsAt: indiaInputInstant(form.start),
+                  expiresAt: indiaInputInstant(expiry),
+                  paidAt: indiaInputInstant(form.paid),
                   confirmed,
                 })
                 setForm(emptyForm)
@@ -692,25 +704,16 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
               <label>
                 Duration preset
                 <select
-                  defaultValue=""
-                  onChange={(e) => {
-                    if (!e.target.value) return
-                    try {
-                      const end = previewAccessExpiry(
-                        indiaInstant(form.start),
-                        Number(e.target.value) as AccessPreset,
-                      )
-                      change(
-                        'expiry',
-                        new Date(Date.parse(end) + 330 * 60_000).toISOString().slice(0, 16),
-                      )
-                      setError('')
-                    } catch (failure) {
-                      setError(failure instanceof Error ? failure.message : 'Choose start first.')
-                    }
-                  }}
+                  value={form.preset}
+                  disabled={!form.start}
+                  onChange={(e) =>
+                    change(
+                      'preset',
+                      accessPresets.find((preset) => String(preset) === e.target.value) ?? '',
+                    )
+                  }
                 >
-                  <option value="">Choose after setting start</option>
+                  <option value="">Custom expiry</option>
                   {accessPresets.map((preset) => (
                     <option key={preset} value={preset}>
                       {preset === 30 ? '30 exact days' : `${preset} calendar months`}
@@ -718,16 +721,20 @@ function AdmissionsWorkspace({ accountId }: { accountId: string }) {
                   ))}
                 </select>
               </label>
+              {durationError && <p role="alert">{durationError}</p>}
               <Input
                 label="Access expiry — Asia/Kolkata (exclusive)"
                 type="datetime-local"
                 required
-                value={form.expiry}
+                value={expiry}
                 onChange={(e) => change('expiry', e.target.value)}
               />
               <label>
                 Manual payment method
-                <select value={form.method} onChange={(e) => change('method', e.target.value)}>
+                <select
+                  value={form.method}
+                  onChange={(e) => change('method', e.target.value as AdmissionDraft['method'])}
+                >
                   <option value="cash">Cash</option>
                   <option value="online_transfer">Online transfer</option>
                   <option value="card_machine">Card machine</option>

@@ -62,3 +62,9 @@ An administrator with current F054 authority can read an enrolment’s manual ad
 Local acceptance used a fictional administrator with a real local Auth/TOTP session, the protected route and PostgREST. Chromium exercised course, batch, text and inclusive expiry filtering, an empty result, keyboard history disclosure and the persisted receipt and edit. At 1440 px and 390 px the history fit the viewport; axe reported no WCAG A/AA findings in the exercised desktop light and mobile light/dark states. Dark-mode coverage applied the existing theme tokens. Separate component and database regressions exercise page boundaries, historical choices, account isolation, independent enrolments and authorization denial.
 
 The admissions authority helper still requires recent TOTP at AAL2. Verify how a Google-only admin should satisfy F054 before rollout. The remaining Google callback, mutation workflows, assessment rights, archive decision and staging acceptance are tracked in `CURRENT_STATE.md`.
+
+## Admission dates
+
+In the admission form, changing the start recalculates the chosen duration in India time. Editing the expiry switches the form to a custom date. Subsequent start changes preserve that custom expiry. The form clears an unrepresentable preset expiry and asks for a supported date. Date edits require an expiry after the start, and a renewal must extend the existing expiry. The database still checks backdating and all time-dependent conditions using its own clock.
+
+A fictional administrator exercised this through the authenticated browser route. On the PR #119 baseline, moving the start of a 12-month enrolment left the expiry at January 31, 2029. The corrected form showed July 31, 2029 at 10:00 India time. A manually entered August 15 expiry survived another start change. The form retried the same admission after a deliberately lost response, and the database contained the submitted dates and one receipt.

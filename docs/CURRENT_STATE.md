@@ -1,8 +1,10 @@
 # Current State
 
-Last updated: 2026-11-20
+Last updated: 2026-11-21
 
 ## Current phase
+
+The local `fix/admission-duration-preset` branch corrects the F054 form’s duration and custom-expiry handling. The authenticated browser regression and receipt-retry evidence are recorded in [F054](features/F054-shared-admissions-google-access.md#admission-dates).
 
 ### Execution checkpoint from `main` at `7c6664a`
 

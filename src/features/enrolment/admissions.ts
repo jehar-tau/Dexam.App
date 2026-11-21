@@ -1,7 +1,11 @@
 import { z } from 'zod'
 import { getSupabaseClient } from '../auth/supabaseClient'
 import { captureAccountOperation } from '../auth/accountOperation'
-import { amountReceivedPaise, normalizeStudentLoginEmail } from './admissionInputs'
+import {
+  amountReceivedPaise,
+  assertLaterExpiry,
+  normalizeStudentLoginEmail,
+} from './admissionInputs'
 
 const id = z.string().uuid()
 const revision = z.number().int().positive().safe()
@@ -106,6 +110,8 @@ async function rpc<T>(
         throw new Error(
           'This identity or record changed. Refresh and deliberately review the existing student; nothing was overwritten.',
         )
+      if (result.error.code === '22023')
+        throw new Error('Review the admission inputs and correct them before submitting again.')
       if (result.error.code === '42501')
         throw new Error('Current admissions authority is required. Check your session and MFA.')
       if (result.error.code === '55000')
@@ -181,6 +187,7 @@ export type AdmissionDraft = {
 }
 export async function admitStudent(draft: AdmissionDraft) {
   if (!draft.confirmed) throw new Error('Confirm the student, dates and manual payment evidence.')
+  assertLaterExpiry(draft.startsAt, draft.expiresAt)
   const amount = amountReceivedPaise(draft.amount)
   if (amount <= 0) throw new Error('Enter the positive amount actually received.')
   return rpc(
@@ -220,7 +227,14 @@ export type AdmissionEdit = {
   expiresAt?: string
   cohortId?: string
 }
-export function editAdmission(edit: AdmissionEdit) {
+export async function editAdmission(edit: AdmissionEdit) {
+  if (edit.action === 'dates') assertLaterExpiry(edit.startsAt ?? '', edit.expiresAt ?? '')
+  if (edit.action === 'renewal')
+    assertLaterExpiry(
+      edit.enrollment.expiresAt ?? '',
+      edit.expiresAt ?? '',
+      'Renewal must extend the current access expiry.',
+    )
   return rpc(
     'edit_admission',
     {
